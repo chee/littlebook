@@ -11,7 +11,7 @@ export function Badge() {
 		needRefresh: [needRefresh, setNeedRefresh],
 		updateServiceWorker,
 	} = useRegisterSW({
-		onRegisteredSW(swUrl: string, r: string) {
+		onRegisteredSW(swUrl, r) {
 			if (period <= 0) return
 			if (r?.active?.state === "activated") {
 				registerPeriodicSync(period, swUrl, r)
@@ -35,11 +35,14 @@ export function Badge() {
 				<div class="pwa-badge-toast">
 					<div class="pwa-badge-message">
 						{offlineReady ? (
-							<span id="toast-message">App ready to work offline</span>
+							<span id="toast-message">we can work offline</span>
 						) : (
-							<span id="toast-message">
-								New content available, click on reload button to update.
-							</span>
+							<button
+								type="button"
+								id="toast-message"
+								onClick={() => location.reload()}>
+								refresh your browser to get the new version of littlebook
+							</button>
 						)}
 					</div>
 					<div class="pwa-badge-buttons">
@@ -51,7 +54,10 @@ export function Badge() {
 								Reload
 							</button>
 						)}
-						<button class="pwa-badge-toast-button" onClick={() => close()}>
+						<button
+							type="button"
+							class="pwa-badge-toast-button"
+							onClick={() => close()}>
 							Close
 						</button>
 					</div>
