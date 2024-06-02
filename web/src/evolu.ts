@@ -41,7 +41,7 @@ export const Database = database({
 export type Database = typeof Database.Type
 
 const evolu = createEvolu(Database, {
-	syncUrl: "http://localhost:11124",
+	syncUrl: "https://star.littlebook.app",
 })
 export default evolu
 
