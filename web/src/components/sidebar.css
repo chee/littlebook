@@ -1,0 +1,7 @@
+.sidebar {
+	padding: 1em;
+}
+
+.sidebar .card + .card {
+	margin-top: 1em;
+}

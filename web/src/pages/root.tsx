@@ -1,0 +1,35 @@
+import {Outlet} from "react-router-dom"
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels"
+import Sidebar from "../components/sidebar.tsx"
+import type {Database} from "../evolu.ts"
+import {useEvolu, Mnemonic} from "@evolu/react"
+
+export default function Root() {
+	const evolu = useEvolu<Database>()
+
+	return (
+		<PanelGroup autoSaveId="root" direction="horizontal">
+			<Panel defaultSize={25} minSize={10} maxSize={40}>
+				<button
+					type="button"
+					onClick={() => {
+						const mnem = window.prompt("mnemonic?") as Mnemonic
+						mnem && evolu.restoreOwner(mnem)
+					}}>
+					restore
+				</button>
+				<Sidebar />
+			</Panel>
+			<PanelResizeHandle />
+			<Panel>
+				<main id="main">
+					<Outlet />
+				</main>
+			</Panel>
+			<PanelResizeHandle />
+			<Panel defaultSize={25} minSize={10} maxSize={40}>
+				<Sidebar />
+			</Panel>
+		</PanelGroup>
+	)
+}

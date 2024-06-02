@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"target": "ES2020",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"noEmit": true,
+		"allowJs": true,
+		"checkJs": true,
+		"useDefineForClassFields": true,
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact",
+		"skipLibCheck": true,
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"allowImportingTsExtensions": true,
+		"paths": {
+			"react": ["./node_modules/preact/compat/"],
+			"react-dom": ["./node_modules/preact/compat/"]
+		}
+	},
+	"include": [
+		"node_modules/vite/client.d.ts",
+		"src"
+	],
+	"references": [{"path": "./tsconfig.node.json"}]
+}

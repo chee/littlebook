@@ -1,0 +1,13 @@
+{
+	"name": "littlebook",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "pnpm -r t && node t"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "AGPL3.0+",
+	"packageManager": "pnpm@9.1.4"
+}

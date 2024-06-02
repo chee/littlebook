@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "web"
+		},
+		{
+			"path": "srv"
+		}
+	],
+	"settings": {
+		"prettier.enable": false
+	}
+}

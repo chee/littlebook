@@ -1,0 +1,10 @@
+{
+	"name": "ocho",
+	"start_url": ".",
+	"description": "my notebook",
+	"display": "fullscreen",
+	"scope": "/",
+	"theme_color": "#ffe9ed",
+	"background_color": "#ffe9ed",
+	"icons": []
+}
