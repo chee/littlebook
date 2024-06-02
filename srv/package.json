@@ -12,6 +12,8 @@
 	"license": "ISC",
 	"dependencies": {
 		"@evolu/server": "^7.0.10",
+		"@types/cors": "^2.8.17",
+		"cors": "^2.8.5",
 		"effect": "^3.2.7",
 		"express": "^4.19.2"
 	}
