@@ -1,12 +1,18 @@
 import {defineConfig} from "vite"
 import preact from "@preact/preset-vite"
 import {VitePWA as pwa} from "vite-plugin-pwa"
+import wasm from "vite-plugin-wasm"
 
 export default defineConfig({
 	optimizeDeps: {
 		exclude: ["@evolu/common-web", "@sqlite.org/sqlite-wasm"],
 	},
+	worker: {
+		format: "es",
+		plugins: () => [wasm()],
+	},
 	plugins: [
+		wasm(),
 		preact(),
 		pwa({
 			registerType: "autoUpdate",
@@ -45,6 +51,7 @@ export default defineConfig({
 		emptyOutDir: true,
 		sourcemap: "hidden",
 		minify: false,
+		target: "esnext",
 	},
 	server: {
 		headers: {

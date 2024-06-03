@@ -87,6 +87,9 @@ importers:
       '@automerge/automerge-repo-network-websocket':
         specifier: ^1.1.12
         version: 1.1.12(@types/node@20.14.0)(typescript@5.4.5)
+      '@automerge/automerge-repo-react-hooks':
+        specifier: ^1.1.12
+        version: 1.1.12(@types/node@20.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)
       '@automerge/automerge-repo-storage-indexeddb':
         specifier: ^1.1.12
         version: 1.1.12(@types/node@20.14.0)(typescript@5.4.5)
@@ -160,6 +163,9 @@ importers:
       vite-plugin-pwa:
         specifier: ^0.20.0
         version: 0.20.0(@vite-pwa/assets-generator@0.2.4)(vite@5.2.12(@types/node@20.14.0)(terser@5.31.0))(workbox-build@7.1.1)(workbox-window@7.1.0)
+      vite-plugin-wasm:
+        specifier: ^3.3.0
+        version: 3.3.0(vite@5.2.12(@types/node@20.14.0)(terser@5.31.0))
 
 packages:
 
@@ -184,6 +190,12 @@ packages:
 
   '@automerge/automerge-repo-network-websocket@1.1.12':
     resolution: {integrity: sha512-+jRyPkLaNPm9MGnZ6xwGmBwS8Sye6hBhVcrs/1v6Kues06Lecyv8XZvfLkxqOCWSO8aHV6sGhiAj57tDsXXCiw==}
+
+  '@automerge/automerge-repo-react-hooks@1.1.12':
+    resolution: {integrity: sha512-mhyvcBUH+5BCY3ZN0v442yDCmgvGn1X94bsKE5PykECvucWw1gAGPBJkzf1MefiKsepvhMLYI+woAIU3ZmOjIg==}
+    peerDependencies:
+      react: '>16.8.0'
+      react-dom: '>16.8.0'
 
   '@automerge/automerge-repo-storage-indexeddb@1.1.12':
     resolution: {integrity: sha512-kXnLg0PSNWUAyknW7LvZTt2wXIhufuQHpbCWJCOSS6AaIabRxfhzT31hwYLihA2J1A3fRe3vLbUAQ/C9vGoOfg==}
@@ -3410,6 +3422,11 @@ packages:
     peerDependencies:
       react: '>=16.8'
 
+  react-usestateref@1.0.9:
+    resolution: {integrity: sha512-t8KLsI7oje0HzfzGhxFXzuwbf1z9vhBM1ptHLUIHhYqZDKFuI5tzdhEVxSNzUkYxwF8XdpOErzHlKxvP7sTERw==}
+    peerDependencies:
+      react: '>16.0.0'
+
   react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
@@ -4106,6 +4123,11 @@ packages:
       '@vite-pwa/assets-generator':
         optional: true
 
+  vite-plugin-wasm@3.3.0:
+    resolution: {integrity: sha512-tVhz6w+W9MVsOCHzxo6SSMSswCeIw4HTrXEi6qL3IRzATl83jl09JVO1djBqPSwfjgnpVHNLYcaMbaDX5WB/pg==}
+    peerDependencies:
+      vite: ^2 || ^3 || ^4 || ^5
+
   vite@5.2.12:
     resolution: {integrity: sha512-/gC8GxzxMK5ntBwb48pR32GGhENnjtY30G4A0jemunsBkiEZFw60s8InGpN8gkhHEkjnRK1aSAxeQgwvFhUHAA==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -4322,6 +4344,21 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
+
+  '@automerge/automerge-repo-react-hooks@1.1.12(@types/node@20.14.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.4.5)':
+    dependencies:
+      '@automerge/automerge': 2.2.2
+      '@automerge/automerge-repo': 1.1.12(@types/node@20.14.0)(typescript@5.4.5)
+      eventemitter3: 5.0.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-usestateref: 1.0.9(react@18.3.1)
+    transitivePeerDependencies:
+      - '@swc/core'
+      - '@swc/wasm'
+      - '@types/node'
+      - supports-color
+      - typescript
 
   '@automerge/automerge-repo-storage-indexeddb@1.1.12(@types/node@20.14.0)(typescript@5.4.5)':
     dependencies:
@@ -7819,6 +7856,10 @@ snapshots:
       '@remix-run/router': 1.16.1
       react: 18.3.1
 
+  react-usestateref@1.0.9(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+
   react@18.3.1:
     dependencies:
       loose-envify: 1.4.0
@@ -8585,6 +8626,10 @@ snapshots:
       '@vite-pwa/assets-generator': 0.2.4
     transitivePeerDependencies:
       - supports-color
+
+  vite-plugin-wasm@3.3.0(vite@5.2.12(@types/node@20.14.0)(terser@5.31.0)):
+    dependencies:
+      vite: 5.2.12(@types/node@20.14.0)(terser@5.31.0)
 
   vite@5.2.12(@types/node@20.14.0)(terser@5.31.0):
     dependencies:

@@ -15,6 +15,7 @@
 		"@automerge/automerge-repo-network-broadcastchannel": "^1.1.12",
 		"@automerge/automerge-repo-network-messagechannel": "^1.1.12",
 		"@automerge/automerge-repo-network-websocket": "^1.1.12",
+		"@automerge/automerge-repo-react-hooks": "^1.1.12",
 		"@automerge/automerge-repo-storage-indexeddb": "^1.1.12",
 		"@chee/automerge-repo-storage-opfs": "link:../pkg/automerge-repo-storage-opfs",
 		"@littlebook/types": "link:../types",
@@ -40,6 +41,7 @@
 		"sharp-ico": "^0.1.5",
 		"typescript": "^5.2.2",
 		"vite": "^5.2.0",
-		"vite-plugin-pwa": "^0.20.0"
+		"vite-plugin-pwa": "^0.20.0",
+		"vite-plugin-wasm": "^3.3.0"
 	}
 }
