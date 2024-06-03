@@ -1,0 +1,10 @@
+{
+	"name": "@littlebook/types",
+	"private": "true",
+	"version": "1.0.0",
+	"main": "",
+	"types": "littlebook.d.ts",
+	"author": "chee",
+	"license": "AGPL-3.0+",
+	"type": "module"
+}
