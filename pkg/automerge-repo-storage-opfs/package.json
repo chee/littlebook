@@ -1,33 +1,34 @@
 {
-  "name": "@openscript-ch/automerge-repo-storage-opfs",
-  "version": "0.1.1",
-  "description": "OPFS storage adapter for Automerge Repo",
-  "repository": "https://github.com/openscript-ch/automerge-repo-storage-opfs",
-  "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist/*"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "release:major": "standard-version --release-as major && git push --follow-tags",
-    "release:minor": "standard-version --release-as minor && git push --follow-tags",
-    "release:patch": "standard-version --release-as patch && git push --follow-tags",
-    "release:create-github-release": "conventional-github-releaser -p angular"
-  },
-  "keywords": [],
-  "author": "openscript Ltd. <hi@openscript.ch>",
-  "license": "MIT",
-  "dependencies": {
-    "@automerge/automerge-repo": "^1.0.19",
-    "conventional-github-releaser": "^3.1.5",
-    "standard-version": "^9.5.0",
-    "typescript": "^5.3.3"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "packageManager": "pnpm@8.14.1"
+	"private": true,
+	"name": "@chee/automerge-repo-storage-opfs",
+	"version": "0.1.1",
+	"description": "OPFS storage adapter for Automerge Repo",
+	"repository": "https://github.com/openscript-ch/automerge-repo-storage-opfs",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"dist/*"
+	],
+	"scripts": {
+		"mk": "tsc",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"release:major": "standard-version --release-as major && git push --follow-tags",
+		"release:minor": "standard-version --release-as minor && git push --follow-tags",
+		"release:patch": "standard-version --release-as patch && git push --follow-tags",
+		"release:create-github-release": "conventional-github-releaser -p angular"
+	},
+	"keywords": [],
+	"author": "openscript Ltd. <hi@openscript.ch>",
+	"license": "MIT",
+	"dependencies": {
+		"@automerge/automerge-repo": "^1.0.19",
+		"conventional-github-releaser": "^3.1.5",
+		"standard-version": "^9.5.0",
+		"typescript": "^5.3.3"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"packageManager": "pnpm@9.1.4"
 }

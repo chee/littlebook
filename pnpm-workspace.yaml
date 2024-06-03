@@ -2,6 +2,6 @@ packages:
   - "srv"
   - "web"
   - "types"
-  - "add/**"
-  - "pkg/**"
+  - "add/*"
+  - "pkg/*"
   - "!**/t/**"

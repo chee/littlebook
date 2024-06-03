@@ -8,6 +8,21 @@ importers:
 
   .: {}
 
+  pkg/automerge-repo-storage-opfs:
+    dependencies:
+      '@automerge/automerge-repo':
+        specifier: ^1.0.19
+        version: 1.1.12(@types/node@20.14.0)(typescript@5.4.5)
+      conventional-github-releaser:
+        specifier: ^3.1.5
+        version: 3.1.5
+      standard-version:
+        specifier: ^9.5.0
+        version: 9.5.0
+      typescript:
+        specifier: ^5.3.3
+        version: 5.4.5
+
   srv:
     dependencies:
       '@automerge/automerge-repo':
@@ -49,6 +64,9 @@ importers:
       typescript:
         specifier: ^5.2.2
         version: 5.4.5
+      ws:
+        specifier: ^8.17.0
+        version: 8.17.0
 
   types: {}
 
@@ -72,6 +90,9 @@ importers:
       '@automerge/automerge-repo-storage-indexeddb':
         specifier: ^1.1.12
         version: 1.1.12(@types/node@20.14.0)(typescript@5.4.5)
+      '@chee/automerge-repo-storage-opfs':
+        specifier: link:../pkg/automerge-repo-storage-opfs
+        version: link:../pkg/automerge-repo-storage-opfs
       '@littlebook/types':
         specifier: link:../types
         version: link:../types
@@ -1391,9 +1412,6 @@ packages:
 
   '@types/minimist@1.2.5':
     resolution: {integrity: sha512-hov8bUuiLiyFPGyFPE1lwWhmzYbirOXQNNo40+y3zow8aFVTeyn3VWL0VFFfdNddA8S4Vf0Tc062rzyNr7Paag==}
-
-  '@types/node@20.13.0':
-    resolution: {integrity: sha512-FM6AOb3khNkNIXPnHFDYaHerSv8uN22C91z098AnGccVu+Pcdhi+pNUFDi0iLmPIsVE0JBD0KVS7mzUYt4nRzQ==}
 
   '@types/node@20.14.0':
     resolution: {integrity: sha512-5cHBxFGJx6L4s56Bubp4fglrEpmyJypsqI6RgzMfBHWUJQGWAAi8cWcgetEbZXHYXo9C2Fa4EEds/uSyS4cxmA==}
@@ -5578,13 +5596,9 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 20.13.0
+      '@types/node': 20.14.0
 
   '@types/minimist@1.2.5': {}
-
-  '@types/node@20.13.0':
-    dependencies:
-      undici-types: 5.26.5
 
   '@types/node@20.14.0':
     dependencies:
@@ -5596,7 +5610,7 @@ snapshots:
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 20.13.0
+      '@types/node': 20.14.0
 
   '@types/trusted-types@2.0.7': {}
 

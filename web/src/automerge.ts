@@ -1,6 +1,6 @@
 import {} from "@automerge/automerge/next"
 import {Repo} from "@automerge/automerge-repo"
-import {OPFSStorageAdapter} from "@openscript-ch/automerge-repo-storage-opfs"
+import {OPFSStorageAdapter} from "@chee/automerge-repo-storage-opfs"
 import {MessageChannelNetworkAdapter} from "@automerge/automerge-repo-network-messagechannel"
 
 export function repo() {
