@@ -6,9 +6,7 @@ import Root from "./pages/root.tsx"
 import ErrorPage from "./pages/error.tsx"
 import {Card} from "./components/card.tsx"
 import {FilesWorkerProvider} from "./files.tsx"
-import evolu from "./evolu.ts"
-import {EvoluProvider} from "@evolu/react"
-import {lazy, Suspense} from "preact/compat"
+import {Suspense} from "preact/compat"
 
 const router = createBrowserRouter([
 	{
@@ -75,12 +73,7 @@ const router = createBrowserRouter([
 
 render(
 	<FilesWorkerProvider>
-		<EvoluProvider value={evolu}>
-			<RouterProvider
-				router={router}
-				fallbackElement={<div class="spinner" />}
-			/>
-		</EvoluProvider>
+		<RouterProvider router={router} fallbackElement={<div class="spinner" />} />
 	</FilesWorkerProvider>,
 	document.getElementById("littlebook")!,
 )

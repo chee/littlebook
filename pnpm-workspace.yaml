@@ -1,6 +1,7 @@
 packages:
   - "srv"
   - "web"
-  - "plugins/**"
-  - "components/**"
+  - "types"
+  - "add/**"
+  - "pkg/**"
   - "!**/t/**"

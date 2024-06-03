@@ -1,5 +1,5 @@
 {
-	"name": "web",
+	"name": "@littlebook/web",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
@@ -10,10 +10,14 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"@effect/schema": "^0.67.16",
-		"@evolu/common": "^5.2.0",
-		"@evolu/common-web": "^8.1.1",
-		"@evolu/react": "^8.1.0",
+		"@automerge/automerge": "^2.2.2",
+		"@automerge/automerge-repo": "^1.1.12",
+		"@automerge/automerge-repo-network-broadcastchannel": "^1.1.12",
+		"@automerge/automerge-repo-network-messagechannel": "^1.1.12",
+		"@automerge/automerge-repo-network-websocket": "^1.1.12",
+		"@automerge/automerge-repo-storage-indexeddb": "^1.1.12",
+		"@littlebook/types": "link:../types",
+		"@openscript-ch/automerge-repo-storage-opfs": "^0.1.1",
 		"@preact/signals": "^1.2.3",
 		"@sqlite.org/sqlite-wasm": "3.46.0-build1",
 		"effect": "^3.2.7",
@@ -22,6 +26,7 @@
 		"react-hotkeys-hook": "^4.5.0",
 		"react-resizable-panels": "^2.0.19",
 		"react-router-dom": "^6.23.1",
+		"tinybase": "^4.8.11",
 		"workbox-window": "^7.1.0"
 	},
 	"devDependencies": {
