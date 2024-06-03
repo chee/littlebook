@@ -25,8 +25,12 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
+			"suspicious": {
+				"noExplicitAny": "off"
+			},
 			"style": {
-				"noNonNullAssertion": "off"
+				"noNonNullAssertion": "off",
+				"useTemplate": "off"
 			}
 		}
 	}
