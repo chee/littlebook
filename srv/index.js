@@ -6,6 +6,7 @@ import {Repo} from "@automerge/automerge-repo"
 import {NodeWSServerAdapter} from "@automerge/automerge-repo-network-websocket"
 import {NodeFSStorageAdapter} from "@automerge/automerge-repo-storage-nodefs"
 import os from "node:os"
+import cors from "cors"
 
 export class Server {
 	/** @type WebSocketServer */
@@ -32,6 +33,7 @@ export class Server {
 		const PORT = Number.parseInt(process.env.PORT || "11124")
 		const app = express()
 		app.use(express.static("public"))
+		app.use(cors())
 
 		const config = {
 			network: [new NodeWSServerAdapter(this.#socket)],
