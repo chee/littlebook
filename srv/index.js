@@ -1,76 +1,84 @@
-import SQLite from "better-sqlite3"
-import bodyParser from "body-parser"
-import cors from "cors"
-import * as Cause from "effect/Cause"
-import * as Effect from "effect/Effect"
-import * as Either from "effect/Either"
-import * as Exit from "effect/Exit"
-import {flow} from "effect/Function"
-import * as Match from "effect/Match"
+// @ts-check
+import fs from "node:fs"
 import express from "express"
-import {Kysely, SqliteDialect} from "kysely"
-import path from "node:path"
-import {Server, ServerLive, Db} from "@evolu/server"
+import {WebSocketServer} from "ws"
+import {Repo} from "@automerge/automerge-repo"
+import {NodeWSServerAdapter} from "@automerge/automerge-repo-network-websocket"
+import {NodeFSStorageAdapter} from "@automerge/automerge-repo-storage-nodefs"
+import os from "node:os"
 
-const createDb = fileName =>
-	new Kysely({
-		dialect: new SqliteDialect({
-			database: new SQLite(path.join(process.cwd(), "/", fileName)),
-		}),
-	})
+export class Server {
+	/** @type WebSocketServer */
+	#socket
 
-const createExpressApp = Effect.gen(function* (adapt) {
-	const server = yield* adapt(
-		Server.pipe(
-			Effect.provide(ServerLive),
-			Effect.provideService(Db, createDb("db.sqlite")),
-		),
-	)
+	/** @type ReturnType<import("express").Express["listen"]> */
+	#server
 
-	yield* adapt(server.initDatabase)
+	/** @type {((value: any) => void)[]} */
+	#readyResolvers = []
 
-	const app = /** @type {any} */ (express())
-	/**
-	 * @type {cors.CorsOptions}
-	 */
-	const corsopts = {
-		methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-		credentials: true,
+	#isReady = false
+
+	constructor() {
+		const dir = "automerge-sync-server-data"
+		if (!fs.existsSync(dir)) {
+			fs.mkdirSync(dir)
+		}
+
+		const hostname = os.hostname()
+
+		this.#socket = new WebSocketServer({noServer: true})
+
+		const PORT = Number.parseInt(process.env.PORT || "11124")
+		const app = express()
+		app.use(express.static("public"))
+
+		const config = {
+			network: [new NodeWSServerAdapter(this.#socket)],
+			storage: new NodeFSStorageAdapter(dir),
+			/** @ts-ignore @type {(import("@automerge/automerge-repo").PeerId)}  */
+			peerId: `storage-server-${hostname}`,
+			// Since this is a server, we don't share generously — meaning we only sync documents they already
+			// know about and can ask for by ID.
+			sharePolicy: async () => false,
+		}
+		const serverRepo = new Repo(config)
+
+		app.get("/", (req, res) => {
+			res.send(
+				`<!doctype html><meta charset=utf-8><title>starlight</title><h1>✨ hello starlight ✨`,
+			)
+		})
+
+		this.#server = app.listen(PORT, () => {
+			console.log(`Listening on port ${PORT}`)
+			this.#isReady = true
+			for (const resolve of this.#readyResolvers) {
+				resolve(true)
+			}
+		})
+
+		this.#server.on("upgrade", (request, socket, head) => {
+			this.#socket.handleUpgrade(request, socket, head, socket => {
+				this.#socket.emit("connection", socket, request)
+			})
+		})
 	}
 
-	app.use(cors(corsopts))
-	app.options("*", cors(corsopts))
-	app.use(bodyParser.raw({limit: "20mb", type: "application/x-protobuf"}))
+	async ready() {
+		if (this.#isReady) {
+			return true
+		}
 
-	app.post("/", (req, res) => {
-		Effect.runCallback(server.sync(/** @type {Uint8Array} */ (req.body)), {
-			onExit: Exit.match({
-				onFailure: flow(
-					Cause.failureOrCause,
-					Either.match({
-						onLeft: flow(
-							Match.value,
-							Match.tagsExhaustive({
-								BadRequestError: ({error}) => {
-									res.status(400).send(JSON.stringify(error))
-								},
-							}),
-						),
-						onRight: error => {
-							// eslint-disable-next-line no-console
-							console.log(error)
-							res.status(500)
-						},
-					}),
-				),
-				onSuccess: buffer => {
-					res.setHeader("Content-Type", "application/x-protobuf")
-					res.send(buffer)
-				},
-			}),
+		return new Promise(resolve => {
+			this.#readyResolvers.push(resolve)
 		})
-	})
+	}
 
-	return app
-})
-;(await Effect.runPromise(createExpressApp)).listen(11124)
+	close() {
+		this.#socket.close()
+		this.#server.close()
+	}
+}
+
+new Server()
