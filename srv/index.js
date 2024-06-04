@@ -1,86 +1,36 @@
 // @ts-check
 import fs from "node:fs"
-import express from "express"
 import {WebSocketServer} from "ws"
 import {Repo} from "@automerge/automerge-repo"
 import {NodeWSServerAdapter} from "@automerge/automerge-repo-network-websocket"
 import {NodeFSStorageAdapter} from "@automerge/automerge-repo-storage-nodefs"
-import os from "node:os"
-import cors from "cors"
-
-export class Server {
-	/** @type WebSocketServer */
-	#socket
-
-	/** @type ReturnType<import("express").Express["listen"]> */
-	#server
-
-	/** @type {((value: any) => void)[]} */
-	#readyResolvers = []
-
-	#isReady = false
-
-	constructor() {
-		const dir = "automerge-sync-server-data"
-		if (!fs.existsSync(dir)) {
-			fs.mkdirSync(dir)
-		}
-
-		const hostname = os.hostname()
-
-		this.#socket = new WebSocketServer({noServer: true})
-
-		const PORT = Number.parseInt(process.env.PORT || "11124")
-		const app = express()
-		app.use(express.static("public"))
-		app.use(cors())
-
-		const config = {
-			network: [new NodeWSServerAdapter(this.#socket)],
-			storage: new NodeFSStorageAdapter(dir),
-			/** @ts-ignore @type {(import("@automerge/automerge-repo").PeerId)}  */
-			peerId: `storage-server-${hostname}`,
-			// Since this is a server, we don't share generously — meaning we only sync documents they already
-			// know about and can ask for by ID.
-			sharePolicy: async () => false,
-		}
-		const serverRepo = new Repo(config)
-
-		app.get("/", (req, res) => {
-			res.send(
-				`<!doctype html><meta charset=utf-8><title>starlight</title><h1>✨ hello starlight ✨`,
-			)
-		})
-
-		this.#server = app.listen(PORT, () => {
-			console.log(`Listening on port ${PORT}`)
-			this.#isReady = true
-			for (const resolve of this.#readyResolvers) {
-				resolve(true)
-			}
-		})
-
-		this.#server.on("upgrade", (request, socket, head) => {
-			this.#socket.handleUpgrade(request, socket, head, socket => {
-				this.#socket.emit("connection", socket, request)
-			})
-		})
-	}
-
-	async ready() {
-		if (this.#isReady) {
-			return true
-		}
-
-		return new Promise(resolve => {
-			this.#readyResolvers.push(resolve)
-		})
-	}
-
-	close() {
-		this.#socket.close()
-		this.#server.close()
-	}
+const directory =
+	process.env.AUTOMERGE_DIRECTORY || "automerge-sync-server-data"
+if (!fs.existsSync(directory)) {
+	fs.mkdirSync(directory)
 }
+const sock = new WebSocketServer({
+	port: Number.parseInt(process.env.PORT || "11124"),
+})
 
-new Server()
+const config = {
+	network: [new NodeWSServerAdapter(sock)],
+	storage: new NodeFSStorageAdapter(directory),
+
+	peerId: /** @type {(import("@automerge/automerge-repo").PeerId)} */ (
+		`storage-server-${process.env.AUTOMERGE_HOST || "littlebook.app"}`
+	),
+	// Since this is a server, we don't share generously — meaning we only sync documents they already
+	// know about and can ask for by ID.
+	sharePolicy: async () => false,
+}
+const repo = new Repo(config)
+
+repo.addListener("document", doc => {
+	if (doc.isNew) {
+		console.log("new: ", doc.handle.documentId)
+	}
+	doc.handle.addListener("change", change => {
+		console.log(change.patchInfo)
+	})
+})
