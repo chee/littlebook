@@ -23,7 +23,6 @@ import cors from "cors"
 import express, {type ErrorRequestHandler} from "express"
 import fs from "node:fs"
 import type {Server as HttpServer} from "node:http"
-import {fileURLToPath} from "node:url"
 import path from "node:path"
 import {WebSocketServer} from "ws"
 

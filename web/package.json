@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"mk": "tsc && vite build",
+		"mk": "vite build",
+		"tmk": "tsc && vite build",
 		"lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
 		"preview": "vite preview"
 	},
@@ -19,6 +20,8 @@
 		"@automerge/automerge-repo-storage-indexeddb": "^1.1.12",
 		"@chee/automerge-repo-storage-opfs": "link:../pkg/automerge-repo-storage-opfs",
 		"@littlebook/types": "link:../types",
+		"@localfirst/auth": "^5.6.0",
+		"@localfirst/auth-provider-automerge-repo": "^5.6.0",
 		"@openscript-ch/automerge-repo-storage-opfs": "^0.1.1",
 		"@preact/signals": "^1.2.3",
 		"@sqlite.org/sqlite-wasm": "3.46.0-build1",
