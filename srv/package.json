@@ -19,6 +19,7 @@
 		"@evolu/server": "^7.0.10",
 		"@localfirst/auth": "^5.6.0",
 		"@localfirst/auth-provider-automerge-repo": "^5.6.0",
+		"@localfirst/auth-syncserver": "^5.6.0",
 		"@localfirst/shared": "^5.6.0",
 		"@types/body-parser": "^1.19.5",
 		"@types/cors": "^2.8.17",
