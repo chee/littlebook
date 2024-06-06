@@ -1,13 +1,19 @@
-import {RawString, type Repo} from "@automerge/automerge-repo"
-import type {lb} from "../../types.ts"
+import type {Repo} from "@automerge/automerge-repo"
 
 export default function createSpace(
 	repo: Repo,
 	template: Partial<lb.Space> = {},
 ) {
-	return repo.create<lb.Space>({
+	const spaceHandle = repo.create<lb.Space>({
 		type: "space",
-		name: template.name || new RawString(""),
-		children: template.children || [],
+		id: "" as lb.SpaceId,
+		name: template.name || "",
+		areas: template.areas || [],
+		projects: template.projects || [],
 	})
+	spaceHandle.change(space => {
+		// @ts-expect-error
+		space.id = spaceHandle.documentId as lb.SpaceId
+	})
+	return spaceHandle
 }

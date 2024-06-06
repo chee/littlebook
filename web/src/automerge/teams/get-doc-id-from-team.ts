@@ -1,6 +1,5 @@
 import type {DocumentId} from "@automerge/automerge-repo"
 import type * as Auth from "@localfirst/auth"
-import type {lb} from "../../types.ts"
 
 export default function getDocIdFromTeam(team: Auth.Team): lb.SpaceId {
 	const spaceId = team
