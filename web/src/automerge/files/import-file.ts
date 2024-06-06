@@ -2,11 +2,14 @@ import type {Repo} from "@automerge/automerge-repo"
 import contentTypeRegistry from "../content/content-type-registry.ts"
 import type {AutomergeValue} from "@automerge/automerge/next"
 
-export default function createFile(
+// todo combine with createFile
+// todo this should probably be sync and take a Uint8Array instead of a file
+export default async function importFile(
 	repo: Repo,
 	fileTemplate: Partial<Omit<lb.File, "id" | "type" | "content">> & {
 		ext: string
 	},
+	computerFile: File,
 ) {
 	const creator = contentTypeRegistry.getCreator(fileTemplate.ext)
 	if (!creator) {
@@ -14,7 +17,7 @@ export default function createFile(
 			`cannot create a .${fileTemplate.ext} file, register a creator first.`,
 		)
 	}
-	const contentHandle = creator.create(repo)
+	const contentHandle = await creator.import(repo, computerFile)
 
 	const fileHandle = repo.create<lb.File>({
 		id: "" as lb.FileId,

@@ -13,7 +13,7 @@
 			"jsxQuoteStyle": "double",
 			"quoteProperties": "asNeeded",
 			"semicolons": "asNeeded",
-			"trailingComma": "all",
+			"trailingCommas": "all",
 			"quoteStyle": "double"
 		}
 	},

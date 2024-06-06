@@ -10,9 +10,13 @@ import {
 	excalidrawCreator,
 	ExcalidrawView,
 } from "./automerge/content/excalidraw-content.tsx"
+import {imageCreator, ImageView} from "./automerge/content/image-content.tsx"
 
 contentTypeRegistry.define("txt", textCreator, TextView)
 contentTypeRegistry.define("excalidraw", excalidrawCreator, ExcalidrawView)
+contentTypeRegistry.define("jpg", imageCreator, ImageView)
+contentTypeRegistry.define("jpeg", imageCreator, ImageView)
+contentTypeRegistry.define("png", imageCreator, ImageView)
 
 render(
 	<AuthContextProvider>

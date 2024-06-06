@@ -19,6 +19,8 @@ export interface ContentCreator<Type extends AutomergeValue> {
 	// controller lol i reïnvented MVC
 	// does this need to be able to take a file? (repo: Repo, file: lb.File)
 	create(repo: Repo): DocHandle<lb.Content<Type>>
+	// todo make this sync and expect the caller to provide an arrayBuffer instead?
+	import(repo: Repo, file: File): Promise<DocHandle<lb.Content<Type>>>
 }
 
 // todo yes, a ContentManager is gonna need to exist, that is also the arg
