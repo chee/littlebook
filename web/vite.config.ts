@@ -13,6 +13,10 @@ function wordlist(list: string) {
 }
 
 export default defineConfig({
+	define: {
+		// for excalidraw who likes this
+		"process.env.IS_PREACT": JSON.stringify("true"),
+	},
 	optimizeDeps: {
 		exclude: ["@evolu/common-web", "@sqlite.org/sqlite-wasm"],
 	},
