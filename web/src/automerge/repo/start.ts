@@ -6,6 +6,7 @@ import {IndexedDBStorageAdapter} from "@automerge/automerge-repo-storage-indexed
 import type * as Auth from "@localfirst/auth"
 import {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
 import {eventPromise as waitForEvent} from "@localfirst/shared"
+import {BroadcastChannelNetworkAdapter} from "@automerge/automerge-repo-network-broadcastchannel"
 
 type CreateRepoOpts = {
 	user?: Auth.UserWithSecrets
@@ -35,7 +36,7 @@ export default async function start({user, device}: CreateRepoOpts) {
 	)
 
 	// const workerAdapter = new MessageChannelNetworkAdapter(worker.port)
-
+	// const broadcast = new BroadcastChannelNetworkAdapter()
 	const network = [auth.wrap(websocketAdapter)]
 
 	const repo = new Repo({

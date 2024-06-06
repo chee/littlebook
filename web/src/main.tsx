@@ -24,6 +24,7 @@ render(
 declare global {
 	interface Window {
 		clearOPFS: typeof removeDirectory
+		EXCALIDRAW_ASSET_PATH: string
 	}
 }
 window.clearOPFS = removeDirectory
