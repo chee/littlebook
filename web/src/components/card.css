@@ -8,6 +8,10 @@
 	overflow: auto;
 }
 
+.card-inner {
+	height: 100%;
+}
+
 .card-title {
 	font-size: 1.3em;
 	font-weight: bold;

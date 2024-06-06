@@ -1,13 +1,19 @@
 import "./sidebar.css"
 import {Card, CardLink} from "./card.tsx"
-import {useDocument, useDocuments} from "@automerge/automerge-repo-react-hooks"
-import {Littlebook} from "@littlebook/types"
+import {
+	useDocument,
+	useDocuments,
+	useRepo,
+} from "@automerge/automerge-repo-react-hooks"
+import createProject from "../automerge/projects/create-project.ts"
+import type {lb} from "../types.ts"
+import {useLocalState} from "../hooks/local-state.ts"
 
 export default function Sidebar() {
-	const [space, changeSpace] = useDocument<Littlebook.Space>(
-		localStorage.getItem("space-url"),
-	)
-	const projects = useDocuments<Littlebook.Project>(space?.children)
+	const localState = useLocalState()
+	const repo = useRepo()
+	const [space, changeSpace] = useDocument<lb.Space>(localState.spaceId)
+	const projects = useDocuments<lb.Project>(space?.children)
 
 	return (
 		<aside class="sidebar">
@@ -19,13 +25,20 @@ export default function Sidebar() {
 				<CardLink icon="📆" title="upcoming" href="/upcoming" />
 				<CardLink icon="🗃️" title="someday" href="/someday" />
 			</Card>
-			<Card title="projects">
-				{Object.values(projects).map(p => (
+			<Card
+				title="projects"
+				action={() => {
+					const project = createProject(repo)
+					changeSpace(space => {
+						space.children.push(project.documentId as lb.ProjectId)
+					})
+				}}>
+				{Object.entries(projects).map(([id, p]) => (
 					<CardLink
-						key={p.id}
+						key={id}
 						icon={p.icon || "🦔"}
-						title={p.name}
-						href={`/projects/${p.id}`}
+						title={p.name?.val}
+						href={`/projects/${id}`}
 					/>
 				))}
 			</Card>

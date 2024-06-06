@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
-		"target": "ES2020",
+		"target": "ESNext",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"lib": ["ES2023", "DOM", "DOM.Iterable"],
 		"noEmit": true,
 		"allowJs": true,
 		"checkJs": true,
@@ -21,9 +21,6 @@
 			"react-dom": ["./node_modules/preact/compat/"]
 		}
 	},
-	"include": [
-		"node_modules/vite/client.d.ts",
-		"src"
-	],
-	"references": [{"path": "./tsconfig.node.json"}]
+	"include": ["node_modules/vite/client.d.ts", "src", "./index.d.ts"],
+	"references": [{ "path": "./tsconfig.node.json" }]
 }

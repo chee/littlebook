@@ -126,6 +126,8 @@ button:active {
 #littlebook {
 	display: flex;
 	height: 100%;
+	align-items: center;
+	justify-content: center;
 }
 
 [role="separator"] {

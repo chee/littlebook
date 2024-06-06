@@ -1,0 +1,74 @@
+.first-time {
+	background: #36f9c0;
+	padding: 0.5em;
+	font-size: 2em;
+	margin-top: 1em;
+	width: 75vw;
+	max-width: 768px;
+}
+
+.first-time-inner {
+	background: linear-gradient(rgb(234, 238, 237), white);
+	color: black;
+	padding: 1em;
+}
+
+.hello p {
+	margin: 0.25em 0;
+	line-height: 1.2;
+}
+
+.hello.fresh-or-friend {
+	border: 4px solid black;
+	padding: 1em;
+}
+
+.hello-hl {
+	padding: 0 0.25em;
+}
+
+.hello input {
+	font-size: 1.4em;
+	width: 50%;
+	flex: 1;
+}
+
+.hello input:focus {
+	outline: 4px solid black;
+}
+
+.hello form {
+	margin-top: 0.24em;
+}
+
+.hello fieldset {
+	display: flex;
+	border: 0;
+	padding: 0;
+	gap: 1ch;
+	align-items: center;
+	margin-top: 0.76em;
+	justify-content: center;
+}
+
+.hello button {
+	border: 2px solid black;
+	background: #38F8C0;
+	height: 100%;
+	display: block;
+	padding: 1em;
+}
+
+.hello button.oops {
+	background: linear-gradient(white, #f7f7f7);
+	padding: 0.24em;
+	display: inline-block;
+}
+
+.hello small {
+	font-size: 1rem;
+}
+
+.hello button:hover {
+	background: linear-gradient(#38F8C0, #05cc94)
+}

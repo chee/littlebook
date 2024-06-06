@@ -1,33 +1,69 @@
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels"
 import {Card} from "../components/card.tsx"
-import {useLocation, useParams} from "react-router-dom"
-import {useDocument, useDocuments} from "@automerge/automerge-repo-react-hooks"
-import {Littlebook} from "@littlebook/types"
-import {AnyDocumentId, DocumentId} from "@automerge/automerge-repo"
+import {
+	useDocument,
+	useDocuments,
+	useRepo,
+} from "@automerge/automerge-repo-react-hooks"
+import {
+	AnyDocumentId,
+	DocumentId,
+	RawString,
+	updateText,
+} from "@automerge/automerge-repo"
 import {useEffect, useState} from "preact/hooks"
+import {lb} from "../types.ts"
+import {useParams, useSearch} from "wouter-preact"
+import {navigate} from "wouter-preact/use-browser-location"
 
 export default function ProjectPage() {
-	const params = useParams()
-	const [project, changeProject] = useDocument<Littlebook.Project>(
-		params.projectId as AnyDocumentId,
+	const repo = useRepo()
+	const {projectId, fileId} = useParams<{projectId: string; fileId?: string}>()
+	const [project, changeProject] = useDocument<lb.Project>(
+		projectId as AnyDocumentId,
 	)
-	const files = Object.values(useDocuments<Littlebook.File>(project?.children))
-	const [contentId, setContentId] = useState<Littlebook.ContentId>()
-	const [content, changeContent] = useDocument<Littlebook.Content>(contentId)
+	const search = new URLSearchParams(useSearch())
+	const contentId = (search.get("file") as lb.ContentId) || undefined
+	const files = Object.entries(useDocuments<lb.File>(project?.children))
+	const [content, changeContent] = useDocument<lb.TextContent>(contentId)
 
-	const te = new TextEncoder()
-	const td = new TextDecoder()
 	return (
 		<PanelGroup direction="vertical">
 			<Panel defaultSize={50}>
 				<Card>
-					{files.map(f => (
+					<button
+						type="button"
+						onClick={() => {
+							const content = repo.create<lb.TextContent>({
+								ext: "txt",
+								body: Math.random().toString(36).slice(2),
+							})
+							const file = repo.create<lb.File>({
+								type: "file",
+								ext: new RawString("txt"),
+								name: new RawString(Math.random().toString(36).slice(2)),
+								content: content.documentId as lb.ContentId,
+							})
+							changeProject(project => {
+								// not having to do this asing would be maybe enough of
+								// a reason to duplicate the id read-only on the type
+								// itself
+								project.children = project.children || []
+								project.children.push(file.documentId as lb.FileId)
+							})
+						}}>
+						new file
+					</button>
+					{files.map(([id, file]) => (
 						<button
+							style={{
+								border: file.content === contentId ? "2px solid green" : "",
+							}}
 							type="button"
-							key={f.id}
-							id={f.id}
-							onClick={() => setContentId(f.contentId)}>
-							{f.name}.{f.ext}
+							key={id}
+							id={id}
+							onClick={() => navigate(`?file=${file.content}`)}>
+							{file.name.val}.{file.ext.val}
 						</button>
 					))}
 				</Card>
@@ -36,12 +72,14 @@ export default function ProjectPage() {
 			<Panel defaultSize={50}>
 				<Card>
 					<textarea
+						style={{width: "100%", height: "100%"}}
 						onInput={event => {
 							changeContent(content => {
-								content.bytes = te.encode(event.target.value)
+								if (!(event.target instanceof HTMLTextAreaElement)) return
+								updateText(content, ["body"], event.target.value)
 							})
 						}}>
-						{td.decode(content?.bytes)}
+						{content?.body}
 					</textarea>
 				</Card>
 			</Panel>

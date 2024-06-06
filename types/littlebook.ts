@@ -1,6 +1,6 @@
 import type {Branded, Brand} from "./brand.ts"
 
-export declare namespace Littlebook {
+export declare namespace XXX {
 	type ContentId = Branded<string, "content-id">
 	type FileId = Branded<string, "file-id">
 	type FolderId = Branded<string, "folder-id">
