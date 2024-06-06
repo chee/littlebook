@@ -34,18 +34,26 @@ export type CardLinkProps = {
 	href: string
 	unread?: number
 	onClick?: (event: HTMLElementEventMap["click"]) => void
+	current?: boolean
 }
 
-export function CardLink({title, icon, href, unread, onClick}: CardLinkProps) {
-	const [current] = useRoute(href)
+export function CardLink({
+	title,
+	icon,
+	href,
+	unread,
+	onClick,
+	current,
+}: CardLinkProps) {
+	const [exactCurrent] = useRoute(href)
 
 	return (
 		<span class="card-link">
-			<Link asChild to={href}>
+			<Link asChild to={href} onClick={onClick}>
+				{/* biome-ignore lint/a11y/useValidAnchor: it's in a Link asChild */}
 				<a
-					href={href}
-					aria-current={current ? "page" : "false"}
-					onClick={onClick}>
+					aria-current={current || exactCurrent ? "page" : "false"}
+					class="card-link-inner">
 					<span class="card-link-title">
 						<span class="card-link-title__icon">{icon}</span>
 						<span class="card-link-title__text">{title}</span>

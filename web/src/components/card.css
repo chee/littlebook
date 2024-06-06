@@ -46,7 +46,7 @@
 	position: relative;
 }
 
-.card-link a {
+.card-link> :is(a, .card-link-inner) {
 	text-decoration: none;
 	padding: 0.5em 1em;
 	display: block;

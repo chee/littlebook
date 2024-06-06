@@ -3,9 +3,27 @@ import "./style.css"
 import {AuthContextProvider} from "./components/auth-provider.tsx"
 import Littlebook from "./components/littlebook.tsx"
 
+import contentTypeRegistry from "./automerge/content/content-type-registry.ts"
+import {textCreator, TextView} from "./automerge/content/text-content.tsx"
+import {removeDirectory} from "./opfs.ts"
+import {
+	excalidrawCreator,
+	ExcalidrawView,
+} from "./automerge/content/excalidraw-content.tsx"
+
+contentTypeRegistry.define("txt", textCreator, TextView)
+contentTypeRegistry.define("excalidraw", excalidrawCreator, ExcalidrawView)
+
 render(
 	<AuthContextProvider>
 		<Littlebook />
 	</AuthContextProvider>,
 	document.getElementById("littlebook")!,
 )
+
+declare global {
+	interface Window {
+		clearOPFS: typeof removeDirectory
+	}
+}
+window.clearOPFS = removeDirectory

@@ -27,6 +27,11 @@
 			"react-dom": ["./node_modules/preact/compat/"]
 		}
 	},
-	"include": ["node_modules/vite/client.d.ts", "src", "./index.d.ts"],
+	"include": [
+		"node_modules/vite/client.d.ts",
+		"src",
+		"./index.d.ts",
+		"node_modules/@excalidraw/excalidraw/types/types.d.ts"
+	],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }

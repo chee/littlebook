@@ -1,15 +1,11 @@
-import type {DocumentId, Repo} from "@automerge/automerge-repo"
+import type {Repo} from "@automerge/automerge-repo"
 import type * as Auth from "@localfirst/auth"
-import {
-	getShareId,
-	type AuthProvider,
-} from "@localfirst/auth-provider-automerge-repo"
+import type {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
 import {useState} from "preact/hooks"
-// import {CreateTeam} from "./create-team.tsx"
-// import {JoinTeam} from "./join-team.tsx"
 import {useLocalState} from "../../hooks/local-state.ts"
 import "./hello.css"
 import {createDefaultTeam} from "../../automerge/teams/create-team.ts"
+import pairDevice from "../../automerge/devices/pair-device.ts"
 
 export const Hello = ({complete}: {complete: OnComplete}) => {
 	const localState = useLocalState()
@@ -68,22 +64,31 @@ function FreshOrFriend({complete}: {complete: OnComplete}) {
 			{linking ? (
 				<>
 					<p>ok! cool! what's your invite phrase?</p>
-					<fieldset>
-						<span>&gt; </span>
-						<input
-							id="name"
-							autofocus
-							value={invite}
-							onInput={event =>
-								setInvite(
-									event.target instanceof HTMLInputElement
-										? event.target.value
-										: "",
-								)
-							}
-						/>
-						<button type="submit">ok</button>
-					</fieldset>
+					<form
+						onSubmit={event => {
+							event.preventDefault()
+							pairDevice({
+								userName: localState.userName!,
+								invitationCode: invite,
+							}).then(complete)
+						}}>
+						<fieldset>
+							<span>&gt; </span>
+							<input
+								id="name"
+								autofocus
+								value={invite}
+								onInput={event =>
+									setInvite(
+										event.target instanceof HTMLInputElement
+											? event.target.value
+											: "",
+									)
+								}
+							/>
+							<button type="submit">ok</button>
+						</fieldset>
+					</form>
 					<p>
 						<small>
 							(you can get it from your other device by selecting "add a new

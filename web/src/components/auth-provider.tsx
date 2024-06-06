@@ -8,13 +8,12 @@ import {
 import {createContext} from "preact"
 import {useEffect, useState} from "preact/hooks"
 import {useLocalState} from "../hooks/local-state.ts"
-import type {lb} from "../types.js"
 import {assert} from "@localfirst/shared"
 import type {FC} from "preact/compat"
 import {Hello} from "./hello/hello.tsx"
 import "./auth-provider.css"
 import getDocIdFromTeam from "../automerge/teams/get-doc-id-from-team.ts"
-import createRepo from "../automerge/repo/create-repo.ts"
+import start from "../automerge/repo/start.ts"
 
 export const AuthContext = createContext<lb.UserInfo | undefined>(undefined)
 
@@ -35,7 +34,7 @@ export const AuthContextProvider: FC = ({children}) => {
 		if (device) {
 			assert(shareId)
 			// We've used the app before - use our existing user & device to instantiate the auth provider and the repo.
-			createRepo({user, device}).then(({auth, repo}) => {
+			start({user, device}).then(({auth, repo}) => {
 				// Get the team from the auth provider (which will have loaded it from storage).
 				const team = auth.getTeam(shareId)
 				setTeam(team)

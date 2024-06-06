@@ -9,29 +9,27 @@ import ProjectPage from "../pages/project.tsx"
 
 const Littlebook: FC = () => {
 	return (
-		<article class="littlebook">
+		<PanelGroup direction="vertical" autoSaveId="littlebook">
 			<Header />
-			<PanelGroup autoSaveId="root" direction="horizontal">
-				<Panel defaultSize={25} minSize={10} maxSize={40}>
+			<PanelGroup direction="horizontal">
+				<Panel defaultSize={19.1} minSize={10} maxSize={40}>
 					<Sidebar />
 				</Panel>
 				<PanelResizeHandle />
-				<Panel>
+				<Panel defaultSize={80.9}>
 					<Badge />
 					<main id="main">
 						<Switch>
 							{/* todo /inbox etc */}
-							<Route component={ProjectPage} path="/projects/:projectId" />
+							<Route
+								component={ProjectPage}
+								path="/projects/:slug/:projectId"
+							/>
 						</Switch>
 					</main>
 				</Panel>
-				<PanelResizeHandle />
-				<Panel defaultSize={25} minSize={10} maxSize={40}>
-					{/* <Sidebar /> */}
-				</Panel>
 			</PanelGroup>
-			<footer>footer</footer>
-		</article>
+		</PanelGroup>
 	)
 }
 

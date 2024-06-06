@@ -1,4 +1,3 @@
-import type {lb} from "../types.ts"
 import {useLocalStorage} from "@uidotdev/usehooks"
 
 export const useLocalState = () => {
