@@ -13,9 +13,8 @@ const load = (async () => {
 	return new Repo({
 		storage: new IndexedDBStorageAdapter(),
 		network: [new BrowserWebSocketClientAdapter("wss://star.littlebook.app")],
-		peerId: ("starlight-" +
-			Math.random().toString(36).replace(/\d/g, "")) as any,
-		sharePolicy: async peerId => peerId.includes("storage-server"),
+		peerId: ("shine-" +
+			Math.random().toString(36).slice(2).replace(/\d/g, "")) as any,
 	})
 })()
 
