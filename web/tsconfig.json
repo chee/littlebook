@@ -3,7 +3,13 @@
 		"target": "ESNext",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-		"lib": ["ES2023", "DOM", "DOM.Iterable"],
+		"lib": [
+			"ESNext",
+			"ESNext.Array",
+			"ESNext.AsyncIterable",
+			"DOM",
+			"DOM.Iterable"
+		],
 		"noEmit": true,
 		"allowJs": true,
 		"checkJs": true,
