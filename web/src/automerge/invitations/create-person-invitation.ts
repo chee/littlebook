@@ -1,5 +1,5 @@
 import type * as Auth from "@localfirst/auth"
-import createInvitation from "./create-invitation.ts"
+import createFriendlyInvitation from "./create-invitation.ts"
 
 export default function createPersonInvitation(
 	team: Auth.Team,
@@ -12,5 +12,5 @@ export default function createPersonInvitation(
 	},
 ) {
 	const {seed} = team.inviteMember({maxUses, expiration})
-	return createInvitation(team, seed)
+	return createFriendlyInvitation(team, seed)
 }
