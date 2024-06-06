@@ -46,6 +46,7 @@ export default defineConfig({
 				globPatterns: ["**/*.{js,css,html,svg,png,ico,wasm}"],
 				cleanupOutdatedCaches: true,
 				clientsClaim: true,
+				maximumFileSizeToCacheInBytes: 999999999999999,
 			},
 
 			devOptions: {
