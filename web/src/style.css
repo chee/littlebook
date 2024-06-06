@@ -79,6 +79,7 @@ body {
 	-webkit-text-size-adjust: 100%;
 	min-height: 100%;
 	width: 100%;
+	display: flex;
 }
 
 img {
@@ -124,8 +125,8 @@ button:active {
 }
 
 #littlebook {
+	width: 100%;
 	display: flex;
-	height: 100%;
 	align-items: center;
 	justify-content: center;
 }
@@ -143,9 +144,4 @@ button:active {
 
 #main .card {
 	height: 100%;
-}
-
-#main [role="separator"] {
-	height: 1em;
-	width: 100%;
 }
