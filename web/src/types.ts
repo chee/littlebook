@@ -2,6 +2,7 @@ declare const __brand: unique symbol
 type Brand<B> = {[__brand]: B}
 type Branded<T, B> = T & Brand<B>
 import type {DocumentId, RawString} from "@automerge/automerge-repo"
+import type {AutomergeValue} from "@automerge/automerge/next"
 import type * as Auth from "@localfirst/auth"
 import type {
 	AuthProvider,
@@ -24,37 +25,48 @@ export declare namespace lb {
 	type SpaceId = Branded<DocumentId, "space-id">
 	type InboxId = Branded<DocumentId, "inbox-id">
 
+	type When = Date | "someday"
+
+	type AnyDocument = Space | Area | Project | Folder | File
+
 	interface Space {
 		readonly type: "space"
-		name: RawString
-		children: (ProjectId | AreaId)[]
+		readonly id: SpaceId
+		name: string
+		projects: ProjectId[]
+		areas: AreaId[]
 	}
 
 	interface Area {
 		readonly type: "area"
-		name: RawString
+		readonly id: AreaId
+		// readonly parentId: SpaceId
+		name: string
 		children: ProjectId[]
-		// parentId: SpaceId
 	}
 
 	interface Project {
 		readonly type: "project"
-		name: RawString
+		readonly id: ProjectId
+		name: string
+		// readonly parentId: AreaId | SpaceId
 		children: (FolderId | FileId)[]
 		icon: string
-		// parentId: AreaId | SpaceId
-		when?: RawString
+		when?: Date
 	}
 
 	interface Folder {
 		readonly type: "folder"
-		name: RawString
+		readonly id: FolderId
+		name: string
+		// readonly parentId: ProjectId | FolderId
 		children: (FolderId | FileId)[]
 		icon: string
-		// parentId: ProjectId | FolderId
-		when?: RawString
+		when?: Date
 	}
-	interface Package extends Folder {}
+	interface Package extends Folder {
+		ext: string
+	}
 
 	// todo still haven't figured this out.
 	// i guess things can extend this
@@ -63,22 +75,24 @@ export declare namespace lb {
 	// so they aren't distating me
 	interface File {
 		readonly type: "file"
-		name: RawString
-		ext: RawString
-		content: ContentId
+		readonly id: FileId
+		// readonly parentId: ProjectId | FolderId
+		name: string
+		ext: string
+		content?: ContentId
 		data?: any
-		when?: RawString
-		// parentId: ProjectId | FolderId
+		when?: When
+		annotation: string
 	}
 
-	interface Content<Extension extends string, BodyType> {
-		ext: Extension
+	interface Content<BodyType extends AutomergeValue> {
+		readonly id: ContentId
 		body: BodyType
 	}
 
-	type UnknownContent = Content<"", Uint8Array>
-	type TextContent = Content<"txt" | "text", string>
-	type PngContent = Content<"png", Uint8Array>
+	type UnknownContent = Content<Uint8Array>
+	type TextContent = Content<string>
+	type BinaryContent = Content<Uint8Array>
 
 	// interface When {
 	// 	when: string
