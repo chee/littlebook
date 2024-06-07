@@ -3,9 +3,10 @@ export function slugify(string: string) {
 }
 
 export const project = (project: lb.Project, file?: lb.File) =>
-	`/projects/${slugify(project.name)}/${project.id}${file?.id ? `?file=${file.id}` : ""}`
+	`/projects/${slugify(project.name) || "untitled"}/${project.id}${file?.id ? `?file=${file.id}` : ""}`
 
-export const file = (file: lb.File) => `/files/${slugify(file.name)}/${file.id}`
+export const file = (file: lb.File) =>
+	`/files/${slugify(file.name) || "untitled"}/${file.id}`
 
 export const route = {
 	project(project: lb.Project) {
