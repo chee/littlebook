@@ -4,6 +4,9 @@ import {useDocument, useRepo} from "@automerge/automerge-repo-react-hooks"
 import createProject from "../automerge/projects/create-project.ts"
 import {useLocalState} from "../hooks/local-state.ts"
 import ProjectLink from "./project-link.tsx"
+import createDeviceInvitation from "../automerge/invitations/create-device-invitation.ts"
+import {removeDirectory} from "../opfs.ts"
+import {useAuth} from "../hooks/auth.ts"
 
 // todo this should be Navbar or something, and Sidebar should be the generic
 // container so that the other side can have one too
@@ -11,7 +14,7 @@ export default function Sidebar() {
 	const localState = useLocalState()
 	const repo = useRepo()
 	const [space, changeSpace] = useDocument<lb.Space>(localState.spaceId)
-
+	const {team} = useAuth()
 	return (
 		<aside class="sidebar">
 			<nav>
@@ -39,6 +42,28 @@ export default function Sidebar() {
 					})}
 				</Card>
 			</nav>
+			<Card>
+				<button
+					type="button"
+					style="width: 100%"
+					onClick={() => {
+						const answer = window.prompt(
+							"are you sure? if so press ok. you can copy this code if you want to try coming back as the same user.",
+							createDeviceInvitation(team),
+						)
+						if (answer) {
+							Promise.all([
+								removeDirectory(),
+								indexedDB.deleteDatabase("automerge"),
+							]).then(() => {
+								localStorage.clear()
+								location.reload()
+							})
+						}
+					}}>
+					destroy session
+				</button>
+			</Card>
 		</aside>
 	)
 }

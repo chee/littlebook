@@ -6,6 +6,9 @@ import {useDocument} from "@automerge/automerge-repo-react-hooks"
 import {navigate} from "wouter-preact/use-browser-location"
 
 export default function ({id}: {id: lb.ProjectId}) {
+	// todo move this responsibility up a level
+	// todo this should actually maybe be a global context
+	// because the IDs are unique it could be a editingItem={id|null}
 	const [editing, setEditing] = useState(false)
 	const [project, changeProject] = useDocument<lb.Project>(id)
 	if (!project) return <div />
