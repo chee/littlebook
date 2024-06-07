@@ -2,13 +2,13 @@ import {Link, useRoute} from "wouter-preact"
 import "./card.css"
 import type {FunctionComponent} from "preact"
 
-export const Card: FunctionComponent<{title?: string; action?: () => void}> = ({
-	title,
-	action,
-	children,
-}) => {
+export const Card: FunctionComponent<{
+	title?: string
+	action?: () => void
+	paddingless?: boolean
+}> = ({title, action, children, paddingless = false}) => {
 	return (
-		<div class="card">
+		<div class={`card ${paddingless ? "card--paddingless" : ""}`}>
 			{title && (
 				<header class="card-title">
 					<span class="card-title-text">{title}</span>

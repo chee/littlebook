@@ -8,6 +8,10 @@
 	overflow: auto;
 }
 
+.card--paddingless {
+	padding: 0;
+}
+
 .card-inner {
 	height: 100%;
 }

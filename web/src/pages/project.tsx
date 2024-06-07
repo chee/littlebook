@@ -121,7 +121,7 @@ export default function ProjectPage() {
 					</Panel>
 					<PanelResizeHandle style={{width: "100%", height: "1em"}} />
 					<Panel defaultSize={62} minSize={5}>
-						<Card>
+						<Card paddingless>
 							{selectedFileId && <ContentPane fileId={selectedFileId} />}
 						</Card>
 					</Panel>
