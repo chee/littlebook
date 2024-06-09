@@ -8,7 +8,7 @@ import type {
 	AuthProvider,
 	ShareId,
 } from "@localfirst/auth-provider-automerge-repo"
-import type createLittlebookAPI from "./littlebook-api/create-littlebook-api.ts"
+import type createLittlebookAPI from "./api/create-littlebook-api.ts"
 
 /** Inside an Automerge change function, any arrays found on the document have these utility functions */
 export declare interface AutomergeList<T> extends Array<T> {

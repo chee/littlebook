@@ -4,7 +4,7 @@ import {AuthContextProvider} from "./auth/auth-provider.tsx"
 import Littlebook from "./ui/layout.tsx"
 
 import {removeDirectory} from "./ui/opfs.ts"
-import {LittlebookAPIProvider} from "./littlebook-api/littlebook-provider.tsx"
+import {LittlebookAPIProvider} from "./api/littlebook-provider.tsx"
 import {Route, Switch} from "wouter-preact"
 import ProjectPage from "./projects/project-page.tsx"
 

@@ -7,7 +7,7 @@ import ContentPanel from "../contents/content-viewer.tsx"
 import {useEffect, useState} from "preact/hooks"
 import type {FC} from "preact/compat"
 import {showOpenFilePicker} from "file-system-access"
-import {useLittlebookAPI} from "../littlebook-api/use-littlebook.ts"
+import {useLittlebookAPI} from "../api/use-littlebook.ts"
 import {useProject} from "./use-project.ts"
 
 export default function ProjectPage() {

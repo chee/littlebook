@@ -1,5 +1,5 @@
 import {useEffect, useState} from "preact/hooks"
-import {useLittlebookAPI} from "../littlebook-api/use-littlebook.ts"
+import {useLittlebookAPI} from "../api/use-littlebook.ts"
 
 export function useProject(id: lb.ProjectId) {
 	const lb = useLittlebookAPI()

@@ -4,7 +4,7 @@ import {Badge} from "./pwa.tsx"
 import {useEffect, type FC} from "preact/compat"
 import "./header/layout.css"
 import Header from "./header/header.tsx"
-import {useLittlebookAPI} from "../littlebook-api/use-littlebook.ts"
+import {useLittlebookAPI} from "../api/use-littlebook.ts"
 import * as defaultPlugins from "../contents/plugins/default.ts"
 import type {FunctionalComponent} from "preact"
 

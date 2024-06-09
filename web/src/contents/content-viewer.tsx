@@ -1,6 +1,6 @@
 import type {AutomergeValue} from "@automerge/automerge/next"
 import {useDocument} from "@automerge/automerge-repo-react-hooks"
-import {useLittlebookAPI} from "../littlebook-api/use-littlebook.ts"
+import {useLittlebookAPI} from "../api/use-littlebook.ts"
 import UnknownView from "./types/unknown/unknown-view.tsx"
 import {Component} from "preact"
 
