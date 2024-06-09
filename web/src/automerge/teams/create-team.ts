@@ -2,7 +2,7 @@ import * as Auth from "@localfirst/auth"
 import createDevice from "../devices/create-device.ts"
 import storeDocIdOnTeam from "./store-doc-id-on-team.ts"
 import start from "../repo/start.ts"
-import createSpace from "../spaces/create-space.ts"
+import {createSpaceHandle} from "../../api/spaces.ts"
 interface CreateTeamOptions {
 	teamName: string
 	userName: string
@@ -18,7 +18,7 @@ export default async function createTeam({
 	const device = createDevice(user.userId, deviceName)
 	const {auth, repo} = await start({user, device})
 	const team = await auth.createTeam(teamName)
-	const space = createSpace(repo)
+	const space = createSpaceHandle(repo)
 	storeDocIdOnTeam(team, space.documentId)
 	return {device, user, team, auth, repo}
 }

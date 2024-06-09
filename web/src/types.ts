@@ -1,7 +1,7 @@
 declare const __brand: unique symbol
 type Brand<B> = {[__brand]: B}
 type Branded<T, B> = T & Brand<B>
-import type {DocumentId, RawString} from "@automerge/automerge-repo"
+import type {DocumentId} from "@automerge/automerge-repo"
 import type {AutomergeValue} from "@automerge/automerge/next"
 import type * as Auth from "@localfirst/auth"
 import type {
@@ -10,10 +10,15 @@ import type {
 } from "@localfirst/auth-provider-automerge-repo"
 
 /** Inside an Automerge change function, any arrays found on the document have these utility functions */
-export interface ExtendedArray<T> extends Array<T> {
-	insertAt(index: number, ...args: T[]): ExtendedArray<T>
-	deleteAt(index: number, numDelete?: number): ExtendedArray<T>
+export interface AutomergeList<T> extends Array<T> {
+	insertAt(index: number, ...args: T[]): AutomergeList<T>
+	deleteAt(index: number, numDelete?: number): AutomergeList<T>
 }
+
+export type WithoutId<DocType extends {id: any}> = Omit<DocType, "id">
+
+export type WithReadonly<Type, Key extends keyof Type> = Omit<Type, Key> &
+	Readonly<Pick<Type, Key>>
 
 export declare namespace lb {
 	type ContentId = Branded<DocumentId, "content-id">
@@ -24,17 +29,34 @@ export declare namespace lb {
 	type WhenId = Branded<DocumentId, "when-id">
 	type SpaceId = Branded<DocumentId, "space-id">
 	type InboxId = Branded<DocumentId, "inbox-id">
+	type UniformTypeIdentifier = Branded<DocumentId, "uniform-type-identifier">
+	interface UniformType {
+		name: UniformTypeIdentifier
+		conformsTo?: UniformTypeIdentifier[]
+		mimeType?: string
+		fileNameExtension?: string
+	}
 
 	type When = Date | "someday"
 
-	type AnyDocument = Space | Area | Project | Folder | File
+	type AnyContent = AutomergeValue
+
+	type AnyDocument =
+		| Space
+		| Area
+		| Project
+		| Folder
+		| File
+		| Content<AnyContent>
+
+	type NamedDocument = Space | Area | Project | Folder | File
 
 	interface Space {
 		readonly type: "space"
 		readonly id: SpaceId
 		name: string
-		projects: ProjectId[]
-		areas: AreaId[]
+		projects: AutomergeList<ProjectId>
+		areas: AutomergeList<AreaId>
 	}
 
 	interface Area {
@@ -42,7 +64,7 @@ export declare namespace lb {
 		readonly id: AreaId
 		// readonly parentId: SpaceId
 		name: string
-		children: ProjectId[]
+		children: AutomergeList<ProjectId>
 	}
 
 	interface Project {
@@ -50,7 +72,7 @@ export declare namespace lb {
 		readonly id: ProjectId
 		name: string
 		// readonly parentId: AreaId | SpaceId
-		children: (FolderId | FileId)[]
+		items: AutomergeList<FolderId | FileId>
 		icon: string
 		when?: Date
 	}
@@ -60,7 +82,7 @@ export declare namespace lb {
 		readonly id: FolderId
 		name: string
 		// readonly parentId: ProjectId | FolderId
-		children: (FolderId | FileId)[]
+		items: AutomergeList<FolderId | FileId>
 		icon: string
 		when?: Date
 	}
@@ -68,36 +90,26 @@ export declare namespace lb {
 		ext: string
 	}
 
-	// todo still haven't figured this out.
-	// i guess things can extend this
-	// i should just focus on making a collaborative text file
-	// and not worrying about the types. i should maybe disable red wiggly lines
-	// so they aren't distating me
 	interface File {
 		readonly type: "file"
 		readonly id: FileId
-		// readonly parentId: ProjectId | FolderId
 		name: string
-		ext: string
-		content?: ContentId
-		data?: any
+		note: string
 		when?: When
-		annotation: string
+		content: ContentId
 	}
 
-	interface Content<BodyType extends AutomergeValue> {
+	// todo is metadata kept inside `value` or in a separate property?
+	// say exif data for an image, or the character set for a textfile?
+	// those are different, i guess. the exif data is inside the file type while
+	// the character set of a text file is external
+	interface Content<ContentType extends AnyContent> {
 		readonly id: ContentId
-		body: BodyType
+		readonly type: "content"
+		readonly contentType: UniformTypeIdentifier
+		value: ContentType
+		metadata?: AutomergeValue
 	}
-
-	type UnknownContent = Content<Uint8Array>
-	type TextContent = Content<string>
-	type BinaryContent = Content<Uint8Array>
-
-	// interface When {
-	// 	when: string
-	// 	period?: "morning" | "afternoon" | "evening"
-	// }
 
 	type UserInfo = {
 		device: Auth.DeviceWithSecrets

@@ -1,33 +1,27 @@
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels"
 import Sidebar from "./sidebar.tsx"
 import {Badge} from "../pwa.tsx"
-import type {FC} from "preact/compat"
+import {useEffect, type FC} from "preact/compat"
 import "./littlebook.css"
 import Header from "./header.tsx"
-import {Switch, Route, useRoute} from "wouter-preact"
-import ProjectPage from "../pages/project.tsx"
-import createDeviceInvitation from "../automerge/invitations/create-device-invitation.ts"
-import {removeDirectory} from "../opfs.ts"
-import {useAuth} from "../hooks/auth.ts"
+import {Switch, Route} from "wouter-preact"
+import ProjectPage from "./project.tsx"
+import {useLittlebookAPI} from "../hooks/api.ts"
+import * as defaultPlugins from "../plugins/default.ts"
 
 const Littlebook: FC = () => {
-	const [yes] = useRoute("/destroy")
-	const auth = useAuth()
-	if (yes) {
-		const answer = window.prompt(
-			"are you sure? if so press ok. you can copy this code if you want to try coming back as the same user.",
-			createDeviceInvitation(auth.team),
-		)
-		if (answer) {
-			Promise.all([
-				removeDirectory(),
-				indexedDB.deleteDatabase("automerge"),
-			]).then(() => {
-				localStorage.clear()
-				location.reload()
-			})
+	const lb = useLittlebookAPI()
+	// todo usePlugins
+	// biome-ignore lint/correctness/useExhaustiveDependencies: first time
+	useEffect(() => {
+		defaultPlugins.text.activate(lb)
+		defaultPlugins.img.activate(lb)
+		return () => {
+			defaultPlugins.text.deactivate(lb)
+			defaultPlugins.img.deactivate(lb)
 		}
-	}
+	}, [])
+
 	return (
 		<PanelGroup direction="vertical" autoSaveId="littlebook">
 			<Header />
@@ -40,7 +34,6 @@ const Littlebook: FC = () => {
 					<Badge />
 					<main id="main">
 						<Switch>
-							{/* todo /inbox etc */}
 							<Route
 								component={ProjectPage}
 								path="/projects/:slug/:projectId"
