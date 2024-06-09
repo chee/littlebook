@@ -68,6 +68,13 @@ export default defineConfig({
 		minify: false,
 		target: "esnext",
 		rollupOptions: {
+			input: {
+				index: fileURLToPath(new URL("./index.html", import.meta.url)),
+				export: fileURLToPath(new URL("./export/index.html", import.meta.url)),
+				signout: fileURLToPath(
+					new URL("./signout/index.html", import.meta.url),
+				),
+			},
 			external: [
 				...[
 					"chinese_simplified",

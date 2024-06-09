@@ -1,19 +1,21 @@
-/**
- * TODO colocate files related to a littlebook concept, rather than a
- * function-type concept
- */
 import {render} from "preact"
-import "./style.css"
-import {AuthContextProvider} from "./components/auth-provider.tsx"
-import Littlebook from "./components/littlebook.tsx"
+import "./ui/style.css"
+import {AuthContextProvider} from "./auth/auth-provider.tsx"
+import Littlebook from "./ui/layout.tsx"
 
-import {removeDirectory} from "./opfs.ts"
-import {LittlebookAPIProvider} from "./components/api-provider.tsx"
+import {removeDirectory} from "./ui/opfs.ts"
+import {LittlebookAPIProvider} from "./littlebook-api/littlebook-provider.tsx"
+import {Route, Switch} from "wouter-preact"
+import ProjectPage from "./projects/project-page.tsx"
 
 render(
 	<AuthContextProvider>
 		<LittlebookAPIProvider>
-			<Littlebook />
+			<Littlebook>
+				<Switch>
+					<Route component={ProjectPage} path="/projects/:slug/:projectId" />
+				</Switch>
+			</Littlebook>
 		</LittlebookAPIProvider>
 	</AuthContextProvider>,
 	document.getElementById("littlebook")!,

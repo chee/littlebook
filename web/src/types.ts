@@ -8,9 +8,10 @@ import type {
 	AuthProvider,
 	ShareId,
 } from "@localfirst/auth-provider-automerge-repo"
+import type createLittlebookAPI from "./littlebook-api/create-littlebook-api.ts"
 
 /** Inside an Automerge change function, any arrays found on the document have these utility functions */
-export interface AutomergeList<T> extends Array<T> {
+export declare interface AutomergeList<T> extends Array<T> {
 	insertAt(index: number, ...args: T[]): AutomergeList<T>
 	deleteAt(index: number, numDelete?: number): AutomergeList<T>
 }
@@ -36,6 +37,8 @@ export declare namespace lb {
 		mimeType?: string
 		fileNameExtension?: string
 	}
+
+	type API = ReturnType<typeof createLittlebookAPI>
 
 	type When = Date | "someday"
 
