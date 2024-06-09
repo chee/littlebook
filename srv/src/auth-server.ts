@@ -199,7 +199,7 @@ export class LocalFirstAuthSyncServer {
 
 		// create & store new keys
 		const keys = createKeyset({type: "SERVER", name: this.host})
-		fs.writeFileSync(keysPath, JSON.stringify(keys, null, 2))
+		fs.writeFileSync(keysPath, JSON.stringify(keys, null, 2), {flush: true})
 		return keys
 	}
 }
