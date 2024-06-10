@@ -32,6 +32,9 @@
 			"style": {
 				"noNonNullAssertion": "off",
 				"useTemplate": "off"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "off"
 			}
 		}
 	}
