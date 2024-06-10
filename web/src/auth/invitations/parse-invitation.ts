@@ -12,9 +12,7 @@ function* chunks<T extends Array<any>>(arr: T, n: number) {
 }
 export function parseBasicInvitation(invitation: BasicInvitation) {
 	const shareId = invitation.slice(0, 12) as ShareId
-	console.log(shareId)
 	const invitationSeed = invitation.slice(12) as Auth.Base58
-	console.log(invitationSeed)
 	return {shareId, invitationSeed}
 }
 

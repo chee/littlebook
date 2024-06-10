@@ -10,6 +10,7 @@ import {
 	contentViewRegistry,
 	metadataViewRegistry,
 } from "../contents/types/content-type-registry.ts"
+import createContentsAPI from "../contents/contents-api.ts"
 
 /*
  * const doc = littlebook.documents.create("hehe")
@@ -28,5 +29,6 @@ export default function createLittlebookAPI(repo: Repo) {
 			content: contentViewRegistry,
 			metadata: metadataViewRegistry,
 		},
+		contents: createContentsAPI(repo),
 	}
 }

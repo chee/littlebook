@@ -16,7 +16,6 @@ const TextContentView: ContentView<TextModel> = ({content, changeContent}) => {
 			onInput={event => {
 				changeContent(content => {
 					if (!(event.target instanceof HTMLTextAreaElement)) return
-					console.log(content.value)
 					updateText(content, ["value"], event.target.value)
 				})
 			}}>

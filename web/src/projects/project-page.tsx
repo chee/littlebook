@@ -1,30 +1,34 @@
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels"
 import {Card} from "../ui/card/card.tsx"
-import {useDocument, useDocuments} from "@automerge/automerge-repo-react-hooks"
+import {
+	useDocument,
+	useDocuments,
+	useHandle,
+} from "@automerge/automerge-repo-react-hooks"
 import {useParams, useSearch} from "wouter-preact"
 import {navigate} from "wouter-preact/use-browser-location"
-import ContentPanel from "../contents/content-viewer.tsx"
-import {useEffect, useState} from "preact/hooks"
+import ContentViewer from "../contents/content-viewer.tsx"
+import {useState} from "preact/hooks"
 import type {FC} from "preact/compat"
 import {showOpenFilePicker} from "file-system-access"
-import {useLittlebookAPI} from "../api/use-littlebook.ts"
-import {useProject} from "./use-project.ts"
+import {useLittlebookAPI} from "../api/use-littlebook-api.ts"
+import useProject from "./use-project.ts"
+import MetadataViewer from "../contents/metadata/metadata-viewer.tsx"
 
 export default function ProjectPage() {
-	// const repo = useRepo()
 	const lb = useLittlebookAPI()
+
 	const {projectId} = useParams<{projectId: lb.ProjectId}>()
-	// const [project, changeProject] = useDocument<lb.Project>(
-	// 	projectId as lb.ProjectId,
-	// )
-	// const [project] = useState(lb.projects.get(projectId as lb.ProjectId))
-	const project = useProject(projectId)
+	const [project, changeProject] = useProject(projectId)
+	if (!project) {
+		return <div />
+	}
 
 	// const project = lb.projects.get(projectId as lb.ProjectId)
 	const search = new URLSearchParams(useSearch())
 	const fileId = (search.get("file") as lb.FileId) || undefined
 	const files = Object.values(useDocuments<lb.File>(project?.items))
-	const [selectedFileId, setSelectedFileId] = useState<lb.FileId>(
+	const [selectedFileId, setSelectedFileId] = useState<lb.FileId | undefined>(
 		fileId as lb.FileId,
 	)
 
@@ -37,30 +41,38 @@ export default function ProjectPage() {
 							<button
 								type="button"
 								onClick={() => {
-									const file = lb.files.create(
-										{
-											name: "new file.txt",
-										},
+									const fileHandle = lb.files.createHandleInProject(
+										project.id,
+										{name: "new file.txt"},
 										"public.plain-text" as lb.UniformTypeIdentifier,
 									)
-									project.addItem(file.id)
-									navigate(`?file=${file.id}`)
-									setSelectedFileId(file.id)
+									console.log(fileHandle)
+									if (fileHandle instanceof Error) {
+									} else {
+										fileHandle.doc().then(file => {
+											navigate(`?file=${fileHandle.documentId}`)
+											setSelectedFileId(file?.id)
+										})
+									}
 								}}>
 								create .txt
 							</button>
 							<button
 								type="button"
 								onClick={() => {
-									const file = lb.files.create(
-										{
-											name: "new file.txt",
-										},
-										"com.excalidraw.elements" as lb.UniformTypeIdentifier,
+									const fileHandle = lb.files.createHandleInProject(
+										project.id,
+										{name: "new file.excalidraw"},
+										"com.excalidraw.json" as lb.UniformTypeIdentifier,
 									)
-									project.addItem(file.id)
-									navigate(`?file=${file.id}`)
-									setSelectedFileId(file.id)
+									if (fileHandle instanceof Error) {
+									} else {
+										fileHandle.doc().then(file => {
+											console.log(file)
+											navigate(`?file=${fileHandle.documentId}`)
+											setSelectedFileId(file?.id)
+										})
+									}
 								}}>
 								create drawing
 							</button>
@@ -74,11 +86,12 @@ export default function ProjectPage() {
 									})
 									const computerFile = await computerFileHandle.getFile()
 									const bytes = new Uint8Array(await computerFile.arrayBuffer())
-
-									const file = lb.files.import(computerFile, bytes)
-									project.addItem(file.id)
-									navigate(`?file=${file.id}`)
-									setSelectedFileId(file.id)
+									const fileHandle = lb.files.import(computerFile, bytes)
+									fileHandle.doc().then(file => {
+										file && changeProject(lb.projects.addItem(file.id))
+										file && navigate(`?file=${file.id}`)
+										setSelectedFileId(file?.id)
+									})
 								}}>
 								import file
 							</button>
@@ -95,14 +108,18 @@ export default function ProjectPage() {
 					<PanelResizeHandle style={{width: "100%", height: "1em"}} />
 					<Panel defaultSize={62} minSize={5}>
 						<Card paddingless>
-							{selectedFileId && <ContentPanel fileId={selectedFileId} />}
+							{selectedFileId && <ContentViewer fileId={selectedFileId} />}
 						</Card>
 					</Panel>
 				</PanelGroup>
 			</Panel>
 			<PanelResizeHandle />
 			<Panel defaultSize={19} minSize={5}>
-				<aside class="sidebar sidebar--file-panel">okay</aside>
+				<aside class="sidebar sidebar--file-panel">
+					<Card>
+						{selectedFileId && <MetadataViewer fileId={selectedFileId} />}
+					</Card>
+				</aside>
 			</Panel>
 		</PanelGroup>
 	)
@@ -110,7 +127,7 @@ export default function ProjectPage() {
 
 const RenameableFile: FC<{
 	file: lb.File
-	selectedFileId: lb.FileId
+	selectedFileId: lb.FileId | undefined
 	setSelectedFileId: (id: lb.FileId) => void
 }> = ({file, selectedFileId, setSelectedFileId}) => {
 	const [editing, setEditing] = useState(false)

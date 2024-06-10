@@ -67,7 +67,7 @@ export declare namespace lb {
 		readonly id: AreaId
 		// readonly parentId: SpaceId
 		name: string
-		children: AutomergeList<ProjectId>
+		projects: AutomergeList<ProjectId>
 	}
 
 	interface Project {
@@ -80,6 +80,8 @@ export declare namespace lb {
 		when?: Date
 	}
 
+	type ProjectItemId = Project["items"][number]
+
 	interface Folder {
 		readonly type: "folder"
 		readonly id: FolderId
@@ -89,6 +91,8 @@ export declare namespace lb {
 		icon: string
 		when?: Date
 	}
+
+	type FolderItem = Folder["items"][number]
 	interface Package extends Folder {
 		ext: string
 	}
@@ -100,6 +104,7 @@ export declare namespace lb {
 		note: string
 		when?: When
 		content: ContentId
+		lastModified?: number
 	}
 
 	// todo is metadata kept inside `value` or in a separate property?

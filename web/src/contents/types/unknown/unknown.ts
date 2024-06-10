@@ -3,7 +3,7 @@ import * as coders from "../coders.ts"
 
 export const types = []
 
-const type = "content.data" as lb.UniformTypeIdentifier
+const type = "public.data" as lb.UniformTypeIdentifier
 
 const coder = coders.binary()
 

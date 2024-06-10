@@ -2,7 +2,7 @@ import * as Auth from "@localfirst/auth"
 import createDevice from "../devices/create-device.ts"
 import storeDocIdOnTeam from "./store-doc-id-on-team.ts"
 import start from "../../repo/start-repo.ts"
-import createSpaceHandle from "../../spaces/space-handle.ts"
+import {createSpaceHandle} from "../../spaces/spaces-api.ts"
 
 interface CreateTeamOptions {
 	teamName: string

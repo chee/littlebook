@@ -1,10 +1,13 @@
-import type {ChangeFn} from "@automerge/automerge-repo"
 import type {FunctionalComponent} from "preact"
 import typeRegistry from "./uniform-type-identifiers.ts"
 import type {ContentCoder} from "./coders.ts"
+import type {ChangeFn} from "@automerge/automerge-repo"
 
+// todo this should take the Content and File models instead
 export interface ContentViewProps<ContentType extends lb.AnyContent> {
-	content: Readonly<lb.Content<ContentType>>
+	file: lb.File
+	changeFile(fn: ChangeFn<lb.File>): void
+	content: lb.Content<ContentType>
 	changeContent(fn: ChangeFn<lb.Content<ContentType>>): void
 }
 

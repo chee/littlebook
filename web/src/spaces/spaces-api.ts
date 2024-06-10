@@ -1,15 +1,42 @@
 import type {Repo} from "@automerge/automerge-repo"
-import type {WithoutId} from "../types.ts"
-import {Space} from "./space-model.ts"
-import createSpaceHandle from "./space-handle.ts"
+import type {AutomergeList} from "../types.ts"
+import {
+	getDocumentHandle,
+	createDocumentHandle,
+} from "../documents/documents-api.ts"
+
+export function createSpaceHandle(
+	repo: Repo,
+	template: Partial<lb.Space> = {},
+) {
+	return createDocumentHandle<lb.Space>(repo, {
+		type: "space",
+		name: template.name || "",
+		areas: (template.areas || []) as AutomergeList<lb.AreaId>,
+		projects: (template.projects || []) as AutomergeList<lb.ProjectId>,
+	})
+}
+
+export const getSpaceHandle = (repo: Repo, id: lb.ProjectId) =>
+	getDocumentHandle<lb.Project>(repo, id)
+
+export const addAreaToSpace = (id: lb.AreaId) => (space: lb.Space) =>
+	space.areas.push(id)
+
+export const addProjectToSpace = (id: lb.ProjectId) => (space: lb.Space) =>
+	space.projects.push(id)
+
+export const removeProjectFromSpace = (id: lb.ProjectId) => (space: lb.Space) =>
+	space.projects.deleteAt(space.projects.indexOf(id))
+
+export const removeAreaFromSpace = (id: lb.AreaId) => (space: lb.Space) =>
+	space.areas.push(id)
 
 export default function createSpacesAPI(repo: Repo) {
 	return {
-		create(doc: Partial<WithoutId<lb.Space>>) {
-			return new Space(createSpaceHandle(repo, doc))
-		},
-		get(id: lb.SpaceId) {
-			return new Space(repo.find<lb.Space>(id))
-		},
+		createHandle: createSpaceHandle.bind(null, repo),
+		getHandle: getSpaceHandle.bind(null, repo),
+		addProject: addProjectToSpace,
+		removeProject: removeProjectFromSpace,
 	}
 }

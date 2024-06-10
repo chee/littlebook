@@ -6,11 +6,12 @@ import ProjectLink from "./project-link.tsx"
 import createDeviceInvitation from "../../auth/invitations/create-device-invitation.ts"
 import {removeDirectory} from "../opfs.ts"
 import {useAuth} from "../../auth/auth-hooks.ts"
-import createProjectHandle from "../../projects/project-handle.ts"
+import {useLittlebookAPI} from "../../api/use-littlebook-api.ts"
 
 // todo this should be Navbar or something, and Sidebar should be the generic
 // container so that the other side can have one too
 export default function Sidebar() {
+	const lb = useLittlebookAPI()
 	const localState = useLocalState()
 	const repo = useRepo()
 	const [space, changeSpace] = useDocument<lb.Space>(localState.spaceId)
@@ -29,10 +30,9 @@ export default function Sidebar() {
 				<Card
 					title="projects"
 					action={() => {
-						// todo use api
-						const project = createProjectHandle(repo)
-						changeSpace(space => {
-							space.projects.push(project.documentId as lb.ProjectId)
+						const projectHandle = lb.projects.createHandle()
+						projectHandle.doc().then(prj => {
+							prj && changeSpace(lb.spaces.addProject(prj.id))
 						})
 					}}>
 					{space?.projects.map(id => (

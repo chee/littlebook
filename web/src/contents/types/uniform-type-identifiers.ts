@@ -37,11 +37,15 @@ export function as(type: string) {
 }
 
 export function forFilename(filename: lb.File["name"]) {
-	return UTI.getUTIsForFileName(filename) as lb.UniformTypeIdentifier[]
+	return Array.from(
+		new Set(UTI.getUTIsForFileName(filename) as lb.UniformTypeIdentifier[]),
+	)
 }
 
 export function forMime(mimetype: string) {
-	return UTI.getUTIsForMimeType(mimetype) as lb.UniformTypeIdentifier[]
+	return Array.from(
+		new Set(UTI.getUTIsForMimeType(mimetype) as lb.UniformTypeIdentifier[]),
+	)
 }
 
 export function associate(

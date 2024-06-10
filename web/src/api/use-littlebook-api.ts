@@ -1,5 +1,5 @@
 import {useContext} from "preact/hooks"
-import {LittlebookAPIContext} from "./littlebook-provider.tsx"
+import {LittlebookAPIContext} from "./littlebook-api-provider.tsx"
 
 export function useLittlebookAPI() {
 	const lb = useContext(LittlebookAPIContext)

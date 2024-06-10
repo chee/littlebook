@@ -1,14 +1,17 @@
-import type {ContentView, ContentViewProps} from "../content-type-registry.ts"
+import type {ContentView} from "../content-type-registry.ts"
 
-// todo should these also get the File?
-const UnknownView: ContentView<any> = ({
-	content,
-}: Pick<ContentViewProps<any>, "content">) => {
+const UnknownView: ContentView<any> = ({content, file}) => {
 	return (
 		<div style={{display: "flex", height: "100%", background: "#fffefd"}}>
 			<ul>
 				<li>
-					ContentType: <code>{content.contentType}</code>
+					file name: <code>{file.name}</code>
+				</li>
+				<li>
+					content-type: <code>{content.contentType}</code>
+				</li>
+				<li>
+					last-modified: <code>{file.lastModified}</code>
 				</li>
 			</ul>
 		</div>
