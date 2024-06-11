@@ -1,8 +1,8 @@
-import {useLittlebookAPI} from "../api/use-littlebook-api.ts"
-import UnknownView from "./types/unknown/unknown-view.tsx"
-import useFile from "../files/use-file.ts"
+import {useLittlebookAPI} from "../../api/use-littlebook-api.ts"
+import UnknownView from "../../contents/types/unknown/unknown-view.tsx"
+import useFile from "../../files/use-file.ts"
 import "./content-viewer.css"
-import useContent from "./use-content.ts"
+import useContent from "../../contents/use-content.ts"
 import {useEffect, useErrorBoundary} from "preact/hooks"
 
 export default function ContentViewer({fileId}: {fileId: lb.FileId}) {
@@ -14,35 +14,40 @@ export default function ContentViewer({fileId}: {fileId: lb.FileId}) {
 	const [file, changeFile] = useFile(fileId)
 	if (!file) {
 		return (
-			<div class="content-viewer content-viewer--loading content-viewer--file-loading" />
+			<div class="box content-viewer content-viewer--loading content-viewer--file-loading" />
 		)
 	}
 	const [content, changeContent] = useContent(file.content)
 	if (!content) {
 		return (
-			<div class="content-viewer content-viewer--loading content-viewer--content-loading" />
+			<div class="box content-viewer content-viewer--loading content-viewer--content-loading" />
 		)
 	}
 
-	const [ContentView] = lb.views.content.get(content.contentType) || UnknownView
+	let [ContentView] = lb.views.content.get(content.contentType)
+	if (!ContentView) {
+		ContentView = UnknownView
+	}
 
 	if (error) {
 		return <SomethingWentWrong error={error} />
 	}
 
 	return (
-		<ContentView
-			file={file}
-			changeFile={changeFile}
-			content={content}
-			changeContent={changeContent}
-		/>
+		<div class="mnh-100">
+			<ContentView
+				file={file}
+				changeFile={changeFile}
+				content={content}
+				changeContent={changeContent}
+			/>
+		</div>
 	)
 }
 
 function SomethingWentWrong({error}: {error: Error}) {
 	return (
-		<details style={{height: "100%"}}>
+		<details class="box h-100">
 			<summary>something went bad :( </summary>
 			<pre
 				style={{

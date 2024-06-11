@@ -1,0 +1,42 @@
+:root {
+	/* --lb-scheme-h: 163; */
+	/* --lb-scheme-s: 100%; */
+	--lb-light-h: 351;
+	--lb-light-s: 100%;
+
+	/* --lb-scheme-main-l: 100%; */
+	--lb-body-background-color: hsl(351, 100%, 96%);
+	--lb-body-line-height: 1.24;
+	--lb-primary-h: 163;
+	--lb-primary-s: 93%;
+	--lb-primary-l: 60%;
+	--lb-color-primary: #3af8c2;
+	/* hsl(163, 93%, 60%); */
+	--lb-text: #000;
+	--lb-family-primary: 'system-ui', -apple-system, Inter, sans-serif;
+	--lb-family-code: Iosevka Rabbits, Iosevka, monospace;
+	--lb-shadow-h: var(--lb-scheme-h);
+	--lb-shadow-s: 100%;
+	--lb-shadow-l: 20%;
+	/* --lb-hover-background-l-delta: -1.4%; */
+}
+
+.has-sash-delta {
+	--lb-background-l-delta: -2% !important;
+}
+
+.is-fullheight {
+	min-height: 100%;
+}
+
+.h-100 {
+	height: 100%;
+}
+
+.mxh-100 {
+	max-height: 100%;
+}
+
+.mnh-100 {
+	min-height: 100%;
+}

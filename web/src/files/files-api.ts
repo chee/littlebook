@@ -1,9 +1,6 @@
 import type {Repo} from "@automerge/automerge-repo"
 import {createContentHandle} from "../contents/contents-api.ts"
-import {
-	coderRegistry,
-	typeRegistry,
-} from "../contents/types/content-type-registry.ts"
+import {coderRegistry, typeRegistry} from "../contents/types/type-registries.ts"
 import {binary} from "../contents/types/coders.ts"
 import {unknown} from "../contents/types/uniform-type-identifiers.ts"
 import {

@@ -1,7 +1,15 @@
 .sidebar {
-	padding: 1em;
-}
+	--lb-shadow-h: var(--lb-light-h);
+	--lb-shadow:
+		0 0.5em 1em -0.125em hsla(var(--lb-shadow-h),
+			var(--lb-shadow-s),
+			var(--lb-shadow-l),
+			0.1),
+		0 0px 0 1px hsla(var(--lb-shadow-h),
+			var(--lb-shadow-s),
+			var(--lb-shadow-l),
+			0.02);
 
-.sidebar .card + .card {
-	margin-top: 1em;
+	overflow: auto;
+	height: 100%;
 }

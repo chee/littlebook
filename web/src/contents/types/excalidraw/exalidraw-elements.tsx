@@ -1,4 +1,4 @@
-import type {ContentView} from "../content-type-registry.ts"
+import type {ContentView} from "../type-registries.ts"
 import * as coders from "../coders.ts"
 import {ExcalidrawView, type ExcalidrawJSON} from "./excalidraw.tsx"
 
@@ -59,6 +59,7 @@ export function activate(lb: lb.API) {
 	lb.coders.register(type, coder)
 	lb.views.content.register([type], ExcalidrawElementsView)
 	lb.contentTypes.associate(type, [".excalidraw"])
+	lb.contentTypes.setDisplayName(type, "Excalidraw elements (legacy)")
 }
 
 export function deactivate(lb: lb.API) {

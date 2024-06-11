@@ -30,9 +30,14 @@ export declare namespace lb {
 	type WhenId = Branded<DocumentId, "when-id">
 	type SpaceId = Branded<DocumentId, "space-id">
 	type InboxId = Branded<DocumentId, "inbox-id">
-	type UniformTypeIdentifier = Branded<DocumentId, "uniform-type-identifier">
+	type UniformTypeIdentifier = Branded<string, "uniform-type-identifier">
+	type FolderTypeIdentifier = Branded<
+		"public.folder",
+		"uniform-type-identifier"
+	>
 	interface UniformType {
 		name: UniformTypeIdentifier
+		prettyName?: string
 		conformsTo?: UniformTypeIdentifier[]
 		mimeType?: string
 		fileNameExtension?: string
@@ -85,6 +90,7 @@ export declare namespace lb {
 	interface Folder {
 		readonly type: "folder"
 		readonly id: FolderId
+		contentType: FolderTypeIdentifier
 		name: string
 		// readonly parentId: ProjectId | FolderId
 		items: AutomergeList<FolderId | FileId>

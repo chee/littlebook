@@ -1,21 +1,17 @@
 import {render} from "preact"
-import "./ui/style.css"
 import {AuthContextProvider} from "./auth/auth-provider.tsx"
-import Littlebook from "./ui/layout.tsx"
-
+import SpacePage from "./ui/space-page.tsx"
+import "./ui/bulma.scss"
+import "./ui/ui.css"
 import {removeDirectory} from "./ui/opfs.ts"
 import {LittlebookAPIProvider} from "./api/littlebook-api-provider.tsx"
 import {Route, Switch} from "wouter-preact"
-import ProjectPage from "./projects/project-page.tsx"
+import ProjectPage from "./ui/projects/project-page.tsx"
 
 render(
 	<AuthContextProvider>
 		<LittlebookAPIProvider>
-			<Littlebook>
-				<Switch>
-					<Route component={ProjectPage} path="/projects/:slug/:projectId" />
-				</Switch>
-			</Littlebook>
+			<SpacePage />
 		</LittlebookAPIProvider>
 	</AuthContextProvider>,
 	document.getElementById("littlebook")!,

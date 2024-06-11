@@ -24,29 +24,40 @@ export const Hello = ({complete}: {complete: OnComplete}) => {
 function WhatsYourName({complete}: {complete: (n: string) => void}) {
 	const [name, setName] = useState("")
 	return (
-		<div class="hello whats-your-name">
-			<p>hey! welcome to littlebook</p>
+		<div class="hello whats-your-name container is-mobile">
+			<p class="is-size-1 mb-4">
+				hey!
+				<span class="is-size-2 ml-2">welcome to littlebook.</span>
+			</p>
+
 			<form onSubmit={() => complete(name)}>
-				<label for="name">
+				<label class="label" for="hello-name">
 					what's your name?
-					<br />
 				</label>
-				<fieldset>
-					<span>&gt; </span>
-					<input
-						id="name"
-						autofocus
-						value={name}
-						onInput={event =>
-							setName(
-								event.target instanceof HTMLInputElement
-									? event.target.value
-									: "",
-							)
-						}
-					/>
-					<button type="submit">ok</button>
-				</fieldset>
+				<div class="field has-addons is-size-1">
+					<div class="control">
+						<input
+							id="hello-name"
+							class="input"
+							type="text"
+							placeholder="zoozy"
+							autofocus
+							value={name}
+							onInput={event =>
+								setName(
+									event.target instanceof HTMLInputElement
+										? event.target.value
+										: "",
+								)
+							}
+						/>
+					</div>
+					<div class="control">
+						<button class="button is-primary" type="submit">
+							ok
+						</button>
+					</div>
+				</div>
 			</form>
 		</div>
 	)
@@ -58,7 +69,7 @@ function FreshOrFriend({complete}: {complete: OnComplete}) {
 	const [invite, setInvite] = useState("")
 	return (
 		<div class="hello fresh-or-friend">
-			<p>
+			<p class="is-size-2 mb-3">
 				hello, <span class="hello-hl">{localState.userName!}</span>!!!
 			</p>
 			{linking ? (
@@ -107,9 +118,15 @@ function FreshOrFriend({complete}: {complete: OnComplete}) {
 			) : (
 				<>
 					{" "}
-					<p>are you starting fresh, or linking up to a new device?</p>
-					<fieldset>
+					<p class="is-size-4 mb-4">
+						are you starting fresh, or pairing with another device?
+					</p>
+					<fieldset
+						class="field buttons are-large  is-grouped
+					is-flex is-align-items-center
+					is-justify-content-space-around is-flex-space-between">
 						<button
+							class="button is-rounded is-primary"
 							type="button"
 							onClick={() =>
 								createDefaultTeam({
@@ -118,7 +135,10 @@ function FreshOrFriend({complete}: {complete: OnComplete}) {
 							}>
 							start fresh!
 						</button>
-						<button type="button" onClick={() => setLinking(true)}>
+						<button
+							class="button is-link is-rounded"
+							type="button"
+							onClick={() => setLinking(true)}>
 							link device!
 						</button>
 					</fieldset>

@@ -1,4 +1,4 @@
-import type {ContentView} from "../content-type-registry.ts"
+import type {ContentView} from "../type-registries.ts"
 import type {ExcalidrawImperativeAPI} from "@excalidraw/excalidraw/types/types.d.ts"
 import type {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types.d.ts"
 import {useCallback, useEffect, useMemo, useState} from "preact/hooks"
@@ -155,6 +155,7 @@ export function activate(lb: lb.API) {
 		mimeType: "application/json",
 	})
 	lb.contentTypes.associate(type, [".excalidraw"])
+	lb.contentTypes.setDisplayName(type, "Excalidraw drawing")
 }
 
 export function deactivate(lb: lb.API) {

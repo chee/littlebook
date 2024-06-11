@@ -1,4 +1,4 @@
-import type {ContentView} from "../content-type-registry.ts"
+import type {ContentView} from "../type-registries.ts"
 
 const UnknownView: ContentView<any> = ({content, file}) => {
 	return (

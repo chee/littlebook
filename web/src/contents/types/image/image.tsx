@@ -1,4 +1,4 @@
-import type {ContentView} from "../content-type-registry.ts"
+import type {ContentView} from "../type-registries.ts"
 import {useMemo} from "preact/hooks"
 import * as coders from "../coders.ts"
 

@@ -9,7 +9,7 @@ import {
 	typeRegistry,
 	contentViewRegistry,
 	metadataViewRegistry,
-} from "../contents/types/content-type-registry.ts"
+} from "../contents/types/type-registries.ts"
 import createContentsAPI from "../contents/contents-api.ts"
 
 /*

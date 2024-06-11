@@ -1,11 +1,12 @@
 import type {Repo} from "@automerge/automerge-repo"
-import {coderRegistry} from "./types/content-type-registry.ts"
+import {coderRegistry} from "./types/type-registries.ts"
 import {
 	createDocumentHandle,
 	getDocumentHandle,
 } from "../documents/documents-api.ts"
 import {createFileHandle} from "../files/files-api.ts"
 import {CodingError} from "./types/coders.ts"
+import type {AnyContent} from "../global.js"
 
 export function createContentHandle<T extends lb.AnyContent>(
 	repo: Repo,
@@ -20,7 +21,7 @@ export function createContentHandle<T extends lb.AnyContent>(
 
 export function recodeContent(
 	repo: Repo,
-	source: lb.Content<{contentType: lb.UniformTypeIdentifier}>,
+	source: lb.Content<AnyContent>,
 	targetType: lb.UniformTypeIdentifier,
 ) {
 	const sourceCoder = coderRegistry.get(source.contentType)

@@ -46,20 +46,25 @@ export const AuthContextProvider: FC = ({children}) => {
 
 	if (!device) {
 		return (
-			<main class="first-time">
-				<div class="first-time-inner">
-					<Hello
-						complete={({user, device, team, auth, repo}) => {
-							const shareId = getShareId(team)
-							const spaceId = getDocIdFromTeam(team)
-							localState.updateLocalState({user, device, shareId, spaceId})
-							setTeam(team)
-							setAuth(auth)
-							setRepo(repo)
-						}}
-					/>
+			<div class="modal is-active is-clipped">
+				<div class="modal-background" />
+				<div class="modal-content">
+					<main class="first-time card">
+						<div class="card-content">
+							<Hello
+								complete={({user, device, team, auth, repo}) => {
+									const shareId = getShareId(team)
+									const spaceId = getDocIdFromTeam(team)
+									localState.updateLocalState({user, device, shareId, spaceId})
+									setTeam(team)
+									setAuth(auth)
+									setRepo(repo)
+								}}
+							/>
+						</div>
+					</main>
 				</div>
-			</main>
+			</div>
 		)
 	}
 

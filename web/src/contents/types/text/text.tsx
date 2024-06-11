@@ -1,5 +1,5 @@
 import {updateText} from "@automerge/automerge-repo"
-import type {ContentView} from "../content-type-registry.ts"
+import type {ContentView} from "../type-registries.ts"
 import * as coders from "../coders.ts"
 import type {ContentCoder} from "../coders.ts"
 
@@ -12,7 +12,7 @@ const coder: ContentCoder<TextModel> = coders.text()
 const TextContentView: ContentView<TextModel> = ({content, changeContent}) => {
 	return (
 		<textarea
-			style={{width: "100%", height: "100%", resize: "none"}}
+			class="textarea has-fixed-size is-borderless h-100 is-white is-family-code pt-1 pb-1 is-flush"
 			onInput={event => {
 				changeContent(content => {
 					if (!(event.target instanceof HTMLTextAreaElement)) return
@@ -27,6 +27,7 @@ const TextContentView: ContentView<TextModel> = ({content, changeContent}) => {
 export function activate(lb: lb.API) {
 	lb.coders.register<TextModel>(type, coder)
 	lb.views.content.register([type], TextContentView)
+	lb.contentTypes.setDisplayName(type, "plain text")
 }
 
 export function deactivate(lb: lb.API) {

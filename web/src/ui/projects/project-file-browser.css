@@ -1,0 +1,31 @@
+.file-browser-table {
+	--lb-table-cell-border-width: 0;
+	overflow: auto;
+	height: 100%;
+}
+
+.file-browser-table tbody {
+	display: block;
+	max-height: 100%;
+	overflow: auto;
+}
+
+.file-browser-table tbody tr {
+	display: table;
+}
+
+/*
+.project-file-browser button.panel-block:hover,
+label.panel-block:hover {
+	background-color: var(--lb-panel-block-hover-background-color);
+}
+
+.panel-tabs:not(:last-child),
+.panel-block:not(:last-child) {
+	border-bottom: var(--lb-panel-item-border);
+}
+
+a.panel-block,
+label.panel-block {
+	cursor: pointer;
+} */

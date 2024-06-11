@@ -62,6 +62,48 @@ export function associateMime(
 	UTI.assignMimeTypes(type, mimetypes)
 }
 
+const displayNames = new Map<lb.UniformTypeIdentifier, string>()
+
+export function getDisplayName(type: lb.UniformTypeIdentifier) {
+	return displayNames.get(type) || type
+}
+
+export function setDisplayName(type: lb.UniformTypeIdentifier, name: string) {
+	displayNames.set(type, name)
+}
+
+export function extensionsFor(target: lb.UniformTypeIdentifier) {
+	for (const [type, exts] of UTI.utiByFileNameExtension.entries()) {
+		if (type == target) {
+			return exts
+		}
+	}
+}
+
+export function getFilenameParts(
+	target: lb.UniformTypeIdentifier,
+	fullFilename: string,
+): [string, string?] {
+	const m = fullFilename.match(/(\.[\.a-zA-Z_0-9]+)$/)
+
+	if (m) {
+		for (
+			let extension = m[1];
+			extension.length > 0;
+			extension = extension.replace(/^\.[a-zA-Z_0-9]+/, "")
+		) {
+			if (UTI.utiByFileNameExtension.get(extension)?.includes(target)) {
+				return [
+					fullFilename.slice(0, fullFilename.length - extension.length),
+					extension.slice(1),
+				]
+			}
+		}
+	}
+
+	return [fullFilename]
+}
+
 const typeRegistry = {
 	conformsTo,
 	conformsToAny,
@@ -73,5 +115,9 @@ const typeRegistry = {
 	forMime,
 	associate,
 	associateMime,
+	getDisplayName,
+	setDisplayName,
+	extensionsFor,
+	getFilenameParts,
 }
 export default typeRegistry

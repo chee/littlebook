@@ -1,5 +1,5 @@
 import useFile from "../../files/use-file.ts"
-import {metadataViewRegistry} from "../types/content-type-registry.ts"
+import {metadataViewRegistry} from "../types/type-registries.ts"
 import useContent from "../use-content.ts"
 
 export default function MetadataViewer({fileId}: {fileId: lb.FileId}) {
