@@ -2,9 +2,9 @@ import type {Repo} from "@automerge/automerge-repo"
 import type * as Auth from "@localfirst/auth"
 import type {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
 import {useState} from "preact/hooks"
-import {useLocalState} from "../use-local-state.ts"
-import {createDefaultTeam} from "../teams/create-team.ts"
-import pairDevice from "../devices/pair-device.ts"
+import {useLocalState} from "./use-local-state.ts"
+import {createDefaultTeam} from "../../auth/teams/create-team.ts"
+import pairDevice from "../../auth/devices/pair-device.ts"
 
 export const Hello = ({complete}: {complete: OnComplete}) => {
 	const localState = useLocalState()
@@ -25,7 +25,7 @@ function WhatsYourName({complete}: {complete: (n: string) => void}) {
 	return (
 		<div
 			class="hello whats-your-name flex self-center bg-white w-full h-svh sm:max-w-md
-		sm:h-auto ring-8 ring-yes-400 p-8 size-48 dark:bg-black dark:text-white">
+		sm:h-auto ring-8 ring-primary-400 p-8 size-48 dark:bg-black dark:text-white">
 			<h1 class="size-48">
 				hey!
 				<span class="size-38">welcome to littlebook.</span>

@@ -72,7 +72,6 @@ function automergeToExcalidraw(element: MergeableExcalidrawElement) {
 	} as unknown as ExcalidrawElement
 }
 
-// todo lazy load excalidraw here using suspense
 export const ExcalidrawView: ContentView<ExcalidrawJSON> = ({
 	content,
 	changeContent,

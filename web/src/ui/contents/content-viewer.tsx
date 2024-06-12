@@ -3,12 +3,12 @@ import UnknownView from "../../contents/types/unknown/unknown-view.tsx"
 import useFile from "../../files/use-file.ts"
 import useContent from "../../contents/use-content.ts"
 import {useEffect, useErrorBoundary} from "preact/hooks"
-import {useSpaceUIState} from "../space-ui-state.tsx"
+import {useSpaceState} from "../space/space-state.tsx"
 
 export default function ContentViewer() {
 	const lb = useLittlebookAPI()
 	const [error, reset] = useErrorBoundary()
-	const ui = useSpaceUIState()
+	const ui = useSpaceState()
 	const fileId = ui.files.selected
 	if (!fileId.value) return null
 	useEffect(() => {

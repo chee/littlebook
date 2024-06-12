@@ -1,8 +1,8 @@
-import {CardLink} from "../card/card.tsx"
+import {CardLink} from "../elements/card/card.tsx"
 import * as urlFor from "../urls.ts"
 import {useDocument} from "@automerge/automerge-repo-react-hooks"
 import EditableName from "../documents/editable-name.tsx"
-import {useSpaceUIState} from "../space-ui-state.tsx"
+import {useSpaceState} from "../space/space-state.tsx"
 
 type id = lb.ProjectId
 
@@ -11,23 +11,23 @@ export default function ({
 }: {
 	projectId: id
 }) {
-	const ui = useSpaceUIState()
+	const ui = useSpaceState()
 	if (!ui.projects.selected) return null
 	const [project, changeProject] = useDocument<lb.Project>(projectId)
 	if (!project) return null
 
 	const href = urlFor.project(project)
 	const current = ui.projects.selected.value == projectId
+
 	return (
 		<CardLink
+			class="bold"
 			title=""
 			href={href}
 			icon={project.icon}
 			current={current}
-			onClick={event => {
-				if (current) {
-					event.preventDefault()
-				}
+			onDblClick={event => {
+				ui.projects.renaming.value = projectId
 			}}>
 			<EditableName
 				id={projectId}

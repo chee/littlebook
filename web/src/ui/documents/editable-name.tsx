@@ -1,7 +1,7 @@
 import {useEffect, useState} from "preact/hooks"
-import {useSpaceUIState} from "../space-ui-state.tsx"
-import {Card} from "../card/card.tsx"
-import Button from "../elements/button.tsx"
+import {useSpaceState} from "../space/space-state.tsx"
+import Button from "../elements/button/button.tsx"
+import "./editable-name.scss"
 
 interface EditableNameProps<T extends lb.NamedDocument> {
 	id: T["id"]
@@ -16,7 +16,7 @@ export default function EditableName<T extends lb.NamedDocument>({
 	saveName,
 	which,
 }: EditableNameProps<T>) {
-	const ui = useSpaceUIState()
+	const ui = useSpaceState()
 	const selectedId = ui[which].selected
 	const editingId = ui[which].renaming
 	// todo pull the ext off from the name
@@ -28,9 +28,9 @@ export default function EditableName<T extends lb.NamedDocument>({
 
 	if (selectedId.value == editingId.value && editingId.value == id) {
 		return (
-			<form class="absolute z-10 p-1 ml-[-.2em] mt-[-1em] rounded-lg bg-white shadow-lg flex flex-row ring-1 ring-yes-400">
+			<form class="editable-name editing inline-input-button">
 				<input
-					class="input px-3 dark:bg-black ring-2 ring-yes-400 rounded-l-lg text-lg"
+					class="input px-3 dark:bg-black ring-2 ring-primary-400 rounded-l-lg text-lg"
 					value={localName}
 					autofocus
 					ref={input => input?.focus()}
@@ -41,7 +41,7 @@ export default function EditableName<T extends lb.NamedDocument>({
 				/>
 				<Button
 					type="submit"
-					class="button p-2 ml-0 bg-yes-400 rounded-r-lg ring-2 ring-yes-400"
+					class="button p-2 ml-0 bg-primary-400 rounded-r-lg ring-2 ring-primary-400"
 					onClick={event => {
 						event.preventDefault()
 						saveName(localName)
@@ -56,7 +56,7 @@ export default function EditableName<T extends lb.NamedDocument>({
 	return (
 		<button
 			type="button"
-			class="truncate overflow-hidden text-ellipsis max-w-full"
+			class="editable-name not-editing"
 			onClick={() => {
 				if (selectedId.value == id) {
 					ui[which].renaming.value = id

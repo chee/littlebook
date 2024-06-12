@@ -18,7 +18,6 @@ const ImageContentView: ContentView<ImageModel> = ({content}) => {
 
 export function activate(lb: lb.API) {
 	lb.coders.register(type, coder)
-	// todo should i shrink this to just be websafe images?
 	lb.views.content.register([type], ImageContentView)
 }
 

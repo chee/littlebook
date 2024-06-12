@@ -4,15 +4,18 @@ import type * as Auth from "@localfirst/auth"
 import {
 	getShareId,
 	type AuthProvider,
+	type ShareId,
 } from "@localfirst/auth-provider-automerge-repo"
 import {createContext} from "preact"
 import {useEffect, useState} from "preact/hooks"
 import {useLocalState} from "./use-local-state.ts"
 import {assert} from "@localfirst/shared"
 import type {FC} from "preact/compat"
-import {Hello} from "./hello/hello.tsx"
-import getDocIdFromTeam from "./teams/get-doc-id-from-team.ts"
-import start from "../repo/start-repo.ts"
+import {Hello} from "./hello.tsx"
+import getDocIdFromTeam from "../../auth/teams/get-doc-id-from-team.ts"
+import start from "../../repo/start-repo.ts"
+import {useRoute} from "wouter-preact"
+import {navigate} from "wouter-preact/use-browser-location"
 
 export const AuthContext = createContext<lb.UserInfo | undefined>(undefined)
 
@@ -22,7 +25,10 @@ export const AuthContext = createContext<lb.UserInfo | undefined>(undefined)
  */
 export const AuthContextProvider: FC = ({children}) => {
 	const localState = useLocalState()
-	const {user, device, shareId, spaceId, userName: name} = localState
+	const [routing, routeParams] = useRoute<{shareId: ShareId}>("/space/:shareId")
+
+	const {user, device} = localState
+	const shareId = routing ? routeParams.shareId : localState.shareId
 
 	const [team, setTeam] = useState<Auth.Team>()
 	const [auth, setAuth] = useState<AuthProvider>()
@@ -31,10 +37,16 @@ export const AuthContextProvider: FC = ({children}) => {
 	useEffect(() => {
 		if (device) {
 			assert(shareId)
-			// We've used the app before - use our existing user & device to instantiate the auth provider and the repo.
 			start({user, device}).then(({auth, repo}) => {
-				// Get the team from the auth provider (which will have loaded it from storage).
+				if (!auth.hasTeam(shareId)) {
+					console.error(
+						`we are trying to go to the page for a team we don't have access to.`,
+					)
+					// todo Notifications
+					navigate("/")
+				}
 				const team = auth.getTeam(shareId)
+				// todo find out what happens if we aren't in this team
 				setTeam(team)
 				setAuth(auth)
 				setRepo(repo)
@@ -44,7 +56,7 @@ export const AuthContextProvider: FC = ({children}) => {
 
 	if (!device) {
 		return (
-			<main class="first-time card h-full flex bg-center items-center justify-center grow">
+			<dialog open class="first-time">
 				<Hello
 					complete={({user, device, team, auth, repo}) => {
 						const shareId = getShareId(team)
@@ -55,7 +67,7 @@ export const AuthContextProvider: FC = ({children}) => {
 						setRepo(repo)
 					}}
 				/>
-			</main>
+			</dialog>
 		)
 	}
 

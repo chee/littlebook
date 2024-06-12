@@ -1,0 +1,21 @@
+/** sidebar block top-0 bottom-0 p-4 overflow-y-auto
+			bg-paper-100 h-[95vh] w-full dark:bg-black dark:text-white*/
+
+@use "styles" as *;
+
+.sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: get-var("s4");
+	top: 0;
+	bottom: 0;
+	padding: get-var("s4");
+	overflow-y: auto;
+	background: get-color("paper-100");
+	height: 95vh;
+	width: 100%;
+	@include dark {
+		background: black;
+		color: white;
+	}
+}

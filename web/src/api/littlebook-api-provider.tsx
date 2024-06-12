@@ -1,7 +1,7 @@
 import {useRepo} from "@automerge/automerge-repo-react-hooks"
 import {createContext, type FunctionalComponent} from "preact"
 import createLittlebookAPI from "./create-littlebook-api.ts"
-import {useAuth} from "../auth/auth-hooks.ts"
+import {useAuth} from "../ui/auth/use-auth.ts"
 
 export const LittlebookAPIContext = createContext<
 	ReturnType<typeof createLittlebookAPI> | undefined

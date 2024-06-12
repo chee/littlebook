@@ -1,0 +1,11 @@
+@use "../helpers" as *;
+
+@include set-vars(
+	(
+		"br-small": 2px,
+		"br": 4px,
+		"br-medium": 8px,
+		"br-large": 14px,
+		"br-full": 999rem,
+	)
+);

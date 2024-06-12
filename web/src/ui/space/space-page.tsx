@@ -1,28 +1,38 @@
-import {
-	Panel,
-	PanelGroup,
-	PanelResizeHandle,
-	type ImperativePanelHandle,
-} from "react-resizable-panels"
-import PrimarySidebar from "./sidebar/sidebar.tsx"
-import {Badge} from "./pwa.tsx"
-import {useCallback, useEffect, useRef, useState, type FC} from "preact/compat"
-import {useLittlebookAPI} from "../api/use-littlebook-api.ts"
-import * as defaultPlugins from "../contents/plugins/default.ts"
-import type {FunctionalComponent, Ref, RefObject} from "preact"
-import SidebarToggle from "./sidebar/sidebar-toggle.tsx"
-import {Switch, Route} from "wouter-preact"
-import ProjectPage from "./projects/project-page.tsx"
-import {useLocalState} from "../auth/use-local-state.ts"
-import cl from "./cl.ts"
-import useNamedBreakpoint from "./hooks/use-breakpoint.ts"
-import {useSpaceUIState} from "./space-ui-state.tsx"
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels"
+import PrimarySidebar from "../sidebar/primary-sidebar.tsx"
+import {Badge} from "../pwa.tsx"
+import {useEffect} from "preact/compat"
+import {useLittlebookAPI} from "../../api/use-littlebook-api.ts"
+import * as defaultPlugins from "../../contents/plugins/default.ts"
+import type {FunctionalComponent} from "preact"
+import SidebarToggle from "../sidebar/sidebar-toggle.tsx"
+import {Switch, Route, useSearch} from "wouter-preact"
+import ProjectPage from "../projects/project-page.tsx"
+import cl from "../cl.ts"
+import useViewportAtLeast from "../styles/use-breakpoints.ts"
+import {useSpaceState} from "./space-state.tsx"
 import {useHotkeys} from "react-hotkeys-hook"
+import {route, useRouting} from "../routing.ts"
+import "../elements/topnav/topnav.scss"
 
 const Littlebook: FunctionalComponent = ({children}) => {
 	const lb = useLittlebookAPI()
-	const ui = useSpaceUIState()
-	const {spaceId} = useLocalState()
+	const ui = useSpaceState()
+	ui.route.value = useRouting()
+	if (ui.route.value.space == false && ui.space.shareId.value) {
+		route({
+			shareId: ui.space.shareId.value,
+		})
+	}
+
+	useEffect(() => {
+		ui.projects.selected.value = ui.route.value?.projectId || null
+	}, [ui.route.value?.page, ui.route.value?.projectId])
+
+	useEffect(() => {
+		ui.files.selected.value = ui.route.value?.fileId || null
+	}, [ui.route.value?.page, ui.route.value?.fileId])
+
 	// todo usePlugins
 	useEffect(() => {
 		defaultPlugins.text.activate(lb)
@@ -54,7 +64,7 @@ const Littlebook: FunctionalComponent = ({children}) => {
 			? sidebar.ref.current.isCollapsed()
 			: false
 	}, [secondary.ref.current])
-	const skinny = !useNamedBreakpoint("sm")
+	const skinny = useViewportAtLeast("small")
 
 	useHotkeys(
 		"escape",
@@ -69,20 +79,18 @@ const Littlebook: FunctionalComponent = ({children}) => {
 
 	return (
 		<>
-			<header
-				class="space-header flex items-center justify-between sticky top-0 py-2
-			z-40 w-full bg-cover border-b-1 border-cover-300 bg-cover-200 dark:bg-cover-950">
-				<section class="pl-4">
+			<header class="space-header topnav">
+				<section class="pl-4 topnav-left">
 					<SidebarToggle which="primary" />
 				</section>
-				<section class="left-section flex-1 flex items-center justify-center" />
-				<section class="right-section pl-r">
+				<section class="left-section topnav-middle" />
+				<section class="right-section pl-r topnav-right">
 					<SidebarToggle which="secondary" />
 				</section>
 			</header>
 			<PanelGroup
 				direction="horizontal"
-				autoSaveId={"space+" + spaceId}
+				autoSaveId={"space+"}
 				class="flex grow">
 				<Panel
 					class={cl("flex grow max-w-full")}
@@ -101,10 +109,9 @@ const Littlebook: FunctionalComponent = ({children}) => {
 					ref={primary.ref}>
 					<PrimarySidebar />
 				</Panel>
-
 				<PanelResizeHandle
 					hitAreaMargins={{coarse: 20, fine: 20}}
-					class="w-px bg-cover-100"
+					class="w-px fill-paper-200"
 				/>
 				<Panel defaultSize={80.9}>
 					<main id="main" class="h-full">

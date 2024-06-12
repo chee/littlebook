@@ -4,14 +4,13 @@ import useProject from "../../projects/use-project.ts"
 import {useDocuments} from "@automerge/automerge-repo-react-hooks"
 import {showOpenFilePicker} from "file-system-access"
 import {LuUpload as UploadIcon} from "react-icons/lu"
-import clsx from "clsx"
 import EditableName from "../documents/editable-name.tsx"
-import {Card} from "../card/card.tsx"
-import {useSpaceUIState} from "../space-ui-state.tsx"
-import Button from "../elements/button.tsx"
+import {Card} from "../elements/card/card.tsx"
+import {useSpaceState} from "../space/space-state.tsx"
+import Button from "../elements/button/button.tsx"
 
 export default function ProjectFileBrowser() {
-	const ui = useSpaceUIState()
+	const ui = useSpaceState()
 	if (!ui.projects.selected.value) {
 		return <Card class="h-full" />
 	}
@@ -41,17 +40,17 @@ export default function ProjectFileBrowser() {
 	// }, [files])
 
 	return (
-		<Card>
+		<Card class="h-full">
 			<div
-				class="bg-yes-300 dark:bg-yes-800 text-center items-center justify-center
-			px-4 p-2 mt-3 rounded-t flex font-bold gap-2">
+				class="bg-primary-300 dark:bg-primary-800 text-center items-center justify-center
+			px-4 p-2 rounded-t flex font-bold gap-2 sticky">
 				<span>{project.icon}</span>
 				<span>{project.name}</span>
 			</div>
 			<div class="p-2 flex gap-2">
 				<Button
 					type="button"
-					class="p-2 flex gap-2 items-center ring-1 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950"
+					kind="ghost"
 					onClick={() => {
 						const fileHandle = lb.files.createHandleInProject(
 							project.id,
@@ -71,7 +70,6 @@ export default function ProjectFileBrowser() {
 				</Button>
 
 				<Button
-					class="p-2 flex gap-2 items-center ring-1 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950"
 					type="button"
 					onClick={() => {
 						const fileHandle = lb.files.createHandleInProject(
@@ -90,7 +88,6 @@ export default function ProjectFileBrowser() {
 					create drawing
 				</Button>
 				<Button
-					class="p-2 flex gap-2 items-center ring-1 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950"
 					type="button"
 					onClick={async () => {
 						// todo move to some kind of project-create-file
@@ -113,7 +110,7 @@ export default function ProjectFileBrowser() {
 					<span>import file</span>
 				</Button>
 			</div>
-			<section class="overflow-scroll max-h-full">
+			<section class="overflow-scroll max-h-full p-4 my-4 h-full">
 				{Object.values(files).map(file => {
 					return (
 						<Button
@@ -122,6 +119,7 @@ export default function ProjectFileBrowser() {
 								ui.files.selected.value = file.id
 								navigate(`?file=${file.id}`)
 							}}
+							active={file.id == ui.files.selected.value}
 							type="button"
 							key={file.id}>
 							<EditableName

@@ -7,19 +7,11 @@ import MetadataViewer from "../../contents/metadata/metadata-viewer.tsx"
 import ProjectFileBrowser from "./project-file-browser.tsx"
 import InfoPanel from "../../contents/metadata/info-panel.tsx"
 import cl from "../cl.ts"
-import {useSpaceUIState} from "../space-ui-state.tsx"
+import {useSpaceState} from "../space/space-state.tsx"
 
 export default function ProjectPage() {
-	const {projectId} = useParams<{projectId: lb.ProjectId}>()
-	const ui = useSpaceUIState()
-	useEffect(() => {
-		ui.projects.selected.value = projectId
-	}, [projectId])
-	const search = new URLSearchParams(useSearch())
-	const fileId = (search.get("file") as lb.FileId) || undefined
-	useEffect(() => {
-		ui.projects.selected.value = projectId
-	}, [projectId])
+	const ui = useSpaceState()
+	const projectId = ui.projects.selected.value
 
 	return (
 		<PanelGroup
@@ -33,7 +25,7 @@ export default function ProjectPage() {
 					<Panel defaultSize={38} minSize={5}>
 						<ProjectFileBrowser />
 					</Panel>
-					<PanelResizeHandle class="bg-cover-100 h-2" />
+					<PanelResizeHandle class="bg-paper-100 h-2" />
 					<Panel defaultSize={62} minSize={5}>
 						<ContentViewer />
 					</Panel>

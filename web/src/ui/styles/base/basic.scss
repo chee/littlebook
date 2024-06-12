@@ -1,0 +1,85 @@
+@use "./breakpoints" as bp;
+@use "../helpers" as *;
+@use "sass-mq" as * with (
+	$breakpoints: bp.$breakpoints,
+	$show-breakpoints: ()
+);
+
+@include set-vars(
+	(
+		ring-inset: "",
+		ring-offset: 0,
+	)
+);
+
+a,
+a:visited {
+	text-decoration: none;
+}
+
+button {
+	background: inherit;
+	cursor: pointer;
+}
+
+@include set-vars(
+	(
+		family-sans: "system-ui, -apple-system, sans-serif",
+		family-mono: "Jetbrains Mono, Iosevka Rabbits, Iosevka, monospace",
+	)
+);
+
+:root {
+	font-family: get-var(family-sans);
+	font-size: 16px;
+}
+
+code {
+	font-family: get-var(family-mono);
+}
+
+// todo move these utils elsewhere
+.bold {
+	font-weight: bolder;
+}
+
+.italic {
+	font-style: italic;
+}
+
+.min-w-full {
+	min-width: 100%;
+}
+.min-h-full {
+	min-height: 100%;
+}
+.min-w-full {
+	min-width: 100%;
+}
+.min-h-full {
+	min-height: 100%;
+}
+.w-full {
+	width: 100%;
+}
+.h-full {
+	height: 100%;
+}
+.w-px {
+	width: 1px;
+}
+.h-px {
+	height: 1px;
+}
+.flex {
+	display: flex;
+}
+.grow {
+	flex-grow: 1;
+}
+.rotate-180 {
+	transform: rotate(180deg);
+}
+.rotate-90 {
+	transform: rotate(90deg);
+}

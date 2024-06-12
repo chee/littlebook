@@ -14,13 +14,10 @@ import useFile from "../../files/use-file.ts"
 import useContent from "../use-content.ts"
 import type {FunctionalComponent} from "preact"
 import clsx from "clsx"
-import Button from "../../ui/elements/button.tsx"
-import {Card} from "../../ui/card/card.tsx"
+import Button from "../../ui/elements/button/button.tsx"
+import {Card} from "../../ui/elements/card/card.tsx"
 import cl from "../../ui/cl.ts"
-import {
-	SpaceUIStateProvider,
-	useSpaceUIState,
-} from "../../ui/space-ui-state.tsx"
+import {SpaceStateProvider, useSpaceState} from "../../ui/space/space-state.tsx"
 
 const Dropdown: FunctionalComponent<{
 	label: string
@@ -68,23 +65,18 @@ const Dropdown: FunctionalComponent<{
 	}, [isActive])
 
 	return (
-		<div ref={ref} class={clsx("relative", isActive && "is-active")}>
-			<div class="dropdown-trigger">
-				<Button
-					type="button"
-					class="px-3 py-2 bg-neutral-100 shadow-sm rounded-lg ring-1 ring-neutral-200 whitespace-nowrap flex gap-2"
-					aria-haspopup="true"
-					onClick={() => setIsActive(active => !active)}
-					aria-controls={id}>
-					<span>{label}</span>
-					<span> ⬇︎</span>
-				</Button>
-			</div>
-			<Card
-				className={cl(
-					"absolute left-0 shadow-2xl rounded p-1 ring-2 ring-neutral-200",
-					isActive ? "opacity-100" : "opacity-0",
-				)}>
+		<div ref={ref} class={clsx(isActive && "is-active")}>
+			<Button
+				active={isActive}
+				type="button"
+				aria-haspopup="true"
+				onClick={() => setIsActive(active => !active)}
+				aria-controls={id}>
+				<span>{label}</span>
+				<span> ⬇︎</span>
+			</Button>
+
+			<Card>
 				<div id={id} role="menu" aria-orientation="vertical">
 					<div class="flex flex-col gap-2">{children}</div>
 				</div>
@@ -94,7 +86,7 @@ const Dropdown: FunctionalComponent<{
 }
 
 export default function InfoPanel() {
-	const ui = useSpaceUIState()
+	const ui = useSpaceState()
 	const fileId = ui.files.selected
 	if (!fileId.value) {
 		return null
@@ -173,7 +165,9 @@ export default function InfoPanel() {
 							}}
 							class={clsx(
 								"py-2 px-4 block w-full",
-								type == content.contentType ? "bg-yes-100" : "hover:bg-yes-50",
+								type == content.contentType
+									? "bg-primary-100"
+									: "hover:bg-primary-50",
 							)}>
 							{displayName || type}
 						</Button>

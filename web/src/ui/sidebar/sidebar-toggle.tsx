@@ -1,15 +1,15 @@
 import clsx from "clsx"
-import Button from "../elements/button.tsx"
-import {useSpaceUIState} from "../space-ui-state.tsx"
+import Button from "../elements/button/button.tsx"
+import {useSpaceState} from "../space/space-state.tsx"
 
 function CuteSidebarIcon({open, flipped}: {open: boolean; flipped: boolean}) {
 	return (
 		// biome-ignore lint/a11y/noSvgWithoutTitle: there is a label on the button
 		<svg
-			height="40"
+			height="32"
 			alt=""
 			viewBox="0 0 67 47"
-			class={clsx("stroke-cover-600", {
+			class={clsx("line-paper-600", {
 				"rotate-180": flipped,
 			})}>
 			<g stroke-linecap="round">
@@ -25,7 +25,7 @@ function CuteSidebarIcon({open, flipped}: {open: boolean; flipped: boolean}) {
 			</g>
 			<g stroke-linecap="round">
 				<path
-					class={clsx(open ? "fill-cover-600" : "fill-white")}
+					class={clsx(open ? "fill-paper-600" : "fill-white")}
 					d="M14.75 10.33h7.5c2.5 0 3.75 1.25 3.75 3.75v17.5c0 2.5-1.25 3.75-3.75 3.75h-7.5c-2.5 0-3.75-1.25-3.75-3.75v-17.5c0-2.5 1.25-3.75 3.75-3.75"
 				/>
 				<path
@@ -35,7 +35,7 @@ function CuteSidebarIcon({open, flipped}: {open: boolean; flipped: boolean}) {
 				/>
 			</g>
 			<path
-				class={clsx(open && "stroke-white")}
+				class={clsx(open && "line-white")}
 				fill="none"
 				stroke-linecap="round"
 				stroke-width="2"
@@ -50,17 +50,17 @@ export default function SidebarToggle({
 }: {
 	which: "primary" | "secondary"
 }) {
-	const ui = useSpaceUIState()
+	const ui = useSpaceState()
 	const sidebar = ui.layout.sidebars[which]
 
 	return (
 		<Button
 			type="button"
-			class={clsx(
-				"hover:text-white hover:bg-cover-300 ring-cover-300 rounded-lg",
-				sidebar.open.value &&
-					"text-white bg-cover-300 dark:bg-cover-700 sm:bg-transparent",
-			)}
+			size="small"
+			color="paper"
+			kind="ghost"
+			pressed={sidebar.open.value}
+			class="p-0 my-05"
 			onClick={() => {
 				const element = sidebar.ref.current
 				if (element) {

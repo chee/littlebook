@@ -1,17 +1,16 @@
 import {render} from "preact"
-import {AuthContextProvider} from "./auth/auth-provider.tsx"
-import SpacePage from "./ui/space-page.tsx"
-import "./ui/ui.css"
+import {AuthContextProvider} from "./ui/auth/auth-provider.tsx"
+import SpacePage from "./ui/space/space-page.tsx"
 import {removeDirectory} from "./ui/opfs.ts"
 import {LittlebookAPIProvider} from "./api/littlebook-api-provider.tsx"
-import {SpaceUIStateProvider} from "./ui/space-ui-state.tsx"
+import {SpaceStateProvider} from "./ui/space/space-state.tsx"
 
 render(
 	<AuthContextProvider>
 		<LittlebookAPIProvider>
-			<SpaceUIStateProvider>
+			<SpaceStateProvider>
 				<SpacePage />
-			</SpaceUIStateProvider>
+			</SpaceStateProvider>
 		</LittlebookAPIProvider>
 	</AuthContextProvider>,
 	document.getElementById("littlebook")!,
