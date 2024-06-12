@@ -11,6 +11,9 @@
 		}
 	],
 	"settings": {
-		"prettier.enable": false
+		"prettier.enable": false,
+		"files.associations": {
+			"*.css": "tailwindcss"
+		}
 	}
 }
