@@ -1,26 +1,23 @@
-import {useRoute} from "wouter-preact"
 import {CardLink} from "../card/card.tsx"
-import {useState} from "preact/hooks"
 import * as urlFor from "../urls.ts"
 import {useDocument} from "@automerge/automerge-repo-react-hooks"
-import {navigate} from "wouter-preact/use-browser-location"
 import EditableName from "../documents/editable-name.tsx"
+import {useSpaceUIState} from "../space-ui-state.tsx"
 
 type id = lb.ProjectId
 
 export default function ({
-	id,
-	editingId,
-	setEditingId,
+	projectId,
 }: {
-	id: id
-	editingId?: id
-	setEditingId(id?: id): void
+	projectId: id
 }) {
-	const [project, changeProject] = useDocument<lb.Project>(id)
-	if (!project) return <div />
+	const ui = useSpaceUIState()
+	if (!ui.projects.selected) return null
+	const [project, changeProject] = useDocument<lb.Project>(projectId)
+	if (!project) return null
+
 	const href = urlFor.project(project)
-	const [current] = useRoute(urlFor.route.project(project))
+	const current = ui.projects.selected.value == projectId
 	return (
 		<CardLink
 			title=""
@@ -33,18 +30,14 @@ export default function ({
 				}
 			}}>
 			<EditableName
-				id={id}
-				setEditingId={setEditingId}
-				selectedId={current ? id : undefined}
-				editingId={editingId}
+				id={projectId}
 				name={project.name}
 				saveName={name => {
-					console.log("saving")
 					changeProject(project => {
 						project.name = name
 					})
-					setEditingId()
 				}}
+				which="projects"
 			/>
 		</CardLink>
 	)

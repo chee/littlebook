@@ -1,10 +1,6 @@
 import {useParams} from "wouter-preact"
 import {useLittlebookAPI} from "../../api/use-littlebook-api.ts"
-import {
-	coderRegistry,
-	typeRegistry,
-	type ContentView,
-} from "../types/type-registries.ts"
+import {typeRegistry} from "../types/type-registries.ts"
 import {
 	useCallback,
 	useEffect,
@@ -15,11 +11,16 @@ import {
 } from "preact/hooks"
 
 import useFile from "../../files/use-file.ts"
-import {metadataViewRegistry} from "../types/type-registries.ts"
 import useContent from "../use-content.ts"
-import {LuArrowDown} from "react-icons/lu"
 import type {FunctionalComponent} from "preact"
 import clsx from "clsx"
+import Button from "../../ui/elements/button.tsx"
+import {Card} from "../../ui/card/card.tsx"
+import cl from "../../ui/cl.ts"
+import {
+	SpaceUIStateProvider,
+	useSpaceUIState,
+} from "../../ui/space-ui-state.tsx"
 
 const Dropdown: FunctionalComponent<{
 	label: string
@@ -35,12 +36,17 @@ const Dropdown: FunctionalComponent<{
 	const ref = useRef<HTMLDivElement>(null)
 
 	const onclickoutside = useCallback((event: MouseEvent) => {
+		if (!ref.current) return
+		console.log(event.target instanceof HTMLElement, event.target, ref.current)
 		if (
 			ref.current &&
 			event.target instanceof HTMLElement &&
+			ref.current != event.target &&
 			!ref.current.contains(event.target)
-		)
+		) {
 			setIsActive(false)
+			event.stopPropagation()
+		}
 	}, [])
 
 	const onescape = useCallback((event: KeyboardEvent) => {
@@ -50,38 +56,50 @@ const Dropdown: FunctionalComponent<{
 	}, [])
 
 	useEffect(() => {
-		document.addEventListener("click", onclickoutside, true)
-		document.addEventListener("keydown", onescape)
+		if (isActive) {
+			document.addEventListener("click", onclickoutside, true)
+			document.addEventListener("keydown", onescape)
+		}
+
 		return () => {
 			document.removeEventListener("click", onclickoutside, true)
 			document.removeEventListener("keydown", onescape)
 		}
-	}, [])
+	}, [isActive])
 
 	return (
-		<div ref={ref} class={clsx("dropdown", isActive && "is-active")}>
+		<div ref={ref} class={clsx("relative", isActive && "is-active")}>
 			<div class="dropdown-trigger">
-				<button
+				<Button
 					type="button"
-					class="button"
+					class="px-3 py-2 bg-neutral-100 shadow-sm rounded-lg ring-1 ring-neutral-200 whitespace-nowrap flex gap-2"
 					aria-haspopup="true"
 					onClick={() => setIsActive(active => !active)}
 					aria-controls={id}>
 					<span>{label}</span>
-					<span class="icon is-small">
-						<LuArrowDown />
-					</span>
-				</button>
+					<span> ⬇︎</span>
+				</Button>
 			</div>
-			<div class="dropdown-menu" id={id} role="menu">
-				<div class="dropdown-content">{children}</div>
-			</div>
+			<Card
+				className={cl(
+					"absolute left-0 shadow-2xl rounded p-1 ring-2 ring-neutral-200",
+					isActive ? "opacity-100" : "opacity-0",
+				)}>
+				<div id={id} role="menu" aria-orientation="vertical">
+					<div class="flex flex-col gap-2">{children}</div>
+				</div>
+			</Card>
 		</div>
 	)
 }
 
-export default function InfoPanel({fileId}: {fileId: lb.FileId}) {
-	const [file, changeFile] = useFile(fileId)
+export default function InfoPanel() {
+	const ui = useSpaceUIState()
+	const fileId = ui.files.selected
+	if (!fileId.value) {
+		return null
+	}
+	const [file, changeFile] = useFile(fileId.value)
 	if (!file) {
 		return <div class="metadata metadata--loading metadata--loading-file" />
 	}
@@ -89,7 +107,7 @@ export default function InfoPanel({fileId}: {fileId: lb.FileId}) {
 	if (!content) {
 		return <div class="metadata metadata--loading metadata--loading-content" />
 	}
-	if (!file) return <div />
+
 	const lb = useLittlebookAPI()
 	const {projectId} = useParams()
 
@@ -116,41 +134,37 @@ export default function InfoPanel({fileId}: {fileId: lb.FileId}) {
 
 	const [typeDropdownActive, setTypeDropdownActive] = useState(false)
 	return (
-		<div>
-			<div class="field">
-				<label class="label">name</label>
-				<div class="control">
-					<input
-						class="input"
-						type="text"
-						placeholder="Text input"
-						readonly
-						value={file.name}
-					/>
-				</div>
-			</div>
-			<div class="field">
-				<label class="label">id</label>
-				<div class="control">
-					<input
-						class="input"
-						type="text"
-						placeholder="Text input"
-						readonly
-						value={file.id}
-					/>
-				</div>
-			</div>
+		<div class="bg-white rounded-xl mt-4 p-4 grid grid-cols-4 gap-y-2 dark:bg-black dark:text-white">
+			<label class="grid-cols-subgrid col-span-4 grid">
+				<span class="font-bold">name</span>
+				<input
+					class="col-span-3"
+					type="text"
+					placeholder="Text input"
+					readonly
+					value={file.name}
+				/>
+			</label>
+
+			<label class="grid-cols-subgrid col-span-4 grid">
+				<span class="font-bold">id</span>
+				<input
+					class="col-span-3"
+					type="text"
+					placeholder="Text input"
+					readonly
+					value={file.id}
+				/>
+			</label>
 
 			<Dropdown
-				label={lb.contentTypes.getDisplayName(content.contentType)}
+				label={"type"}
 				isActive={typeDropdownActive}
 				setIsActive={setTypeDropdownActive}>
 				{typeRegistry.forFilename(file.name).map(type => {
 					const displayName = lb.contentTypes.getDisplayName(type)
 					return (
-						<button
-							type="button"
+						<Button
 							key={type}
 							onClick={event => {
 								event.preventDefault()
@@ -158,17 +172,21 @@ export default function InfoPanel({fileId}: {fileId: lb.FileId}) {
 								switchContent(type)
 							}}
 							class={clsx(
-								"dropdown-item",
-								type == content.contentType && "is-active",
+								"py-2 px-4 block w-full",
+								type == content.contentType ? "bg-yes-100" : "hover:bg-yes-50",
 							)}>
 							{displayName || type}
-						</button>
+						</Button>
 					)
 				})}
 			</Dropdown>
-			<button type="button" onClick={deleteFile}>
+
+			<Button
+				class="col-start-3 col-span-2 bg-red-500 rounded-lg ring-1 ring-red-600 font-bold text-white"
+				type="button"
+				onClick={deleteFile}>
 				destroy file
-			</button>
+			</Button>
 		</div>
 	)
 }

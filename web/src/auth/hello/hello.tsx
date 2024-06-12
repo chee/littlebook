@@ -3,7 +3,6 @@ import type * as Auth from "@localfirst/auth"
 import type {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
 import {useState} from "preact/hooks"
 import {useLocalState} from "../use-local-state.ts"
-import "./hello.css"
 import {createDefaultTeam} from "../teams/create-team.ts"
 import pairDevice from "../devices/pair-device.ts"
 
@@ -24,11 +23,13 @@ export const Hello = ({complete}: {complete: OnComplete}) => {
 function WhatsYourName({complete}: {complete: (n: string) => void}) {
 	const [name, setName] = useState("")
 	return (
-		<div class="hello whats-your-name container is-mobile">
-			<p class="is-size-1 mb-4">
+		<div
+			class="hello whats-your-name flex self-center bg-white w-full h-svh sm:max-w-md
+		sm:h-auto ring-8 ring-yes-400 p-8 size-48 dark:bg-black dark:text-white">
+			<h1 class="size-48">
 				hey!
-				<span class="is-size-2 ml-2">welcome to littlebook.</span>
-			</p>
+				<span class="size-38">welcome to littlebook.</span>
+			</h1>
 
 			<form onSubmit={() => complete(name)}>
 				<label class="label" for="hello-name">

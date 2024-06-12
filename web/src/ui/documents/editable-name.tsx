@@ -1,67 +1,66 @@
 import {useEffect, useState} from "preact/hooks"
+import {useSpaceUIState} from "../space-ui-state.tsx"
+import {Card} from "../card/card.tsx"
+import Button from "../elements/button.tsx"
 
 interface EditableNameProps<T extends lb.NamedDocument> {
 	id: T["id"]
-	selectedId?: T["id"]
-	editingId?: T["id"]
 	name: string
 	saveName(name: string): void
-	setEditingId(set?: T["id"]): void
+	which: "files" | "projects" // | "folders" | "spaces" | "areas"
 }
+// todo pop up the renaming input in a pretty floating window with a shadow
 export default function EditableName<T extends lb.NamedDocument>({
 	id,
-	selectedId,
-	editingId,
 	name,
 	saveName,
-	setEditingId,
+	which,
 }: EditableNameProps<T>) {
+	const ui = useSpaceUIState()
+	const selectedId = ui[which].selected
+	const editingId = ui[which].renaming
 	// todo pull the ext off from the name
 	const [localName, setLocalName] = useState(name)
 
 	useEffect(() => {
 		setLocalName(name)
-	}, [editingId, name, selectedId])
-	if (selectedId == editingId && editingId == id) {
+	}, [editingId.value, name, selectedId.value])
+
+	if (selectedId.value == editingId.value && editingId.value == id) {
 		return (
-			<form>
-				<div class="field has-addons is-small">
-					<div class="control">
-						<input
-							class="input pb-0 pt-0"
-							value={localName}
-							autofocus
-							ref={input => input?.focus()}
-							onInput={event => {
-								if (!(event.target instanceof HTMLInputElement)) return
-								setLocalName(event.target.value)
-							}}
-						/>
-					</div>
-					<div class="control">
-						<button
-							type="submit"
-							class="button pb-1 pt-0 is-outlined"
-							onClick={event => {
-								event.preventDefault()
-								console.log("saving name")
-								saveName(localName)
-								setEditingId(undefined)
-							}}>
-							ok
-						</button>
-					</div>
-				</div>
+			<form class="absolute z-10 p-1 ml-[-.2em] mt-[-1em] rounded-lg bg-white shadow-lg flex flex-row ring-1 ring-yes-400">
+				<input
+					class="input px-3 dark:bg-black ring-2 ring-yes-400 rounded-l-lg text-lg"
+					value={localName}
+					autofocus
+					ref={input => input?.focus()}
+					onInput={event => {
+						if (!(event.target instanceof HTMLInputElement)) return
+						setLocalName(event.target.value)
+					}}
+				/>
+				<Button
+					type="submit"
+					class="button p-2 ml-0 bg-yes-400 rounded-r-lg ring-2 ring-yes-400"
+					onClick={event => {
+						event.preventDefault()
+						saveName(localName)
+						ui[which].renaming.value = null
+					}}>
+					ok
+				</Button>
 			</form>
 		)
 	}
 
 	return (
 		<button
-			style={{appearance: "none", background: "transparent", padding: 0}}
 			type="button"
+			class="truncate overflow-hidden text-ellipsis max-w-full"
 			onClick={() => {
-				selectedId == id && setEditingId(id)
+				if (selectedId.value == id) {
+					ui[which].renaming.value = id
+				}
 			}}>
 			{name}
 		</button>

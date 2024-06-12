@@ -5,6 +5,7 @@ import wasm from "vite-plugin-wasm"
 import {fileURLToPath} from "node:url"
 // import {analyzer} from "vite-bundle-analyzer"
 import {nodePolyfills} from "vite-plugin-node-polyfills"
+import svgr from "vite-plugin-svgr"
 
 function wordlist(list: string) {
 	return fileURLToPath(
@@ -26,6 +27,16 @@ export default defineConfig({
 	},
 	plugins: [
 		nodePolyfills(),
+		svgr({
+			svgrOptions: {
+				plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
+				svgoConfig: {
+					floatPrecision: 2,
+				},
+			},
+			include: "**/*.svg",
+			exclude: "**/*.svg?u",
+		}),
 		wasm(),
 		preact(),
 		pwa({

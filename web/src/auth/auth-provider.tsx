@@ -11,7 +11,6 @@ import {useLocalState} from "./use-local-state.ts"
 import {assert} from "@localfirst/shared"
 import type {FC} from "preact/compat"
 import {Hello} from "./hello/hello.tsx"
-import "./auth-provider.css"
 import getDocIdFromTeam from "./teams/get-doc-id-from-team.ts"
 import start from "../repo/start-repo.ts"
 
@@ -29,7 +28,6 @@ export const AuthContextProvider: FC = ({children}) => {
 	const [auth, setAuth] = useState<AuthProvider>()
 	const [repo, setRepo] = useState<Repo>()
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: first time only
 	useEffect(() => {
 		if (device) {
 			assert(shareId)
@@ -46,25 +44,18 @@ export const AuthContextProvider: FC = ({children}) => {
 
 	if (!device) {
 		return (
-			<div class="modal is-active is-clipped">
-				<div class="modal-background" />
-				<div class="modal-content">
-					<main class="first-time card">
-						<div class="card-content">
-							<Hello
-								complete={({user, device, team, auth, repo}) => {
-									const shareId = getShareId(team)
-									const spaceId = getDocIdFromTeam(team)
-									localState.updateLocalState({user, device, shareId, spaceId})
-									setTeam(team)
-									setAuth(auth)
-									setRepo(repo)
-								}}
-							/>
-						</div>
-					</main>
-				</div>
-			</div>
+			<main class="first-time card h-full flex bg-center items-center justify-center grow">
+				<Hello
+					complete={({user, device, team, auth, repo}) => {
+						const shareId = getShareId(team)
+						const spaceId = getDocIdFromTeam(team)
+						localState.updateLocalState({user, device, shareId, spaceId})
+						setTeam(team)
+						setAuth(auth)
+						setRepo(repo)
+					}}
+				/>
+			</main>
 		)
 	}
 
