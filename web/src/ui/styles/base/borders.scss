@@ -1,0 +1,44 @@
+@use "../sass" as *;
+@use "sass:map";
+@use "sass:meta";
+
+$default-border-radius: 4px !default;
+$border-radiuses: (
+	"0": 0,
+	"s": 2px,
+	default: 4px,
+	"m": 8px,
+	"l": 14px,
+	"full": 999rem,
+) !default;
+$border-radius-prefix: "radius-" !default;
+@include set-named-root-vars($border-radiuses, $border-radius-prefix);
+@function get-radius($name: "default") {
+	@return get-var($name, $border-radius-prefix);
+}
+@include each-corner(
+	("radius", "border-radius"),
+	self-reference($border-radiuses, $border-radius-prefix)
+);
+
+$default-border-width: 1px !default;
+$named-border-widths: 2 4 8;
+
+$border-widths: (
+	0: 0,
+	default: 1px,
+	2: 2px,
+	4: 4px,
+	8: 8px,
+) !default;
+$border-width-prefix: "border-width-";
+@include set-named-root-vars($border-widths, $border-width-prefix);
+@function get-border-width($name: "default") {
+	@return get-var($name, $border-width-prefix);
+}
+
+// @include each-side(
+// 	(border-width, border-width),
+// 	map.keys($border-widths),
+// 	meta.get-function(get-border-width)
+// );

@@ -1,0 +1,17 @@
+@use "custom-properties" as *;
+
+$corner-shorthands: (
+	"": "",
+	t: "-top-left" "-top-right",
+	b: "-bottom-left" "-bottom-right",
+	l: "-top-left" "-bottom-left",
+	r: "-top-right" "-bottom-right",
+	tr: "-top-right",
+	tl: "-top-left",
+	bl: "-bottom-left",
+	br: "-bottom-right",
+) !default;
+
+@mixin each-corner($prop-shorthands, $map) {
+	@include each-named-var($prop-shorthands, $corner-shorthands, $map);
+}

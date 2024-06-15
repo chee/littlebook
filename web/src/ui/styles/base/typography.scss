@@ -1,0 +1,33 @@
+@use "../sass" as *;
+.bold {
+	font-weight: bolder;
+}
+
+.italic {
+	font-style: italic;
+}
+
+$typo-prefix: "typo-";
+
+@include set-root-vars(
+	(
+		family-sans: "system-ui, -apple-system, sans-serif",
+		family-mono: "Jetbrains Mono, Iosevka Rabbits, Iosevka, monospace",
+		font-size: 16px,
+	),
+	$typo-prefix
+);
+
+:root {
+	font-size: 16px;
+}
+
+:root,
+.has-sans-font {
+	font-family: get-var(typo-family-sans);
+}
+
+code,
+.has-mono-font {
+	font-family: get-var(typo-family-mono);
+}

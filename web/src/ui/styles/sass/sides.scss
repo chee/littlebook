@@ -1,0 +1,14 @@
+@use "custom-properties" as *;
+$side-shorthands: (
+	"": "",
+	t: "-top",
+	b: "-bottom",
+	l: "-left",
+	r: "-right",
+	x: "-inline",
+	y: "-block",
+) !default;
+
+@mixin each-side($prop-shorthands, $map) {
+	@include each-named-var($prop-shorthands, $side-shorthands, $map);
+}

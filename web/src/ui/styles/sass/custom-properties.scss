@@ -1,0 +1,79 @@
+@use "sass:string";
+@use "sass:map";
+@use "sass:list";
+$custom-property-prefix: "littlebook-" !default;
+// todo consider removing the requirement to add the - at the end of the prefix
+// search to see if anything DOESN"T include it, after a few more styles have been written
+
+@function get-var($name, $prefix: "") {
+	@return var(--#{$custom-property-prefix}#{$prefix}#{$name});
+}
+
+@mixin set-var($name, $value, $prefix: "") {
+	--#{$custom-property-prefix}#{$prefix}#{$name}: #{$value};
+}
+
+@mixin set-vars($variables, $prefix: "") {
+	@each $name, $value in $variables {
+		@include set-var($name, $value, $prefix);
+	}
+}
+
+@mixin set-root-var($name, $value, $prefix) {
+	:root {
+		--#{$custom-property-prefix}#{$prefix}#{$name}: #{$value};
+	}
+}
+
+@mixin set-root-vars($variables, $prefix) {
+	:root {
+		@each $name, $value in $variables {
+			@include set-var($name, $value, $prefix);
+		}
+	}
+}
+
+@mixin set-named-root-vars($variables, $prefix) {
+	:root {
+		@each $name, $value in $variables {
+			@if $name == "default" {
+				$p: string.slice($prefix, 1, -2);
+				@include set-var($name, $value, $p);
+			} @else {
+				@include set-var($name, $value, $prefix);
+			}
+		}
+	}
+}
+
+@function self-reference($map, $prefix) {
+	@each $key, $_value in $map {
+		$map: map.set($map, $key, get-var($key, $prefix));
+	}
+	@return $map;
+}
+
+@mixin each-named-var(
+	$base-property-shorthands,
+	$property-suffix-shorthands,
+	$map
+) {
+	@each $short-property, $property in $base-property-shorthands {
+		@each $short-suffix, $suffixes in $property-suffix-shorthands {
+			@each $var-name, $value in $map {
+				@for $s from 1 through length($suffixes) {
+					$suffix: list.nth($suffixes, $s);
+					@if $var-name == "default" {
+						.#{$short-property}#{$short-suffix} {
+							#{$property}#{$suffix}: $value;
+						}
+					} @else {
+						.#{$short-property}#{$short-suffix}-#{$var-name} {
+							#{$property}#{$suffix}: $value;
+						}
+					}
+				}
+			}
+		}
+	}
+}

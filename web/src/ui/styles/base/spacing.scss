@@ -1,0 +1,93 @@
+@use "../sass" as *;
+@use "breakpoints" as *;
+
+@use "sass:list";
+@use "sass:map";
+@use "sass:meta";
+
+$space-prefix: "space-" !default;
+
+$named-spaces: (
+	0: 0,
+	1: 4px,
+	2: 8px,
+	3: 12px,
+	4: 16px,
+	5: 24px,
+	6: 32px,
+	7: 48px,
+	px: 1px,
+	2px: 2px,
+) !default;
+
+@include set-root-vars($named-spaces, $space-prefix);
+
+$breakpoint-spaces: (
+	xs: (
+		xs: 1,
+		s: 1,
+		m: 1,
+		l: 1,
+		xl: 1,
+	),
+	s: (
+		xs: 1,
+		s: 2,
+		m: 2,
+		l: 3,
+		xl: 3,
+	),
+	m: (
+		xs: 2,
+		s: 3,
+		m: 3,
+		l: 4,
+		xl: 5,
+	),
+	l: (
+		xs: 3,
+		s: 4,
+		m: 4,
+		l: 5,
+		xl: 6,
+	),
+	xl: (
+		xs: 4,
+		s: 5,
+		m: 5,
+		l: 6,
+		xl: 7,
+	),
+);
+
+@function get-space($name) {
+	@return get-var($name, $space-prefix);
+}
+
+$spacing-shorthands: (
+	m: margin,
+	p: padding,
+) !default;
+
+@each $name, $map in $breakpoint-spaces {
+	@include set-root-var($name, get-space(map.get($map, xs)), $space-prefix);
+	@each $bp in map.keys($breakpoints) {
+		@include mq($from: $bp) {
+			@include set-root-var(
+				$name,
+				get-space(map.get($map, $bp)),
+				$space-prefix
+			);
+		}
+	}
+}
+
+@include each-side(
+	$spacing-shorthands,
+	map.merge(
+		self-reference($named-spaces, $space-prefix),
+		self-reference($breakpoint-spaces, $space-prefix)
+	)
+);
+
+@include set-root-vars($named-spaces, $space-prefix);

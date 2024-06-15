@@ -1,7 +1,53 @@
+@use "../sass" as *;
+
+$breakpoint-prefix: "breakpoint-";
+
 $breakpoints: (
-	"small": 640px,
-	"medium": 768px,
-	"large": 1024px,
-	"huge": 1280px,
-	"massive": 1536px,
+	"s": 490px,
+	"m": 740px,
+	"l": 980px,
+	"xl": 1220px,
+	"2xl": 1536px,
 );
+
+@use "sass-mq/mq" as mq with (
+	$breakpoints: $breakpoints
+);
+
+@forward "sass-mq/mq";
+
+@include set-root-vars($breakpoints, $breakpoint-prefix);
+
+@function get-breakpoint($name) {
+	@return get-var($name, $breakpoint-prefix);
+}
+
+@mixin respond-to-s() {
+	@include mq.mq($from: s) {
+		@content;
+	}
+}
+
+@mixin respond-to-m() {
+	@include mq.mq($from: m) {
+		@content;
+	}
+}
+
+@mixin respond-to-l() {
+	@include mq.mq($from: l) {
+		@content;
+	}
+}
+
+@mixin respond-to-xl() {
+	@include mq.mq($from: xl) {
+		@content;
+	}
+}
+
+@mixin respond-to-2xl() {
+	@include mq.mq($from: 2xl) {
+		@content;
+	}
+}
