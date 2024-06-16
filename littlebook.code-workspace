@@ -11,9 +11,11 @@
 		}
 	],
 	"settings": {
-		"prettier.enable": false,
-		"files.associations": {
-			"*.css": "tailwindcss"
+		"prettier.enable": true,
+		"todo-tree.tree.scanMode": "workspace",
+		"editor.defaultFormatter": "biomejs.biome",
+		"[scss]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
 		}
 	}
 }
