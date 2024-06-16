@@ -1,5 +1,0 @@
-export * as text from "../types/text/text.tsx"
-export * as img from "../types/image/image.tsx"
-export * as excalidrawElements from "../types/excalidraw/exalidraw-elements.tsx"
-export * as excalidraw from "../types/excalidraw/excalidraw.tsx"
-export * as unknown from "../types/unknown/unknown.ts"

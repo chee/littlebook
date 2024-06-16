@@ -5,10 +5,15 @@ export const unknown = "public.data" as lb.UniformTypeIdentifier
 
 export function register(type: lb.UniformType) {
 	UTI.register([type])
+	if (type.displayName) {
+		setDisplayName(type.name, type.displayName)
+	}
 }
 
 export function registerAll(types: lb.UniformType[]) {
-	UTI.register(types)
+	for (const type of types) {
+		register(type)
+	}
 }
 
 export function conformsTo(

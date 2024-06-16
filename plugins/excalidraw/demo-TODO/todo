@@ -1,0 +1,3 @@
+i should provide a thing for this! if you `pnpm add @littlebook/plugin` you can
+do `pnpx lb demo .` to see your thing live or something with a dummy view of
+littlebook

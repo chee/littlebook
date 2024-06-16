@@ -8,7 +8,7 @@ import type {
 	AuthProvider,
 	ShareId,
 } from "@localfirst/auth-provider-automerge-repo"
-import type createLittlebookAPI from "./api/create-littlebook-api.ts"
+import type createLittlebookAPI from "./api/api.ts"
 
 /** Inside an Automerge change function, any arrays found on the document have these utility functions */
 export declare interface AutomergeList<T> extends Array<T> {
@@ -37,10 +37,36 @@ export declare namespace lb {
 	>
 	interface UniformType {
 		name: UniformTypeIdentifier
-		prettyName?: string
+		displayName?: string
 		conformsTo?: UniformTypeIdentifier[]
 		mimeType?: string
 		fileNameExtension?: string
+	}
+	type ContentCoder<Model extends AnyContent> =
+		import("./contents/types/coders.ts").ContentCoder<Model>
+	type ContentView<Model extends AnyContent> =
+		import("./contents/views/content-view.ts").ContentView<Model>
+	type ContentMetadataView<Model extends AnyContent> =
+		import("./contents/views/content-view.ts").ContentMetadataView<Model>
+	type ContentPreview<Model extends AnyContent> =
+		import("./contents/views/content-view.ts").ContentPreview<Model>
+
+	type ContentViewProps<Model extends AnyContent> =
+		import("./contents/views/content-view.ts").ContentViewProps<Model>
+
+	namespace plugins {
+		type API = typeof import("./plugins/plugin-api.ts")
+
+		interface ContentType<T extends lb.AnyContent> {
+			type: lb.UniformType | lb.UniformTypeIdentifier
+			coder: lb.ContentCoder<T>
+			views: {
+				// todo this should be a ContentViewElement
+				content?: ContentView<T>
+				metadata?: ContentMetadataView<T>
+				preview?: ContentPreview<T>
+			}
+		}
 	}
 
 	type API = ReturnType<typeof createLittlebookAPI>

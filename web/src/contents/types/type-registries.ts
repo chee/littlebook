@@ -1,17 +1,5 @@
-import type {FunctionalComponent} from "preact"
 import typeRegistry from "./uniform-type-identifiers.ts"
 import type {ContentCoder} from "./coders.ts"
-import type {ChangeFn} from "@automerge/automerge-repo"
-
-export interface ContentViewProps<ContentType extends lb.AnyContent> {
-	file: lb.File
-	changeFile(fn: ChangeFn<lb.File>): void
-	content: lb.Content<ContentType>
-	changeContent(fn: ChangeFn<lb.Content<ContentType>>): void
-}
-
-export type ContentView<ContentType extends lb.AnyContent> =
-	FunctionalComponent<ContentViewProps<ContentType>>
 
 export class ContentCoderRegistry {
 	private registry = new Map<lb.UniformTypeIdentifier, ContentCoder<any>>()
@@ -42,23 +30,23 @@ export class ContentCoderRegistry {
 }
 
 export class ContentViewRegistry {
-	private registry = new Map<ContentView<any>, lb.UniformTypeIdentifier[]>()
-	register<Type extends lb.AnyContent>(
+	private registry = new Map<lb.ContentView<any>, lb.UniformTypeIdentifier[]>()
+	register(
 		identifiers: lb.UniformTypeIdentifier[],
-		view: ContentView<Type>,
+		element: lb.ContentView<any>,
 	) {
-		this.registry.set(view, identifiers)
+		this.registry.set(element, identifiers)
 	}
 
 	registerAll(
-		items: {view: ContentView<any>; types: lb.UniformTypeIdentifier[]}[],
+		items: {view: lb.ContentView<any>; types: lb.UniformTypeIdentifier[]}[],
 	) {
 		for (const {view, types} of items) {
 			this.register(types, view)
 		}
 	}
 
-	remove(view: ContentView<any>) {
+	remove(view: lb.ContentView<any>) {
 		this.registry.delete(view)
 	}
 
@@ -86,6 +74,17 @@ export class ContentViewRegistry {
 export const coderRegistry = new ContentCoderRegistry()
 export const contentViewRegistry = new ContentViewRegistry()
 export const metadataViewRegistry = new ContentViewRegistry()
-// todo or displayView or outputView or liveView
 export const previewRegistry = new ContentViewRegistry()
 export {typeRegistry}
+
+const registries = {
+	coders: coderRegistry,
+	contentTypes: typeRegistry,
+	views: {
+		content: contentViewRegistry,
+		metadata: metadataViewRegistry,
+		preview: previewRegistry,
+	},
+}
+
+export default registries

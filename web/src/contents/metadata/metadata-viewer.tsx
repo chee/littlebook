@@ -1,4 +1,4 @@
-import useFile from "../../files/use-file.ts"
+import useFile from "../../ui/automerge/use-file.ts"
 import {metadataViewRegistry} from "../types/type-registries.ts"
 import useContent from "../use-content.ts"
 
