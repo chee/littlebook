@@ -25,7 +25,7 @@ export default function ProjectPage() {
 					<Panel defaultSize={38} minSize={5}>
 						<ProjectFileBrowser />
 					</Panel>
-					<PanelResizeHandle class="bg-paper-100 h-2" />
+					<PanelResizeHandle class="has-paper-100-background pb-1" />
 					<Panel defaultSize={62} minSize={5}>
 						<ContentViewer />
 					</Panel>

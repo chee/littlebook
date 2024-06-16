@@ -4,6 +4,7 @@ import SpacePage from "./ui/space/space-page.tsx"
 import {removeDirectory} from "./ui/opfs.ts"
 import {LittlebookAPIProvider} from "./api/littlebook-api-provider.tsx"
 import {SpaceStateProvider} from "./ui/space/space-state.tsx"
+import "styles/_index.scss"
 
 render(
 	<AuthContextProvider>

@@ -1,6 +1,6 @@
 import {signal} from "@preact/signals"
 import {createContext, type FunctionalComponent, createRef} from "preact"
-import {useContext} from "preact/hooks"
+import {useContext, useMemo} from "preact/hooks"
 import type {ImperativePanelHandle} from "react-resizable-panels"
 import {useAuth} from "../auth/use-auth.ts"
 import {
@@ -8,7 +8,6 @@ import {
 	type AuthProvider,
 } from "@localfirst/auth-provider-automerge-repo"
 import type {DeviceWithSecrets, Team, UserWithSecrets} from "@localfirst/auth"
-import type {useRouting} from "../routing.ts"
 
 interface SpaceStateOptions {
 	auth: AuthProvider
@@ -19,7 +18,6 @@ interface SpaceStateOptions {
 
 export function createSpaceState({user, device, team}: SpaceStateOptions) {
 	return {
-		route: signal<ReturnType<typeof useRouting> | null>(null),
 		layout: {
 			sidebars: {
 				primary: {
@@ -67,15 +65,19 @@ export const SpaceStateProvider: FunctionalComponent<
 	Partial<SpaceStateOptions>
 > = ({children, ...options}) => {
 	const {auth, device, user, team} = useAuth()
-	return (
-		<SpaceStateContext.Provider
-			value={createSpaceState({
+	const space = useMemo(
+		() =>
+			createSpaceState({
 				...options,
 				auth,
 				device,
 				user,
 				team,
-			})}>
+			}),
+		[],
+	)
+	return (
+		<SpaceStateContext.Provider value={space}>
 			{children}
 		</SpaceStateContext.Provider>
 	)

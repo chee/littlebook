@@ -1,11 +1,12 @@
 import type {FunctionalComponent} from "preact"
 import type {SpaceState} from "../../space/space-state.tsx"
-import "./sidebar.scss"
+import cl from "../../cl.ts"
 
 const Sidebar: FunctionalComponent<{
 	state: SpaceState["layout"]["sidebars"]["primary" | "secondary"]
-}> = ({state, children}) => (
-	<aside aria-expanded={state.open} class="sidebar">
+	class?: string
+}> = ({state, children, ...props}) => (
+	<aside aria-expanded={state.open} class={cl("sidebar", props.class)}>
 		{children}
 	</aside>
 )

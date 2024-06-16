@@ -53,11 +53,7 @@ $custom-property-prefix: "littlebook-" !default;
 	@return $map;
 }
 
-@mixin each-named-var(
-	$base-property-shorthands,
-	$property-suffix-shorthands,
-	$map
-) {
+@mixin each-named-var($base-property-shorthands, $property-suffix-shorthands, $map) {
 	@each $short-property, $property in $base-property-shorthands {
 		@each $short-suffix, $suffixes in $property-suffix-shorthands {
 			@each $var-name, $value in $map {

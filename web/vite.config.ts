@@ -3,7 +3,6 @@ import preact from "@preact/preset-vite"
 import {VitePWA as pwa} from "vite-plugin-pwa"
 import wasm from "vite-plugin-wasm"
 import {fileURLToPath} from "node:url"
-// import {analyzer} from "vite-bundle-analyzer"
 import {nodePolyfills} from "vite-plugin-node-polyfills"
 import svgr from "vite-plugin-svgr"
 
@@ -14,6 +13,11 @@ function wordlist(list: string) {
 }
 
 export default defineConfig({
+ 	resolve: {
+		alias: {
+			styles: fileURLToPath(new URL("./src/ui/styles", import.meta.url)),
+		},
+	},
 	define: {
 		// for excalidraw who likes this
 		"process.env.IS_PREACT": JSON.stringify("true"),
@@ -99,6 +103,13 @@ export default defineConfig({
 					"spanish",
 				].map(wordlist),
 			],
+		},
+	},
+	css: {
+		preprocessorOptions: {
+			scss: {
+				includePaths: ["./src/ui/styles/", "node_modules"],
+			},
 		},
 	},
 	server: {

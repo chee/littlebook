@@ -1,8 +1,7 @@
 import {Link, useRoute} from "wouter-preact"
-import type {FunctionComponent, RenderableProps} from "preact"
+import type {FunctionComponent} from "preact"
 import cl from "../../cl.ts"
-import type {DetailedHTMLProps, HTMLProps} from "preact/compat"
-import "./card.scss"
+import type {HTMLProps} from "preact/compat"
 
 export interface CardAction {
 	icon: string

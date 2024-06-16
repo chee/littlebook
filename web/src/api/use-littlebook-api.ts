@@ -1,4 +1,4 @@
-import {useContext} from "preact/hooks"
+import {useContext, useMemo} from "preact/hooks"
 import {LittlebookAPIContext} from "./littlebook-api-provider.tsx"
 
 export function useLittlebookAPI() {

@@ -1,17 +1,31 @@
 <!doctype html>
-<html lang="en-ca" class="h-full">
+<html lang="en-ca" style="height: 100%">
 <meta charset="UTF-8">
 <title>littlebook</title>
 <style>
 	html {
 		background: #ffe9ed;
+		background: var(--lb-color-paper);
+	}
+
+	body {
+		display: flex;
+		min-height: 100%;
+		flex-direction: column;
+		flex-grow: 1;
+	}
+
+	#littlebook {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
 	}
 </style>
 <link rel="icon" type="image/svg+xml" href="/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<body class="flex min-h-full flex-col bg-cover-100 dark:bg-black">
-	<article id="littlebook" class="flex flex-col grow"></article>
+<body>
+	<article id="littlebook"></article>
 	<script>
 		window.EXCALIDRAW_ASSET_PATH="/"
 	</script>

@@ -34,6 +34,7 @@ export const AuthContextProvider: FC = ({children}) => {
 	const [auth, setAuth] = useState<AuthProvider>()
 	const [repo, setRepo] = useState<Repo>()
 
+	// todo move this stuff out of react
 	useEffect(() => {
 		if (device) {
 			assert(shareId)
@@ -46,6 +47,8 @@ export const AuthContextProvider: FC = ({children}) => {
 					navigate("/")
 				}
 				const team = auth.getTeam(shareId)
+				// hack that seems to work when the server freaks out
+				auth.createTeam(team.teamName)
 				// todo find out what happens if we aren't in this team
 				setTeam(team)
 				setAuth(auth)

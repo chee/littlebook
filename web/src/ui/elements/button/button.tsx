@@ -1,7 +1,6 @@
 import type {FunctionalComponent} from "preact"
 import cl from "../../cl.ts"
 import type {HTMLAttributes} from "preact/compat"
-import "./button.scss"
 
 // todo
 interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement>, "size"> {

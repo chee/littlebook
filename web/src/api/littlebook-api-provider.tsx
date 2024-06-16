@@ -2,6 +2,7 @@ import {useRepo} from "@automerge/automerge-repo-react-hooks"
 import {createContext, type FunctionalComponent} from "preact"
 import createLittlebookAPI from "./create-littlebook-api.ts"
 import {useAuth} from "../ui/auth/use-auth.ts"
+import {useMemo} from "preact/hooks"
 
 export const LittlebookAPIContext = createContext<
 	ReturnType<typeof createLittlebookAPI> | undefined
@@ -13,10 +14,7 @@ export const LittlebookAPIContext = createContext<
  */
 export const LittlebookAPIProvider: FunctionalComponent = ({children}) => {
 	const repo = useRepo()
-	const api = createLittlebookAPI(repo)
-	const {auth, team} = useAuth()
-	// hack that seems to work when the server freaks out
-	auth.createTeam(team.teamName)
+	const api = useMemo(() => createLittlebookAPI(repo), [])
 
 	return (
 		<LittlebookAPIContext.Provider value={api}>

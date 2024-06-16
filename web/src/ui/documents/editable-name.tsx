@@ -1,7 +1,6 @@
 import {useEffect, useState} from "preact/hooks"
 import {useSpaceState} from "../space/space-state.tsx"
 import Button from "../elements/button/button.tsx"
-import "./editable-name.scss"
 
 interface EditableNameProps<T extends lb.NamedDocument> {
 	id: T["id"]

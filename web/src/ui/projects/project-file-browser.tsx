@@ -11,6 +11,8 @@ import Button from "../elements/button/button.tsx"
 
 export default function ProjectFileBrowser() {
 	const ui = useSpaceState()
+	console.log(ui)
+	console.log(ui.projects.selected.value)
 	if (!ui.projects.selected.value) {
 		return <Card class="h-full" />
 	}

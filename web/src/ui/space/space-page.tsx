@@ -6,32 +6,40 @@ import {useLittlebookAPI} from "../../api/use-littlebook-api.ts"
 import * as defaultPlugins from "../../contents/plugins/default.ts"
 import type {FunctionalComponent} from "preact"
 import SidebarToggle from "../sidebar/sidebar-toggle.tsx"
-import {Switch, Route, useSearch} from "wouter-preact"
+import {Switch, Route, useSearch, useRoute} from "wouter-preact"
 import ProjectPage from "../projects/project-page.tsx"
 import cl from "../cl.ts"
-import useViewportAtLeast from "../styles/use-breakpoints.ts"
+import useMinWidth from "../styles/use-breakpoints.ts"
 import {useSpaceState} from "./space-state.tsx"
 import {useHotkeys} from "react-hotkeys-hook"
-import {route, useRouting} from "../routing.ts"
-import "../elements/topnav/topnav.scss"
+
+import "styles/elements/topnav.scss"
+import {useSignalEffect} from "@preact/signals"
 
 const Littlebook: FunctionalComponent = ({children}) => {
 	const lb = useLittlebookAPI()
 	const ui = useSpaceState()
-	ui.route.value = useRouting()
-	if (ui.route.value.space == false && ui.space.shareId.value) {
-		route({
-			shareId: ui.space.shareId.value,
-		})
-	}
 
-	useEffect(() => {
-		ui.projects.selected.value = ui.route.value?.projectId || null
-	}, [ui.route.value?.page, ui.route.value?.projectId])
+	// const routing = useRouting()
+	// const [is, params] = useRoute<{
+	// 	projectId: lb.ProjectId
+	// 	spaceId: lb.SpaceId
+	// 	fileId: lb.FileId
+	// }>("/space/:spaceId/project?/:slug?/:projectId?/file?/:fileId?")
 
-	useEffect(() => {
-		ui.files.selected.value = ui.route.value?.fileId || null
-	}, [ui.route.value?.page, ui.route.value?.fileId])
+	// if (is == false) {
+	// route({
+	// 	shareId: ui.space.shareId.value,
+	// })
+	// }
+
+	// useEffect(() => {
+	// 	ui.projects.selected.value = ui.routing.projectId || null
+	// }, [ui.routing.projectId])
+
+	// useEffect(() => {
+	// 	ui.files.selected.value = ui.routing.fileId || null
+	// }, [ui.routing.fileId])
 
 	// todo usePlugins
 	useEffect(() => {
@@ -51,20 +59,21 @@ const Littlebook: FunctionalComponent = ({children}) => {
 
 	const {sidebars} = ui.layout
 	const {primary, secondary} = sidebars
+
 	useEffect(() => {
 		const sidebar = primary
 		sidebar.open.value = sidebar.ref.current
-			? sidebar.ref.current.isCollapsed()
+			? sidebar.ref.current.isExpanded()
 			: false
 	}, [primary.ref.current])
 
 	useEffect(() => {
 		const sidebar = secondary
 		sidebar.open.value = sidebar.ref.current
-			? sidebar.ref.current.isCollapsed()
+			? sidebar.ref.current.isExpanded()
 			: false
 	}, [secondary.ref.current])
-	const skinny = useViewportAtLeast("small")
+	const skinny = !useMinWidth("m")
 
 	useHotkeys(
 		"escape",
@@ -85,7 +94,7 @@ const Littlebook: FunctionalComponent = ({children}) => {
 				</section>
 				<section class="left-section topnav-middle" />
 				<section class="right-section pl-r topnav-right">
-					<SidebarToggle which="secondary" />
+					{ui.projects.selected.value && <SidebarToggle which="secondary" />}
 				</section>
 			</header>
 			<PanelGroup
@@ -116,7 +125,7 @@ const Littlebook: FunctionalComponent = ({children}) => {
 				<Panel defaultSize={80.9}>
 					<main id="main" class="h-full">
 						<Switch>
-							<Route path="/projects/:slug/:projectId">
+							<Route path="/space/:space-id/projects/:slug/:projectId">
 								<ProjectPage />
 							</Route>
 						</Switch>
