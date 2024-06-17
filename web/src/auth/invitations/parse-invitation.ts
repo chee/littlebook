@@ -1,8 +1,8 @@
 import type * as Auth from "@localfirst/auth"
 import type {ShareId} from "@localfirst/auth-provider-automerge-repo"
 
-import * as bip39 from "bip39"
-import bs58 from "bs58"
+// import * as bip39 from "bip39"
+// import bs58 from "bs58"
 import type {BasicInvitation, FriendlyInvitation} from "./invitation-types.ts"
 
 function* chunks<T extends Array<any>>(arr: T, n: number) {

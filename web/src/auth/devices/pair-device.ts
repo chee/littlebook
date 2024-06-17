@@ -1,10 +1,15 @@
 import type {DeviceWithSecrets, Team, User} from "@localfirst/auth"
 import createDevice from "./create-device.ts"
 import start from "../../repo/start-repo.ts"
-import parseFriendlyInvitation from "../invitations/parse-invitation.ts"
+import parseFriendlyInvitation, {
+	parseBasicInvitation,
+} from "../invitations/parse-invitation.ts"
 import type {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
 import type {Repo} from "@automerge/automerge-repo"
-import type {FriendlyInvitation} from "../invitations/invitation-types.ts"
+import type {
+	BasicInvitation,
+	FriendlyInvitation,
+} from "../invitations/invitation-types.ts"
 
 export default async function pairDevice({
 	userName,
@@ -21,8 +26,8 @@ export default async function pairDevice({
 }> {
 	const device = createDevice(userName)
 	const {auth, repo} = await start({device})
-	const {shareId, invitationSeed} = parseFriendlyInvitation(
-		invitationCode as FriendlyInvitation,
+	const {shareId, invitationSeed} = parseBasicInvitation(
+		invitationCode as BasicInvitation,
 	)
 	auth.addInvitation({shareId, invitationSeed, userName})
 

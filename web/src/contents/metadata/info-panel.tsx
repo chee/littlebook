@@ -1,26 +1,26 @@
-import {useParams} from "wouter-preact"
+// import {useParams} from "wouter-preact"
 import {useLittlebookAPI} from "../../ui/api/use-api.ts"
 import {typeRegistry} from "../types/type-registries.ts"
-import {
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-	type StateUpdater,
-} from "preact/hooks"
+// import {
+// 	useCallback,
+// 	useEffect,
+// 	useMemo,
+// 	useRef,
+// 	useState,
+// 	type StateUpdater,
+// } from "preact/hooks"
 
 import useFile from "../../ui/automerge/use-file.ts"
 import useContent from "../use-content.ts"
-import type {FunctionalComponent} from "preact"
+// import type {FunctionalComponent} from "preact"
 import clsx from "clsx"
 import Button from "../../ui/elements/button/button.tsx"
 import {Card} from "../../ui/elements/card/card.tsx"
-import cl from "../../ui/cl.ts"
-import {
-	SpaceStateProvider,
-	useSpaceState,
-} from "../../ui/littlebook/space/space-state.tsx"
+// import cl from "../../ui/lib/cl.ts"
+// import {
+// 	SpaceStateProvider,
+// 	useSpaceState,
+// } from "../../ui/littlebook/spaces/space-state.tsx"
 
 const Dropdown: FunctionalComponent<{
 	label: string

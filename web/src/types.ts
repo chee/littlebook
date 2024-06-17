@@ -1,7 +1,7 @@
 declare const __brand: unique symbol
 type Brand<B> = {[__brand]: B}
 type Branded<T, B> = T & Brand<B>
-import type {DocumentId} from "@automerge/automerge-repo"
+import type {DocumentId, Repo} from "@automerge/automerge-repo"
 import type {AutomergeValue} from "@automerge/automerge/next"
 import type * as Auth from "@localfirst/auth"
 import type {
@@ -151,11 +151,13 @@ export declare namespace lb {
 		metadata?: AutomergeValue
 	}
 
-	type UserInfo = {
+	type AutomergeAuthState = {
 		device: Auth.DeviceWithSecrets
 		user: Auth.UserWithSecrets
 		team: Auth.Team
-		auth: AuthProvider
+		provider: AuthProvider
+		repo: Repo
+		shareId: ShareId
 	}
 
 	type LocalState = {

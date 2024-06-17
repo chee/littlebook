@@ -1,6 +1,6 @@
-import type {FunctionalComponent} from "preact"
-import cl from "../../cl.ts"
-import type {HTMLAttributes} from "preact/compat"
+// import type {FunctionalComponent} from "preact"
+import cl from "../../lib/cl.ts"
+// import type {HTMLAttributes} from "preact/compat"
 
 // todo
 interface ButtonProps extends Omit<HTMLAttributes<HTMLButtonElement>, "size"> {

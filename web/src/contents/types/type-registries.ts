@@ -29,24 +29,28 @@ export class ContentCoderRegistry {
 	}
 }
 
+export type ContentViewName<T extends lb.ContentView<any>> = string & {
+	"__content-view": T
+}
+
 export class ContentViewRegistry {
-	private registry = new Map<lb.ContentView<any>, lb.UniformTypeIdentifier[]>()
+	private registry = new Map<ContentViewName<any>, lb.UniformTypeIdentifier[]>()
 	register(
 		identifiers: lb.UniformTypeIdentifier[],
-		element: lb.ContentView<any>,
+		element: ContentViewName<any>,
 	) {
 		this.registry.set(element, identifiers)
 	}
 
 	registerAll(
-		items: {view: lb.ContentView<any>; types: lb.UniformTypeIdentifier[]}[],
+		items: {view: ContentViewName<any>; types: lb.UniformTypeIdentifier[]}[],
 	) {
 		for (const {view, types} of items) {
 			this.register(types, view)
 		}
 	}
 
-	remove(view: lb.ContentView<any>) {
+	remove(view: ContentViewName<any>) {
 		this.registry.delete(view)
 	}
 

@@ -1,6 +1,6 @@
-import type {FunctionalComponent} from "preact"
-import type {SpaceState} from "../../space/space-state.tsx"
-import cl from "../../cl.ts"
+// import type {FunctionalComponent} from "preact
+// import type {SpaceState} from "../../littlebook/spaces/space-state.tsx"
+import cl from "../../lib/cl.ts"
 
 const Sidebar: FunctionalComponent<{
 	state: SpaceState["layout"]["sidebars"]["primary" | "secondary"]

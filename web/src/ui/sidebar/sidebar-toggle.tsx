@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import Button from "../elements/button/button.tsx"
-import {useSpaceState} from "../space/space-state.tsx"
-import { useCallback } from "preact/hooks";
+// import {useSpaceState} from "../littlebook/spaces/space-state.tsx"
+// import {useCallback} from "preact/hooks"
 
 function CuteSidebarIcon({open, flipped}: {open: boolean; flipped: boolean}) {
 	return (
@@ -51,18 +51,18 @@ export default function SidebarToggle({
 }: {
 	which: "primary" | "secondary"
 }) {
-	const ui = useSpaceState()
-	const sidebar = ui.layout.sidebars[which]
-	const onclick = useCallback(() => {
-		const element = sidebar.ref.current
-		if (element) {
-			if (element.isExpanded()) {
-				element.collapse()
-			} else {
-				element.expand()
-			}
-		}
-	}, [])
+	// const ui = useSpaceState()
+	// const sidebar = ui.layout.sidebars[which]
+	// const onclick = useCallback(() => {
+	// 	const element = sidebar.ref.current
+	// 	if (element) {
+	// 		if (element.isExpanded()) {
+	// 			element.collapse()
+	// 		} else {
+	// 			element.expand()
+	// 		}
+	// 	}
+	// }, [])
 
 	return (
 		<Button
@@ -70,14 +70,14 @@ export default function SidebarToggle({
 			size="small"
 			color="paper"
 			kind="ghost"
-			pressed={sidebar.open.value}
+			// label={
+			// sidebar.open.value ? "hide projects sidebar" : "show projects sidebar"
+			// }
+			// pressed={sidebar.open.value}
 			class="p-0 my-05"
-			onClick={onclick}
-			label={
-				sidebar.open.value ? "hide projects sidebar" : "show projects sidebar"
-			}>
+			onClick={onclick}>
 			<CuteSidebarIcon
-				open={sidebar.open.value}
+				// open={sidebar.open.value}
 				flipped={which == "secondary"}
 			/>
 		</Button>

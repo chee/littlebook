@@ -1,10 +1,10 @@
-import {defineConfig} from "vite"
-import preact from "@preact/preset-vite"
+import {defineConfig, type UserConfig} from "vite"
 import {VitePWA as pwa} from "vite-plugin-pwa"
 import wasm from "vite-plugin-wasm"
 import {fileURLToPath} from "node:url"
 import {nodePolyfills} from "vite-plugin-node-polyfills"
-import svgr from "vite-plugin-svgr"
+import solidPlugin from "vite-plugin-solid"
+import devtools from "solid-devtools/vite"
 
 function wordlist(list: string) {
 	return fileURLToPath(
@@ -12,37 +12,18 @@ function wordlist(list: string) {
 	)
 }
 
-export default defineConfig({
- 	resolve: {
-		alias: {
-			styles: fileURLToPath(new URL("./src/ui/styles", import.meta.url)),
-		},
-	},
-	define: {
-		// for excalidraw who likes this
-		"process.env.IS_PREACT": JSON.stringify("true"),
-	},
-	optimizeDeps: {
-		exclude: ["@evolu/common-web", "@sqlite.org/sqlite-wasm"],
-	},
+export const config: UserConfig = {
 	worker: {
 		format: "es",
 		plugins: () => [wasm()],
 	},
 	plugins: [
 		nodePolyfills(),
-		svgr({
-			svgrOptions: {
-				plugins: ["@svgr/plugin-svgo", "@svgr/plugin-jsx"],
-				svgoConfig: {
-					floatPrecision: 2,
-				},
-			},
-			include: "**/*.svg",
-			exclude: "**/*.svg?u",
-		}),
 		wasm(),
-		preact(),
+		devtools({
+			autoname: true,
+		}),
+		solidPlugin(),
 		pwa({
 			registerType: "autoUpdate",
 			injectRegister: false,
@@ -81,7 +62,7 @@ export default defineConfig({
 		emptyOutDir: true,
 		sourcemap: "hidden",
 		minify: false,
-		target: "esnext",
+		target: ["firefox127", "safari14"],
 		rollupOptions: {
 			input: {
 				index: fileURLToPath(new URL("./index.html", import.meta.url)),
@@ -118,4 +99,6 @@ export default defineConfig({
 			"Cross-Origin-Embedder-Policy": "require-corp",
 		},
 	},
-})
+}
+
+export default defineConfig(config)

@@ -1,11 +1,10 @@
-import type {ContentView} from "../type-registries.ts"
 import type {ExcalidrawImperativeAPI} from "@excalidraw/excalidraw/types/types.d.ts"
 import type {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types.d.ts"
-import {useCallback, useEffect, useMemo, useState} from "preact/hooks"
+// import {useCallback, useEffect, useMemo, useState} from "preact/hooks"
 import {Counter} from "@automerge/automerge"
 import * as coders from "../coders.ts"
 import type {AutomergeList} from "../../../types.ts"
-import {Suspense, lazy} from "preact/compat"
+// import {Suspense, lazy} from "preact/compat"
 type DeepWriteable<T> = {-readonly [P in keyof T]: DeepWriteable<T[P]>}
 type WriteableExcalidrawElement = DeepWriteable<ExcalidrawElement>
 type MergeableExcalidrawElement = WriteableExcalidrawElement

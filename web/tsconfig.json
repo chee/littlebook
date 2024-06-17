@@ -1,37 +1,29 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"lib": [
-			"ESNext",
-			"ESNext.Array",
-			"ESNext.AsyncIterable",
-			"DOM",
-			"DOM.Iterable"
-		],
-		"noEmit": true,
+		"allowImportingTsExtensions": true,
 		"allowJs": true,
 		"checkJs": true,
-		"useDefineForClassFields": true,
-		"jsx": "react-jsx",
-		"jsxImportSource": "preact",
+		"isolatedModules": true,
+		"jsx": "preserve",
+		"jsxImportSource": "solid-js",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"noEmit": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"strict": true,
-		"noFallthroughCasesInSwitch": true,
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"allowImportingTsExtensions": true,
-		"paths": {
-			"react": ["./node_modules/preact/compat/"],
-			"react-dom": ["./node_modules/preact/compat/"]
-		}
+		"target": "ESNext",
+		"types": ["vinxi/types/client"]
 	},
 	"include": [
-		"node_modules/vite/client.d.ts",
 		"src",
+		"node_modules/vite/client.d.ts",
 		"./index.d.ts",
 		"node_modules/@excalidraw/excalidraw/types/types.d.ts"
-	],
+, "src/ui/zzz/entry.tsx"	],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }

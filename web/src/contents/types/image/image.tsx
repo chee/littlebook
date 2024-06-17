@@ -1,5 +1,5 @@
 import type {ContentView} from "../type-registries.ts"
-import {useMemo} from "preact/hooks"
+// import {useMemo} from "preact/hooks"
 import * as coders from "../coders.ts"
 
 const type = "public.image" as lb.UniformTypeIdentifier
