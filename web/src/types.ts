@@ -93,6 +93,11 @@ export declare namespace lb {
 		areas: AutomergeList<AreaId>
 	}
 
+	interface HomeSpace extends Space {
+		home: true
+		teams: AutomergeList<Auth.Team>
+	}
+
 	interface Area {
 		readonly type: "area"
 		readonly id: AreaId
@@ -132,6 +137,8 @@ export declare namespace lb {
 	interface File {
 		readonly type: "file"
 		readonly id: FileId
+		// todo
+		readonly contentType: UniformTypeIdentifier
 		name: string
 		note: string
 		when?: When
@@ -151,26 +158,22 @@ export declare namespace lb {
 		metadata?: AutomergeValue
 	}
 
-	type AutomergeAuthState = {
-		device: Auth.DeviceWithSecrets
-		user: Auth.UserWithSecrets
-		team: Auth.Team
-		provider: AuthProvider
+	type AutomergeState = {
 		repo: Repo
-		shareId: ShareId
+		auth: AuthProvider
+		user: Auth.UserWithSecrets
+		device: Auth.DeviceWithSecrets
+		team: Auth.Team
+		homeShareId: ShareId
 	}
 
-	type LocalState = {
-		userName?: string
+	type LocalAutomergeState = {
+		// when they've chosen a name but not yet created a user?
+		// maybe this should just be in memory
+		username?: string
 		device?: Auth.DeviceWithSecrets
 		user?: Auth.UserWithSecrets
-		shareId?: ShareId
-		spaceId?: lb.SpaceId
-	}
-
-	interface Store<DataType> {
-		sub(listener: () => void): () => void
-		get(): DataType
-		set(local: DataType): void
+		homeTeam?: Auth.Team
+		homeShareId?: ShareId
 	}
 }

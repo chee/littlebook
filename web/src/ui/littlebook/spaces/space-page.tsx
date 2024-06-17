@@ -17,15 +17,15 @@ import {Switch, type ParentComponent} from "solid-js"
 
 import "../../styles/elements/topnav.scss"
 import {Route, type RouteSectionProps} from "@solidjs/router"
-import {useAuth} from "../../automerge/auth/use-auth.ts"
+// import {useAuth} from "../../automerge/auth/use-automerge.ts"
 // import {useSignalEffect} from "@preact/signals"
 // import {DockPanel, DockView} from "solid-dockview"
 // todo my own styles
 // import "dockview-core/dist/styles/dockview.css"
 
 const Littlebook: ParentComponent<RouteSectionProps> = ({children}) => {
-	const auth = useAuth()
-	console.log({auth}, "from space page")
+	// const auth = useAuth()
+	// console.log({auth}, "from space p/*  */age")
 	console.log("i am rendering the space page")
 	const lb = useLittlebookAPI()
 	console.log({lb})

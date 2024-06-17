@@ -4,15 +4,20 @@ import storeDocIdOnTeam from "./store-doc-id-on-team.ts"
 import start from "../../repo/start-repo.ts"
 import {createSpaceHandle} from "../../api/spaces.ts"
 
-interface CreateTeamOptions {
+export interface CreateTeamOptions {
 	teamName: string
-	userName: string
+	username: string
 	deviceName?: string
 }
 
+export type CreateDefaultTeamOptions = Omit<
+	CreateTeamOptions,
+	"teamName" | "deviceName"
+>
+
 export default async function createTeam({
 	teamName,
-	userName,
+	username: userName,
 	deviceName,
 }: CreateTeamOptions) {
 	const user = Auth.createUser(userName) as Auth.UserWithSecrets
@@ -25,7 +30,7 @@ export default async function createTeam({
 }
 
 export async function createDefaultTeam({
-	userName,
-}: Omit<CreateTeamOptions, "teamName" | "deviceName">) {
-	return createTeam({userName, teamName: userName})
+	username: userName,
+}: CreateDefaultTeamOptions) {
+	return createTeam({username: userName, teamName: userName})
 }

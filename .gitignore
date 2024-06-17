@@ -1,3 +1,4 @@
 node_modules/
 *.sqlite
 output/
+app.config.timestamp*

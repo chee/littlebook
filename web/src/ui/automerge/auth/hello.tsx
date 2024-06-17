@@ -2,32 +2,37 @@ import type {Repo} from "@automerge/automerge-repo"
 import type * as Auth from "@localfirst/auth"
 import type {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
 // import {useState} from "preact/hooks"
-import {useLocalState} from "./use-local-state.ts"
-import {createDefaultTeam} from "../../../auth/teams/create-team.ts"
-import pairDevice from "../../../auth/devices/pair-device.ts"
+import {useLocalAuthState} from "./local.ts"
+import {
+	createDefaultTeam,
+	type CreateDefaultTeamOptions,
+} from "../../../auth/teams/create-team.ts"
+import pairDevice, {
+	type PairDeviceOptions,
+} from "../../../auth/devices/pair-device.ts"
 import {createSignal} from "solid-js"
+import * as local from "./local.ts"
 
-export const Hello = ({complete}: {complete: OnComplete}) => {
-	const [localState, updateLocalState] = useLocalState()
+type HelloProps = {
+	pair(opts: PairDeviceOptions): void
+	fresh(opts: CreateDefaultTeamOptions): void
+}
 
-	if (!localState.userName) {
-		return (
-			<WhatsYourName complete={name => updateLocalState({userName: name})} />
-		)
+export const Hello = (props: HelloProps) => {
+	if (!local.state.username) {
+		return <WhatsYourName complete={username => local.set({username})} />
 	}
 
-	return <FreshOrFriend complete={complete} />
+	return <FreshOrFriend pair={props.pair} fresh={props.fresh} />
 }
 
 function WhatsYourName({complete}: {complete: (n: string) => void}) {
 	const [name, setName] = createSignal("")
 	return (
-		<div
-			class="hello whats-your-name flex self-center bg-white w-full h-svh sm:max-w-md
-		sm:h-auto ring-8 ring-primary-400 p-8 size-48 dark:bg-black dark:text-white">
-			<h1 class="size-48">
+		<div>
+			<h1>
 				hey!
-				<span class="size-38">welcome to littlebook.</span>
+				<span style="font-size: 0.8em">welcome to littlebook.</span>
 			</h1>
 
 			<form onSubmit={() => complete(name())}>
@@ -63,25 +68,30 @@ function WhatsYourName({complete}: {complete: (n: string) => void}) {
 	)
 }
 
-function FreshOrFriend({complete}: {complete: OnComplete}) {
-	const [localState, updateLocalState] = useLocalState()
+function FreshOrFriend({pair, fresh}: HelloProps) {
 	const [linking, setLinking] = createSignal(false)
 	const [invite, setInvite] = createSignal("")
 	return (
 		<div class="hello fresh-or-friend">
 			<p class="is-size-2 mb-3">
-				hello, <span class="hello-hl">{localState.userName!}</span>!!!
+				hello, <span class="hello-hl">{local.state.username!}</span>!!!
 			</p>
+			<label>
+				wrong name?{" "}
+				<button type="button" onClick={() => local.set(() => ({}))}>
+					click here to start again
+				</button>
+			</label>
 			{linking() ? (
 				<>
 					<p>ok! cool! what's your invite phrase?</p>
 					<form
 						onSubmit={event => {
 							event.preventDefault()
-							pairDevice({
-								userName: localState.userName!,
+							pair({
+								username: local.state.username!,
 								invitationCode: invite(),
-							}).then(complete)
+							})
 						}}>
 						<fieldset>
 							<span>&gt; </span>
@@ -129,9 +139,9 @@ function FreshOrFriend({complete}: {complete: OnComplete}) {
 							class="button is-rounded is-primary"
 							type="button"
 							onClick={() =>
-								createDefaultTeam({
-									userName: localState.userName!,
-								}).then(complete)
+								fresh({
+									username: local.state.username!,
+								})
 							}>
 							start fresh!
 						</button>

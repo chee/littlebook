@@ -18,12 +18,12 @@ export const config: UserConfig = {
 		plugins: () => [wasm()],
 	},
 	plugins: [
-		nodePolyfills(),
+		// nodePolyfills(),
 		wasm(),
 		devtools({
 			autoname: true,
 		}),
-		solidPlugin(),
+		// solidPlugin(),
 		pwa({
 			registerType: "autoUpdate",
 			injectRegister: false,

@@ -14,8 +14,8 @@ export function createSpaceHandle(
 	})
 }
 
-export const getSpaceHandle = (repo: Repo, id: lb.ProjectId) =>
-	getDocumentHandle<lb.Project>(repo, id)
+export const getSpaceHandle = (repo: Repo, id: lb.SpaceId) =>
+	getDocumentHandle<lb.Space>(repo, id)
 
 export const addAreaToSpace = (id: lb.AreaId) => (space: lb.Space) =>
 	space.areas.push(id)

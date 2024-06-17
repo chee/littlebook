@@ -1,3 +1,4 @@
+import {Show} from "solid-js"
 import useDocument from "../automerge/use-document.ts"
 import {CardLink} from "../elements/card/card.tsx"
 // import * as urlFor from "../urls.ts"
@@ -11,34 +12,30 @@ export default function ProjectLink({
 }: {
 	projectId: id
 }) {
-	// const ui = useSpaceState()
-	console.log("hello", projectId)
 	const [project, changeProject] = useDocument<lb.Project>(projectId)
-	console.log(project()?.id)
-	if (!project()) return null
-
-	// const current = ui.projects.selected.value == projectId
 
 	return (
-		<CardLink
-			class="bold"
-			title=""
-			href={`projects/${projectId}`}
-			icon={project()!.icon}
-			// current={current}
-			onDblClick={event => {
-				// ui.projects.renaming.value = projectId
-			}}>
-			<EditableName
-				id={projectId}
-				name={project()!.name}
-				saveName={name => {
-					changeProject(project => {
-						project.name = name
-					})
-				}}
-				which="projects"
-			/>
-		</CardLink>
+		<Show when={project()}>
+			<CardLink
+				class="bold"
+				title=""
+				href={`projects/${projectId}`}
+				icon={project()!.icon}
+				// current={current}
+				onDblClick={event => {
+					// ui.projects.renaming.value = projectId
+				}}>
+				<EditableName
+					id={projectId}
+					name={project()!.name}
+					saveName={name => {
+						changeProject(project => {
+							project.name = name
+						})
+					}}
+					which="projects"
+				/>
+			</CardLink>
+		</Show>
 	)
 }

@@ -16,6 +16,10 @@
 		"editor.defaultFormatter": "biomejs.biome",
 		"[scss]": {
 			"editor.defaultFormatter": "esbenp.prettier-vscode"
-		}
+		},
+		"typescript.experimental.updateImportsOnPaste": true,
+		"typescript.preferences.preferTypeOnlyAutoImports": true,
+		"typescript.preferences.importModuleSpecifierEnding": "js",
+		"typescript.tsserver.web.typeAcquisition.enabled": true
 	}
 }

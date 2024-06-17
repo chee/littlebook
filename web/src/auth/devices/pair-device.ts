@@ -11,13 +11,15 @@ import type {
 	FriendlyInvitation,
 } from "../invitations/invitation-types.ts"
 
-export default async function pairDevice({
-	userName,
-	invitationCode,
-}: {
-	userName: string
+export interface PairDeviceOptions {
+	username: string
 	invitationCode: string
-}): Promise<{
+}
+
+export default async function pairDevice({
+	username: userName,
+	invitationCode,
+}: PairDeviceOptions): Promise<{
 	device: DeviceWithSecrets
 	user: User
 	team: Team

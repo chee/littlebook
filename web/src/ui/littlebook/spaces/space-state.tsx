@@ -1,5 +1,5 @@
 import {createStore} from "solid-js/store"
-import {useAuth} from "../../automerge/auth/use-auth.ts"
+// import {useAuth} from "../../automerge/auth/use-automerge.ts"
 import {
 	getShareId,
 	type AuthProvider,

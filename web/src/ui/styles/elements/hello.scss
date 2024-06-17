@@ -1,0 +1,21 @@
+@use "../base" as *;
+
+.hello {
+	display: flex;
+	align-self: center;
+	flex-direction: column;
+	background: get-color("white");
+	width: 100%;
+	height: 100vh;
+	padding: get-space(8);
+	font-size: 4em;
+	border: 1em solid get-color(highlight);
+	@include respond-to-s {
+		max-width: 1200px;
+		height: auto;
+	}
+	@include dark {
+		background: get-color("black");
+		color: get-color("white");
+	}
+}

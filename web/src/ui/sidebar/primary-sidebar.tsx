@@ -1,29 +1,35 @@
 import {Card, CardLink} from "../elements/card/card.tsx"
 import useDocument from "../automerge/use-document.ts"
-import {useLocalState} from "../automerge/auth/use-local-state.ts"
+import {useLocalAuthState} from "../automerge/auth/local.ts"
 import ProjectLink from "./project-link.tsx"
 import {useLittlebookAPI} from "../api/use-api.ts"
 // import {useSpaceState} from "../littlebook/spaces/space-state.tsx"
 import Sidebar from "../elements/sidebar/sidebar.tsx"
-import {For, createEffect, createMemo} from "solid-js"
+import {For, createEffect, createMemo, createResource} from "solid-js"
+// import {useAuth} from "../automerge/auth/use-automerge.ts"
+import getDocIdFromTeam from "../../auth/teams/get-doc-id-from-team.ts"
+import {getSpaceHandle} from "../../api/spaces.ts"
+import type {Doc} from "@automerge/automerge/next"
+import {useAutomerge} from "../automerge/auth/use-automerge.ts"
 
 // todo this should be Navbar or something, and Sidebar should be the generic
 // container so that the other side can have one too
 export default function PrimarySidebar() {
+	const automerge = useAutomerge()
+	const spaceId = createMemo(
+		() => automerge()?.team && getDocIdFromTeam(automerge()?.team!),
+	)
+
 	// const ui = useSpaceState()
 	// const {shareId} = ui.space
 
 	// const sidebar = ui.layout.sidebars.primary
 
 	const lb = useLittlebookAPI()
-
-	const [localState] = useLocalState()
-
-	const [space, changeSpace] = useDocument<lb.Space>(localState.spaceId!)
-	createEffect(() => {
-		console.log(space()?.projects, "ppp")
-	})
-	const projects = createMemo(() => space()?.projects)
+	const [spaceDoc, what] = createResource<Doc<lb.Space> | undefined>(
+		async () =>
+			automerge()?.repo && getSpaceHandle(automerge()?.repo!, spaceId()!).doc(),
+	)
 
 	const state = {open: true}
 
@@ -81,9 +87,8 @@ export default function PrimarySidebar() {
 						})
 					},
 				}}>
-				<For each={projects()} fallback={<div>lol</div>}>
+				<For each={spaceDoc()?.projects} fallback={<div>lol</div>}>
 					{id => {
-						console.log(id)
 						return <ProjectLink projectId={id} />
 					}}
 				</For>
