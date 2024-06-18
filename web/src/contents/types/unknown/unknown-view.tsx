@@ -1,21 +1,42 @@
-import type {ContentView} from "../type-registries.ts"
+export class UnknownContent extends HTMLElement {
+	#file?: lb.File
+	#content?: lb.Content<any>
+	connectedCallback() {
+		console.log("im conntencted")
+		console.log(this, this.file)
+	}
 
-const UnknownView: ContentView<any> = ({content, file}) => {
-	return (
-		<div style={{display: "flex", height: "100%", background: "#fffefd"}}>
+	set file(file: lb.File) {
+		this.#file = file
+		this.render()
+	}
+
+	set content(content: lb.Content<lb.AnyContent>) {
+		this.#content = content
+		this.render()
+	}
+
+	render() {
+		this.innerHTML = /*html*/ `
 			<ul>
 				<li>
-					file name: <code>{file.name}</code>
+					file name: <code>${this.#file?.name}</code>
 				</li>
 				<li>
-					content-type: <code>{content.contentType}</code>
+					file id: <code>${this.#file?.id}</code>
 				</li>
 				<li>
-					last-modified: <code>{file.lastModified}</code>
+					content-type: <code>${this.#content?.contentType}</code>
+				</li>
+				<li>
+					content-id: <code>${this.#content?.id}</code>
+				</li>
+				<li>
+					last-modified: <code>${this.#file?.lastModified}</code>
 				</li>
 			</ul>
-		</div>
-	)
+		`
+	}
 }
 
-export default UnknownView
+export default UnknownContent

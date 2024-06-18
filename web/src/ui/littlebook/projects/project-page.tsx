@@ -1,43 +1,46 @@
-// import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels"
-// import {useParams, useSearch} from "wouter-preact"
 import ContentViewer from "../contents/content-viewer.tsx"
-// import {useEffect, useState} from "preact/hooks"
-// import useProject from "../../automerge/use-project.ts"
 import MetadataViewer from "../../../contents/metadata/metadata-viewer.tsx"
 import ProjectFileBrowser from "./project-file-browser.tsx"
 import InfoPanel from "../../../contents/metadata/info-panel.tsx"
-// import cl from "../../lib/cl.ts"
-// import {useSpaceState} from "../spaces/space-state.tsx"
 
 export default function ProjectPage() {
-	const ui = useSpaceState()
-	const projectId = ui.projects.selected.value
-
 	return (
-		<PanelGroup
-			class="grow flex"
-			direction="horizontal"
-			autoSaveId={"project+" + projectId}>
-			<Panel defaultSize={62} class="p-4 px-1">
-				<PanelGroup
-					direction="vertical"
-					autoSaveId={"project+" + projectId + "-browsers"}>
-					<Panel defaultSize={38} minSize={5}>
+		<div class="flex grow">
+			<div class="flex column grow">
+				<ProjectFileBrowser />
+				<ContentViewer />
+			</div>
+			<aside class="px-2 flex">
+				<InfoPanel />
+				<MetadataViewer />
+			</aside>
+		</div>
+	)
+}
+
+/**
+ * 		<PanelGroup class="grow flex" direction="row">
+			<Panel
+				minSize={75}
+				initialSize={62}
+				class="pr-4 pl-8"
+				id={`${params.projectId}-main`}>
+				<PanelGroup direction="column">
+					<Panel initialSize={38} minSize={10} id={`${params.projectId}-fb`}>
 						<ProjectFileBrowser />
 					</Panel>
-					<PanelResizeHandle class="has-paper-100-background pb-1" />
-					<Panel defaultSize={62} minSize={5}>
+					<ResizeHandle />
+					<Panel initialSize={62} minSize={5} id={`${params.projectId}-cv`}>
 						<ContentViewer />
 					</Panel>
 				</PanelGroup>
 			</Panel>
-			<PanelResizeHandle />
-			<Panel defaultSize={19} minSize={5}>
+			<ResizeHandle />
+			<Panel initialSize={19} minSize={5} id="metapanel">
 				<aside class="px-2">
 					<InfoPanel />
 					<MetadataViewer />
 				</aside>
 			</Panel>
 		</PanelGroup>
-	)
-}
+ */

@@ -1,4 +1,4 @@
-import {Show} from "solid-js"
+import {Show, createMemo} from "solid-js"
 import useDocument from "../automerge/use-document.ts"
 import {CardLink} from "../elements/card/card.tsx"
 // import * as urlFor from "../urls.ts"
@@ -12,7 +12,8 @@ export default function ProjectLink({
 }: {
 	projectId: id
 }) {
-	const [project, changeProject] = useDocument<lb.Project>(projectId)
+	const pid = createMemo(() => projectId)
+	const [project, changeProject] = useDocument<lb.Project>(pid)
 
 	return (
 		<Show when={project()}>

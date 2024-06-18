@@ -1,7 +1,10 @@
 // things i'll need to make available in @littlebook/plugin
 import "../../web/src/types.ts"
 import type {AutomergeList} from "../../web/src/types.ts"
-import type {ContentView} from "../../web/src/contents/types/type-registries.ts"
+import type {
+	ContentView,
+	ContentViewComponent,
+} from "../../web/src/contents/views/content-view.ts"
 
 // should i provide this from @littlebook/plugin? probably, right! like, plus
 // any other types i create with crdx? yeah, right now this is the only reason
@@ -12,8 +15,8 @@ import {Counter} from "@automerge/automerge"
 import type {ExcalidrawImperativeAPI} from "@excalidraw/excalidraw/types/types.d.ts"
 import type {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types.d.ts"
 import {useCallback, useEffect, useMemo, useRef, useState} from "preact/hooks"
-import {Suspense, lazy} from "preact/compat"
-import styles from "./styles.css"
+import {Suspense, lazy, type FunctionComponent} from "preact/compat"
+// import styles from "./styles.css"
 
 import {throttle} from "throttle-debounce"
 import type {ExcalidrawJSON, MergeableExcalidrawElement} from "./shared.ts"
@@ -40,10 +43,10 @@ function automergeToExcalidraw(element: MergeableExcalidrawElement) {
 }
 
 // todo work with `contentchange` event
-const ExcalidrawView: ContentView<ExcalidrawJSON> = ({
-	content,
-	changeContent,
-}) => {
+const ExcalidrawView: ContentViewComponent<
+	ExcalidrawJSON,
+	FunctionComponent
+> = ({content, changeContent}) => {
 	const Excalidraw = useMemo(
 		() =>
 			lazy(() => import("@excalidraw/excalidraw").then(mod => mod.Excalidraw)),

@@ -34,6 +34,7 @@
 		"component-register": "^0.8.3",
 		"dockview-core": "^1.14.2",
 		"file-system-access": "^1.0.4",
+		"muuri": "^0.9.5",
 		"postcss": "^8.4.38",
 		"random": "^4.1.0",
 		"sass": "npm:sass-embedded@^1.77.5",

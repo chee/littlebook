@@ -2,6 +2,8 @@
 // import type {FunctionComponent} from "preact"
 import {A} from "@solidjs/router"
 import cl from "../../lib/cl.ts"
+import type {ParentComponent} from "solid-js"
+import {useMatch, useHref} from "@solidjs/router"
 // import type {HTMLProps} from "preact/compat"
 
 export interface CardAction {
@@ -65,7 +67,7 @@ export interface CardLinkProps extends HTMLProps<HTMLDivElement> {
 	current?: boolean
 }
 
-export function CardLink({
+export const CardLink: ParentComponent<CardLinkProps> = ({
 	title,
 	icon,
 	href,
@@ -73,10 +75,7 @@ export function CardLink({
 	current,
 	children,
 	...props
-}: CardLinkProps) {
-	// const [exactCurrent] = useRoute(href)
-	const exactCurrent = false
-	console.log({href})
+}) => {
 	return (
 		<div {...props}>
 			<A
@@ -84,7 +83,7 @@ export function CardLink({
 				href={href}
 				onClick={props.onClick}
 				class="card-item"
-				aria-current={current || exactCurrent ? "page" : "false"}>
+				aria-current={current ? "page" : "false"}>
 				<span class="card-link-title">
 					<span class="">{icon}</span>
 					<span class="">{children || title}</span>

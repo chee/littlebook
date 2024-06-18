@@ -1,43 +1,28 @@
-import {
-	createEffect,
-	createMemo,
-	createResource,
-	createSignal,
-	onCleanup,
-	onMount,
-} from "solid-js"
-import {useRepo} from "./use-repo"
-import type {ChangeFn, Doc, DocHandle} from "@automerge/automerge-repo"
-import {useAutomerge} from "./auth/use-automerge"
+import {createEffect, createResource, on, onCleanup, onMount} from "solid-js"
+
+import type {ChangeFn, Doc} from "@automerge/automerge-repo"
+import useHandle from "./use-handle"
 
 export default function useDocument<T extends lb.AnyDocument>(
-	id?: T["id"],
+	id: () => T["id"] | undefined,
 ): [doc: () => Doc<T> | undefined, (fn: ChangeFn<T>) => void] {
-	const automerge = useAutomerge()
-	const repo = createMemo(() => automerge()?.repo)
-	const [handle, setHandle] = createSignal<DocHandle<T> | undefined>(
-		id && repo()?.find<T>(id),
+	const handle = useHandle(id)
+
+	const [doc, control] = createResource(() => handle()?.doc())
+
+	createEffect(
+		on([handle], () => {
+			handle()?.on("change", control.refetch)
+			handle()?.on("delete", control.refetch)
+			control.refetch()
+		}),
 	)
-	const [doc] = createResource(() => handle()?.doc())
-	const reset = () => setHandle(() => handle())
-
-	createEffect(() => {})
-
-	onMount(() => {
-		handle()?.on("change", reset)
-		handle()?.on("delete", reset)
-	})
-
-	onCleanup(() => {
-		handle()?.off("change", reset)
-		handle()?.off("delete", reset)
-	})
 
 	return [
 		doc,
 		(fn: ChangeFn<T>) => {
 			handle()?.change(fn)
-			console.log("that worked")
+			control.refetch()
 		},
 	]
 }

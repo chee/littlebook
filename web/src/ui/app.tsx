@@ -1,7 +1,14 @@
 import "./app.scss"
 
 import {MetaProvider, Title} from "@solidjs/meta"
-import {Navigate, Route, Router, useIsRouting, useParams} from "@solidjs/router"
+import {
+	Navigate,
+	Route,
+	Router,
+	action,
+	useIsRouting,
+	useParams,
+} from "@solidjs/router"
 // import {FileRoutes} from "@solidjs/start/router"
 import {
 	Match,
@@ -29,6 +36,7 @@ import * as local from "./automerge/auth/local.ts"
 import {Hello} from "./automerge/auth/hello.tsx"
 import type {PairDeviceOptions} from "../auth/devices/pair-device.ts"
 import type {CreateDefaultTeamOptions} from "../auth/teams/create-team.ts"
+import ProjectPage from "./littlebook/projects/project-page.tsx"
 
 const LittlebookAPIProvider: ParentComponent<{
 	automergeState: ResourceReturn<lb.AutomergeState | undefined>[0]
@@ -44,8 +52,18 @@ const LittlebookAPIProvider: ParentComponent<{
 	)
 }
 
+import excalidraw from "@littlebook/excalidraw"
+
+const plugins = [excalidraw]
+import * as pluginAPI from "../plugins/plugin-api.ts"
+
+for (const plugin of plugins) {
+	plugin(pluginAPI)
+}
+
 export default function Littlebook() {
 	const [state, control] = startFromLocal()
+
 	return (
 		<Switch>
 			<Match when={state.state == "ready" && state() == null}>
@@ -85,7 +103,11 @@ export default function Littlebook() {
 						</MetaProvider>
 					)}>
 					<Route path="*" component={Fallback} />
-					<Route path="/spaces/:shareId" component={SpacePage} />
+					<Route path="/spaces/:shareId" component={SpacePage}>
+						<Route path="/*" component={Fallback} />
+						<Route path="/projects/:projectId" component={ProjectPage} />
+					</Route>
+					{/* <Route path="/projects/:projectId" component={ProjectPage} /> */}
 				</Router>
 			</Match>
 		</Switch>
@@ -96,10 +118,10 @@ function Fallback() {
 	const params = useParams<{shareId?: ShareId}>()
 	const routing = useIsRouting()
 	return (
-		<Show
-			when={!routing() && local.state.homeShareId && !params.shareId}
-			fallback={<div>nothing</div>}>
-			<Navigate href={`/spaces/${local.state.homeShareId}`} />
-		</Show>
+		<Switch>
+			<Match when={!routing() && local.state.homeShareId && !params.shareId}>
+				<Navigate href={`/spaces/${local.state.homeShareId}`} />
+			</Match>
+		</Switch>
 	)
 }

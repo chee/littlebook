@@ -1,10 +1,6 @@
 import ExcalidrawView from "./view.tsx"
 import coder from "./coder.ts"
-import {withPreact} from "component-register-preact"
-import type {ExcalidrawJSON} from "./shared.ts"
-
-const ExcalidrawElement =
-	withPreact<lb.ContentViewProps<ExcalidrawJSON>>(ExcalidrawView)
+import register from "preact-custom-element"
 
 export default function excalidraw(lb: lb.plugins.API) {
 	lb.registerContentType({
@@ -22,7 +18,11 @@ export default function excalidraw(lb: lb.plugins.API) {
 		},
 		coder,
 		views: {
-			content: ExcalidrawElement,
+			content: {
+				define(name) {
+					register(ExcalidrawView, name)
+				},
+			},
 		},
 	})
 }

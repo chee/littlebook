@@ -19,11 +19,7 @@ export default function PrimarySidebar() {
 	const spaceId = createMemo(
 		() => automerge()?.team && getDocIdFromTeam(automerge()?.team!),
 	)
-
-	// const ui = useSpaceState()
-	// const {shareId} = ui.space
-
-	// const sidebar = ui.layout.sidebars.primary
+	const [space, changeSpace] = useDocument<lb.Space>(spaceId)
 
 	const lb = useLittlebookAPI()
 	const [spaceDoc, what] = createResource<Doc<lb.Space> | undefined>(
@@ -34,7 +30,7 @@ export default function PrimarySidebar() {
 	const state = {open: true}
 
 	return (
-		<Sidebar state={state} class="pr-6">
+		<Sidebar state={state}>
 			<Card>
 				<CardLink
 					icon="📥"
@@ -70,11 +66,9 @@ export default function PrimarySidebar() {
 					icon: "+",
 					action() {
 						const projectHandle = lb()?.projects.createHandle()
-						console.log(projectHandle)
 						projectHandle?.doc().then(prj => {
 							if (prj) {
 								const change = lb()?.spaces.addProject(prj.id)
-								console.log(change)
 								change && changeSpace(change)
 								setTimeout(() => {
 									// route({

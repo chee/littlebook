@@ -1,9 +1,10 @@
 {
 	"compilerOptions": {
+		"outDir": "./output",
 		"allowImportingTsExtensions": true,
-		"target": "ES2020",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
+		"target": "ES2022",
+		"module": "Preserve",
+		"moduleResolution": "Bundler",
 		"noEmit": true,
 		"checkJs": true,
 		"strict": true,

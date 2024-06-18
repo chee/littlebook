@@ -1,68 +1,85 @@
 import {useLittlebookAPI} from "../../api/use-api.ts"
-import UnknownView from "../../../contents/types/unknown/unknown-view.tsx"
-import useFile from "../../automerge/use-file.ts"
-import useContent from "../../../contents/use-content.ts"
-// import {useEffect, useErrorBoundary} from "preact/hooks"
-// import {useSpaceState} from "../spaces/space-state.tsx"
+import {UnknownContent} from "../../../contents/types/unknown/unknown-view.tsx"
+// import useFile from "../../automerge/use-file.ts"
+// import useContent from "../../../contents/use-content.ts"
+import {useSearchParams} from "@solidjs/router"
+import {ErrorBoundary, Suspense, createEffect} from "solid-js"
+import useDocument from "../../automerge/use-document.ts"
+import {Dynamic} from "solid-js/web"
+import {ContentViewElement} from "../../../contents/views/content-view.ts"
+
+customElements.define("unknown-view", UnknownContent)
 
 export default function ContentViewer() {
+	// todo use setSearch in project-page :)
+	const [search, setSearch] = useSearchParams<{file?: lb.FileId}>()
 	const lb = useLittlebookAPI()
-	const [error, reset] = useErrorBoundary()
-	const ui = useSpaceState()
-	const fileId = ui.files.selected
-	if (!fileId.value) return null
-	useEffect(() => {
-		reset()
-	}, [fileId.value])
 
-	const [file, changeFile] = useFile(fileId.value)
-	if (!file) {
-		return (
-			<div class="box content-viewer content-viewer--loading content-viewer--file-loading" />
-		)
-	}
-	const [content, changeContent] = useContent(file.content)
-	if (!content) {
-		return (
-			<div class="box content-viewer content-viewer--loading content-viewer--content-loading" />
-		)
-	}
+	createEffect(() => {
+		console.log(search.file, search.file)
+	})
 
-	let [ContentView] = lb.views.content.get(content.contentType)
-	if (!ContentView) {
-		ContentView = UnknownView
-	}
+	const [file, changeFile] = useDocument<lb.File>(() => search.file)
+	const [content, changeContent] = useDocument<lb.Content<any>>(
+		() => file()?.content,
+	)
 
-	if (error) {
-		return <SomethingWentWrong error={error} />
-	}
+	const contentViews = () =>
+		content() && lb()?.views.content.get(content()!.contentType)
+
+	const component = () => contentViews()?.next().value || "unknown-view"
+
+	const ContentView = () => (
+		<Dynamic
+			component={component()}
+			file={file()}
+			changeFile={changeFile}
+			content={content}
+			changeContent={changeContent}
+			onfilechange={(event: any) => {
+				changeFile(event.detail)
+			}}
+			oncontentchange={(event: any) => {
+				changeContent(event.detail)
+			}}
+		/>
+	)
+
+	createEffect(() => {
+		console.log(component(), "comp", ContentView)
+	})
 
 	return (
-		<div class="h-full overflow-auto bg-white rounded overscroll-none dark:bg-black dark:text-white">
-			<ContentView
-				file={file}
-				changeFile={changeFile}
-				content={content}
-				changeContent={changeContent}
-			/>
+		<div class="content-viewer">
+			<ErrorBoundary fallback={SomethingWentWrong}>
+				<Suspense
+					fallback={
+						<div class="box content-viewer content-viewer--loading content-viewer--file-loading" />
+					}>
+					<ContentView />
+				</Suspense>
+			</ErrorBoundary>
 		</div>
 	)
 }
 
-function SomethingWentWrong({error}: {error: Error}) {
+function SomethingWentWrong(error: TypeError) {
 	return (
-		<details class="box h-100">
+		<details class="flex column h-100">
 			<summary>something went bad :( </summary>
-			<pre
+			<div
 				style={{
 					background: "black",
 					color: "lime",
 					padding: "1em",
-					display: "flex",
+					// display: "flex",
+					// "flex-direction": "column",
 					height: "100%",
 				}}>
-				<code>{error.message || JSON.stringify(error)}</code>
-			</pre>
+				<code>{error.message}</code>
+				<code>{JSON.stringify(error)}</code>
+				<code>{error.stack}</code>
+			</div>
 		</details>
 	)
 }

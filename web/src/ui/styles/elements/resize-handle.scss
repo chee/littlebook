@@ -1,0 +1,22 @@
+@use "../base" as *;
+
+.ResizeablePanelGroup[style*=": row"] {
+	.ResizeablePanelGroup-ResizeHandle {
+		width: 2px;
+		min-height: 100%;
+		// background: get-color(paper-200);
+		cursor: ew-resize;
+		padding: 0;
+	}
+}
+
+
+.ResizeablePanelGroup[style*=": column"] {
+	.ResizeablePanelGroup-ResizeHandle {
+		height: 2px;
+		width: 100%;
+		// background: get-color(paper-200);
+		cursor: ns-resize;
+		padding: 0;
+	}
+}

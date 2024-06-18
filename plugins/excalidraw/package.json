@@ -4,8 +4,7 @@
 	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
-		"mk": "NODE_ENV=production esbuild --define:process.env.IS_PREACT=\\\"true\\\" --external:@automerge/automerge --external:throttle-debounce --external:@excalidraw/excalidraw --bundle --minify --sourcemap --outfile=index.js index.ts",
-		"w": "pnpm mk --watch",
+		"mk": "node mk",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
@@ -14,8 +13,6 @@
 	"devDependencies": {
 		"@automerge/automerge": "^2.2.2",
 		"@types/preact-custom-element": "^4.0.4",
-		"component-register": "^0.8.3",
-		"component-register-preact": "^0.1.1",
 		"esbuild": "^0.21.5",
 		"preact": "^10.22.0",
 		"preact-custom-element": "^4.3.0",
@@ -23,6 +20,7 @@
 	},
 	"dependencies": {
 		"@excalidraw/excalidraw": "^0.17.6",
+		"@types/throttle-debounce": "^5.0.2",
 		"throttle-debounce": "^5.0.0"
 	},
 	"peerDependencies": {

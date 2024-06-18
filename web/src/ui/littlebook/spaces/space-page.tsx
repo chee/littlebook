@@ -11,24 +11,29 @@ import SidebarToggle from "../../sidebar/sidebar-toggle.tsx"
 import ProjectPage from "../projects/project-page.tsx"
 import cl from "../../lib/cl.ts"
 import breakpoints from "../../styles/breakpoints.ts"
-// import {useSpaceState} from "./space-state.tsx"
 // import {useHotkeys} from "react-hotkeys-hook"
-import {Switch, type ParentComponent} from "solid-js"
-
+import {
+	Switch,
+	createEffect,
+	createSignal,
+	type ParentComponent,
+} from "solid-js"
+import * as sidebars from "./sidebar-state.ts"
 import "../../styles/elements/topnav.scss"
-import {Route, type RouteSectionProps} from "@solidjs/router"
+import {Route, action, useParams, type RouteSectionProps} from "@solidjs/router"
 // import {useAuth} from "../../automerge/auth/use-automerge.ts"
 // import {useSignalEffect} from "@preact/signals"
 // import {DockPanel, DockView} from "solid-dockview"
 // todo my own styles
 // import "dockview-core/dist/styles/dockview.css"
 
-const Littlebook: ParentComponent<RouteSectionProps> = ({children}) => {
+const Littlebook: ParentComponent<RouteSectionProps> = props => {
+	const params = useParams()
 	// const auth = useAuth()
 	// console.log({auth}, "from space p/*  */age")
-	console.log("i am rendering the space page")
-	const lb = useLittlebookAPI()
-	console.log({lb})
+
+	// const lb = useLittlebookAPI()
+
 	// const ui = useSpaceState()
 
 	// const routing = useRouting()
@@ -68,24 +73,6 @@ const Littlebook: ParentComponent<RouteSectionProps> = ({children}) => {
 	// 	}
 	// }, [])
 
-	// const {sidebars} = ui.layout
-	// const {primary, secondary} = sidebars
-
-	// useEffect(() => {
-	// 	const sidebar = primary
-	// 	sidebar.open.value = sidebar.ref.current
-	// 		? sidebar.ref.current.isExpanded()
-	// 		: false
-	// }, [primary.ref.current])
-
-	// useEffect(() => {
-	// 	const sidebar = secondary
-	// 	sidebar.open.value = sidebar.ref.current
-	// 		? sidebar.ref.current.isExpanded()
-	// 		: false
-	// }, [secondary.ref.current])
-	const skinny = !breakpoints.s
-
 	// useHotkeys(
 	// 	"escape",
 	// 	() => {
@@ -96,6 +83,10 @@ const Littlebook: ParentComponent<RouteSectionProps> = ({children}) => {
 	// 		enableOnFormTags: true,
 	// 	},
 	// )
+
+	createEffect(() => {
+		console.log(props.children)
+	})
 
 	return (
 		<>
@@ -111,30 +102,22 @@ const Littlebook: ParentComponent<RouteSectionProps> = ({children}) => {
 			<PanelGroup direction="row" class="flex grow">
 				<Panel
 					id="sidebar"
-					class={cl("flex grow max-w-full")}
-					initialSize={19.1}
-					minSize={breakpoints.s ? 14 : 100}
-					// style={{minWidth: primary.open.value ? 180 : 0}}
-					maxSize={breakpoints.s ? 50 : 100}
-					collapsible={true}
+					class={cl("flex grow max-w-full", breakpoints.m || "full-screen")}
+					initialSize={breakpoints.m ? 19.1 : 100}
+					minSize={breakpoints.m ? 20 : 100}
 					// onCollapse={() => {
 					// 	primary.open.value = false
 					// }}
 					// onExpand={() => {
 					// primary.open.value = true
 					// }}
-					// @ts-expect-error ref def is wrong
-					ref={primary.ref}>
+					collapsible={true}>
 					<PrimarySidebar />
 				</Panel>
-				<ResizeHandle class="w-px fill-paper-200" />
+				<ResizeHandle class="resize-handle resize-handle-row" />
 				<Panel id="main" initialSize={80.9}>
-					<main id="main" class="h-full">
-						<Switch>
-							<Route path="/space/:space-id/projects/:slug/:projectId">
-								{/* <ProjectPage /> */}
-							</Route>
-						</Switch>
+					<main id="main" class="h-full flex">
+						{props.children}
 					</main>
 					<Badge />
 				</Panel>

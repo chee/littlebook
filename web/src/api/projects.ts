@@ -43,7 +43,6 @@ export function deleteItemFromProject(repo: Repo, id: lb.ProjectItemId) {
 }
 
 export default function createProjectsAPI(repo: Repo) {
-	console.log({repo})
 	return {
 		createHandle: createProjectHandle.bind(null, repo),
 		getHandle: getProjectHandle.bind(null, repo),

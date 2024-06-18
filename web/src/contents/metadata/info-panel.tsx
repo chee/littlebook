@@ -37,7 +37,6 @@ const Dropdown: FunctionalComponent<{
 
 	const onclickoutside = useCallback((event: MouseEvent) => {
 		if (!ref.current) return
-		console.log(event.target instanceof HTMLElement, event.target, ref.current)
 		if (
 			ref.current &&
 			event.target instanceof HTMLElement &&
@@ -89,6 +88,7 @@ const Dropdown: FunctionalComponent<{
 }
 
 export default function InfoPanel() {
+	return "info"
 	const ui = useSpaceState()
 	const fileId = ui.files.selected
 	if (!fileId.value) {

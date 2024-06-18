@@ -4,34 +4,27 @@
 @use "sass:math";
 @use "sass:map";
 
-$default-shadow: (
-	color: color-mix(in oklch, get-color(fill), get-color(line)),
-	x: 0,
-	y: 4px,
-	spread: 6px,
-	offset: -1px,
-) !default;
-
 $shadow-prefix: "shadow-";
-@include set-root-vars($default-shadow, $shadow-prefix);
-@function get-shadow-var($prop) {
-	@return get-var($prop, $shadow-prefix);
-}
-@mixin set-shadow-var($prop, $value) {
-	@include set-var($prop, $value, $shadow-prefix);
-}
 
-$named-shadows: (
-	default: $default-shadow,
+$shadows: (
 	xs: (
 		x: 0,
 		y: 1px,
 		spread: 2px,
+		offset: 0,
 	),
 	s: (
 		x: 0,
 		y: 1px,
 		spread: 3px,
+		offset: 0,
+	),
+	default: (
+		color: color-mix(in oklch, get-color(fill), get-color(line)),
+		x: 0,
+		y: 4px,
+		spread: 6px,
+		offset: -1px,
 	),
 	l: (
 		x: 0,
@@ -47,11 +40,19 @@ $named-shadows: (
 	),
 ) !default;
 
-@mixin set-shadow-direct($shadow) {
+@include set-root-vars(map.get($shadows, default), $shadow-prefix);
+@function get-shadow-var($prop) {
+	@return get-var($prop, $shadow-prefix);
+}
+@mixin set-shadow-var($prop, $value) {
+	@include set-var($prop, $value, $shadow-prefix);
+}
+
+@mixin set-shadow-direct($shadow: default) {
 	@include set-vars($shadow, $shadow-prefix);
 }
-@mixin set-shadow($shadow-name) {
-	@include set-shadow-direct(map.get($named-shadows, $shadow-name));
+@mixin set-shadow($shadow-name: default) {
+	@include set-shadow-direct(map.get($shadows, $shadow-name));
 }
 
 @mixin shadow {

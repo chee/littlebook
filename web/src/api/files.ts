@@ -21,6 +21,7 @@ export function createFileHandle(
 		name: fileTemplate.name || "",
 		content: fileTemplate.content,
 		note: "",
+		contentType: fileTemplate.contentType || ("" as lb.UniformTypeIdentifier),
 	})
 }
 
@@ -38,6 +39,7 @@ export function createFileHandleWithContentType(
 		...fileTemplate,
 		content: content.documentId as lb.ContentId,
 		lastModified: Date.now(),
+		contentType: contentTypeId,
 	})
 	return file
 }

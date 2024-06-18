@@ -15,7 +15,7 @@ $card-prefix: card-;
 	color: get-color(line, $card-prefix);
 	border-radius: get-var(card-radius);
 	display: block;
-	@include set-shadow(s);
+	@include set-shadow;
 	@include shadow;
 }
 

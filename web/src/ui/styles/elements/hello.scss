@@ -9,7 +9,7 @@
 	height: 100vh;
 	padding: get-space(8);
 	font-size: 4em;
-	border: 1em solid get-color(highlight);
+	border: 1em solid get-color(primary);
 	@include respond-to-s {
 		max-width: 1200px;
 		height: auto;

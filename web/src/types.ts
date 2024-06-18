@@ -61,7 +61,6 @@ export declare namespace lb {
 			type: lb.UniformType | lb.UniformTypeIdentifier
 			coder: lb.ContentCoder<T>
 			views: {
-				// todo this should be a ContentViewElement
 				content?: ContentView<T>
 				metadata?: ContentMetadataView<T>
 				preview?: ContentPreview<T>

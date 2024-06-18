@@ -38,7 +38,7 @@ export function startFromLocal(): ResourceReturn<
 			}).then(({auth, repo}) => {
 				const team = auth.getTeam(local.state.homeShareId!)
 				// hack that seems to work when the server freaks out
-				auth.createTeam(team.teamName)
+				// auth.createTeam(team.teamName)
 				return {
 					team,
 					auth,
