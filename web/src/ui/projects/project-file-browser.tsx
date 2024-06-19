@@ -8,7 +8,7 @@ import {A, useNavigate, useParams} from "@solidjs/router"
 import {For, Suspense, createEffect, on} from "solid-js"
 import useDocument from "../documents/use-document.ts"
 import useDocuments from "../documents/use-documents.ts"
-import Button from "../elements/button/button.tsx"
+import button from "../elements/button/button.tsx"
 
 export default function ProjectFileBrowser() {
 	const params = useParams<{projectId?: lb.ProjectId}>()
@@ -29,7 +29,7 @@ export default function ProjectFileBrowser() {
 					<span>{project()?.name}</span>
 				</div>
 				<div class="buttons p-2">
-					<Button
+					<button
 						type="button"
 						kind="ghost"
 						onclick={() => {
@@ -53,9 +53,9 @@ export default function ProjectFileBrowser() {
 							}
 						}}>
 						create .txt
-					</Button>
+					</button>
 
-					<Button
+					<button
 						type="button"
 						onClick={() => {
 							const id = project()?.id
@@ -77,8 +77,8 @@ export default function ProjectFileBrowser() {
 							}
 						}}>
 						create drawing
-					</Button>
-					<Button
+					</button>
+					<button
 						type="button"
 						onClick={async () => {
 							// todo move to some kind of project-create-file
@@ -97,7 +97,7 @@ export default function ProjectFileBrowser() {
 						}}>
 						<span class="icon">{/* <UploadIcon /> */}</span>
 						<span>import file</span>
-					</Button>
+					</button>
 				</div>
 				<section class="overflow-scroll max-h-full p-4 my-4 h-full">
 					<For each={files()}>

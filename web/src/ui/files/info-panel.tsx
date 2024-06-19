@@ -1,73 +1,10 @@
 import {typeRegistry} from "../../contents/types/type-registries.ts"
 import {useLittlebookAPI} from "../api/use-api.ts"
 import clsx from "clsx"
-import Button from "../elements/button/button.tsx"
 import {Card} from "../elements/card/card.tsx"
 import {useParams, useSearchParams} from "@solidjs/router"
 import useDocument from "../documents/use-document.ts"
 import {Show, createEffect, createSignal, type ParentComponent} from "solid-js"
-
-const Dropdown: ParentComponent<{
-	label: string
-	isActive: () => boolean
-	setIsActive(fn: boolean): void
-}> = ({children, label = "dropdown", isActive, setIsActive}) => {
-	const id =
-		"dropdown-menu-" + Math.random().toString(36).slice(2).replace(/\d+/, "")
-
-	let ref: HTMLDivElement | undefined
-
-	const onclickoutside = (event: MouseEvent) => {
-		if (!ref) return
-		if (
-			ref &&
-			event.target instanceof HTMLElement &&
-			ref != event.target &&
-			!ref.contains(event.target)
-		) {
-			setIsActive(false)
-			event.stopPropagation()
-		}
-	}
-
-	const onescape = (event: KeyboardEvent) => {
-		if (event.key == "Escape") {
-			setIsActive(false)
-		}
-	}
-
-	createEffect(() => {
-		if (isActive()) {
-			document.addEventListener("click", onclickoutside, true)
-			document.addEventListener("keydown", onescape)
-		}
-
-		return () => {
-			document.removeEventListener("click", onclickoutside, true)
-			document.removeEventListener("keydown", onescape)
-		}
-	}, [isActive])
-
-	return (
-		<div ref={ref} class={clsx(isActive() && "active")}>
-			<Button
-				active={isActive()}
-				type="button"
-				aria-haspopup="true"
-				onClick={() => setIsActive(!isActive())}
-				aria-controls={id}>
-				<span>{label}</span>
-				<span> ⬇︎</span>
-			</Button>
-
-			<Card>
-				<div id={id} role="menu" aria-orientation="vertical">
-					<div class="flex flex-col gap-2">{children}</div>
-				</div>
-			</Card>
-		</div>
-	)
-}
 
 export default function InfoPanel() {
 	const [search] = useSearchParams<{file?: lb.FileId}>()
@@ -124,38 +61,12 @@ export default function InfoPanel() {
 					/>
 				</label>
 
-				<Dropdown
-					label={"type"}
-					isActive={typeDropdownActive}
-					setIsActive={setTypeDropdownActive}>
-					{typeRegistry.forFilename(file()!.name).map(type => {
-						const displayName = lb()?.contentTypes.getDisplayName(type)
-						return (
-							<Button
-								key={type}
-								onClick={event => {
-									event.preventDefault()
-									setTypeDropdownActive(false)
-									switchContent(type)
-								}}
-								class={clsx(
-									"py-2 px-4 block w-full",
-									type == content()?.contentType
-										? "bg-primary-100"
-										: "hover:bg-primary-50",
-								)}>
-								{displayName || type}
-							</Button>
-						)
-					})}
-				</Dropdown>
-
-				<Button
+				<button
 					class="col-start-3 col-span-2 bg-red-500 rounded-lg ring-1 ring-red-600 font-bold text-white"
 					type="button"
 					onClick={deleteFile}>
 					destroy file
-				</Button>
+				</button>
 			</div>
 		</Show>
 	)
