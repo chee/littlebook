@@ -5,11 +5,11 @@ import cl from "../../lib/cl.ts"
 import "./sidebar.scss"
 
 const Sidebar: ParentComponent<{
-	state: SpaceState["layout"]["sidebars"]["primary" | "secondary"]
+	open: boolean
 	class?: string
-}> = ({state, children, ...props}) => (
-	<aside aria-expanded={state.open} class={cl("sidebar", props.class)}>
-		{children}
+}> = props => (
+	<aside aria-expanded={props.open} class={cl("sidebar", props.class)}>
+		{props.children}
 	</aside>
 )
 

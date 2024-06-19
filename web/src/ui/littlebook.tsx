@@ -1,4 +1,4 @@
-import "./app.scss"
+import "./littlebook.scss"
 
 import {MetaProvider, Title} from "@solidjs/meta"
 import {Navigate, Route, Router, useIsRouting, useParams} from "@solidjs/router"
@@ -9,7 +9,6 @@ import {
 	type ResourceReturn,
 	Suspense,
 	Switch,
-	createEffect,
 	createMemo,
 } from "solid-js"
 
@@ -54,6 +53,7 @@ import text from "../plugins/content/text/text.tsx"
 const plugins = [excalidraw, text]
 import pairDevice from "../auth/devices/pair-device.ts"
 import * as pluginAPI from "../plugins/plugin-api.ts"
+import PleaseReload from "./sw/please-reload.tsx"
 
 for (const plugin of plugins) {
 	plugin(pluginAPI)
@@ -63,14 +63,32 @@ export default function Littlebook() {
 	const [automergeState, control] = startFromLocal()
 
 	return (
-		<Switch>
-			<Match when={automergeState.state == "ready" && !automergeState()}>
-				<Hello
-					pair={(opts: PairDeviceOptions) => {
-						pairDevice(opts)
-							.then(result => {
-								const team = result.team
+		<>
+			<Switch>
+				<Match when={automergeState.state == "ready" && !automergeState()}>
+					<Hello
+						pair={(opts: PairDeviceOptions) => {
+							pairDevice(opts)
+								.then(result => {
+									const team = result.team
 
+									local.set({
+										device: result.device,
+										homeShareId: getShareId(team),
+										user: result.user,
+									} satisfies Omit<
+										Required<lb.LocalAutomergeState>,
+										"username"
+									>)
+									control.refetch()
+								})
+								.catch(error => {
+									console.error(error)
+								})
+						}}
+						fresh={async (opts: CreateDefaultTeamOptions) => {
+							createDefaultTeam(opts).then(result => {
+								const team = result.team
 								local.set({
 									device: result.device,
 									homeShareId: getShareId(team),
@@ -78,47 +96,34 @@ export default function Littlebook() {
 								} satisfies Omit<Required<lb.LocalAutomergeState>, "username">)
 								control.refetch()
 							})
-							.catch(error => {
-								console.error(error)
-							})
-					}}
-					fresh={async (opts: CreateDefaultTeamOptions) => {
-						createDefaultTeam(opts).then(result => {
-							const team = result.team
-							local.set({
-								device: result.device,
-								homeShareId: getShareId(team),
-								user: result.user,
-							} satisfies Omit<Required<lb.LocalAutomergeState>, "username">)
-							control.refetch()
-						})
-					}}
-				/>
-			</Match>
-			<Match when={automergeState.state == "ready"}>
-				<Router
-					root={props => (
-						<MetaProvider>
-							<Title>littlebook</Title>
-							<AutomergeContext.Provider value={automergeState!}>
-								<LittlebookAPIProvider automergeState={automergeState}>
-									<Suspense>{props.children}</Suspense>
-								</LittlebookAPIProvider>
-							</AutomergeContext.Provider>
-						</MetaProvider>
-					)}>
-					<Route path="/spaces/:shareId" component={SpacePage}>
-						<Route path="/*" component={Fallback} />
-						<Route path="/projects/:projectId" component={ProjectPage} />
-					</Route>
-					<Route path="*" component={Fallback} />
-					{/* <Route path="/projects/:projectId" component={ProjectPage} /> */}
-				</Router>
-			</Match>
-		</Switch>
+						}}
+					/>
+				</Match>
+				<Match when={automergeState.state == "ready"}>
+					<Router
+						root={props => (
+							<MetaProvider>
+								<Title>littlebook</Title>
+								<AutomergeContext.Provider value={automergeState!}>
+									<LittlebookAPIProvider automergeState={automergeState}>
+										<Suspense>{props.children}</Suspense>
+									</LittlebookAPIProvider>
+								</AutomergeContext.Provider>
+							</MetaProvider>
+						)}>
+						<Route path="/spaces/:shareId" component={SpacePage}>
+							<Route path="/*" component={Fallback} />
+							<Route path="/projects/:projectId" component={ProjectPage} />
+						</Route>
+						<Route path="*" component={Fallback} />
+						{/* <Route path="/projects/:projectId" component={ProjectPage} /> */}
+					</Router>
+				</Match>
+			</Switch>
+			<PleaseReload />
+		</>
 	)
 }
-
 function Fallback() {
 	const params = useParams<{shareId?: ShareId}>()
 	const routing = useIsRouting()
@@ -131,3 +136,17 @@ function Fallback() {
 		</Switch>
 	)
 }
+
+window.EXCALIDRAW_ASSET_PATH = "/"
+
+import {removeDirectory} from "../lib/opfs.ts"
+import {render} from "solid-js/web"
+declare global {
+	interface Window {
+		clearOPFS: typeof removeDirectory
+		EXCALIDRAW_ASSET_PATH: string
+	}
+}
+window.clearOPFS = removeDirectory
+
+render(() => <Littlebook />, document.getElementById("littlebook")!)

@@ -3,6 +3,7 @@
 @use "sass:map";
 
 @include set-root-vars(map.get($shadows, default), $shadow-namespace);
+@include set-root-var(color, fade(black, 90%), shadow);
 
 /* todo
 $ring-namespace: "namespace";

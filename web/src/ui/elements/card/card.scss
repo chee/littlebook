@@ -25,6 +25,9 @@ $card-namespace: card;
 	align-items: center;
 	background: inherit;
 	color: inherit;
+	gap: get-space(1);
+	padding-inline: get-space(3);
+	padding-block: get-space(2);
 
 	&:is(a, button)[aria-current="page"] {
 		background: get-color(primary-300);
@@ -40,32 +43,17 @@ $card-namespace: card;
 		}
 	}
 
-	.card > :first-child & {
+	.card > &:first-child {
 		border-top-left-radius: get-var(card-radius);
 		border-top-right-radius: get-var(card-radius);
 	}
 
-	.card > :last-child & {
+	.card > &:last-child {
 		border-bottom-left-radius: get-var(card-radius);
 		border-bottom-right-radius: get-var(card-radius);
 	}
 
 	font-weight: 500;
-
-	> * {
-		display: flex;
-		gap: get-space(1);
-	}
-}
-
-.card-link-title {
-	display: flex;
-	padding-inline: get-space(3);
-	padding-block: get-space(2);
-	flex: 1;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .card-header {

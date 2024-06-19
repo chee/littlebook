@@ -9,6 +9,11 @@ import type {
 	ShareId,
 } from "@localfirst/auth-provider-automerge-repo"
 import type createLittlebookAPI from "./api/api.ts"
+import type {ParentComponent} from "solid-js"
+
+export declare type ParentComponentProps<T = Record<any, any>> = Parameters<
+	ParentComponent<T>
+>[0]
 
 /** Inside an Automerge change function, any arrays found on the document have these utility functions */
 export declare interface AutomergeList<T> extends Array<T> {

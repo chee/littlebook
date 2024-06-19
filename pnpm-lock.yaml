@@ -202,6 +202,9 @@ importers:
       solid-resizable-panels:
         specifier: ^0.5.4
         version: 0.5.4(solid-js@1.8.17)
+      solid-split-pane:
+        specifier: ^0.0.5
+        version: 0.0.5
       styles:
         specifier: link:src/ui/styles
         version: link:src/ui/styles
@@ -5648,6 +5651,9 @@ packages:
     peerDependencies:
       solid-js: ^1.7
 
+  solid-split-pane@0.0.5:
+    resolution: {integrity: sha512-VhcbEAoVITw14Q0bt1+yOHfUYeZ4m+mkAQyCPrkwShB373O2G6bfkwJZZ3mBj0Nr09En5mjFDslteSbSz8Lolw==}
+
   solid-use@0.8.0:
     resolution: {integrity: sha512-YX+XmcKLvSx3bwMimMhFy40ZkDnShnUcEw6cW6fSscwKEgl1TG3GlgAvkBmQ3AeWjvQSd8+HGTr82ImsrjkkqA==}
     engines: {node: '>=10'}
@@ -5695,6 +5701,9 @@ packages:
 
   spdx-license-ids@3.0.18:
     resolution: {integrity: sha512-xxRs31BqRYHwiMzudOrpSiHtZ8i/GeionCBDSilhYRj+9gIcI8wCZTlXZKu9vZIVqViP3dcp9qE5G6AlIaD+TQ==}
+
+  split.js@1.6.5:
+    resolution: {integrity: sha512-mPTnGCiS/RiuTNsVhCm9De9cCAUsrNFFviRbADdKiiV+Kk8HKp/0fWu7Kr8pi3/yBmsqLFHuXGT9UUZ+CNLwFw==}
 
   split2@2.2.0:
     resolution: {integrity: sha512-RAb22TG39LhI31MbreBgIuKiIKhVsawfTgEGqKHTK87aG+ul/PB8Sqoi3I7kVdRWiCfrKxK3uo4/YUkpNvhPbw==}
@@ -12793,6 +12802,11 @@ snapshots:
     dependencies:
       solid-js: 1.8.17
 
+  solid-split-pane@0.0.5:
+    dependencies:
+      solid-js: 1.8.17
+      split.js: 1.6.5
+
   solid-use@0.8.0(solid-js@1.8.17):
     dependencies:
       solid-js: 1.8.17
@@ -12836,6 +12850,8 @@ snapshots:
       spdx-license-ids: 3.0.18
 
   spdx-license-ids@3.0.18: {}
+
+  split.js@1.6.5: {}
 
   split2@2.2.0:
     dependencies:

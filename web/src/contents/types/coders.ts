@@ -25,7 +25,7 @@ export function text(): ContentCoder<string> {
 				return utf8Decoder.decode(bytes)
 			} catch (error) {
 				console.error(error)
-				return new EncodingError((error as Error).message || (error as string))
+				return new DecodingError((error as Error).message || (error as string))
 			}
 		},
 	}

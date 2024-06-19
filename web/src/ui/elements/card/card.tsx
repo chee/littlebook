@@ -1,5 +1,5 @@
 import {A} from "@solidjs/router"
-import type {ParentComponent} from "solid-js"
+import {For, Show, type ParentComponent} from "solid-js"
 import cl from "../../lib/cl.ts"
 import "./card.scss"
 
@@ -9,53 +9,51 @@ export interface CardAction {
 	action(...any: any[]): any
 }
 
-export const Card: FunctionComponent<{
+export const Card: ParentComponent<{
 	title?: string
 	headerAction?: CardAction
 	footerActions?: CardAction[]
 	className?: string
 	class?: string
-}> = ({
-	title,
-	footerActions,
-	headerAction,
-	children,
-	className,
-	class: clas,
-}) => {
+}> = props => {
 	return (
-		<div class={cl("card", className, clas)}>
-			{title && (
+		<div class={cl("card", props.className, props.class)}>
+			<Show when={props.title}>
 				<header class="card-header">
-					<span>{title}</span>
+					<span>{props.title}</span>
 					<div>
-						{headerAction && (
+						{props.headerAction && (
 							<button
-								onClick={headerAction.action}
+								onclick={props.headerAction.action}
 								type="button"
-								label={headerAction.label}
+								aria-label={props.headerAction.label}
 								class="card-action">
-								{headerAction.icon}
+								{props.headerAction.icon}
 							</button>
 						)}
 					</div>
 				</header>
-			)}
-			{children}
-			{footerActions && (
+			</Show>
+			{props.children}
+			<Show when={props.footerActions}>
 				<footer class="card-footer">
-					{footerActions.map(desc => (
-						<button key={desc.action} type="button" class="card-footer-item">
-							{desc.label}
-						</button>
-					))}
+					<For each={props.footerActions}>
+						{footerAction => (
+							<button
+								type="button"
+								class="card-footer-item"
+								onclick={footerAction.action}>
+								{footerAction.label}
+							</button>
+						)}
+					</For>
 				</footer>
-			)}
+			</Show>
 		</div>
 	)
 }
 
-export interface CardLinkProps extends HTMLProps<HTMLDivElement> {
+export interface CardLinkProps {
 	title: string
 	icon: string
 	href: string
@@ -64,33 +62,22 @@ export interface CardLinkProps extends HTMLProps<HTMLDivElement> {
 	current?: boolean
 }
 
-export const CardLink: ParentComponent<CardLinkProps> = ({
-	title,
-	icon,
-	href,
-	unread,
-	current,
-	children,
-	...props
-}) => {
+export const CardLink: ParentComponent<CardLinkProps> = props => {
 	return (
-		<div {...props}>
-			<A
-				{...props}
-				href={href}
-				onClick={props.onClick}
-				class="card-item"
-				aria-current={current ? "page" : "false"}>
-				<span class="card-link-title">
-					<span class="">{icon}</span>
-					<span class="">{children || title}</span>
+		<A
+			{...props}
+			href={props.href}
+			onClick={props.onClick}
+			class="card-item"
+			aria-current={props.current ? "page" : "false"}>
+			<span>{props.icon}</span>
+			<p class="card-link-title">{props.children || props.title}</p>
+			{props.unread && (
+				// todo
+				<span class="rounded-full ring-primary-200 text-primary-300 bg-primary-100 ring-1">
+					{props.unread}
 				</span>
-				{unread && (
-					<span class="rounded-full ring-primary-200 text-primary-300 bg-primary-100 ring-1">
-						{unread}
-					</span>
-				)}
-			</A>
-		</div>
+			)}
+		</A>
 	)
 }

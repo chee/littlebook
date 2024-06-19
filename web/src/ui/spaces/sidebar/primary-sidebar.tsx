@@ -21,68 +21,65 @@ export default function PrimarySidebar() {
 
 	const lb = useLittlebookAPI()
 
-	const state = {open: true}
-
 	return (
 		<Show when={space()}>
-			<Sidebar state={state}>
-				<Card>
-					<CardLink
-						icon="📥"
-						title="inbox"
-						// href={getRoute({shareId: shareId.value, page: "inbox"})}
-						href="inbox"
-					/>
-				</Card>
-				<Card>
-					<CardLink
-						icon="⭐"
-						title="today"
-						// href={getRoute({shareId: shareId.value, page: "today"})}
-						href="today"
-					/>
-					<CardLink
-						icon="📆"
-						title="upcoming"
-						// href={getRoute({shareId: shareId.value, page: "upcoming"})}
-						href="upcoming"
-					/>
-					<CardLink
-						icon="🗃️"
-						title="someday"
-						// href={getRoute({shareId: shareId.value, page: "someday"})}
-						href="someday"
-					/>
-				</Card>
-				<Card
-					title="projects"
-					headerAction={{
-						label: "create project",
-						icon: "+",
-						action() {
-							const projectHandle = lb()?.projects.createHandle()
-							projectHandle?.doc().then(prj => {
-								if (prj) {
-									const change = lb()?.spaces.addProject(prj.id)
-									change && changeSpace(change)
-									setTimeout(() => {
-										// route({
-										// 	shareId: ui.space.shareId.value,
-										// 	project: prj,
-										// })
-										// ui.projects.renaming.value = prj.id
-									})
-								}
-							})
-						},
-					}}>
-					<For each={space()?.projects} fallback={<div>lol</div>}>
-						{id => {
-							return <ProjectLink projectId={id} />
-						}}
-					</For>
-				</Card>
-				{/* {space?.areas.map(id => {
+			<Card>
+				<CardLink
+					icon="📥"
+					title="inbox"
+					// href={getRoute({shareId: shareId.value, page: "inbox"})}
+					href="inbox"
+				/>
+			</Card>
+			<Card>
+				<CardLink
+					icon="⭐"
+					title="today"
+					// href={getRoute({shareId: shareId.value, page: "today"})}
+					href="today"
+				/>
+				<CardLink
+					icon="📆"
+					title="upcoming"
+					// href={getRoute({shareId: shareId.value, page: "upcoming"})}
+					href="upcoming"
+				/>
+				<CardLink
+					icon="🗃️"
+					title="someday"
+					// href={getRoute({shareId: shareId.value, page: "someday"})}
+					href="someday"
+				/>
+			</Card>
+			<Card
+				title="projects"
+				headerAction={{
+					label: "create project",
+					icon: "+",
+					action() {
+						const projectHandle = lb()?.projects.createHandle()
+						projectHandle?.doc().then(prj => {
+							if (prj) {
+								const change = lb()?.spaces.addProject(prj.id)
+								change && changeSpace(change)
+								setTimeout(() => {
+									// route({
+									// 	shareId: ui.space.shareId.value,
+									// 	project: prj,
+									// })
+									// ui.projects.renaming.value = prj.id
+								})
+							}
+						})
+					},
+				}}>
+				<For each={space()?.projects} fallback={<div>lol</div>}>
+					{id => {
+						return <ProjectLink projectId={id} />
+					}}
+				</For>
+			</Card>
+			{/* {space?.areas.map(id => {
 				return (
 					<Card
 						key={id}
@@ -100,18 +97,17 @@ export default function PrimarySidebar() {
 						{/* {space?.projects.map(id => (
 								<ProjectLink key={id} id={id} />
 							))} */}
-				{/* </Card> */}
-				{/* ) */}
-				{/* })} */}
-				<button
-					class="button"
-					type="button"
-					onclick={() =>
-						window.prompt("", createDeviceInvitation(automerge()?.team))
-					}>
-					inv
-				</button>
-			</Sidebar>
+			{/* </Card> */}
+			{/* ) */}
+			{/* })} */}
+			<button
+				class="button"
+				type="button"
+				onclick={() =>
+					window.prompt("", createDeviceInvitation(automerge()?.team))
+				}>
+				inv
+			</button>
 		</Show>
 	)
 }

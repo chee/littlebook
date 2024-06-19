@@ -5,7 +5,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "vite --port 1234",
+		"dev": "vite dev --port 1234",
 		"mk": "vite build",
 		"tmk": "tsc && vite build",
 		"start": "vite preview"
@@ -45,6 +45,7 @@
 		"solid-element": "^1.8.0",
 		"solid-js": "^1.8.17",
 		"solid-resizable-panels": "^0.5.4",
+		"solid-split-pane": "^0.0.5",
 		"styles": "link:src/ui/styles",
 		"throttle-debounce": "^5.0.0",
 		"ua-parser-js": "^1.0.38",

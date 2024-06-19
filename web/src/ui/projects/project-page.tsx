@@ -3,18 +3,21 @@ import InfoPanel from "../files/info-panel.tsx"
 import MetadataViewer from "../files/metadata-viewer.tsx"
 import ProjectFileBrowser from "./project-file-browser.tsx"
 import "./projects.scss"
+import {SplitPane} from "solid-split-pane"
 
 export default function ProjectPage() {
 	return (
 		<div class="flex grow">
-			<div class="flex column grow">
-				<ProjectFileBrowser />
-				<ContentEditor />
-			</div>
-			<aside class="px-2 flex">
-				<InfoPanel />
-				<MetadataViewer />
-			</aside>
+			<SplitPane>
+				<div class="flex column grow">
+					<ProjectFileBrowser />
+					<ContentEditor />
+				</div>
+				<aside class="px-2 flex">
+					<InfoPanel />
+					<MetadataViewer />
+				</aside>
+			</SplitPane>
 		</div>
 	)
 }
