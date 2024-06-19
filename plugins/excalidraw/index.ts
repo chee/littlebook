@@ -29,7 +29,7 @@ export default function excalidraw(lb: lb.plugins.API) {
 				dom,
 				{
 					props: {
-						content: "func",
+						content: "object",
 						changeContent: "func",
 					},
 				},

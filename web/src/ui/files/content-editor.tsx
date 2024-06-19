@@ -27,7 +27,7 @@ export default function ContentEditor() {
 	const ContentView = () => (
 		<Dynamic
 			component={component()}
-			content={() => content.latest?.value}
+			content={content.latest?.value}
 			prop:changeContent={changeContent}
 		/>
 	)

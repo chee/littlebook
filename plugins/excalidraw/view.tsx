@@ -3,7 +3,7 @@ import "../../web/src/types.ts"
 import type {AutomergeList} from "../../web/src/types.ts"
 import type {
 	// ContentView,
-	ContentViewComponent,
+	EditorViewComponent,
 } from "../../web/src/contents/views/content-view.ts"
 
 // should i provide this from @littlebook/plugin? probably, right! like, plus
@@ -55,7 +55,7 @@ const Excalidraw = lazy(async () => {
 })
 
 // todo work with `contentchange` event
-const ExcalidrawView: ContentViewComponent<
+const ExcalidrawView: EditorViewComponent<
 	ExcalidrawJSON,
 	FunctionComponent<lb.ContentEditorViewProps<ExcalidrawJSON>>
 > = ({content, changeContent, ...props}) => {
@@ -65,13 +65,13 @@ const ExcalidrawView: ContentViewComponent<
 	const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI>()
 
 	const initialElements = useMemo(
-		() => content.value.elements.map(automergeToExcalidraw),
+		() => content.elements.map(automergeToExcalidraw),
 		[],
 	)
 
 	useEffect(() => {
 		const elements = excalidrawAPI?.getSceneElements()
-		const contentVersion = content.value.elements.reduce(sumVersion, 0) || 0
+		const contentVersion = content.elements.reduce(sumVersion, 0) || 0
 		const excaliVersion = elements?.reduce(sumVersion, 0) || 0
 		if (contentVersion > excaliVersion) {
 			const state = excalidrawAPI?.getAppState()
@@ -84,10 +84,10 @@ const ExcalidrawView: ContentViewComponent<
 				return
 			}
 			excalidrawAPI?.updateScene({
-				elements: content.value.elements.map(automergeToExcalidraw),
+				elements: content.elements.map(automergeToExcalidraw),
 			})
 		}
-	}, [content.value])
+	}, [content])
 
 	const onchange = useCallback(
 		throttle(500, (elements, appState, files) => {
@@ -113,7 +113,7 @@ const ExcalidrawView: ContentViewComponent<
 			<Excalidraw
 				excalidrawAPI={api => setExcalidrawAPI(api)}
 				initialData={{
-					...content.value,
+					...content,
 					elements: initialElements,
 				}}
 				handleKeyboardGlobally={false}

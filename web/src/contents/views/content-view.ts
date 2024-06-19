@@ -1,8 +1,9 @@
+import type {ChangeFn} from "@automerge/automerge"
 import type {lb} from "../../types"
 import type {ContentViewName} from "../types/type-registries"
 
 export interface EditorViewProps<ContentType extends lb.AnyContent> {
-	content(): ContentType
+	content: ContentType
 	// todo make it possible to have the change function only have access to .value.
 	//
 	// right now it isn't possible because you wouldn't be able to use the automerge
@@ -11,7 +12,7 @@ export interface EditorViewProps<ContentType extends lb.AnyContent> {
 }
 
 export interface PreviewProps<ContentType extends lb.AnyContent> {
-	content(): ContentType
+	content: ContentType
 }
 
 export interface SelfRegisteringContentView<ContentType extends lb.AnyContent> {
@@ -30,23 +31,29 @@ export type PreviewComponent<
 > = (props: PreviewProps<T>) => ReturnType<C>
 
 // todo rethink all of this
-// todo provide a class to inherit from
 // todo make more webby with events
-export interface EditorViewElement<ContentType extends lb.AnyContent>
-	extends CustomElementConstructor,
-		EditorViewProps<ContentType> {}
+export abstract class EditorViewElement<
+	ContentType extends lb.AnyContent,
+> extends HTMLElement {
+	abstract content: ContentType
+	changeContent(_fn: ChangeFn<lb.Content<ContentType>>) {}
+}
 
-export interface PreviewElement<ContentType extends lb.AnyContent>
-	extends CustomElementConstructor,
-		PreviewProps<ContentType> {}
+export abstract class PreviewElement<
+	ContentType extends lb.AnyContent,
+> extends HTMLElement {
+	abstract content: ContentType
+}
 
 export type EditorView<ContentType extends lb.AnyContent> =
 	| SelfRegisteringContentView<ContentType>
-	| EditorViewElement<ContentType>
+	| ((new () => EditorViewElement<ContentType>) &
+			typeof EditorViewElement<ContentType>)
 
 export type Preview<ContentType extends lb.AnyContent> =
 	| SelfRegisteringContentView<ContentType>
-	| PreviewElement<ContentType>
+	| ((new () => PreviewElement<ContentType>) &
+			typeof PreviewElement<ContentType>)
 
 // todo store metadata in a different automerge doc
 // export interface MetadataViewProps<ContentType extends lb.AnyContent> {
