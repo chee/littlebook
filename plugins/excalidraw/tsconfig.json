@@ -11,12 +11,12 @@
 		"allowJs": true,
 		/* Preact Config */
 		"jsx": "react-jsx",
-		"jsxImportSource": "preact",
+		// "jsxImportSource": "preact",
 		"skipLibCheck": true,
-		"paths": {
-			"react": ["./node_modules/preact/compat/"],
-			"react-dom": ["./node_modules/preact/compat/"]
-		}
+		// "paths": {
+			// "react": ["./node_modules/preact/compat/"],
+			// "react-dom": ["./node_modules/preact/compat/"]
+		// }
 	},
 	"include": ["*.ts", "*.tsx", "create-custom-element.js"]
 }

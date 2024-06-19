@@ -1,11 +1,10 @@
-@use "../sass" as *;
-@use "breakpoints" as *;
+@use "../api" as *;
+
+@use "sides" as *;
 
 @use "sass:list";
 @use "sass:map";
 @use "sass:meta";
-
-$space-prefix: "space-" !default;
 
 $named-spaces: (
 	0: 0,
@@ -20,7 +19,7 @@ $named-spaces: (
 	2px: 2px,
 ) !default;
 
-@include set-root-vars($named-spaces, $space-prefix);
+@include set-root-vars($named-spaces, $space-namespace);
 
 $breakpoint-spaces: (
 	xs: (
@@ -62,12 +61,8 @@ $breakpoint-spaces: (
 		l: 6,
 		xl: 7,
 		2xl: 8,
-	)
+	),
 );
-
-@function get-space($name) {
-	@return get-var($name, $space-prefix);
-}
 
 $spacing-shorthands: (
 	m: margin,
@@ -75,7 +70,7 @@ $spacing-shorthands: (
 ) !default;
 
 @each $name, $map in $breakpoint-spaces {
-	@include set-root-var($name, get-space(map.get($map, xs)), $space-prefix);
+	@include set-root-var($name, get-space(map.get($map, xs)), $space-namespace);
 	@each $bp in map.keys($breakpoints) {
 		@include mq($from: $bp) {
 			$mapbp: map.get($map, $bp);
@@ -83,10 +78,9 @@ $spacing-shorthands: (
 				@include set-root-var(
 					$name,
 					get-space(map.get($map, $bp)),
-					$space-prefix
+					$space-namespace
 				);
 			}
-
 		}
 	}
 }
@@ -94,9 +88,9 @@ $spacing-shorthands: (
 @include each-side(
 	$spacing-shorthands,
 	map.merge(
-		self-reference($named-spaces, $space-prefix),
-		self-reference($breakpoint-spaces, $space-prefix)
+		self-reference($named-spaces, $space-namespace),
+		self-reference($breakpoint-spaces, $space-namespace)
 	)
 );
 
-@include set-root-vars($named-spaces, $space-prefix);
+@include set-root-vars($named-spaces, $space-namespace);

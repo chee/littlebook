@@ -1,11 +1,7 @@
+@use "../api" as *;
 @use "colors" as *;
-@use "../sass" as *;
 @use "sass:list";
-// todo is it weird that this file uses the $color-prefix?
 
-// todo i don't know design terminology. is primary "rose" or is that secondary?
-// is primary "white" ? and then rose secondary? idk
-// todo decide if secondary is even necesary
 $semantic-color-names: paper primary secondary;
 $status-color-names: good bad info warning;
 $use-case-color-names: fill line link;
@@ -24,10 +20,10 @@ $theme-color-names: list.join(
 			color: get-color(#{$color}-#{$scale-value});
 		}
 		.with-#{$color}-#{$scale-value}-background {
-			@include set-var(fill, #{$color}-#{$scale-value}, $color-prefix);
+			@include set-var(fill, #{$color}-#{$scale-value}, $color-namespace);
 		}
 		.with-#{$color}-#{$scale-value}-text {
-			@include set-var(line, #{$color}-#{$scale-value}, $color-prefix);
+			@include set-var(line, #{$color}-#{$scale-value}, $color-namespace);
 		}
 	}
 	// @each $lightness in $color-scale {
@@ -40,13 +36,13 @@ $theme-color-names: list.join(
 	// 		color-mix(in oklch, get-color($color) #{$step * 1%}, get-color(fill)),
 	// 		// okget-color($color) #{$lightness * 1%} c h,
 	// 		// color-mix(in srgb, get-color($color))
-	// 		$color-prefix
+	// 		$color-namespace
 	// 	);
 	// }
 }
 
 @mixin alias($theme-color, $palette-color) {
-	@include set-var($theme-color, get-color($palette-color), $color-prefix);
+	@include set-var($theme-color, get-color($palette-color), $color-namespace);
 	@include set-up-color($theme-color);
 	@each $scale-value in $color-scale {
 		$scaled-color-name: #{$theme-color}-#{$scale-value};
@@ -54,7 +50,7 @@ $theme-color-names: list.join(
 		@include set-var(
 			$scaled-color-name,
 			get-color(#{$palette-color}-#{$scale-value}),
-			$color-prefix
+			$color-namespace
 		);
 	}
 }
@@ -84,7 +80,7 @@ $base-theme: (
 	warning: "orange",
 ) !default;
 
-@include set-root-vars($base-theme, $color-prefix);
+@include set-root-vars($base-theme, $color-namespace);
 
 :root:not([theme]),
 :root[theme="cherries"] {
@@ -124,23 +120,14 @@ $base-theme: (
 	)
 );
 
-@mixin dark() {
-	:root[color-scheme="dark"] {
-		@content;
-	}
-	@media (prefers-color-scheme: dark) {
-		@content;
-	}
-}
-
 $scrollbar-width: thin !default;
-@include set-root-var(width, $scrollbar-width, scrollbar-);
+@include set-root-var(width, $scrollbar-width, scrollbar);
 $scrollbar-base-color: get-color(paper-900);
 $scrollbar-handle-color: get-color(paper-900);
-@include set-root-color(base, get-color(paper-200), scrollbar-);
-@include set-root-color(handle, get-color(paper-700), scrollbar-);
+@include set-root-color(base, get-color(paper-200), scrollbar);
+@include set-root-color(handle, get-color(paper-700), scrollbar);
 
 * {
-	scrollbar-width: get-var(width, scrollbar-);
+	scrollbar-width: get-var(width, scrollbar);
 	scrollbar-color: get-color(scrollbar-handle) get-color(scrollbar-base);
 }

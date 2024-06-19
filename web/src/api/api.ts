@@ -1,16 +1,16 @@
 import type {Repo} from "@automerge/automerge-repo"
-import createSpacesAPI from "./spaces.ts"
+import {
+	coderRegistry,
+	editorViewRegistry,
+	metadataViewRegistry,
+	previewRegistry,
+	typeRegistry,
+} from "../contents/types/type-registries.ts"
+import createContentsAPI from "./contents.ts"
 import createDocumentsAPI from "./documents.ts"
 import createFilesAPI from "./files.ts"
 import createProjectsAPI from "./projects.ts"
-import {
-	coderRegistry,
-	previewRegistry,
-	typeRegistry,
-	contentViewRegistry,
-	metadataViewRegistry,
-} from "../contents/types/type-registries.ts"
-import createContentsAPI from "./contents.ts"
+import createSpacesAPI from "./spaces.ts"
 
 /*
  * const doc = littlebook.documents.create("hehe")
@@ -26,7 +26,7 @@ export default function createLittlebookAPI(repo: Repo) {
 		contentTypes: typeRegistry,
 		views: {
 			preview: previewRegistry,
-			content: contentViewRegistry,
+			editor: editorViewRegistry,
 			metadata: metadataViewRegistry,
 		},
 		contents: createContentsAPI(repo),

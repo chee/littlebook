@@ -1,4 +1,4 @@
-@use "../sass" as *;
+@use "../api" as *;
 .bold {
 	font-weight: bolder;
 }
@@ -7,7 +7,7 @@
 	font-style: italic;
 }
 
-$typo-prefix: "typo-";
+$typo-namespace: "typo";
 
 @include set-root-vars(
 	(
@@ -15,7 +15,7 @@ $typo-prefix: "typo-";
 		family-mono: "Jetbrains Mono, Iosevka Rabbits, Iosevka, monospace",
 		font-size: 16px,
 	),
-	$typo-prefix
+	$typo-namespace
 );
 
 :root {

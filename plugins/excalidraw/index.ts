@@ -1,6 +1,10 @@
 import ExcalidrawView from "./view.tsx"
 import coder from "./coder.ts"
-import register from "preact-custom-element"
+import r2wc from "react-to-webcomponent"
+import react from "react"
+import dom from "react-dom"
+
+import type {ExcalidrawJSON} from "./shared.ts"
 
 export default function excalidraw(lb: lb.plugins.API) {
 	lb.registerContentType({
@@ -18,11 +22,18 @@ export default function excalidraw(lb: lb.plugins.API) {
 		},
 		coder,
 		views: {
-			content: {
-				define(name) {
-					register(ExcalidrawView, name)
+			editor: r2wc(
+				ExcalidrawView,
+				react,
+				// @ts-expect-error
+				dom,
+				{
+					props: {
+						content: "func",
+						changeContent: "func",
+					},
 				},
-			},
+			) as lb.ContentEditorView<ExcalidrawJSON>,
 		},
 	})
 }

@@ -1,24 +1,9 @@
-@use "../sass" as *;
+@use "../api" as *;
 @use "sass:list";
 @use "sass:map";
 @use "sass:math";
 
-$color-prefix: "color-" !default;
 $color-scale: 50 100 200 300 400 500 600 700 800 900 950 !default;
-
-@function get-color($name, $prefix: "") {
-	@return get-var($name, $color-prefix);
-}
-
-@mixin set-color($name, $value, $prefix: "") {
-	@include set-var(#{$prefix}#{$name}, $value, $color-prefix);
-}
-
-@mixin set-root-color($name, $value, $prefix: "") {
-	:root {
-		@include set-color($name, $value, $prefix);
-	}
-}
 
 @mixin set-up-color($color) {
 	.has-#{$color}-background {
@@ -35,10 +20,10 @@ $color-scale: 50 100 200 300 400 500 600 700 800 900 950 !default;
 	}
 
 	.with-#{$color}-background {
-		@include set-var(fill, $color, $color-prefix);
+		@include set-var(fill, $color, $color-namespace);
 	}
 	.with-#{$color}-text {
-		@include set-var(line, $color, $color-prefix);
+		@include set-var(line, $color, $color-namespace);
 	}
 
 	// @each $lightness in $color-scale {
@@ -51,7 +36,7 @@ $color-scale: 50 100 200 300 400 500 600 700 800 900 950 !default;
 	// 		color-mix(in oklch, get-color($color) #{$step * 1%}, get-color(fill)),
 	// 		// okget-color($color) #{$lightness * 1%} c h,
 	// 		// color-mix(in srgb, get-color($color))
-	// 		$color-prefix
+	// 		$color-namespace
 	// 	);
 
 	// 	.has-#{$color}-#{$scale}-background {
@@ -61,10 +46,10 @@ $color-scale: 50 100 200 300 400 500 600 700 800 900 950 !default;
 	// 		color: get-color($color);
 	// 	}
 	// 	.with-#{$color}-#{$scale}-background {
-	// 		@include set-var(fill, $color, $color-prefix);
+	// 		@include set-var(fill, $color, $color-namespace);
 	// 	}
 	// 	.with-#{$color}-#{$scale}-text {
-	// 		@include set-var(line, $color, $color-prefix);
+	// 		@include set-var(line, $color, $color-namespace);
 	// 	}
 	// }
 }
@@ -279,23 +264,23 @@ $base-palette: (
 	"stone": #40464a,
 ) !default;
 
-// @include set-root-vars($base-palette, $color-prefix);
+// @include set-root-vars($base-palette, $color-namespace);
 @each $color, $color-value in $base-palette {
 	// todo when firefox nightly becomes firefox normal
-	// @include set-root-var($color, oklch(from $color-value l c h), $color-prefix);
+	// @include set-root-var($color, oklch(from $color-value l c h), $color-namespace);
 	@include set-root-var(
 		$color,
 		color-mix(in oklch, $color-value, $color-value),
-		$color-prefix
+		$color-namespace
 	);
 }
 
 @include set-root-vars(
 	(
-		fill: get-color("fill"),
-		line: get-color("line"),
+		fill: get-color("rose"),
+		line: get-color("black"),
 	),
-	"#{$color-prefix}-page-"
+	$color-namespace
 );
 
 @include set-root-vars(
@@ -304,7 +289,7 @@ $base-palette: (
 		"white": white,
 		"transparent": transparent,
 	),
-	$color-prefix
+	$color-namespace
 );
 
 @include set-up-color("white");

@@ -1,4 +1,4 @@
-import type {ChangeFn, Repo} from "@automerge/automerge-repo"
+import type {Repo} from "@automerge/automerge-repo"
 import type {AutomergeList} from "../types.ts"
 export type WithoutId<DocType extends lb.AnyDocument> = Omit<DocType, "id">
 export type WithWriteableId<DocType extends lb.AnyDocument> =

@@ -44,15 +44,26 @@ export declare namespace lb {
 	}
 	type ContentCoder<Model extends AnyContent> =
 		import("./contents/types/coders.ts").ContentCoder<Model>
-	type ContentView<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").ContentView<Model>
-	type ContentMetadataView<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").ContentMetadataView<Model>
+	type ContentEditorView<Model extends AnyContent> =
+		import("./contents/views/content-view.ts").EditorView<Model>
+	// type ContentMetadataView<Model extends AnyContent> =
+	// 	import("./contents/views/content-view.ts").MetadataView<Model>
 	type ContentPreview<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").ContentPreview<Model>
+		import("./contents/views/content-view.ts").Preview<Model>
 
-	type ContentViewProps<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").ContentViewProps<Model>
+	type AnyContentView<Model extends AnyContent> =
+		| ContentEditorView<Model>
+		// | ContentMetadataView<Model>
+		| ContentPreview<Model>
+
+	type ContentEditorViewProps<Model extends AnyContent> =
+		import("./contents/views/content-view.ts").EditorViewProps<Model>
+
+	// type ContentMetadataViewProps<Model extends AnyContent> =
+	// 	import("./contents/views/content-view.ts").MetadataViewProps<Model>
+
+	type ContentPreviewProps<Model extends AnyContent> =
+		import("./contents/views/content-view.ts").PreviewProps<Model>
 
 	namespace plugins {
 		type API = typeof import("./plugins/plugin-api.ts")
@@ -61,9 +72,9 @@ export declare namespace lb {
 			type: lb.UniformType | lb.UniformTypeIdentifier
 			coder: lb.ContentCoder<T>
 			views: {
-				content?: ContentView<T>
-				metadata?: ContentMetadataView<T>
+				editor?: ContentEditorView<T>
 				preview?: ContentPreview<T>
+				// metadata?: ContentMetadataView<T>
 			}
 		}
 	}
@@ -163,7 +174,7 @@ export declare namespace lb {
 		user: Auth.UserWithSecrets
 		device: Auth.DeviceWithSecrets
 		team: Auth.Team
-		homeShareId: ShareId
+		shareId: ShareId
 	}
 
 	type LocalAutomergeState = {
@@ -172,7 +183,6 @@ export declare namespace lb {
 		username?: string
 		device?: Auth.DeviceWithSecrets
 		user?: Auth.UserWithSecrets
-		homeTeam?: Auth.Team
 		homeShareId?: ShareId
 	}
 }

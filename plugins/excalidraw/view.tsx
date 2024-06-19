@@ -2,7 +2,7 @@
 import "../../web/src/types.ts"
 import type {AutomergeList} from "../../web/src/types.ts"
 import type {
-	ContentView,
+	// ContentView,
 	ContentViewComponent,
 } from "../../web/src/contents/views/content-view.ts"
 
@@ -14,8 +14,15 @@ import {Counter} from "@automerge/automerge"
 // internal to the plugin
 import type {ExcalidrawImperativeAPI} from "@excalidraw/excalidraw/types/types.d.ts"
 import type {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types.d.ts"
-import {useCallback, useEffect, useMemo, useRef, useState} from "preact/hooks"
-import {Suspense, lazy, type FunctionComponent} from "preact/compat"
+import {
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+	Suspense,
+	lazy,
+	type FunctionComponent,
+} from "react"
 // import styles from "./styles.css"
 
 import {throttle} from "throttle-debounce"
@@ -42,16 +49,19 @@ function automergeToExcalidraw(element: MergeableExcalidrawElement) {
 	} as unknown as ExcalidrawElement
 }
 
+const Excalidraw = lazy(async () => {
+	const module = await import("@excalidraw/excalidraw")
+	return {default: module.default.Excalidraw}
+})
+
 // todo work with `contentchange` event
 const ExcalidrawView: ContentViewComponent<
 	ExcalidrawJSON,
-	FunctionComponent
-> = ({content, changeContent}) => {
-	const Excalidraw = useMemo(
-		() =>
-			lazy(() => import("@excalidraw/excalidraw").then(mod => mod.Excalidraw)),
-		[],
-	)
+	FunctionComponent<lb.ContentEditorViewProps<ExcalidrawJSON>>
+> = ({content, changeContent, ...props}) => {
+	if (!content) {
+		return <div>waiting for content</div>
+	}
 	const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI>()
 
 	const initialElements = useMemo(
@@ -80,7 +90,7 @@ const ExcalidrawView: ContentViewComponent<
 	}, [content.value])
 
 	const onchange = useCallback(
-		throttle(50, (elements, appState, files) => {
+		throttle(500, (elements, appState, files) => {
 			// todo snapshot!
 
 			changeContent(content => {
@@ -99,18 +109,7 @@ const ExcalidrawView: ContentViewComponent<
 	)
 
 	return (
-		<Suspense
-			fallback={
-				<div
-					style={{
-						textAlign: "center",
-						color: "#c7c7cc",
-						fontSize: "0.8rem",
-						marginTop: "1em",
-					}}>
-					loading scene
-				</div>
-			}>
+		<Suspense fallback={<div style={placeholderStyle} />}>
 			<Excalidraw
 				excalidrawAPI={api => setExcalidrawAPI(api)}
 				initialData={{
@@ -125,3 +124,13 @@ const ExcalidrawView: ContentViewComponent<
 }
 
 export default ExcalidrawView
+
+/** @type {React.CSSProperties} */
+const placeholderStyle = {
+	backgroundColor: "var(--paper)",
+	position: "absolute",
+	top: 0,
+	left: 0,
+	right: 0,
+	bottom: 0,
+}

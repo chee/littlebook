@@ -1,47 +1,94 @@
-import type {ChangeFn} from "@automerge/automerge-repo"
-import type {ContentViewName} from "../types/type-registries"
 import type {lb} from "../../types"
+import type {ContentViewName} from "../types/type-registries"
 
-export interface ContentViewProps<ContentType extends lb.AnyContent> {
-	file: lb.File
-	changeFile(fn: ChangeFn<lb.File>): void
-	content: lb.Content<ContentType>
-	changeContent(fn: ChangeFn<lb.Content<ContentType>>): void
+export interface EditorViewProps<ContentType extends lb.AnyContent> {
+	content(): ContentType
+	// todo make it possible to have the change function only have access to .value.
+	//
+	// right now it isn't possible because you wouldn't be able to use the automerge
+	// `updateText` feature. but i could provide a way to do that
+	changeContent(fn: (content: lb.Content<ContentType>) => void): void
+}
+
+export interface PreviewProps<ContentType extends lb.AnyContent> {
+	content(): ContentType
 }
 
 export interface SelfRegisteringContentView<ContentType extends lb.AnyContent> {
 	define(name: ContentViewName<SelfRegisteringContentView<ContentType>>): void
 }
 
-export type ContentViewComponent<
+// todo are these useful?
+export type EditorViewComponent<
 	T extends lb.AnyContent,
-	C extends (props: any) => any,
-> = (props: ContentViewProps<T>) => ReturnType<C>
+	C extends (props: any) => any | {new (props: any): C},
+> = (props: EditorViewProps<T>) => ReturnType<C>
+
+export type PreviewComponent<
+	T extends lb.AnyContent,
+	C extends (props: any) => any | {new (props: any): C},
+> = (props: PreviewProps<T>) => ReturnType<C>
 
 // todo rethink all of this
 // todo provide a class to inherit from
 // todo make more webby with events
-export interface ContentViewElement<ContentType extends lb.AnyContent>
-	extends HTMLElement {
-	file: lb.File
-	content: lb.Content<ContentType>
-	changeFile(fn: ChangeFn<lb.File>): void
-	changeContent(fn: ChangeFn<ContentType>): void
-}
+export interface EditorViewElement<ContentType extends lb.AnyContent>
+	extends CustomElementConstructor,
+		EditorViewProps<ContentType> {}
 
-export interface ContentMetadataViewElement<ContentType extends lb.AnyContent>
-	extends ContentViewElement<ContentType> {}
-export interface ContentPreviewElement<ContentType extends lb.AnyContent>
-	extends ContentViewElement<ContentType> {}
+export interface PreviewElement<ContentType extends lb.AnyContent>
+	extends CustomElementConstructor,
+		PreviewProps<ContentType> {}
 
-export type ContentView<ContentType extends lb.AnyContent> =
+export type EditorView<ContentType extends lb.AnyContent> =
 	| SelfRegisteringContentView<ContentType>
-	| {new (...args: any[]): ContentViewElement<ContentType>}
+	| EditorViewElement<ContentType>
 
-export type ContentMetadataView<ContentType extends lb.AnyContent> =
+export type Preview<ContentType extends lb.AnyContent> =
 	| SelfRegisteringContentView<ContentType>
-	| {new (...args: any[]): ContentViewElement<ContentType>}
+	| PreviewElement<ContentType>
 
-export type ContentPreview<ContentType extends lb.AnyContent> =
-	| SelfRegisteringContentView<ContentType>
-	| {new (...args: any[]): ContentViewElement<ContentType>}
+// todo store metadata in a different automerge doc
+// export interface MetadataViewProps<ContentType extends lb.AnyContent> {
+// 	metadata(): lb.Content<ContentType>
+// 	changeMetadata(fn: (content: lb.Content<ContentType>) => void): void
+// }
+
+// const placeholderContent: lb.Content<any> = {
+// 	id: "__placeholder" as lb.ContentId,
+// 	type: "content",
+// 	contentType: "public.data" as lb.UniformTypeIdentifier,
+// 	value: null,
+// 	metadata: {},
+// }
+
+// export const metadataViewPlaceholderProps: MetadataViewProps<any> = {
+// 	metadata: () => new Uint8Array(),
+// 	changeMetadata() {},
+// }
+
+// export interface SelfRegisteringMetadataView<
+// 	ContentType extends lb.AnyContent,
+// > {
+// 	define(
+// 		name: ContentViewName<SelfRegisteringMetadataView<ContentType>>,
+// 		placeholderProps: MetadataViewProps<ContentType>,
+// 	): void
+// }
+
+// export interface SelfRegisteringPreview<ContentType extends lb.AnyContent> {
+// 	define(name: ContentViewName<SelfRegisteringPreview<ContentType>>): void
+// }
+
+// export type MetadataViewComponent<
+// 	T extends lb.AnyContent,
+// 	C extends (props: any) => any | {new (props: any): C},
+// > = (props: MetadataViewProps<T>) => ReturnType<C>
+
+// export interface MetadataViewElement<ContentType extends lb.AnyContent>
+// 	extends CustomElementConstructor,
+// 		MetadataViewProps<ContentType> {}
+
+// export type MetadataView<ContentType extends lb.AnyContent> =
+// 	| SelfRegisteringMetadataView<ContentType>
+// 	| MetadataViewElement<ContentType>

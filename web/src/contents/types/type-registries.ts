@@ -1,5 +1,5 @@
-import typeRegistry from "./uniform-type-identifiers.ts"
 import type {ContentCoder} from "./coders.ts"
+import typeRegistry from "./uniform-type-identifiers.ts"
 
 export class ContentCoderRegistry {
 	private registry = new Map<lb.UniformTypeIdentifier, ContentCoder<any>>()
@@ -29,7 +29,7 @@ export class ContentCoderRegistry {
 	}
 }
 
-export type ContentViewName<T extends lb.ContentView<any>> = string & {
+export type ContentViewName<T extends lb.AnyContentView<any>> = string & {
 	"__content-view": T
 }
 
@@ -76,7 +76,7 @@ export class ContentViewRegistry {
 }
 
 export const coderRegistry = new ContentCoderRegistry()
-export const contentViewRegistry = new ContentViewRegistry()
+export const editorViewRegistry = new ContentViewRegistry()
 export const metadataViewRegistry = new ContentViewRegistry()
 export const previewRegistry = new ContentViewRegistry()
 export {typeRegistry}
@@ -85,7 +85,7 @@ const registries = {
 	coders: coderRegistry,
 	contentTypes: typeRegistry,
 	views: {
-		content: contentViewRegistry,
+		editor: editorViewRegistry,
 		metadata: metadataViewRegistry,
 		preview: previewRegistry,
 	},

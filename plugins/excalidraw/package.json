@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"mk": "node mk",
+		"w": "node mk/w",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
@@ -20,7 +21,14 @@
 	},
 	"dependencies": {
 		"@excalidraw/excalidraw": "^0.17.6",
+		"@types/react": "^18.3.3",
+		"@types/react-dom": "^18.3.0",
 		"@types/throttle-debounce": "^5.0.2",
+		"component-register": "^0.7.1",
+		"component-register-preact": "^0.1.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-to-webcomponent": "^2.0.0",
 		"throttle-debounce": "^5.0.0"
 	},
 	"peerDependencies": {

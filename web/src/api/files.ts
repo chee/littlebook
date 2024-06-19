@@ -1,15 +1,15 @@
 import type {Repo} from "@automerge/automerge-repo"
-import {createContentHandle} from "./contents.ts"
-import {coderRegistry, typeRegistry} from "../contents/types/type-registries.ts"
 import {binary} from "../contents/types/coders.ts"
+import {coderRegistry, typeRegistry} from "../contents/types/type-registries.ts"
 import {unknown} from "../contents/types/uniform-type-identifiers.ts"
+import type {UniformTypeIdentifier} from "../global.js"
+import {createContentHandle} from "./contents.ts"
 import {
+	type DocTemplate,
 	createDocumentHandle,
 	getDocumentHandle,
 	removeItemFromDocument,
-	type DocTemplate,
 } from "./documents.ts"
-import type {UniformTypeIdentifier} from "../global.js"
 import {addItemToProject, getProjectHandle} from "./projects.ts"
 
 export function createFileHandle(

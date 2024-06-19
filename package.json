@@ -11,7 +11,9 @@
 	"author": "",
 	"license": "AGPL3.0+",
 	"packageManager": "pnpm@9.1.4",
-	"peerDependencyRules": {
-		"ignoreMissing": ["@opentelemetry/*"]
+	"pnpm": {
+		"peerDependencyRules": {
+			"ignoreMissing": ["@opentelemetry/*", "@netlify/*"]
+		}
 	}
 }

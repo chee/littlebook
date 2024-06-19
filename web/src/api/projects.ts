@@ -3,11 +3,11 @@ import type {Repo} from "@automerge/automerge-repo"
 import random from "random"
 import type {AutomergeList} from "../types.ts"
 import {
+	type DocTemplate,
 	addItemToDocument,
+	createDocumentHandle,
 	getDocumentHandle,
 	removeItemFromDocument,
-	createDocumentHandle,
-	type DocTemplate,
 } from "./documents.ts"
 
 export function createProjectHandle(

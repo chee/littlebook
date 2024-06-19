@@ -1,0 +1,80 @@
+@use "../../styles/api" as *;
+
+$card-namespace: card;
+@include set-root-vars(
+	(
+		radius: get-radius(l),
+	),
+	$card-namespace
+);
+
+@include set-root-color(fill, get-color(fill), $card-namespace);
+@include set-root-color(line, get-color(line), $card-namespace);
+.card {
+	background: get-color(fill, $card-namespace);
+	color: get-color(line, $card-namespace);
+	border-radius: get-var(card-radius);
+	display: block;
+	@include set-shadow;
+	@include shadow;
+}
+
+.card-item {
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+	background: inherit;
+	color: inherit;
+
+	&:is(a, button)[aria-current="page"] {
+		background: get-color(primary-300);
+		@include dark {
+			background: get-color(primary-800);
+		}
+	}
+
+	&:is(a, button):not([aria-current="page"]):hover {
+		background: get-color(primary-50);
+		@include dark {
+			background: get-color(primary-950);
+		}
+	}
+
+	.card > :first-child & {
+		border-top-left-radius: get-var(card-radius);
+		border-top-right-radius: get-var(card-radius);
+	}
+
+	.card > :last-child & {
+		border-bottom-left-radius: get-var(card-radius);
+		border-bottom-right-radius: get-var(card-radius);
+	}
+
+	font-weight: 500;
+
+	> * {
+		display: flex;
+		gap: get-space(1);
+	}
+}
+
+.card-link-title {
+	display: flex;
+	padding-inline: get-space(3);
+	padding-block: get-space(2);
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.card-header {
+	display: flex;
+	justify-content: space-between;
+	padding-inline: get-space(3);
+	padding-block: get-space(2);
+	font-weight: 600;
+	font-size: 1.2rem;
+	border-bottom: 1px solid
+		color-mix(in oklch, get-color(secondary-100) 50%, get-color(card-fill));
+}

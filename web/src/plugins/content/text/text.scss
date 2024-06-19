@@ -1,0 +1,9 @@
+@use "styles/api";
+
+.text-content-view {
+	height: 100%;
+	width: 100%;
+	border: 0;
+	font-family: api.get-var("family-mono");
+	padding: api.get-space(1);
+}

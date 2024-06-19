@@ -1,6 +1,6 @@
 import type {Repo} from "@automerge/automerge-repo"
 import type {AutomergeList} from "../types.ts"
-import {getDocumentHandle, createDocumentHandle} from "./documents.ts"
+import {createDocumentHandle, getDocumentHandle} from "./documents.ts"
 
 export function createSpaceHandle(
 	repo: Repo,

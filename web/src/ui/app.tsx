@@ -1,42 +1,38 @@
 import "./app.scss"
 
 import {MetaProvider, Title} from "@solidjs/meta"
-import {
-	Navigate,
-	Route,
-	Router,
-	action,
-	useIsRouting,
-	useParams,
-} from "@solidjs/router"
-// import {FileRoutes} from "@solidjs/start/router"
+import {Navigate, Route, Router, useIsRouting, useParams} from "@solidjs/router"
+
 import {
 	Match,
-	Show,
+	type ParentComponent,
+	type ResourceReturn,
 	Suspense,
 	Switch,
 	createEffect,
 	createMemo,
-	type ParentComponent,
-	type ResourceReturn,
 } from "solid-js"
 
-import {LittlebookAPIContext} from "./api/use-api.ts"
-import SpacePage from "./littlebook/spaces/space-page.tsx"
-import type {ShareId} from "@localfirst/auth-provider-automerge-repo"
+import {
+	type ShareId,
+	getShareId,
+} from "@localfirst/auth-provider-automerge-repo"
 import createLittlebookAPI from "../api/api.ts"
+import type {PairDeviceOptions} from "../auth/devices/pair-device.ts"
+import {
+	type CreateDefaultTeamOptions,
+	createDefaultTeam,
+} from "../auth/teams/create-team.ts"
+import {LittlebookAPIContext} from "./api/use-api.ts"
+import {Hello} from "./automerge/hello.tsx"
+import * as local from "./automerge/local.ts"
 import {
 	AutomergeContext,
-	createDefaultTeam,
-	pair,
 	startFromLocal,
 	useAutomerge,
-} from "./automerge/auth/use-automerge.ts"
-import * as local from "./automerge/auth/local.ts"
-import {Hello} from "./automerge/auth/hello.tsx"
-import type {PairDeviceOptions} from "../auth/devices/pair-device.ts"
-import type {CreateDefaultTeamOptions} from "../auth/teams/create-team.ts"
-import ProjectPage from "./littlebook/projects/project-page.tsx"
+} from "./automerge/use-automerge.ts"
+import ProjectPage from "./projects/project-page.tsx"
+import SpacePage from "./spaces/space-page.tsx"
 
 const LittlebookAPIProvider: ParentComponent<{
 	automergeState: ResourceReturn<lb.AutomergeState | undefined>[0]
@@ -53,8 +49,10 @@ const LittlebookAPIProvider: ParentComponent<{
 }
 
 import excalidraw from "@littlebook/excalidraw"
+import text from "../plugins/content/text/text.tsx"
 
-const plugins = [excalidraw]
+const plugins = [excalidraw, text]
+import pairDevice from "../auth/devices/pair-device.ts"
 import * as pluginAPI from "../plugins/plugin-api.ts"
 
 for (const plugin of plugins) {
@@ -62,51 +60,58 @@ for (const plugin of plugins) {
 }
 
 export default function Littlebook() {
-	const [state, control] = startFromLocal()
+	const [automergeState, control] = startFromLocal()
 
 	return (
 		<Switch>
-			<Match when={state.state == "ready" && state() == null}>
+			<Match when={automergeState.state == "ready" && !automergeState()}>
 				<Hello
 					pair={(opts: PairDeviceOptions) => {
-						const [state] = pair(opts)
-						createEffect(() => {
-							const s = state()
-							if (s) {
-								local.set(s)
-								// stateResource[1].refetch()
-							}
-						})
+						pairDevice(opts)
+							.then(result => {
+								const team = result.team
+
+								local.set({
+									device: result.device,
+									homeShareId: getShareId(team),
+									user: result.user,
+								} satisfies Omit<Required<lb.LocalAutomergeState>, "username">)
+								control.refetch()
+							})
+							.catch(error => {
+								console.error(error)
+							})
 					}}
-					fresh={(opts: CreateDefaultTeamOptions) => {
-						const [state] = createDefaultTeam(opts)
-						createEffect(() => {
-							const s = state()
-							if (s) {
-								local.set(s)
-								// stateResource[1].refetch()
-							}
+					fresh={async (opts: CreateDefaultTeamOptions) => {
+						createDefaultTeam(opts).then(result => {
+							const team = result.team
+							local.set({
+								device: result.device,
+								homeShareId: getShareId(team),
+								user: result.user,
+							} satisfies Omit<Required<lb.LocalAutomergeState>, "username">)
+							control.refetch()
 						})
 					}}
 				/>
 			</Match>
-			<Match when={state() != null}>
+			<Match when={automergeState.state == "ready"}>
 				<Router
 					root={props => (
 						<MetaProvider>
 							<Title>littlebook</Title>
-							<AutomergeContext.Provider value={state}>
-								<LittlebookAPIProvider automergeState={state}>
+							<AutomergeContext.Provider value={automergeState!}>
+								<LittlebookAPIProvider automergeState={automergeState}>
 									<Suspense>{props.children}</Suspense>
 								</LittlebookAPIProvider>
 							</AutomergeContext.Provider>
 						</MetaProvider>
 					)}>
-					<Route path="*" component={Fallback} />
 					<Route path="/spaces/:shareId" component={SpacePage}>
 						<Route path="/*" component={Fallback} />
 						<Route path="/projects/:projectId" component={ProjectPage} />
 					</Route>
+					<Route path="*" component={Fallback} />
 					{/* <Route path="/projects/:projectId" component={ProjectPage} /> */}
 				</Router>
 			</Match>
@@ -117,10 +122,11 @@ export default function Littlebook() {
 function Fallback() {
 	const params = useParams<{shareId?: ShareId}>()
 	const routing = useIsRouting()
+	const automerge = useAutomerge()
 	return (
 		<Switch>
-			<Match when={!routing() && local.state.homeShareId && !params.shareId}>
-				<Navigate href={`/spaces/${local.state.homeShareId}`} />
+			<Match when={!routing() && automerge()?.shareId && !params.shareId}>
+				<Navigate href={`/spaces/${automerge()!.shareId}/today`} />
 			</Match>
 		</Switch>
 	)

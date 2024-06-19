@@ -1,0 +1,19 @@
+<!doctype html>
+<script type="module">
+	import it from "./index.js"
+
+	it({registerContentType: config => {
+		config.views.content.define("my-element")
+	}})
+
+	const element = document.createElement("my-element")
+	element._props = {
+		content: {
+			value: {
+				elements: []
+			}
+		}
+	}
+	// element.content.value.elements = []
+</script>
+<my-element></my-element>

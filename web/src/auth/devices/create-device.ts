@@ -1,5 +1,5 @@
-import getDefaultDeviceName from "./get-default-device-name.ts"
 import * as Auth from "@localfirst/auth"
+import getDefaultDeviceName from "./get-default-device-name.ts"
 
 export default function createDevice(
 	userId: string,

@@ -1,0 +1,60 @@
+@use "../../styles/api" as *;
+
+@include set-root-color(sidebar-fill, get-color(paper-100));
+
+.sidebar-panel {
+	width: 100%;
+	height: 100%;
+	background: get-color(sidebar-fill);
+	position: fixed;
+	top: calc(get-space(4) + get-space(6));
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 100;
+	@include respond-to-m {
+		position: static;
+	}
+}
+
+.sidebar {
+	background: get-color(sidebar-fill);
+	display: flex;
+	flex-direction: column;
+	gap: get-space(l);
+	@include respond-to-s {
+		gap: get-space(m);
+	}
+	top: 0;
+	bottom: 0;
+	overflow-y: auto;
+	height: 95vh;
+	width: 100%;
+	padding: 0;
+
+	@include set-var(card-fill, get-color(sidebar-fill));
+	@include set-var(card-radius, 0);
+	@include respond-to-m {
+		padding: get-space(s);
+		@include set-var(card-fill, get-color(fill));
+		@include set-var(card-radius, get-radius("l"));
+	}
+
+	> * {
+		@include set-shadow-var(color, transparent);
+		@include respond-to-m {
+			@include set-shadow-var(color, get-color("paper-200"));
+		}
+	}
+
+	@include set-shadow(l);
+	@include set-shadow-var(color, get-color("paper-900"));
+	@include set-shadow-var(y, 0);
+	@include set-shadow-var(x, 10);
+	@include shadow;
+	@include dark {
+		background: black;
+		color: white;
+		@include set-shadow-var(color, black);
+	}
+}

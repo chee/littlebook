@@ -25,6 +25,7 @@ export default {
 		if (bytes.length == 0) {
 			return base
 		}
-		return jsonCoder.decode(bytes)
+		const decoded = jsonCoder.decode(bytes)
+		return decoded
 	},
 } satisfies ContentCoder<ExcalidrawJSON>

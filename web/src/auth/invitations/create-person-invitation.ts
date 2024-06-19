@@ -1,7 +1,5 @@
 import type * as Auth from "@localfirst/auth"
-import createFriendlyInvitation, {
-	createBasicInvitation,
-} from "./create-invitation.ts"
+import {createBasicInvitation} from "./create-invitation.ts"
 
 export default function createPersonInvitation(
 	team: Auth.Team,

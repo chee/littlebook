@@ -1,9 +1,9 @@
 import type {Repo} from "@automerge/automerge-repo"
+import {CodingError} from "../contents/types/coders.ts"
 import {coderRegistry} from "../contents/types/type-registries.ts"
+import type {AnyContent} from "../global.js"
 import {createDocumentHandle, getDocumentHandle} from "./documents.ts"
 import {createFileHandle} from "./files.ts"
-import {CodingError} from "../contents/types/coders.ts"
-import type {AnyContent} from "../global.js"
 
 export function createContentHandle<T extends lb.AnyContent>(
 	repo: Repo,

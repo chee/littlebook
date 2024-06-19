@@ -1,10 +1,7 @@
-// import {Link, useRoute} from "wouter-preact"
-// import type {FunctionComponent} from "preact"
 import {A} from "@solidjs/router"
-import cl from "../../lib/cl.ts"
 import type {ParentComponent} from "solid-js"
-import {useMatch, useHref} from "@solidjs/router"
-// import type {HTMLProps} from "preact/compat"
+import cl from "../../lib/cl.ts"
+import "./card.scss"
 
 export interface CardAction {
 	icon: string
