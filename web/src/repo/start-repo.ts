@@ -1,12 +1,11 @@
 // @refresh skip
-import {type PeerId, Repo} from "@automerge/automerge-repo"
-// import {MessageChannelNetworkAdapter} from "@automerge/automerge-repo-network-messagechannel"
+import {Repo} from "@automerge/automerge-repo"
+import {BroadcastChannelNetworkAdapter} from "@automerge/automerge-repo-network-broadcastchannel"
 import {BrowserWebSocketClientAdapter} from "@automerge/automerge-repo-network-websocket"
 import {IndexedDBStorageAdapter} from "@automerge/automerge-repo-storage-indexeddb"
 import type * as Auth from "@localfirst/auth"
 import {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
 import {eventPromise as waitForEvent} from "@localfirst/shared"
-import * as local from "../ui/automerge/local.ts"
 
 export type CreateRepoOpts = {
 	user?: Auth.UserWithSecrets
@@ -14,7 +13,9 @@ export type CreateRepoOpts = {
 }
 
 export default async function start({user, device}: CreateRepoOpts) {
+	// const storage = new OPFSStorageAdapter("automerge")
 	const storage = new IndexedDBStorageAdapter("automerge")
+
 	const auth = new AuthProvider({
 		user,
 		device,
@@ -26,16 +27,33 @@ export default async function start({user, device}: CreateRepoOpts) {
 		"wss://star.littlebook.app",
 	)
 
-	const network = [auth.wrap(websocketAdapter)]
+	// @ts-expect-error
+	websocketAdapter.onMessage = function (
+		this: BrowserWebSocketClientAdapter,
+		event: MessageEvent<Uint8Array>,
+	) {
+		try {
+			this.receiveMessage(event.data)
+		} catch (error) {
+			console.error(error)
+			// hack that seems to work when the server freaks out
+			const shareId = local.state.homeShareId
+			if (shareId) {
+				auth.createTeam(auth.getTeam(shareId).teamName)
+			}
+		}
+	}.bind(websocketAdapter)
+
+	const broadcastAdapter = new BroadcastChannelNetworkAdapter()
 
 	const repo = new Repo({
-		peerId: device.deviceId as PeerId,
+		// peerId: ,
 		storage,
-		network,
+		network: [auth.wrap(websocketAdapter), broadcastAdapter],
+		// async sharePolicy(peerId, _documentId) {
+		// return peerId == device.deviceId
+		// },
 	})
-	// occasionally i have to remake the home team?
-	// hack
-	user && auth.createTeam(user.userName)
 
 	await Promise.all([
 		waitForEvent(auth, "ready"),
@@ -45,19 +63,23 @@ export default async function start({user, device}: CreateRepoOpts) {
 	return {auth, repo}
 }
 
-// // @ts-expect-error
-// websocketAdapter.onMessage = function (
-// 	this: BrowserWebSocketClientAdapter,
-// 	event: MessageEvent<Uint8Array>,
-// ) {
-// 	try {
-// 		this.receiveMessage(event.data)
-// 	} catch (error) {
-// 		console.error(error)
-// 		// hack that seems to work when the server freaks out
-// 		const shareId = local.state.homeShareId
-// 		if (shareId) {
-// 			auth.createTeam(auth.getTeam(shareId).teamName)
-// 		}
-// 	}
-// }.bind(websocketAdapter)
+/*
+	// const workerAdapter = new MessageChannelNetworkAdapter(worker.port)
+	// worker.port.postMessage([
+	// 	"auth-info",
+	// 	JSON.stringify(user),
+	// 	JSON.stringify(device),
+	// ])
+	// worker.port.postMessage({
+	// 	type: "peer-id",
+	// 	id: device.deviceId,
+	// })
+		const network = [auth.wrap(workerAdapter)]
+			const worker = new SharedWorker(
+		new URL("./repo.worker.ts", import.meta.url),
+		{
+			type: "module",
+			name: "automerge-repo-shared-worker",
+		},
+	)
+ */
