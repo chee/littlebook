@@ -2,9 +2,8 @@
 	"compilerOptions": {
 		"composite": true,
 		"skipLibCheck": true,
-		"target": "ESNext",
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"allowSyntheticDefaultImports": true,
 		"strict": true
 	},

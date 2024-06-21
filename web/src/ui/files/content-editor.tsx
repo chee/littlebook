@@ -3,9 +3,9 @@ import {ErrorBoundary, Show, Suspense, createEffect, on} from "solid-js"
 import {Dynamic} from "solid-js/web"
 import {UnknownContent} from "../../plugins/content/unknown/unknown-view.tsx"
 import {useLittlebookAPI} from "../api/use-api.ts"
-import useDocument from "../documents/use-document.ts"
+import useContentValue from "./use-content-value.ts"
 import "./content-editor.scss"
-import {updateText} from "@automerge/automerge-repo"
+import useDocument from "../documents/use-document.ts"
 
 customElements.define("unknown-view", UnknownContent)
 
@@ -15,25 +15,29 @@ export default function ContentEditor() {
 	const lb = useLittlebookAPI()
 	const [file] = useDocument<lb.File>(() => search.file)
 
-	const [content, changeContent] = useDocument<lb.Content<any>>(
+	const [content, changeContent] = useContentValue<lb.Content<any>>(
 		() => file()?.content,
 	)
 
 	const contentViews = () =>
-		content.latest && lb()?.views.editor.get(content.latest!.contentType)
+		file.latest && lb()?.views.editor.get(file.latest!.contentType)
 
 	const component = () => contentViews()?.next().value || "unknown-view"
 
 	const ContentView = () => (
 		<Dynamic
 			component={component()}
-			content={content.latest?.value}
+			content={content()}
 			prop:changeContent={changeContent}
 		/>
 	)
 
+	createEffect(() => {
+		console.log(content(), changeContent)
+	})
+
 	return (
-		<Show when={content.latest}>
+		<Show when={content}>
 			<div class="content-editor">
 				<ErrorBoundary
 					fallback={(error, reset) => {

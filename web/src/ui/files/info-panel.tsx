@@ -38,11 +38,10 @@ export default function InfoPanel() {
 	const [typeDropdownActive, setTypeDropdownActive] = createSignal(false)
 	return (
 		<Show when={file()}>
-			<div class="bg-white rounded-xl mt-4 p-4 grid grid-cols-4 gap-y-2 dark:bg-black dark:text-white">
-				<label class="grid-cols-subgrid col-span-4 grid">
-					<span class="font-bold">name</span>
+			<div>
+				<label>
+					<span>name</span>
 					<input
-						class="col-span-3"
 						type="text"
 						placeholder="Text input"
 						readonly
@@ -50,10 +49,9 @@ export default function InfoPanel() {
 					/>
 				</label>
 
-				<label class="grid-cols-subgrid col-span-4 grid">
-					<span class="font-bold">id</span>
+				<label>
+					<span>id</span>
 					<input
-						class="col-span-3"
 						type="text"
 						placeholder="Text input"
 						readonly
@@ -62,7 +60,7 @@ export default function InfoPanel() {
 				</label>
 
 				<button
-					class="col-start-3 col-span-2 bg-red-500 rounded-lg ring-1 ring-red-600 font-bold text-white"
+					class="button has-background-bad"
 					type="button"
 					onClick={deleteFile}>
 					destroy file

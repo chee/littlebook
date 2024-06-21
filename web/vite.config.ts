@@ -1,8 +1,9 @@
 import {defineConfig, type UserConfig} from "vite"
 import {VitePWA as pwa} from "vite-plugin-pwa"
 import wasm from "vite-plugin-wasm"
-import solidPlugin from "vite-plugin-solid"
+import solid from "vite-plugin-solid"
 import devtools from "solid-devtools/vite"
+import {analyzer} from "vite-bundle-analyzer"
 
 export const config: UserConfig = {
 	worker: {
@@ -10,7 +11,7 @@ export const config: UserConfig = {
 		plugins: () => [wasm()],
 	},
 	plugins: [
-		// nodePolyfills(),
+		analyzer(),
 		wasm(),
 		pwa({
 			registerType: "prompt",
@@ -44,7 +45,7 @@ export const config: UserConfig = {
 		devtools({
 			autoname: true,
 		}),
-		solidPlugin(),
+		solid(),
 	],
 	build: {
 		outDir: "output",

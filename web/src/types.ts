@@ -152,7 +152,6 @@ export declare namespace lb {
 	interface File {
 		readonly type: "file"
 		readonly id: FileId
-		// todo
 		readonly contentType: UniformTypeIdentifier
 		name: string
 		note: string
@@ -161,10 +160,6 @@ export declare namespace lb {
 		lastModified?: number
 	}
 
-	// todo is metadata kept inside `value` or in a separate property?
-	// say exif data for an image, or the character set for a textfile?
-	// those are different, i guess. the exif data is inside the file type while
-	// the character set of a text file is external
 	interface Content<ContentType extends AnyContent> {
 		readonly id: ContentId
 		readonly type: "content"

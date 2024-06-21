@@ -1,15 +1,20 @@
-import type {ChangeFn} from "@automerge/automerge"
 import type {lb} from "../../types"
+import type {ContentHelpers} from "../../ui/files/content-helpers.ts"
 import type {ContentViewName} from "../types/type-registries"
+
+type ContentChangeFn<ContentType extends lb.AnyContent> = (
+	content: ContentType,
+) => void
 
 export interface EditorViewProps<ContentType extends lb.AnyContent> {
 	content: ContentType
-	// todo make it possible to have the change function only have access to .value.
-	//
-	// right now it isn't possible because you wouldn't be able to use the automerge
-	// `updateText` feature. but i could provide a way to do that
-	changeContent(fn: (content: lb.Content<ContentType>) => void): void
+	helpers: ContentHelpers<ContentType>
+	changeContent(fn: ContentChangeFn<ContentType>): void
 }
+
+export type CreateEditorView<ContentType extends lb.AnyContent> = (
+	props: EditorViewProps<ContentType>,
+) => HTMLElement
 
 export interface PreviewProps<ContentType extends lb.AnyContent> {
 	content: ContentType
@@ -32,11 +37,14 @@ export type PreviewComponent<
 
 // todo rethink all of this
 // todo make more webby with events
+// todo i don't know how to describe in typescript that this thing is going to have these set on it.
+// maybe actually i should be providing a mixin-like function
 export abstract class EditorViewElement<
 	ContentType extends lb.AnyContent,
 > extends HTMLElement {
 	abstract content: ContentType
-	changeContent(_fn: ChangeFn<lb.Content<ContentType>>) {}
+	abstract helpers: ContentHelpers<ContentType>
+	changeContent(_fn: ContentChangeFn<ContentType>) {}
 }
 
 export abstract class PreviewElement<
@@ -47,6 +55,7 @@ export abstract class PreviewElement<
 
 export type EditorView<ContentType extends lb.AnyContent> =
 	| SelfRegisteringContentView<ContentType>
+	| CreateEditorView<ContentType>
 	| ((new () => EditorViewElement<ContentType>) &
 			typeof EditorViewElement<ContentType>)
 
