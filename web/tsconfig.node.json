@@ -2,10 +2,11 @@
 	"compilerOptions": {
 		"composite": true,
 		"skipLibCheck": true,
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
 		"allowSyntheticDefaultImports": true,
 		"strict": true
 	},
-	"include": ["vite.config.ts", "src/ui/styles/base/breakpoints.ts"]
+	"include": ["vite.config.ts"]
 }

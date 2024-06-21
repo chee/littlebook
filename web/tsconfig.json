@@ -17,13 +17,10 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "ESNext",
-		"types": ["vinxi/types/client"]
+		"types": ["vite/client"]
 	},
 	"include": [
-		"src",
-		"node_modules/vite/client.d.ts",
-		"./index.d.ts",
-		"node_modules/@excalidraw/excalidraw/types/types.d.ts"
-, "src/ui/zzz/entry.tsx"	],
+		"src/**/*.ts"
+	],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }
