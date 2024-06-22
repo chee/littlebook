@@ -148,7 +148,6 @@ export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
 	})
 	connectedCallback() {
 		this.root.render(<ExcalidrawView {...this.props()} />)
-
 		this.handle.on("change", this.render)
 	}
 
@@ -160,7 +159,6 @@ export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
 
 	disconnectedCallback() {
 		this.handle?.removeListener("change", this.render)
-
 		this.root.unmount()
 		this.textContent = ""
 	}
