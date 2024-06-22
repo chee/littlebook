@@ -1,4 +1,11 @@
-export class UnknownContent extends HTMLElement {
+import {
+	EditorViewElement,
+	type EditorViewProps,
+} from "../../../contents/views/content-view.ts"
+
+export class UnknownContent extends EditorViewElement<any> {
+	static displayName: "mystery meat"
+	static tag: "unknown"
 	#file?: lb.File
 	#content?: lb.Content<any>
 	connectedCallback() {
@@ -25,10 +32,10 @@ export class UnknownContent extends HTMLElement {
 					file id: <code>${this.#file?.id}</code>
 				</li>
 				<li>
-					content-type: <code>${this.#content?.contentType}</code>
+					content-type: <code>${this.#file?.contentType}</code>
 				</li>
 				<li>
-					content-id: <code>${this.#content?.id}</code>
+					content-id: <code>${this.#file?.content}</code>
 				</li>
 				<li>
 					last-modified: <code>${this.#file?.lastModified}</code>

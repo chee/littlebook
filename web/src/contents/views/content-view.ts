@@ -1,22 +1,16 @@
 import type {ChangeFn} from "@automerge/automerge"
 import type {lb} from "../../types"
-import type {ContentViewName} from "../types/type-registries"
+import type {DocHandle} from "@automerge/automerge-repo"
 
 export interface EditorViewProps<ContentType extends lb.AnyContent> {
-	content: ContentType
-	// todo make it possible to have the change function only have access to .value.
-	//
-	// right now it isn't possible because you wouldn't be able to use the automerge
-	// `updateText` feature. but i could provide a way to do that
-	changeContent(fn: (content: lb.Content<ContentType>) => void): void
+	doc: lb.Content<ContentType>
+	change(fn: ChangeFn<lb.Content<ContentType>>): void
+	handle: DocHandle<lb.Content<ContentType>>
+	value: ContentType
 }
 
 export interface PreviewProps<ContentType extends lb.AnyContent> {
-	content: ContentType
-}
-
-export interface SelfRegisteringContentView<ContentType extends lb.AnyContent> {
-	define(name: ContentViewName<SelfRegisteringContentView<ContentType>>): void
+	value: ContentType
 }
 
 // todo are these useful?
@@ -32,28 +26,33 @@ export type PreviewComponent<
 
 // todo rethink all of this
 // todo make more webby with events
-export abstract class EditorViewElement<
-	ContentType extends lb.AnyContent,
-> extends HTMLElement {
-	abstract content: ContentType
-	changeContent(_fn: ChangeFn<lb.Content<ContentType>>) {}
+export abstract class EditorViewElement<ContentType extends lb.AnyContent>
+	extends HTMLElement
+	implements EditorViewProps<ContentType>
+{
+	doc!: lb.Content<ContentType>
+	handle!: DocHandle<lb.Content<ContentType>>
+	change(_fn: ChangeFn<lb.Content<ContentType>>) {}
+	value!: ContentType
 }
 
-export abstract class PreviewElement<
-	ContentType extends lb.AnyContent,
-> extends HTMLElement {
-	abstract content: ContentType
+export abstract class PreviewElement<ContentType extends lb.AnyContent>
+	extends HTMLElement
+	implements PreviewProps<ContentType>
+{
+	abstract value: ContentType
 }
 
-export type EditorView<ContentType extends lb.AnyContent> =
-	| SelfRegisteringContentView<ContentType>
-	| ((new () => EditorViewElement<ContentType>) &
-			typeof EditorViewElement<ContentType>)
+export type EditorViewConstructor<ContentType extends lb.AnyContent> =
+	(new () => EditorViewElement<ContentType>) &
+		typeof EditorViewElement<ContentType> & {
+			displayName?: string
+			name: string
+		}
 
-export type Preview<ContentType extends lb.AnyContent> =
-	| SelfRegisteringContentView<ContentType>
-	| ((new () => PreviewElement<ContentType>) &
-			typeof PreviewElement<ContentType>)
+export type PreviewConstructor<ContentType extends lb.AnyContent> =
+	(new () => PreviewElement<ContentType>) &
+		typeof PreviewElement<ContentType> & {displayName?: string; name: string}
 
 // todo store metadata in a different automerge doc
 // export interface MetadataViewProps<ContentType extends lb.AnyContent> {
@@ -74,19 +73,6 @@ export type Preview<ContentType extends lb.AnyContent> =
 // 	changeMetadata() {},
 // }
 
-// export interface SelfRegisteringMetadataView<
-// 	ContentType extends lb.AnyContent,
-// > {
-// 	define(
-// 		name: ContentViewName<SelfRegisteringMetadataView<ContentType>>,
-// 		placeholderProps: MetadataViewProps<ContentType>,
-// 	): void
-// }
-
-// export interface SelfRegisteringPreview<ContentType extends lb.AnyContent> {
-// 	define(name: ContentViewName<SelfRegisteringPreview<ContentType>>): void
-// }
-
 // export type MetadataViewComponent<
 // 	T extends lb.AnyContent,
 // 	C extends (props: any) => any | {new (props: any): C},
@@ -97,5 +83,4 @@ export type Preview<ContentType extends lb.AnyContent> =
 // 		MetadataViewProps<ContentType> {}
 
 // export type MetadataView<ContentType extends lb.AnyContent> =
-// 	| SelfRegisteringMetadataView<ContentType>
 // 	| MetadataViewElement<ContentType>

@@ -22,7 +22,8 @@ export default function InfoPanel() {
 		} else {
 			convertedContentHandle?.doc().then(convertedContent => {
 				changeFile(file => {
-					if (convertedContent) file.content = convertedContent.id
+					if (convertedContent)
+						file.content = convertedContentHandle.documentId as lb.ContentId
 				})
 			})
 		}

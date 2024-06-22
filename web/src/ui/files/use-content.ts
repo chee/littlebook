@@ -1,17 +1,19 @@
 import {type Resource, createEffect, createResource, on} from "solid-js"
 
-import type {ChangeFn, Doc} from "@automerge/automerge-repo"
-import useHandle from "../automerge/use-handle"
+import type {ChangeFn, Doc, DocHandle} from "@automerge/automerge-repo"
+import {useAutomerge} from "../automerge/use-automerge.ts"
 
-type UseContent<T extends lb.Content<any>> = [
-	Resource<Doc<T>["value"] | undefined>,
-	(change: ChangeFn<T["value"]>) => void,
+type UseContent<T extends lb.AnyContent> = [
+	Resource<Doc<lb.Content<T>> | undefined>,
+	(change: ChangeFn<lb.Content<T>>) => void,
+	() => DocHandle<Doc<lb.Content<T>>> | undefined,
 ]
 
-export default function useContent<T extends lb.Content<any>>(
-	id: () => T["id"] | undefined,
+export default function useContent<T extends lb.AnyContent>(
+	id: () => lb.ContentId | undefined,
 ): UseContent<T> {
-	const handle = useHandle(id)
+	const automerge = useAutomerge()
+	const handle = () => id() && automerge()?.repo.find<lb.Content<T>>(id()!)
 
 	const [doc, control] = createResource(() => handle()?.doc())
 
@@ -30,10 +32,9 @@ export default function useContent<T extends lb.Content<any>>(
 
 	return [
 		doc,
-		(change: ChangeFn<T["value"]>) => {
-			handle()?.change(content => {
-				content.value = change(content.value)
-			})
+		(change: ChangeFn<lb.Content<T>>) => {
+			handle()?.change(change)
 		},
+		handle,
 	]
 }

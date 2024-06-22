@@ -2,7 +2,7 @@ import type {Repo} from "@automerge/automerge-repo"
 import {
 	coderRegistry,
 	editorViewRegistry,
-	metadataViewRegistry,
+	// metadataViewRegistry,
 	previewRegistry,
 	typeRegistry,
 } from "../contents/types/type-registries.ts"
@@ -27,7 +27,7 @@ export default function createLittlebookAPI(repo: Repo) {
 		views: {
 			preview: previewRegistry,
 			editor: editorViewRegistry,
-			metadata: metadataViewRegistry,
+			// metadata: metadataViewRegistry,
 		},
 		contents: createContentsAPI(repo),
 	}

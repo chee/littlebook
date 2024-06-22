@@ -299,3 +299,5 @@ $base-palette: (
 @each $color in map.keys($base-palette) {
 	@include set-up-color($color);
 }
+
+@include set-root-color(fill, get-color(fill), content);

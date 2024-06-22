@@ -2,26 +2,24 @@ import type {Repo} from "@automerge/automerge-repo"
 import {CodingError} from "../contents/types/coders.ts"
 import {coderRegistry} from "../contents/types/type-registries.ts"
 import type {AnyContent} from "../global.js"
-import {createDocumentHandle, getDocumentHandle} from "./documents.ts"
-import {createFileHandle} from "./files.ts"
 
-export function createContentHandle<T extends lb.AnyContent>(
+export function createContentHandle<ContentType extends lb.AnyContent>(
 	repo: Repo,
-	content: Omit<lb.Content<T>, "id" | "type">,
+	value: ContentType,
 ) {
-	return createDocumentHandle<lb.Content<T>>(repo, {
-		type: "content",
-		contentType: content.contentType,
-		value: content.value,
+	const handle = repo.create<lb.Content<ContentType>>({
+		value,
 	})
+	return handle
 }
 
 export function recodeContent(
 	repo: Repo,
-	source: lb.Content<AnyContent>,
+	sourceType: lb.UniformTypeIdentifier,
 	targetType: lb.UniformTypeIdentifier,
+	source: lb.Content<AnyContent>,
 ) {
-	const sourceCoder = coderRegistry.get(source.contentType)
+	const sourceCoder = coderRegistry.get(sourceType)
 	const targetCoder = coderRegistry.get(targetType)
 
 	if (sourceCoder && targetCoder) {
@@ -29,25 +27,24 @@ export function recodeContent(
 		if (bytes instanceof Error) {
 			return bytes
 		}
-		return createContentHandle(repo, {
-			contentType: targetType,
-			value: targetCoder.decode(bytes),
-		})
+		return createContentHandle(repo, targetCoder.decode(bytes))
 	}
 
-	return new CodingError()
+	return new CodingError(
+		`didn't have source ${sourceType} and target ${targetType} coders`,
+	)
 }
 
 export function getContentHandle<Type extends lb.AnyContent>(
 	repo: Repo,
 	id: lb.ContentId,
 ) {
-	return getDocumentHandle<lb.Content<Type>>(repo, id)
+	return repo.find<lb.Content<Type>>(id)
 }
 
 export default function createContentsAPI(repo: Repo) {
 	return {
-		createHandle: createFileHandle.bind(null, repo),
+		createHandle: createContentHandle.bind(null, repo),
 		recode: recodeContent.bind(null, repo),
 		getHandle: getContentHandle.bind(null, repo),
 	}

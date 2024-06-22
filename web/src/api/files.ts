@@ -1,8 +1,6 @@
 import type {Repo} from "@automerge/automerge-repo"
 import {binary} from "../contents/types/coders.ts"
 import {coderRegistry, typeRegistry} from "../contents/types/type-registries.ts"
-import {unknown} from "../contents/types/uniform-type-identifiers.ts"
-import type {UniformTypeIdentifier} from "../global.js"
 import {createContentHandle} from "./contents.ts"
 import {
 	type DocTemplate,
@@ -12,36 +10,20 @@ import {
 } from "./documents.ts"
 import {addItemToProject, getProjectHandle} from "./projects.ts"
 
-export function createFileHandle(
-	repo: Repo,
-	fileTemplate: DocTemplate<lb.File> & {content: lb.ContentId},
-) {
+type FileTemplate = DocTemplate<lb.File> & {
+	contentType: lb.UniformTypeIdentifier
+}
+
+export function createFileHandle(repo: Repo, fileTemplate: FileTemplate) {
+	const coder = coderRegistry.get(fileTemplate.contentType) || binary()
+	const content = createContentHandle(repo, coder.decode(new Uint8Array()))
 	return createDocumentHandle<lb.File>(repo, {
 		type: "file",
 		name: fileTemplate.name || "",
-		content: fileTemplate.content,
-		note: "",
-		contentType: fileTemplate.contentType || ("" as lb.UniformTypeIdentifier),
-	})
-}
-
-export function createFileHandleWithContentType(
-	repo: Repo,
-	fileTemplate: DocTemplate<lb.File>,
-	contentTypeId: lb.UniformTypeIdentifier,
-) {
-	const coder = coderRegistry.get(contentTypeId) || binary()
-	const content = createContentHandle(repo, {
-		contentType: contentTypeId,
-		value: coder.decode(new Uint8Array()),
-	})
-	const file = createFileHandle(repo, {
-		...fileTemplate,
 		content: content.documentId as lb.ContentId,
-		lastModified: Date.now(),
-		contentType: contentTypeId,
+		note: "",
+		contentType: fileTemplate.contentType,
 	})
-	return file
 }
 
 export function importFile(
@@ -55,14 +37,12 @@ export function importFile(
 
 	const [type] = types
 	const coder = coderRegistry.get(types[0]) || binary()
-	const content = createContentHandle(repo, {
-		contentType: type || unknown,
-		value: coder.decode(bytes),
-	})
+	const content = createContentHandle(repo, coder.decode(bytes))
 	const file = createFileHandle(repo, {
 		name: computerFile.name,
 		content: content.documentId as lb.ContentId,
 		lastModified: computerFile.lastModified || Date.now(),
+		contentType: type,
 	})
 	return file
 }
@@ -92,21 +72,9 @@ export function deleteFile(
 export function createFileHandleInProject(
 	repo: Repo,
 	projectId: lb.ProjectId,
-	template: DocTemplate<lb.File>,
-	contentType?: UniformTypeIdentifier,
+	template: FileTemplate,
 ) {
-	const fileHandle = (() => {
-		if (contentType) {
-			return createFileHandleWithContentType(repo, template, contentType)
-		}
-		if ("content" in template && typeof template.content == "string") {
-			return createFileHandle(
-				repo,
-				template as DocTemplate<lb.File> & {content: lb.ContentId},
-			)
-		}
-		return new Error("oh no she's a rejecter")
-	})()
+	const fileHandle = createFileHandle(repo, template)
 
 	if (fileHandle instanceof Error) {
 		// todo lol i can't do anything here because these functions are passed
@@ -126,10 +94,6 @@ export function createFileHandleInProject(
 export default function createFilesAPI(repo: Repo) {
 	return {
 		createHandle: createFileHandle.bind(null, repo),
-		createHandleWithContentType: createFileHandleWithContentType.bind(
-			null,
-			repo,
-		),
 		createHandleInProject: createFileHandleInProject.bind(null, repo),
 		import: importFile.bind(null, repo),
 		getHandle: getFileHandle.bind(null, repo),

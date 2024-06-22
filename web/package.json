@@ -12,12 +12,15 @@
 	},
 	"dependencies": {
 		"@automerge/automerge": "^2.2.2",
+		"@automerge/automerge-codemirror": "^0.0.11",
 		"@automerge/automerge-repo": "^1.1.12",
 		"@automerge/automerge-repo-network-broadcastchannel": "^1.1.12",
 		"@automerge/automerge-repo-network-messagechannel": "^1.1.12",
 		"@automerge/automerge-repo-network-websocket": "^1.1.12",
 		"@automerge/automerge-repo-storage-indexeddb": "^1.1.12",
 		"@chee/automerge-repo-storage-opfs": "link:../pkg/automerge-repo-storage-opfs",
+		"@codemirror/state": "^6.4.1",
+		"@codemirror/view": "^6.28.2",
 		"@littlebook/excalidraw": "link:../plugins/excalidraw",
 		"@localfirst/auth": "6.0.0-alpha.6",
 		"@localfirst/auth-provider-automerge-repo": "6.0.0-alpha.6",
@@ -28,6 +31,7 @@
 		"@solidjs/meta": "^0.29.4",
 		"@solidjs/router": "^0.13.5",
 		"clsx": "^2.1.1",
+		"codemirror": "^6.0.1",
 		"dockview-core": "^1.14.2",
 		"file-system-access": "^1.0.4",
 		"muuri": "^0.9.5",
@@ -47,13 +51,13 @@
 		"uuid": "^9.0.1"
 	},
 	"devDependencies": {
-		"autoprefixer": "^10.4.19",
 		"@biomejs/biome": "1.8.1",
 		"@oddbird/blend": "^0.2.4",
 		"@types/micromatch": "^4.0.7",
 		"@types/ua-parser-js": "^0.7.39",
 		"@types/uuid": "^9.0.8",
 		"@vite-pwa/assets-generator": "^0.2.4",
+		"autoprefixer": "^10.4.19",
 		"sass-mq": "^6.0.0",
 		"sharp": "^0.33.4",
 		"sharp-ico": "^0.1.5",
@@ -62,8 +66,8 @@
 		"vite": "^5.2.0",
 		"vite-plugin-pwa": "^0.20.0",
 		"vite-plugin-solid": "^2.10.2",
-		"vite-plugin-wasm": "^3.3.0",
 		"vite-plugin-svgr": "^4.2.0",
+		"vite-plugin-wasm": "^3.3.0",
 		"workbox-window": "^7.1.0"
 	}
 }

@@ -50,11 +50,11 @@ export declare namespace lb {
 	type ContentCoder<Model extends AnyContent> =
 		import("./contents/types/coders.ts").ContentCoder<Model>
 	type ContentEditorView<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").EditorView<Model>
+		import("./contents/views/content-view.ts").EditorViewConstructor<Model>
 	// type ContentMetadataView<Model extends AnyContent> =
 	// 	import("./contents/views/content-view.ts").MetadataView<Model>
 	type ContentPreview<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").Preview<Model>
+		import("./contents/views/content-view.ts").PreviewConstructor<Model>
 
 	type AnyContentView<Model extends AnyContent> =
 		| ContentEditorView<Model>
@@ -90,13 +90,7 @@ export declare namespace lb {
 
 	type AnyContent = AutomergeValue
 
-	type AnyDocument =
-		| Space
-		| Area
-		| Project
-		| Folder
-		| File
-		| Content<AnyContent>
+	type AnyDocument = Space | Area | Project | Folder | File
 
 	type NamedDocument = Space | Area | Project | Folder | File
 
@@ -161,16 +155,8 @@ export declare namespace lb {
 		lastModified?: number
 	}
 
-	// todo is metadata kept inside `value` or in a separate property?
-	// say exif data for an image, or the character set for a textfile?
-	// those are different, i guess. the exif data is inside the file type while
-	// the character set of a text file is external
 	interface Content<ContentType extends AnyContent> {
-		readonly id: ContentId
-		readonly type: "content"
-		readonly contentType: UniformTypeIdentifier
 		value: ContentType
-		metadata?: AutomergeValue
 	}
 
 	type AutomergeState = {

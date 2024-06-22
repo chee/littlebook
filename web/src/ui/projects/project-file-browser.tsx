@@ -5,10 +5,9 @@ import {showOpenFilePicker} from "file-system-access"
 import {useLittlebookAPI} from "../api/use-api.ts"
 
 import {A, useNavigate, useParams} from "@solidjs/router"
-import {For, Suspense, createEffect, on} from "solid-js"
+import {For, Suspense} from "solid-js"
 import useDocument from "../documents/use-document.ts"
 import useDocuments from "../documents/use-documents.ts"
-import button from "../elements/button/button.tsx"
 
 export default function ProjectFileBrowser() {
 	const params = useParams<{projectId?: lb.ProjectId}>()
@@ -31,7 +30,6 @@ export default function ProjectFileBrowser() {
 				<div class="buttons p-2">
 					<button
 						type="button"
-						kind="ghost"
 						onclick={() => {
 							// todo this should be part of projects api
 							const id = project()?.id
@@ -39,11 +37,10 @@ export default function ProjectFileBrowser() {
 								console.error("no project id")
 								return
 							}
-							const fileHandle = lb()?.files.createHandleInProject(
-								id,
-								{name: "new file.txt"},
-								"public.plain-text" as lb.UniformTypeIdentifier,
-							)
+							const fileHandle = lb()?.files.createHandleInProject(id, {
+								name: "new file.txt",
+								contentType: "public.plain-text" as lb.UniformTypeIdentifier,
+							})
 
 							if (fileHandle instanceof Error) {
 							} else {
@@ -63,11 +60,10 @@ export default function ProjectFileBrowser() {
 								console.error("no project id")
 								return
 							}
-							const fileHandle = lb()?.files.createHandleInProject(
-								id,
-								{name: "new file.excalidraw"},
-								"com.excalidraw.json" as lb.UniformTypeIdentifier,
-							)
+							const fileHandle = lb()?.files.createHandleInProject(id, {
+								name: "new file.excalidraw",
+								contentType: "com.excalidraw.json" as lb.UniformTypeIdentifier,
+							})
 
 							if (fileHandle instanceof Error) {
 							} else {
@@ -88,11 +84,11 @@ export default function ProjectFileBrowser() {
 							})
 							const computerFile = await computerFileHandle.getFile()
 							const bytes = new Uint8Array(await computerFile.arrayBuffer())
-							const fileHandle = lb.files.import(computerFile, bytes)
-							fileHandle.doc().then(file => {
-								file && changeProject(lb.projects.addItem(file.id))
+							const fileHandle = lb()?.files.import(computerFile, bytes)
+							fileHandle?.doc().then(file => {
+								file && changeProject(lb()?.projects.addItem(file.id))
 								file && navigate(`?file=${file.id}`)
-								ui.files.selected.value = file?.id || null
+								// ui.files.selected.value = file?.id || null
 							})
 						}}>
 						<span class="icon">{/* <UploadIcon /> */}</span>

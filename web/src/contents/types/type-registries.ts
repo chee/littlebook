@@ -1,3 +1,9 @@
+import type {AnyContentView} from "../../global"
+import type {
+	EditorViewConstructor,
+	EditorViewElement,
+	PreviewConstructor,
+} from "../views/content-view.ts"
 import type {ContentCoder} from "./coders.ts"
 import typeRegistry from "./uniform-type-identifiers.ts"
 
@@ -33,29 +39,27 @@ export type ContentViewName<T extends lb.AnyContentView<any>> = string & {
 	"__content-view": T
 }
 
-export class ContentViewRegistry {
-	private registry = new Map<ContentViewName<any>, lb.UniformTypeIdentifier[]>()
-	register(
-		identifiers: lb.UniformTypeIdentifier[],
-		element: ContentViewName<any>,
-	) {
-		this.registry.set(element, identifiers)
+/*
+ * okay so what do i want here? probably i want the plugin to provide a function
+ * that returns a custom element (or returns a promise that resolves to a custom
+ * element) and then somewhere i want to register that custom element in the
+ * registry, when it is needed and give it an id (which could be randomly
+ * generated, or something the plugin defines) for the name it has when it is used, ah this should just be seomthing i require to be on the view
+ */
+
+export class ContentViewRegistry<T extends AnyContentView<any>> {
+	private viewToTypes = new Map<T, lb.UniformTypeIdentifier[]>()
+	private nameToView = new Map<string, T>()
+	register(identifiers: lb.UniformTypeIdentifier[], element: T) {
+		this.viewToTypes.set(element, identifiers)
 	}
 
-	registerAll(
-		items: {view: ContentViewName<any>; types: lb.UniformTypeIdentifier[]}[],
-	) {
-		for (const {view, types} of items) {
-			this.register(types, view)
-		}
-	}
-
-	remove(view: ContentViewName<any>) {
-		this.registry.delete(view)
+	remove(view: T) {
+		this.viewToTypes.delete(view)
 	}
 
 	getstar = function* (
-		registry: ContentViewRegistry["registry"],
+		registry: ContentViewRegistry<T>["viewToTypes"],
 		type: lb.UniformTypeIdentifier,
 	) {
 		for (const [view, types] of registry.entries()) {
@@ -71,14 +75,18 @@ export class ContentViewRegistry {
 	}
 
 	get(type: lb.UniformTypeIdentifier) {
-		return this.getstar(this.registry, type)
+		return this.getstar(this.viewToTypes, type)
 	}
 }
 
 export const coderRegistry = new ContentCoderRegistry()
-export const editorViewRegistry = new ContentViewRegistry()
-export const metadataViewRegistry = new ContentViewRegistry()
-export const previewRegistry = new ContentViewRegistry()
+export const editorViewRegistry = new ContentViewRegistry<
+	EditorViewConstructor<any>
+>()
+// export const metadataViewRegistry = new ContentViewRegistry<MetadataView<any>>()
+export const previewRegistry = new ContentViewRegistry<
+	PreviewConstructor<any>
+>()
 export {typeRegistry}
 
 const registries = {
@@ -86,7 +94,7 @@ const registries = {
 	contentTypes: typeRegistry,
 	views: {
 		editor: editorViewRegistry,
-		metadata: metadataViewRegistry,
+		// metadata: metadataViewRegistry,
 		preview: previewRegistry,
 	},
 }
