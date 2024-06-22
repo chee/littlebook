@@ -37,3 +37,5 @@ export default function excalidraw(lb: lb.plugins.API) {
 		},
 	})
 }
+
+export {createReactTextView} from "./view.tsx"

@@ -2,6 +2,7 @@
 import "../../web/src/types.ts"
 import type {AutomergeList} from "../../web/src/types.ts"
 import type {
+	ContentChangeFn,
 	// ContentView,
 	EditorViewComponent,
 } from "../../web/src/contents/views/content-view.ts"
@@ -22,11 +23,14 @@ import {
 	Suspense,
 	lazy,
 	type FunctionComponent,
+	useRef,
 } from "react"
 // import styles from "./styles.css"
 
 import {throttle} from "throttle-debounce"
 import type {ExcalidrawJSON, MergeableExcalidrawElement} from "./shared.ts"
+import type {ContentViewHelpers} from "../../web/src/ui/files/content-helpers.ts"
+import {createRoot} from "react-dom/client"
 
 const sumVersion = (
 	v: number,
@@ -133,4 +137,37 @@ const placeholderStyle = {
 	left: 0,
 	right: 0,
 	bottom: 0,
+}
+
+export function createReactTextView(
+	target: Element,
+	changeContent: (fn: ContentChangeFn<string>) => void,
+	helpers: ContentViewHelpers<string>,
+) {
+	let c = ""
+
+	function TextView({content}: {content: string}) {
+		const textarea = useRef<HTMLTextAreaElement | undefined>(undefined)
+		return (
+			<textarea
+				ref={textarea}
+				onInput={() =>
+					changeContent((_content, am) => {
+						if (!textarea.current) return
+						am.updateText([], textarea.current.value)
+					})
+				}>
+				{content}
+			</textarea>
+		)
+	}
+	const root = createRoot(target)
+
+	root.render(<TextView content={c} />)
+
+	return [
+		(content: string) => {
+			c = content
+		},
+	]
 }
