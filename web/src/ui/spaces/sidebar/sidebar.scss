@@ -42,4 +42,8 @@
 		color: white;
 		@include set-shadow-var(color, black);
 	}
+
+	&[aria-expanded="false"] {
+		display: none;
+	}
 }

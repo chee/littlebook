@@ -11,7 +11,9 @@ import {Dynamic} from "solid-js/web"
 customElements.define("unknown-view", UnknownContent)
 
 function makeCustomElementName(contentType?: string, constructorName?: string) {
-	return `${contentType?.replaceAll(".", "-")}-${constructorName}`.toLowerCase()
+	return slugify(
+		`${contentType?.replaceAll(".", "-")}-${constructorName}`.toLowerCase(),
+	)
 }
 
 export default function ContentEditor() {
@@ -56,26 +58,26 @@ export default function ContentEditor() {
 	)
 
 	return (
-		<Show when={content.latest}>
-			<div class="content-editor">
-				<ErrorBoundary
-					fallback={(error, reset) => {
-						createEffect(
-							on([() => search.file], () => {
-								reset()
-							}),
-						)
-						return <SomethingWentWrong error={error} />
-					}}>
+		<div class="content-editor">
+			<ErrorBoundary
+				fallback={(error, reset) => {
+					createEffect(
+						on([() => search.file], () => {
+							reset()
+						}),
+					)
+					return <SomethingWentWrong error={error} />
+				}}>
+				<Show when={content.latest}>
 					<Suspense
 						fallback={
 							<div class="box content-editor content-editor--loading content-editor--file-loading" />
 						}>
 						<Editor />
 					</Suspense>
-				</ErrorBoundary>
-			</div>
-		</Show>
+				</Show>
+			</ErrorBoundary>
+		</div>
 	)
 }
 

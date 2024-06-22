@@ -1,15 +1,17 @@
 // things i'll need to make available in @littlebook/plugin
 import "../../web/src/types.ts"
 import type {AutomergeList} from "../../web/src/types.ts"
-import type {
+import {
+	EditorViewElement,
 	// ContentView,
-	EditorViewComponent,
+	type EditorViewComponent,
 } from "../../web/src/contents/views/content-view.ts"
 
 // should i provide this from @littlebook/plugin? probably, right! like, plus
 // any other types i create with crdx? yeah, right now this is the only reason
 // we need to have wasm plugin, and as such why we need an esbuild script file
 import {Counter} from "@automerge/automerge"
+import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 
 // internal to the plugin
 import type {ExcalidrawImperativeAPI} from "@excalidraw/excalidraw/types/types.d.ts"
@@ -27,6 +29,7 @@ import {
 
 import {throttle} from "throttle-debounce"
 import type {ExcalidrawJSON, MergeableExcalidrawElement} from "./shared.ts"
+import {createRoot} from "react-dom/client"
 
 const sumVersion = (
 	v: number,
@@ -54,24 +57,24 @@ const Excalidraw = lazy(async () => {
 	return {default: module.default.Excalidraw}
 })
 
-// todo work with `contentchange` event
 const ExcalidrawView: EditorViewComponent<
 	ExcalidrawJSON,
 	FunctionComponent<lb.ContentEditorViewProps<ExcalidrawJSON>>
-> = ({content, changeContent, ...props}) => {
-	if (!content) {
-		return <div>waiting for content</div>
+> = ({value, change, ...props}) => {
+	console.log({value, props})
+	if (!value) {
+		return <div>waiting for value</div>
 	}
 	const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI>()
 
 	const initialElements = useMemo(
-		() => content.elements.map(automergeToExcalidraw),
+		() => value.elements.map(automergeToExcalidraw),
 		[],
 	)
 
 	useEffect(() => {
 		const elements = excalidrawAPI?.getSceneElements()
-		const contentVersion = content.elements.reduce(sumVersion, 0) || 0
+		const contentVersion = value.elements.reduce(sumVersion, 0) || 0
 		const excaliVersion = elements?.reduce(sumVersion, 0) || 0
 		if (contentVersion > excaliVersion) {
 			const state = excalidrawAPI?.getAppState()
@@ -84,22 +87,22 @@ const ExcalidrawView: EditorViewComponent<
 				return
 			}
 			excalidrawAPI?.updateScene({
-				elements: content.elements.map(automergeToExcalidraw),
+				elements: value.elements.map(automergeToExcalidraw),
 			})
 		}
-	}, [content])
+	}, [value])
 
 	const onchange = useCallback(
 		throttle(500, (elements, appState, files) => {
 			// todo snapshot!
 
-			changeContent(content => {
-				const contentVersion = content.value.elements.reduce(sumVersion, 0) || 0
+			change(doc => {
+				const contentVersion = doc.value.elements.reduce(sumVersion, 0) || 0
 				const excaliVersion = elements.reduce(sumVersion, 0) || 0
 				if (excaliVersion > contentVersion) {
 					// content.value.appState = appState
 					// content.value.files = files
-					content.value.elements = elements.map(
+					doc.value.elements = elements.map(
 						excalidrawToAutomerge,
 					) as AutomergeList<MergeableExcalidrawElement>
 				}
@@ -113,7 +116,7 @@ const ExcalidrawView: EditorViewComponent<
 			<Excalidraw
 				excalidrawAPI={api => setExcalidrawAPI(api)}
 				initialData={{
-					...content,
+					...value,
 					elements: initialElements,
 				}}
 				handleKeyboardGlobally={false}
@@ -128,9 +131,33 @@ export default ExcalidrawView
 /** @type {React.CSSProperties} */
 const placeholderStyle = {
 	backgroundColor: "var(--paper)",
-	position: "absolute",
+	position: "absolute" as const,
 	top: 0,
 	left: 0,
 	right: 0,
 	bottom: 0,
+}
+
+export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
+	root = createRoot(this)
+	props = {
+		value: this.value,
+		change: this.change,
+		handle: this.handle,
+		doc: this.doc,
+	}
+	connectedCallback() {
+		this.root.render(<ExcalidrawView {...this.props} />)
+		this.handle.on("change", this.render)
+	}
+
+	render = (payload: DocHandleChangePayload<lb.Content<ExcalidrawJSON>>) => {
+		this.root.render(
+			<ExcalidrawView {...this.props} value={payload.doc.value} />,
+		)
+	}
+
+	disconnectedCallback() {
+		this.handle.removeListener("change", this.render)
+	}
 }

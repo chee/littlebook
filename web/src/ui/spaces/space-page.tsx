@@ -28,11 +28,11 @@ const SpacePage: ParentComponent<RouteSectionProps> = props => {
 				</section>
 			</header>
 			<div class="flex grow">
-				<SplitPane>
+				<SplitPane sizes={[10]}>
 					<Sidebar open={sidebarState.primary} class="pr-0">
 						<PrimarySidebar />
 					</Sidebar>
-					<main id="main" class="h-full flex pt-2">
+					<main id="main" class="flex pt-2 grow">
 						{props.children}
 					</main>
 				</SplitPane>

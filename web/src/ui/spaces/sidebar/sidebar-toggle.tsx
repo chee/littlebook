@@ -59,7 +59,7 @@ export default function SidebarToggle({
 			aria-label={open ? "hide projects sidebar" : "show projects sidebar"}
 			aria-pressed={true}
 			onClick={() => {
-				updateState({[which]: !open})
+				updateState(state => ({[which]: !state[which]}))
 			}}>
 			<CuteSidebarIcon open={open} flipped={which == "secondary"} />
 		</button>

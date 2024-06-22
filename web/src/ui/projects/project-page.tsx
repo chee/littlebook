@@ -1,11 +1,14 @@
 import ContentEditor from "../files/content-editor.tsx"
 import InfoPanel from "../files/info-panel.tsx"
 import MetadataViewer from "../files/metadata-viewer.tsx"
+import Sidebar from "../spaces/sidebar/sidebar.tsx"
 import ProjectFileBrowser from "./project-file-browser.tsx"
 import "./projects.scss"
 import {SplitPane} from "solid-split-pane"
+import sidebarState from "../spaces/sidebar/sidebar-state.ts"
 
 export default function ProjectPage() {
+	const [sidebar, updateSidebar] = sidebarState
 	return (
 		<div class="flex grow">
 			<SplitPane>
@@ -13,10 +16,10 @@ export default function ProjectPage() {
 					<ProjectFileBrowser />
 					<ContentEditor />
 				</div>
-				<aside class="px-2 flex">
+				<Sidebar open={sidebar.secondary}>
 					<InfoPanel />
 					<MetadataViewer />
-				</aside>
+				</Sidebar>
 			</SplitPane>
 		</div>
 	)
