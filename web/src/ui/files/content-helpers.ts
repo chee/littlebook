@@ -20,13 +20,18 @@ import {
 	type Span,
 	type MarkRange,
 	type MarkValue,
+	getHeads,
+	diff,
+	type Heads,
+	equals,
+	Counter,
 } from "@automerge/automerge/next"
 
 type AutomergeBlock = {
 	[key: string]: MaterializeValue
 }
 
-export default function createContentHelpers<ContentType extends lb.AnyContent>(
+export function createContentChangeHelpers<ContentType extends lb.AnyContent>(
 	content: lb.Content<ContentType>,
 ) {
 	return {
@@ -102,6 +107,17 @@ export default function createContentHelpers<ContentType extends lb.AnyContent>(
 		) {
 			return splice(content, ["value", ...path], index, del, newText)
 		},
+	}
+}
+
+export type ContentChangeHelpers<T extends lb.AnyContent> = ReturnType<
+	typeof createContentChangeHelpers<T>
+>
+
+export function createContentViewHelpers<T extends lb.AnyContent>(
+	content: lb.Content<T>,
+) {
+	return {
 		/**
 		 * get a cursor for a position
 		 *
@@ -124,9 +140,19 @@ export default function createContentHelpers<ContentType extends lb.AnyContent>(
 		getConflicts() {
 			return getConflicts(content, "value")
 		},
+		getHeads() {
+			return getHeads(content)
+		},
+		diff(before: Heads, after: Heads) {
+			return diff(content, before, after)
+		},
+		equals(a: unknown, b: unknown) {
+			return equals(a, b)
+		},
+		Counter,
 	}
 }
 
-export type ContentHelpers<T extends lb.AnyContent> = ReturnType<
-	typeof createContentHelpers<T>
+export type ContentViewHelpers<T extends lb.AnyContent> = ReturnType<
+	typeof createContentViewHelpers<T>
 >

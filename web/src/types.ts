@@ -160,13 +160,7 @@ export declare namespace lb {
 		lastModified?: number
 	}
 
-	interface Content<ContentType extends AnyContent> {
-		readonly id: ContentId
-		readonly type: "content"
-		readonly contentType: UniformTypeIdentifier
-		value: ContentType
-		metadata?: AutomergeValue
-	}
+	type Content<ContentType extends AnyContent> = ContentType
 
 	type AutomergeState = {
 		repo: Repo

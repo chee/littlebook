@@ -5,4 +5,7 @@
 	> input {
 		padding: get-space(1);
 	}
+	> button {
+		@include radius(0, left);
+	}
 }

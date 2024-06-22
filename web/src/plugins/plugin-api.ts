@@ -22,7 +22,7 @@ export function registerContentType<T extends lb.AnyContent>(
 
 			if ("define" in view) {
 				view.define(customElementName)
-			} else {
+			} else if ("constructor" in view) {
 				customElements.define(customElementName, view)
 			}
 		}

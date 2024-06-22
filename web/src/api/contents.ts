@@ -7,17 +7,14 @@ import {createFileHandle} from "./files.ts"
 
 export function createContentHandle<T extends lb.AnyContent>(
 	repo: Repo,
-	content: Omit<lb.Content<T>, "id" | "type">,
+	content: T,
 ) {
-	return createDocumentHandle<lb.Content<T>>(repo, {
-		type: "content",
-		contentType: content.contentType,
-		value: content.value,
-	})
+	return createDocumentHandle<lb.Content<T>>(repo, content)
 }
 
-export function recodeContent(
+export function recodeContent<Source extends lb.AnyContent, Target: lb.AnyContent>(
 	repo: Repo,
+
 	source: lb.Content<AnyContent>,
 	targetType: lb.UniformTypeIdentifier,
 ) {

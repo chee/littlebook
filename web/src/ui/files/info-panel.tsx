@@ -38,7 +38,7 @@ export default function InfoPanel() {
 	const [typeDropdownActive, setTypeDropdownActive] = createSignal(false)
 	return (
 		<Show when={file()}>
-			<div>
+			<div class="flex column">
 				<label>
 					<span>name</span>
 					<input

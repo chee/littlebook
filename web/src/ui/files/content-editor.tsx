@@ -6,6 +6,11 @@ import {useLittlebookAPI} from "../api/use-api.ts"
 import useContentValue from "./use-content-value.ts"
 import "./content-editor.scss"
 import useDocument from "../documents/use-document.ts"
+import {
+	createSolidTextView,
+	createPlainTextView,
+} from "../../plugins/content/text/text.tsx"
+import {createReactTextView} from "@littlebook/excalidraw"
 
 customElements.define("unknown-view", UnknownContent)
 
@@ -15,29 +20,35 @@ export default function ContentEditor() {
 	const lb = useLittlebookAPI()
 	const [file] = useDocument<lb.File>(() => search.file)
 
-	const [content, changeContent] = useContentValue<lb.Content<any>>(
+	const [content, changeContent, helpers] = useContentValue<lb.Content<any>>(
 		() => file()?.content,
 	)
 
-	const contentViews = () =>
-		file.latest && lb()?.views.editor.get(file.latest!.contentType)
+	const el = document.createElement("div")
 
-	const component = () => contentViews()?.next().value || "unknown-view"
+	const view = () => createReactTextView(el, changeContent, helpers)
 
-	const ContentView = () => (
-		<Dynamic
-			component={component()}
-			content={content()}
-			prop:changeContent={changeContent}
-		/>
-	)
+	// const contentViews = () =>
+	// 	file.latest && lb()?.views.editor.get(file.latest!.contentType)
+
+	// const component = () => contentViews()?.next().value || "unknown-view"
+
+	// const ContentView = () => (
+	// 	<Dynamic
+	// 		component={component()}
+	// 		prop:content={content()}
+	// 		prop:changeContent={changeContent}
+	// 		prop:helpers={helpers()}
+	// 	/>
+	// )
 
 	createEffect(() => {
-		console.log(content(), changeContent)
+		const [update, dispose] = view()
+		update(content())
 	})
 
 	return (
-		<Show when={content}>
+		<Show when={content() && helpers()}>
 			<div class="content-editor">
 				<ErrorBoundary
 					fallback={(error, reset) => {
@@ -52,7 +63,7 @@ export default function ContentEditor() {
 						fallback={
 							<div class="box content-editor content-editor--loading content-editor--file-loading" />
 						}>
-						<ContentView />
+						{el}
 					</Suspense>
 				</ErrorBoundary>
 			</div>

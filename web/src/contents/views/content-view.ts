@@ -1,20 +1,21 @@
 import type {lb} from "../../types"
-import type {ContentHelpers} from "../../ui/files/content-helpers.ts"
+import type {
+	ContentChangeHelpers,
+	ContentViewHelpers,
+} from "../../ui/files/content-helpers.ts"
 import type {ContentViewName} from "../types/type-registries"
 
-type ContentChangeFn<ContentType extends lb.AnyContent> = (
+export type ContentChangeFn<ContentType extends lb.AnyContent> = (
 	content: ContentType,
+	changeHelpers: ContentChangeHelpers<ContentType>,
 ) => void
 
+// todo editor view should probably also have access to metadata, which should be a second type arg
 export interface EditorViewProps<ContentType extends lb.AnyContent> {
 	content: ContentType
-	helpers: ContentHelpers<ContentType>
+	helpers: ContentViewHelpers<ContentType>
 	changeContent(fn: ContentChangeFn<ContentType>): void
 }
-
-export type CreateEditorView<ContentType extends lb.AnyContent> = (
-	props: EditorViewProps<ContentType>,
-) => HTMLElement
 
 export interface PreviewProps<ContentType extends lb.AnyContent> {
 	content: ContentType
@@ -39,23 +40,25 @@ export type PreviewComponent<
 // todo make more webby with events
 // todo i don't know how to describe in typescript that this thing is going to have these set on it.
 // maybe actually i should be providing a mixin-like function
-export abstract class EditorViewElement<
-	ContentType extends lb.AnyContent,
-> extends HTMLElement {
+export abstract class EditorViewElement<ContentType extends lb.AnyContent>
+	extends HTMLElement
+	implements EditorViewProps<ContentType>
+{
 	abstract content: ContentType
-	abstract helpers: ContentHelpers<ContentType>
-	changeContent(_fn: ContentChangeFn<ContentType>) {}
+	helpers!: ContentViewHelpers<ContentType>
+	// todo can i make this an event (you can dispatch a function detail)
+	changeContent!: (fn: ContentChangeFn<ContentType>) => void
 }
 
-export abstract class PreviewElement<
-	ContentType extends lb.AnyContent,
-> extends HTMLElement {
-	abstract content: ContentType
+export abstract class PreviewElement<ContentType extends lb.AnyContent>
+	extends HTMLElement
+	implements PreviewProps<ContentType>
+{
+	content!: ContentType
 }
 
 export type EditorView<ContentType extends lb.AnyContent> =
 	| SelfRegisteringContentView<ContentType>
-	| CreateEditorView<ContentType>
 	| ((new () => EditorViewElement<ContentType>) &
 			typeof EditorViewElement<ContentType>)
 
