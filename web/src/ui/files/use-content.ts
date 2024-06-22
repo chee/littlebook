@@ -1,4 +1,10 @@
-import {type Resource, createEffect, createResource, on} from "solid-js"
+import {
+	type Resource,
+	createEffect,
+	createResource,
+	on,
+	onCleanup,
+} from "solid-js"
 
 import type {ChangeFn, Doc, DocHandle} from "@automerge/automerge-repo"
 import {useAutomerge} from "../automerge/use-automerge.ts"
@@ -13,6 +19,7 @@ export default function useContent<T extends lb.AnyContent>(
 	id: () => lb.ContentId | undefined,
 ): UseContent<T> {
 	const automerge = useAutomerge()
+
 	const handle = () => id() && automerge()?.repo.find<lb.Content<T>>(id()!)
 
 	const [doc, control] = createResource(() => handle()?.doc())
@@ -22,13 +29,25 @@ export default function useContent<T extends lb.AnyContent>(
 			handle()?.on("change", control.refetch)
 			handle()?.on("delete", control.refetch)
 			control.refetch()
+			onCleanup(() => {
+				handle()?.off("change", control.refetch)
+				handle()?.off("delete", control.refetch)
+				handle()?.removeAllListeners()
+				console.log(doc.latest)
+				control.mutate(undefined)
+				console.log(doc.latest)
+			})
 		}),
 	)
 
-	createEffect(() => {
-		id()
-		control.mutate(undefined)
-	})
+	createEffect(
+		on([id], () => {
+			id()
+			control.mutate(undefined)
+			// doc.latest = undefined
+			handle()?.removeAllListeners()
+		}),
+	)
 
 	return [
 		doc,

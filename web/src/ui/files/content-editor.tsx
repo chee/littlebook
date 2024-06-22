@@ -68,7 +68,8 @@ export default function ContentEditor() {
 					)
 					return <SomethingWentWrong error={error} />
 				}}>
-				<Show when={content.latest}>
+				<Show
+					when={content.latest && "value" in content.latest && contentHandle()}>
 					<Suspense
 						fallback={
 							<div class="box content-editor content-editor--loading content-editor--file-loading" />

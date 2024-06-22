@@ -5,6 +5,9 @@ import solidPlugin from "vite-plugin-solid"
 import devtools from "solid-devtools/vite"
 
 export const config: UserConfig = {
+	define: {
+		"process.env.IS_PREACT": JSON.stringify("true"),
+	},
 	worker: {
 		format: "es",
 		plugins: () => [wasm()],

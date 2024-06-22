@@ -54,14 +54,13 @@ function automergeToExcalidraw(element: MergeableExcalidrawElement) {
 
 const Excalidraw = lazy(async () => {
 	const module = await import("@excalidraw/excalidraw")
-	return {default: module.default.Excalidraw}
+	return {default: module.Excalidraw}
 })
 
 const ExcalidrawView: EditorViewComponent<
 	ExcalidrawJSON,
 	FunctionComponent<lb.ContentEditorViewProps<ExcalidrawJSON>>
 > = ({value, change, ...props}) => {
-	console.log({value, props})
 	if (!value) {
 		return <div>waiting for value</div>
 	}
@@ -97,6 +96,7 @@ const ExcalidrawView: EditorViewComponent<
 			// todo snapshot!
 
 			change(doc => {
+				if (!doc.value?.elements) return
 				const contentVersion = doc.value.elements.reduce(sumVersion, 0) || 0
 				const excaliVersion = elements.reduce(sumVersion, 0) || 0
 				if (excaliVersion > contentVersion) {
@@ -140,24 +140,28 @@ const placeholderStyle = {
 
 export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
 	root = createRoot(this)
-	props = {
+	props = () => ({
 		value: this.value,
 		change: this.change,
 		handle: this.handle,
 		doc: this.doc,
-	}
+	})
 	connectedCallback() {
-		this.root.render(<ExcalidrawView {...this.props} />)
+		this.root.render(<ExcalidrawView {...this.props()} />)
+
 		this.handle.on("change", this.render)
 	}
 
 	render = (payload: DocHandleChangePayload<lb.Content<ExcalidrawJSON>>) => {
 		this.root.render(
-			<ExcalidrawView {...this.props} value={payload.doc.value} />,
+			<ExcalidrawView {...this.props()} value={payload.doc.value} />,
 		)
 	}
 
 	disconnectedCallback() {
-		this.handle.removeListener("change", this.render)
+		this.handle?.removeListener("change", this.render)
+
+		this.root.unmount()
+		this.textContent = ""
 	}
 }
