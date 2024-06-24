@@ -567,13 +567,29 @@ export class UniformType {
 		"av",
 		[UniformType.content, UniformType.data],
 	)
-	static audio = UniformType.create("public.audio", "audio", [
+	static audio = UniformType.create("public.audio", "sound", [
 		UniformType.audioVisualContent,
 	])
+
+	static flac = UniformType.create(
+		"org.xiph.flac",
+		"flac sound",
+		[UniformType.audio],
+		["flac"],
+		["audio/flac"],
+	)
 	static movie = UniformType.create("public.movie", "movie", [
 		UniformType.data,
 		UniformType.content,
 	])
+
+	static mpeg4Movie = UniformType.create(
+		"public.mpeg-4",
+		"mp4 movie",
+		[UniformType.movie],
+		["mp4"],
+	)
+
 	static video = UniformType.create("public.video", "video", [
 		UniformType.movie,
 	])
