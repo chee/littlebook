@@ -16,7 +16,7 @@ export function createProjectHandle(
 ) {
 	return createDocumentHandle<lb.Project>(repo, {
 		type: "project",
-		items: (template.items || []) as AutomergeList<lb.FileId | lb.FolderId>,
+		items: (template.items || []) as AutomergeList<lb.FileId | lb.DirectoryId>,
 		icon: template.icon || random.choice(["🦔", "🍒", "🧀", "✨", "👽"])!,
 		name: template.name || "",
 	})

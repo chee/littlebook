@@ -1,16 +1,23 @@
 import {showOpenFilePicker} from "file-system-access"
-// import useProject from "../../automerge/use-project.ts"
-// import EditableName from "../documents/editable-name.tsx"
-// import {useSpaceState} from "../spaces/space-state.tsx"
 import {useLittlebookAPI} from "../api/use-api.ts"
 
-import {A, useNavigate, useParams} from "@solidjs/router"
-import {For, Suspense} from "solid-js"
+import {useParams, useSearchParams} from "@solidjs/router"
+import {For, Suspense, createEffect} from "solid-js"
 import useDocument from "../documents/use-document.ts"
 import useDocuments from "../documents/use-documents.ts"
+import {
+	createSolidTable,
+	getCoreRowModel,
+	flexRender,
+} from "@tanstack/solid-table"
+import {
+	UniformType,
+	type UniformTypeIdentifier,
+} from "../../contents/uniform-type.ts"
 
 export default function ProjectFileBrowser() {
 	const params = useParams<{projectId?: lb.ProjectId}>()
+	const [search, setSearch] = useSearchParams<{file?: lb.FileId}>()
 
 	const [project, changeProject] = useDocument<lb.Project>(
 		() => params.projectId,
@@ -18,8 +25,37 @@ export default function ProjectFileBrowser() {
 
 	const files = useDocuments<lb.File | lb.Folder>(() => project()?.items)
 
-	const navigate = useNavigate()
 	const lb = useLittlebookAPI()
+
+	const table = createSolidTable({
+		columns: [
+			{accessorKey: "name", header: "name"},
+			{accessorKey: "contentType", header: "type"},
+		],
+		get data() {
+			return files.latest || []
+		},
+		getCoreRowModel: getCoreRowModel(),
+		enableRowSelection: true,
+		getRowId(doc, index) {
+			return doc?.id || "" + index
+		},
+		initialState: {
+			rowSelection: {
+				[search.file || ""]: true,
+			},
+		},
+	})
+
+	createEffect(() => {
+		table.resetRowSelection(false)
+		table.setRowSelection({
+			[search.file || ""]: true,
+		})
+	})
+
+	const selectedRow = () => table.getSelectedRowModel().flatRows[0]
+
 	return (
 		<Suspense>
 			<article class="project-file-browser">
@@ -39,13 +75,13 @@ export default function ProjectFileBrowser() {
 							}
 							const fileHandle = lb()?.files.createHandleInProject(id, {
 								name: "new file.txt",
-								contentType: "public.plain-text" as lb.UniformTypeIdentifier,
+								contentType: UniformType.plainText.identifier,
 							})
 
 							if (fileHandle instanceof Error) {
 							} else {
 								fileHandle?.doc().then(file => {
-									navigate(`?file=${file?.id}`)
+									setSearch({file: file?.id})
 								})
 							}
 						}}>
@@ -62,13 +98,13 @@ export default function ProjectFileBrowser() {
 							}
 							const fileHandle = lb()?.files.createHandleInProject(id, {
 								name: "new file.excalidraw",
-								contentType: "com.excalidraw.json" as lb.UniformTypeIdentifier,
+								contentType: "com.excalidraw.json" as UniformTypeIdentifier,
 							})
 
 							if (fileHandle instanceof Error) {
 							} else {
 								fileHandle?.doc().then(file => {
-									navigate(`?file=${file?.id}`)
+									setSearch({file: file?.id})
 								})
 							}
 						}}>
@@ -77,34 +113,88 @@ export default function ProjectFileBrowser() {
 					<button
 						type="button"
 						onClick={async () => {
-							// todo move to some kind of project-create-file
 							const [computerFileHandle] = await showOpenFilePicker({
 								_preferPolyfill: true,
 								multiple: false,
 							})
 							const computerFile = await computerFileHandle.getFile()
+
 							const bytes = new Uint8Array(await computerFile.arrayBuffer())
+
 							const fileHandle = lb()?.files.import(computerFile, bytes)
+							console.log(fileHandle)
 							fileHandle?.doc().then(file => {
-								file && changeProject(lb()?.projects.addItem(file.id))
-								file && navigate(`?file=${file.id}`)
-								// ui.files.selected.value = file?.id || null
+								console.log({file})
+								file && changeProject(lb()!.projects.addItem(file.id))
+								// setSearch({file: file?.id})
+								// file &&
 							})
 						}}>
-						<span class="icon">{/* <UploadIcon /> */}</span>
+						<span class="icon">↥ </span>
 						<span>import file</span>
 					</button>
 				</div>
-				<section class="overflow-scroll max-h-full p-4 my-4 h-full">
-					<For each={files()}>
-						{file => {
-							return (
-								<Suspense>
-									<A href={`?file=${file?.id}`}>{file?.name}</A>
-								</Suspense>
-							)
-						}}
-					</For>
+				<section class="project-file-browser-body">
+					<table>
+						<thead>
+							<For each={table.getHeaderGroups()}>
+								{headerGroup => (
+									<tr>
+										<For each={headerGroup.headers}>
+											{header => (
+												<th>
+													{header.isPlaceholder
+														? null
+														: flexRender(
+																header.column.columnDef.header,
+																header.getContext(),
+															)}
+												</th>
+											)}
+										</For>
+									</tr>
+								)}
+							</For>
+						</thead>
+						<tbody>
+							<For each={table.getRowModel().rows}>
+								{row => {
+									if (!row.original) return null
+									const name = row.getValue<string>("name")
+									const type = row.getValue<string>("contentType")
+									const selected = () => selectedRow()?.id == row.original?.id
+									return (
+										<tr aria-current={selected()}>
+											<td>
+												<a href={`?file=${row.original?.id}`}>{name}</a>
+											</td>
+											<td>{type}</td>
+										</tr>
+									)
+								}}
+							</For>
+						</tbody>
+						<tfoot>
+							<For each={table.getFooterGroups()}>
+								{footerGroup => (
+									<tr>
+										<For each={footerGroup.headers}>
+											{header => (
+												<th>
+													{header.isPlaceholder
+														? null
+														: flexRender(
+																header.column.columnDef.footer,
+																header.getContext(),
+															)}
+												</th>
+											)}
+										</For>
+									</tr>
+								)}
+							</For>
+						</tfoot>
+					</table>
 				</section>
 			</article>
 		</Suspense>

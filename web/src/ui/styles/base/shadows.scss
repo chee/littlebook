@@ -4,6 +4,7 @@
 
 @include set-root-vars(map.get($shadows, default), $shadow-namespace);
 @include set-root-var(color, fade(black, 90%), shadow);
+@include set-root-var(inset, "", shadow);
 
 /* todo
 $ring-namespace: "namespace";

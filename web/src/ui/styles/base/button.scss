@@ -27,18 +27,30 @@ $button-namespace: "button" !default;
 	cursor: pointer;
 	@include radius(m);
 	font-family: get-var(family-sans);
+	@include set-shadow-direct(
+		(
+			x: 0,
+			y: 0,
+			spread: 3px,
+			offset: 1px,
+		)
+	);
 
 	&:not(.ghost:not(:hover)) {
-		box-shadow: 0px 0px 3px 1px get-color(button-shadow);
+		@include shadow;
 	}
 
 	&:hover {
-		@include set-color(button-shadow, fade("black", 85%));
+		@include set-shadow-var(color, fade("black", 85%));
+	}
+	&:active {
+		@include set-shadow-var(inset, "inset");
+		@include set-shadow-var(color, fade("black", 80%));
 	}
 
 	&.is-primary {
 		background: get-color(primary);
-		color: get-color(white);
+		// color: get-color(white);
 	}
 	&.small {
 		font-size: 0.875em;

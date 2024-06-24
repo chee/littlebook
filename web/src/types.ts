@@ -10,6 +10,12 @@ import type {
 } from "@localfirst/auth-provider-automerge-repo"
 import type createLittlebookAPI from "./api/api.ts"
 import type {ParentComponent} from "solid-js"
+import type {
+	LooseUniformTypeDescriptor,
+	UniformType,
+	UniformTypeDescriptor,
+	UniformTypeIdentifier,
+} from "./contents/uniform-type.ts"
 
 export declare type ParentComponentProps<T = Record<any, any>> = Parameters<
 	ParentComponent<T>
@@ -29,32 +35,25 @@ export type WithReadonly<Type, Key extends keyof Type> = Omit<Type, Key> &
 export declare namespace lb {
 	type ContentId = Branded<DocumentId, "content-id">
 	type FileId = Branded<DocumentId, "file-id">
-	type FolderId = Branded<DocumentId, "folder-id">
+	type DirectoryId = Branded<DocumentId, "folder-id">
 	type ProjectId = Branded<DocumentId, "project-id">
 	type AreaId = Branded<DocumentId, "area-id">
 	type WhenId = Branded<DocumentId, "when-id">
 	type SpaceId = Branded<DocumentId, "space-id">
 	type InboxId = Branded<DocumentId, "inbox-id">
-	type UniformTypeIdentifier = Branded<string, "uniform-type-identifier">
+
 	type FolderTypeIdentifier = Branded<
 		"public.folder",
 		"uniform-type-identifier"
 	>
-	interface UniformType {
-		name: UniformTypeIdentifier
-		displayName?: string
-		conformsTo?: UniformTypeIdentifier[]
-		mimeType?: string
-		fileNameExtension?: string
-	}
 	type ContentCoder<Model extends AnyContent> =
-		import("./contents/types/coders.ts").ContentCoder<Model>
+		import("./contents/coders.ts").ContentCoder<Model>
 	type ContentEditorView<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").EditorViewConstructor<Model>
+		import("./contents/content-view.ts").EditorViewConstructor<Model>
 	// type ContentMetadataView<Model extends AnyContent> =
 	// 	import("./contents/views/content-view.ts").MetadataView<Model>
 	type ContentPreview<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").PreviewConstructor<Model>
+		import("./contents/content-view.ts").PreviewConstructor<Model>
 
 	type AnyContentView<Model extends AnyContent> =
 		| ContentEditorView<Model>
@@ -62,21 +61,21 @@ export declare namespace lb {
 		| ContentPreview<Model>
 
 	type ContentEditorViewProps<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").EditorViewProps<Model>
+		import("./contents/content-view.ts").EditorViewProps<Model>
 
 	// type ContentMetadataViewProps<Model extends AnyContent> =
 	// 	import("./contents/views/content-view.ts").MetadataViewProps<Model>
 
 	type ContentPreviewProps<Model extends AnyContent> =
-		import("./contents/views/content-view.ts").PreviewProps<Model>
+		import("./contents/content-view.ts").PreviewProps<Model>
 
 	namespace plugins {
 		type API = typeof import("./plugins/plugin-api.ts")
 
 		interface ContentType<T extends lb.AnyContent> {
-			type: lb.UniformType | lb.UniformTypeIdentifier
-			coder: lb.ContentCoder<T>
-			views: {
+			types: (UniformTypeIdentifier | LooseUniformTypeDescriptor)[]
+			coder?: lb.ContentCoder<T>
+			views?: {
 				editor?: ContentEditorView<T>
 				preview?: ContentPreview<T>
 				// metadata?: ContentMetadataView<T>
@@ -120,34 +119,39 @@ export declare namespace lb {
 		readonly id: ProjectId
 		name: string
 		// readonly parentId: AreaId | SpaceId
-		items: AutomergeList<FolderId | FileId>
+		items: AutomergeList<DirectoryId | FileId>
 		icon: string
 		when?: Date
 	}
 
 	type ProjectItemId = Project["items"][number]
 
-	interface Folder {
-		readonly type: "folder"
-		readonly id: FolderId
-		contentType: FolderTypeIdentifier
+	interface Directory {
+		readonly type: "folder" | "package"
+		readonly id: DirectoryId
 		name: string
 		// readonly parentId: ProjectId | FolderId
-		items: AutomergeList<FolderId | FileId>
+		items: AutomergeList<DirectoryId | FileId>
 		icon: string
 		when?: Date
 	}
 
+	interface Folder extends Directory {
+		readonly type: "folder"
+		contentType: FolderTypeIdentifier
+	}
+
 	type FolderItem = Folder["items"][number]
-	interface Package extends Folder {
-		ext: string
+	interface Package extends Directory {
+		readonly type: "package"
+		contentType: UniformTypeIdentifier
 	}
 
 	interface File {
 		readonly type: "file"
 		readonly id: FileId
 		// todo
-		readonly contentType: UniformTypeIdentifier
+		contentType: UniformTypeIdentifier
 		name: string
 		note: string
 		when?: When

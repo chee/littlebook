@@ -1,7 +1,7 @@
 import type {Repo} from "@automerge/automerge-repo"
-import {CodingError} from "../contents/types/coders.ts"
-import {coderRegistry} from "../contents/types/type-registries.ts"
+import {CodingError, coderRegistry} from "../contents/coders.ts"
 import type {AnyContent} from "../global.js"
+import type {UniformTypeIdentifier} from "../contents/uniform-type.ts"
 
 export function createContentHandle<ContentType extends lb.AnyContent>(
 	repo: Repo,
@@ -15,12 +15,12 @@ export function createContentHandle<ContentType extends lb.AnyContent>(
 
 export function recodeContent(
 	repo: Repo,
-	sourceType: lb.UniformTypeIdentifier,
-	targetType: lb.UniformTypeIdentifier,
+	sourceType: UniformTypeIdentifier,
+	targetType: UniformTypeIdentifier,
 	source: lb.Content<AnyContent>,
 ) {
-	const sourceCoder = coderRegistry.get(sourceType)
-	const targetCoder = coderRegistry.get(targetType)
+	const sourceCoder = coderRegistry.getFirst(sourceType)
+	const targetCoder = coderRegistry.getFirst(targetType)
 
 	if (sourceCoder && targetCoder) {
 		const bytes = sourceCoder.encode(source.value)

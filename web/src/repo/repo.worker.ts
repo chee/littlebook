@@ -32,7 +32,6 @@ const repoPromise = (async () => {
 })()
 
 async function configureRepoNetworkPort(port: MessagePort, id: PeerId) {
-	console.log("hello network", id)
 	const {Repo, IndexedDBStorageAdapter, BrowserWebSocketClientAdapter} =
 		await repoPromise
 	const repo = new Repo({

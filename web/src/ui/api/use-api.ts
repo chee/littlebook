@@ -1,6 +1,5 @@
-// import {useContext, useMemo} from "preact/hooks"
 import {createContext, useContext} from "solid-js"
-import type createLittlebookAPI from "../../api/api"
+import type createLittlebookAPI from "../../api/api.ts"
 
 export const LittlebookAPIContext =
 	createContext<() => ReturnType<typeof createLittlebookAPI> | undefined>(

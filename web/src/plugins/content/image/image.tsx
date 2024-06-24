@@ -1,27 +1,54 @@
-// // import {useMemo} from "preact/hooks"
-// import * as coders from "../../../contents/types/coders.ts"
-// import type {ContentView} from "../../../contents/types/type-registries.ts"
+import {binary} from "../../../contents/coders.ts"
+import {UniformType} from "../../../contents/uniform-type.ts"
+import {PreviewElement} from "../../../contents/content-view.ts"
 
-// const type = "public.image" as lb.UniformTypeIdentifier
-// const coder = coders.binary()
-// type ImageModel = Uint8Array
+class ImagePreview extends PreviewElement<Uint8Array> {
+	async blob() {
+		const blob = new Blob([this.value])
+		const url = URL.createObjectURL(blob)
+		return url
+	}
+	connectedCallback() {
+		const img = document.createElement("img")
+		this.blob().then(url => {
+			img.src = url
+			this.replaceChildren(img)
+		})
 
-// // todo also ReadOnly content view ?
-// const ImageContentView: ContentView<ImageModel> = ({content}) => {
-// 	const blob = useMemo(
-// 		() => URL.createObjectURL(new Blob([content.value])),
-// 		[content.value, content],
-// 	)
+		this.addEventListener("change", () => {
+			this.blob().then(url => {
+				img.src = url
+			})
+		})
+	}
+}
 
-// 	return <img src={blob} alt="" />
-// }
+const coder = binary()
 
-// export function activate(lb: lb.API) {
-// 	lb.coders.register(type, coder)
-// 	lb.views.content.register([type], ImageContentView)
-// }
+class VideoPreview extends PreviewElement<Uint8Array> {
+	async blob() {
+		const blob = new Blob([this.value])
+		const url = URL.createObjectURL(blob)
+		return url
+	}
+	connectedCallback() {
+		const video = document.createElement("video")
+		this.blob().then(url => {
+			video.src = url
+			this.replaceChildren(video)
+		})
 
-// export function deactivate(lb: lb.API) {
-// 	lb.coders.remove(type, coder)
-// 	lb.views.content.remove(ImageContentView)
-// }
+		this.addEventListener("change", () => {
+			this.blob().then(url => {
+				video.src = url
+			})
+		})
+	}
+}
+
+export default function image(lb: lb.plugins.API) {
+	lb.registerPreview(UniformType.image, ImagePreview)
+	lb.registerPreview(UniformType.movie, VideoPreview)
+	lb.registerCoder(UniformType.movie, coder)
+	lb.registerCoder(UniformType.image, coder)
+}

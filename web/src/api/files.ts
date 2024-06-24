@@ -1,6 +1,5 @@
 import type {Repo} from "@automerge/automerge-repo"
-import {binary} from "../contents/types/coders.ts"
-import {coderRegistry, typeRegistry} from "../contents/types/type-registries.ts"
+import {binary, coderRegistry} from "../contents/coders.ts"
 import {createContentHandle} from "./contents.ts"
 import {
 	type DocTemplate,
@@ -9,14 +8,23 @@ import {
 	removeItemFromDocument,
 } from "./documents.ts"
 import {addItemToProject, getProjectHandle} from "./projects.ts"
+import {
+	UniformType,
+	type MIMEType,
+	type UniformTypeIdentifier,
+} from "../contents/uniform-type.ts"
 
 type FileTemplate = DocTemplate<lb.File> & {
-	contentType: lb.UniformTypeIdentifier
+	contentType: UniformTypeIdentifier
 }
 
-export function createFileHandle(repo: Repo, fileTemplate: FileTemplate) {
-	const coder = coderRegistry.get(fileTemplate.contentType) || binary()
-	const content = createContentHandle(repo, coder.decode(new Uint8Array()))
+export function createFileHandle(
+	repo: Repo,
+	fileTemplate: FileTemplate,
+	bytes = new Uint8Array(),
+) {
+	const coder = coderRegistry.getFirst(fileTemplate.contentType) || binary()
+	const content = createContentHandle(repo, coder.decode(bytes))
 	return createDocumentHandle<lb.File>(repo, {
 		type: "file",
 		name: fileTemplate.name || "",
@@ -32,18 +40,21 @@ export function importFile(
 	bytes: Uint8Array,
 ) {
 	const types =
-		typeRegistry.forFilename(computerFile.name) ||
-		typeRegistry.forMime(computerFile.type)
+		UniformType.forMIMEType(computerFile.type as MIMEType) ||
+		UniformType.forFilename(computerFile.name)
 
-	const [type] = types
-	const coder = coderRegistry.get(types[0]) || binary()
-	const content = createContentHandle(repo, coder.decode(bytes))
-	const file = createFileHandle(repo, {
-		name: computerFile.name,
-		content: content.documentId as lb.ContentId,
-		lastModified: computerFile.lastModified || Date.now(),
-		contentType: type,
-	})
+	const [type] = types?.values() || [UniformType.data]
+
+	const file = createFileHandle(
+		repo,
+		{
+			name: computerFile.name,
+			lastModified: computerFile.lastModified || Date.now(),
+			contentType: type.identifier,
+		},
+		bytes,
+	)
+
 	return file
 }
 
@@ -54,7 +65,7 @@ export function getFileHandle(repo: Repo, id: lb.FileId) {
 export function deleteFile(
 	repo: Repo,
 	id: lb.FileId,
-	parentId?: lb.ProjectId | lb.FolderId,
+	parentId?: lb.ProjectId | lb.DirectoryId,
 ) {
 	if (parentId) {
 		const parentHandle = repo.find<lb.Project | lb.Folder>(parentId)

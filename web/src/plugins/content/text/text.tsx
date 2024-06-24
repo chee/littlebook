@@ -1,48 +1,35 @@
-import {DocHandle, updateText} from "@automerge/automerge-repo"
-import * as coders from "../../../contents/types/coders.ts"
-import type {ContentCoder} from "../../../contents/types/coders.ts"
-import {EditorViewElement} from "../../../contents/views/content-view.ts"
-
+import {EditorViewElement} from "../../../contents/content-view.ts"
 import "./text.scss"
-
-const type = "public.plain-text" as lb.UniformTypeIdentifier
-
-type TextModel = string
-
-const coder: ContentCoder<TextModel> = coders.text()
-
-class TextContentView extends EditorViewElement<string> {
-	static displayName = "textarea"
-	textarea = document.createElement("textarea")
-
-	connectedCallback() {
-		this.appendChild(this.textarea)
-		this.textarea.classList.add("text-content-view")
-		this.textarea.addEventListener("input", this.#listen)
-	}
-
-	set content(string: string) {
-		this.textarea.value = string
-	}
-
-	get content() {
-		return this.textarea.value
-	}
-
-	disconnectedCallback() {
-		this.textarea.removeEventListener("input", this.#listen)
-	}
-
-	#listen = () => {
-		this.changeContent(content => {
-			updateText(content, ["value"], this.textarea.value)
-		})
-		this.textarea.value
-	}
-}
-
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
-import {EditorView} from "@codemirror/view"
+import {EditorView, lineNumbers} from "@codemirror/view"
+import {Compartment} from "@codemirror/state"
+import {minimalSetup} from "codemirror"
+import {
+	LanguageDescription,
+	indentUnit,
+	type LanguageSupport,
+} from "@codemirror/language"
+import {
+	UniformType,
+	type UniformTypeIdentifier,
+} from "../../../contents/uniform-type.ts"
+import * as coders from "../../../contents/coders.ts"
+
+const python = UniformType.create("public.python-script", "python code", [
+	UniformType.script,
+	UniformType.sourceCode,
+])
+
+const markdown = UniformType.create("net.daringfireball.markdown", "markdown", [
+	UniformType.plainText,
+])
+
+const types = {
+	python: python.identifier,
+	markdown: markdown.identifier,
+	javascript: UniformType.javaScript.identifier,
+	html: UniformType.html.identifier,
+}
 
 class CodemirrorTextEditorView extends EditorViewElement<string> {
 	static displayName = "fancy text editor"
@@ -63,12 +50,55 @@ class CodemirrorTextEditorView extends EditorViewElement<string> {
 		this.shadowRoot?.append(style)
 	}
 
+	languages: {
+		[key: UniformTypeIdentifier]: () => Promise<LanguageSupport>
+	} = {
+		[types.python]: () =>
+			import("@codemirror/lang-python").then(mod => mod.python()),
+		[types.javascript]: () =>
+			import("@codemirror/lang-javascript").then(mod => mod.javascript()),
+		[types.html]: () => import("@codemirror/lang-html").then(mod => mod.html()),
+		[types.markdown]: () =>
+			import("@codemirror/lang-markdown")
+				.then(mod => mod.markdown)
+				.then(async markdown => {
+					return markdown({
+						codeLanguages: [
+							LanguageDescription.of({
+								name: "javascript",
+								alias: ["js", "jsx", "ts", "tsx", "typescript"],
+								filename: /\.[jt]sx?$/,
+								load: this.languages[types.javascript],
+							}),
+							LanguageDescription.of({
+								name: "html",
+								filename: /\.html$/,
+								load: this.languages[types.html],
+							}),
+							LanguageDescription.of({
+								name: "python",
+								alias: ["py"],
+								filename: /\.py$/,
+								load: this.languages[types.python],
+							}),
+						],
+					})
+				}),
+	}
+
 	connectedCallback() {
+		const languageCompartment = new Compartment()
+		// const tabSize = new Compartment()
+		const lineNumbersCompartment = new Compartment()
+
 		if (typeof this.value == "string" && !this.codemirror) {
 			this.codemirror = new EditorView({
 				doc: this.value,
 				extensions: [
-					// basicSetup,
+					minimalSetup,
+					indentUnit.of("\t"),
+					languageCompartment.of([]),
+					lineNumbersCompartment.of([]),
 					automergeSyncPlugin({
 						handle: this.handle,
 						path: ["value"],
@@ -77,16 +107,22 @@ class CodemirrorTextEditorView extends EditorViewElement<string> {
 				parent: this.shadowRoot!,
 			})
 		}
+
+		const lang = this.languages[this.file.contentType]
+		if (lang) {
+			lang()?.then(ext => {
+				this.codemirror?.dispatch({
+					effects: [
+						languageCompartment.reconfigure(ext),
+						lineNumbersCompartment.reconfigure(lineNumbers()),
+					],
+				})
+			})
+		}
 	}
 }
 
 export default function text(lb: lb.plugins.API) {
-	lb.registerEditorView([type], CodemirrorTextEditorView)
-	lb.registerContentType({
-		coder,
-		type,
-		views: {
-			editor: TextContentView,
-		},
-	})
+	lb.registerEditorView(UniformType.plainText, CodemirrorTextEditorView)
+	lb.registerCoder(UniformType.plainText, coders.text())
 }

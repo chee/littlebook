@@ -10,6 +10,7 @@ import {
 	Suspense,
 	Switch,
 	createMemo,
+	lazy,
 } from "solid-js"
 
 import {
@@ -23,15 +24,21 @@ import {
 	createDefaultTeam,
 } from "../auth/teams/create-team.ts"
 import {LittlebookAPIContext} from "./api/use-api.ts"
-import {Hello} from "./automerge/hello.tsx"
+
 import * as local from "./automerge/local.ts"
 import {
 	AutomergeContext,
 	startFromLocal,
 	useAutomerge,
 } from "./automerge/use-automerge.ts"
-import ProjectPage from "./projects/project-page.tsx"
-import SpacePage from "./spaces/space-page.tsx"
+
+const Hello = lazy(() =>
+	import("./automerge/hello.tsx").then(mod => {
+		return {default: mod.Hello}
+	}),
+)
+const ProjectPage = lazy(() => import("./projects/project-page.tsx"))
+const SpacePage = lazy(() => import("./spaces/space-page.tsx"))
 
 const LittlebookAPIProvider: ParentComponent<{
 	automergeState: ResourceReturn<lb.AutomergeState | undefined>[0]
@@ -49,8 +56,10 @@ const LittlebookAPIProvider: ParentComponent<{
 
 import excalidraw from "@littlebook/excalidraw"
 import text from "../plugins/content/text/text.tsx"
+import image from "../plugins/content/image/image.tsx"
+import unknown from "../plugins/content/unknown/unknown.ts"
 
-const plugins = [excalidraw, text]
+const plugins = [excalidraw, text, image, unknown]
 import pairDevice from "../auth/devices/pair-device.ts"
 import * as pluginAPI from "../plugins/plugin-api.ts"
 import PleaseReload from "./sw/please-reload.tsx"
@@ -66,12 +75,30 @@ export default function Littlebook() {
 		<>
 			<Switch>
 				<Match when={automergeState.state == "ready" && !automergeState()}>
-					<Hello
-						pair={(opts: PairDeviceOptions) => {
-							pairDevice(opts)
-								.then(result => {
-									const team = result.team
+					<Suspense>
+						<Hello
+							pair={(opts: PairDeviceOptions) => {
+								pairDevice(opts)
+									.then(result => {
+										const team = result.team
 
+										local.set({
+											device: result.device,
+											homeShareId: getShareId(team),
+											user: result.user,
+										} satisfies Omit<
+											Required<lb.LocalAutomergeState>,
+											"username"
+										>)
+										control.refetch()
+									})
+									.catch(error => {
+										console.error(error)
+									})
+							}}
+							fresh={async (opts: CreateDefaultTeamOptions) => {
+								createDefaultTeam(opts).then(result => {
+									const team = result.team
 									local.set({
 										device: result.device,
 										homeShareId: getShareId(team),
@@ -82,22 +109,9 @@ export default function Littlebook() {
 									>)
 									control.refetch()
 								})
-								.catch(error => {
-									console.error(error)
-								})
-						}}
-						fresh={async (opts: CreateDefaultTeamOptions) => {
-							createDefaultTeam(opts).then(result => {
-								const team = result.team
-								local.set({
-									device: result.device,
-									homeShareId: getShareId(team),
-									user: result.user,
-								} satisfies Omit<Required<lb.LocalAutomergeState>, "username">)
-								control.refetch()
-							})
-						}}
-					/>
+							}}
+						/>
+					</Suspense>
 				</Match>
 				<Match when={automergeState.state == "ready"}>
 					<Router

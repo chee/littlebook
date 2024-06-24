@@ -4,7 +4,6 @@ import type {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
 import {Match, Switch, createSignal} from "solid-js"
 import type {PairDeviceOptions} from "../../auth/devices/pair-device.ts"
 import type {CreateDefaultTeamOptions} from "../../auth/teams/create-team.ts"
-// import {useState} from "preact/hooks"
 import * as local from "../automerge/local.ts"
 import "./hello.scss"
 

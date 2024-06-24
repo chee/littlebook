@@ -7,8 +7,8 @@
 		"jsx": "preserve",
 		"jsxImportSource": "solid-js",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"noEmit": true,
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedLocals": true,
@@ -17,13 +17,7 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "ESNext",
-		"types": ["vinxi/types/client"]
 	},
-	"include": [
-		"src",
-		"node_modules/vite/client.d.ts",
-		"./index.d.ts",
-		"node_modules/@excalidraw/excalidraw/types/types.d.ts"
-, "src/ui/zzz/entry.tsx"	],
+	"include": ["src"],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }

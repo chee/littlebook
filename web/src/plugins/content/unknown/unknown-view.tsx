@@ -1,24 +1,13 @@
-import {
-	EditorViewElement,
-	type EditorViewProps,
-} from "../../../contents/views/content-view.ts"
+import {EditorViewElement} from "../../../contents/content-view.ts"
 
 export class UnknownContent extends EditorViewElement<any> {
 	static displayName: "mystery meat"
 	static tag: "unknown"
 	#file?: lb.File
-	#content?: lb.Content<any>
-	connectedCallback() {
-		console.log("im conntencted")
-	}
+	connectedCallback() {}
 
 	set file(file: lb.File) {
 		this.#file = file
-		this.render()
-	}
-
-	set content(content: lb.Content<lb.AnyContent>) {
-		this.#content = content
 		this.render()
 	}
 

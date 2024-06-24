@@ -5,7 +5,7 @@ import {
 	EditorViewElement,
 	// ContentView,
 	type EditorViewComponent,
-} from "../../web/src/contents/views/content-view.ts"
+} from "../../web/src/contents/content-view.ts"
 
 // should i provide this from @littlebook/plugin? probably, right! like, plus
 // any other types i create with crdx? yeah, right now this is the only reason
@@ -25,7 +25,6 @@ import {
 	lazy,
 	type FunctionComponent,
 } from "react"
-// import styles from "./styles.css"
 
 import {throttle} from "throttle-debounce"
 import type {ExcalidrawJSON, MergeableExcalidrawElement} from "./shared.ts"
@@ -112,31 +111,39 @@ const ExcalidrawView: EditorViewComponent<
 	)
 
 	return (
-		<Suspense fallback={<div style={placeholderStyle} />}>
-			<Excalidraw
-				excalidrawAPI={api => setExcalidrawAPI(api)}
-				initialData={{
-					...value,
-					elements: initialElements,
-				}}
-				handleKeyboardGlobally={false}
-				onChange={onchange}
-			/>
-		</Suspense>
+		<>
+			<style>
+				{
+					/*css*/ `
+					.excalidraw-loading {
+						text-align: center;
+						color: #c7c7cc;
+						font-size: 0.8rem;
+						padding-top: 1em;
+						background: white;
+						height: 100%;
+					}
+					`
+				}
+			</style>
+
+			<Suspense
+				fallback={<div className="excalidraw-loading">loading scene</div>}>
+				<Excalidraw
+					excalidrawAPI={api => setExcalidrawAPI(api)}
+					initialData={{
+						...value,
+						elements: initialElements,
+					}}
+					handleKeyboardGlobally={false}
+					onChange={onchange}
+				/>
+			</Suspense>
+		</>
 	)
 }
 
 export default ExcalidrawView
-
-/** @type {React.CSSProperties} */
-const placeholderStyle = {
-	backgroundColor: "var(--paper)",
-	position: "absolute" as const,
-	top: 0,
-	left: 0,
-	right: 0,
-	bottom: 0,
-}
 
 export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
 	root = createRoot(this)
@@ -145,6 +152,7 @@ export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
 		change: this.change,
 		handle: this.handle,
 		doc: this.doc,
+		file: this.file,
 	})
 	connectedCallback() {
 		this.root.render(<ExcalidrawView {...this.props()} />)

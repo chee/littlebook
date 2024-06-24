@@ -33,9 +33,7 @@ export default function useContent<T extends lb.AnyContent>(
 				handle()?.off("change", control.refetch)
 				handle()?.off("delete", control.refetch)
 				handle()?.removeAllListeners()
-				console.log(doc.latest)
 				control.mutate(undefined)
-				console.log(doc.latest)
 			})
 		}),
 	)

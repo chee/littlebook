@@ -1,5 +1,3 @@
-// import type {FunctionalComponent} from "preact
-// import type {SpaceState} from "../../littlebook/spaces/space-state.tsx"
 import type {ParentComponent} from "solid-js"
 import cl from "../../lib/cl.ts"
 import "./sidebar.scss"

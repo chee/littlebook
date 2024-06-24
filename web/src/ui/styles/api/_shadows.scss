@@ -51,6 +51,6 @@ $shadows: (
 }
 
 @mixin shadow {
-	box-shadow: get-shadow-var(color) get-shadow-var(x) get-shadow-var(y)
-		get-shadow-var(spread) get-shadow-var(offset);
+	box-shadow: get-shadow-var(inset) get-shadow-var(color) get-shadow-var(x)
+		get-shadow-var(y) get-shadow-var(spread) get-shadow-var(offset);
 }
