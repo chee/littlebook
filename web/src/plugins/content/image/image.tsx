@@ -1,5 +1,5 @@
 import {binary} from "../../../contents/coders.ts"
-import {UniformType} from "../../../contents/uniform-type.ts"
+import UniformType from "../../../contents/uniform-type.ts"
 import {PreviewElement} from "../../../contents/content-view.ts"
 
 class ImagePreview extends PreviewElement<Uint8Array> {

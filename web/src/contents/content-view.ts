@@ -1,7 +1,7 @@
 import type {ChangeFn} from "@automerge/automerge"
 import type {lb} from "../types.ts"
 import type {DocHandle} from "@automerge/automerge-repo"
-import {type UniformTypeIdentifier, UniformType} from "./uniform-type.ts"
+import UniformType, {type UniformTypeIdentifier} from "./uniform-type.ts"
 
 export interface EditorViewProps<ContentType extends lb.AnyContent> {
 	doc: lb.Content<ContentType>

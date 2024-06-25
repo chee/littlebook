@@ -3,7 +3,7 @@ import {useParams, useSearchParams} from "@solidjs/router"
 import useDocument from "../documents/use-document.ts"
 import {For, Show, createSignal} from "solid-js"
 import useContent from "./use-content.ts"
-import {UniformType} from "../../contents/uniform-type.ts"
+import UniformType from "../../contents/uniform-type.ts"
 
 export default function InfoPanel() {
 	const [search] = useSearchParams<{file?: lb.FileId}>()

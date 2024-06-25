@@ -10,8 +10,7 @@ import {
 	getCoreRowModel,
 	flexRender,
 } from "@tanstack/solid-table"
-import {
-	UniformType,
+import UniformType, {
 	type UniformTypeIdentifier,
 } from "../../contents/uniform-type.ts"
 

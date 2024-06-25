@@ -23,7 +23,7 @@ export type LooseUniformTypeDescriptor = {
 	mimeTypes?: string[]
 }
 
-export class UniformType {
+export default class UniformType {
 	private static types = new Map<UniformTypeIdentifier, UniformType>()
 	private static mimes = new Map<MIMEType, Set<UniformType>>()
 	private static extensions = new Map<FilenameExtension, Set<UniformType>>()
@@ -119,6 +119,14 @@ export class UniformType {
 	}
 	conforms(to: UniformType) {
 		return this.supertypes.has(to)
+	}
+
+	isSubtype(of: UniformType) {
+		return this.supertypes.has(of)
+	}
+
+	isSupertype(of: UniformType) {
+		return of.supertypes.has(this)
 	}
 
 	static mimeTypes = function* (type: UniformType): Generator<MIMEType> {
@@ -232,6 +240,17 @@ export class UniformType {
 		UniformType.data,
 	])
 
+	static zip = UniformType.create(
+		// deprecated "com.pkware.zip-archive",
+		"public.zip-archive",
+		"zip",
+		[UniformType.archive],
+		["zip", "zipx", "z01"],
+		["application/zip", "application/x-zip-compressed"],
+	)
+
+	// todo https://developer.apple.com/documentation/uniformtypeidentifiers/uttype-swift.struct/gzip
+
 	static directory = UniformType.create("public.directory", "directory", [
 		UniformType.item,
 	])
@@ -259,11 +278,53 @@ export class UniformType {
 		UniformType.item,
 	])
 
+	static aliasFile = UniformType.create("com.apple.alias-file", "alias file", [
+		UniformType.resolvable,
+		UniformType.data,
+	])
+
+	static diskImage = UniformType.create("public.disk-image", "disk image")
+
+	static mountPoint = UniformType.create(
+		"public.mount-point",
+		"volume mount point",
+		[UniformType.item, UniformType.resolvable],
+	)
+
 	static url = UniformType.create("public.url", "URL", [UniformType.data])
 
 	static fileUrl = UniformType.create("public.file-url", "file:///*", [
 		UniformType.url,
 	])
+
+	static pdf = UniformType.create(
+		"com.adobe.pdf",
+		"portable document",
+		[UniformType.data, UniformType.compositeContent],
+		["pdf"],
+		["application/pdf", "application/x-pdf"],
+	)
+
+	static rtfd = UniformType.create(
+		"com.apple.rtfd",
+		"rich text package",
+		[UniformType.package, UniformType.compositeContent],
+		["rtfd"],
+	)
+
+	static flatRTFD = UniformType.create(
+		"com.apple.flat-rtfd",
+		"flat rich text pkg",
+		[UniformType.data, UniformType.compositeContent],
+	)
+
+	static epub = UniformType.create(
+		"org.idpf.epub-container",
+		"book",
+		[UniformType.data, UniformType.compositeContent],
+		["epub"],
+		["application/epub+zip"],
+	)
 
 	static text = UniformType.create("public.text", "text", [
 		UniformType.content,
@@ -578,6 +639,53 @@ export class UniformType {
 		["flac"],
 		["audio/flac"],
 	)
+
+	static mp3 = UniformType.create(
+		"public.mp3",
+		"mp3 sound",
+		[UniformType.audio],
+		["mp3", "bit"],
+		["audio/mpeg", "audio/MPA", "audio/mpa-robust"],
+	)
+
+	static aiff = UniformType.create(
+		"public.aiff-audio",
+		"aif audio",
+		[
+			UniformType.create(
+				"public.aifc-audio",
+				"aifc",
+				[UniformType.audio],
+				["aifc"],
+			),
+		],
+		["aif", "aiff"],
+		["audio/aiff", "audio/x-aiff"],
+	)
+
+	static wav = UniformType.create(
+		"com.microsoft.waveform-audio",
+		".wav",
+		[UniformType.audio],
+		["wav", "wave"],
+		["audio/wave", "audio/wav", "audio/vnd.wave", "audio/x-wav"],
+	)
+
+	static midi = UniformType.create(
+		"public.midi-audio",
+		"midi",
+		[UniformType.audio],
+		["mid", "midi"],
+		["audio/midi"],
+	)
+
+	static playlist = UniformType.create("public.playlist", "playlist")
+
+	static m3uPlaylist = UniformType.create("public.m3u-playlist", "playlist", [
+		UniformType.playlist,
+		UniformType.text,
+	])
+
 	static movie = UniformType.create("public.movie", "movie", [
 		UniformType.data,
 		UniformType.content,
@@ -593,6 +701,8 @@ export class UniformType {
 	static video = UniformType.create("public.video", "video", [
 		UniformType.movie,
 	])
+
+	// todo https://developer.apple.com/documentation/uniformtypeidentifiers/uttype-swift.struct/quicktimemovie
 
 	static toDoItem = UniformType.create("public.to-do-item", "todo")
 

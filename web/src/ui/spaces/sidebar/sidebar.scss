@@ -17,12 +17,26 @@
 	width: 100%;
 	padding: 0;
 
+	position: fixed;
+
+	top: get-space(8);
+	bottom: 0;
+	z-index: 1000;
+
+	&.primary {
+		left: 0;
+	}
+	&.secondary {
+		right: 0;
+	}
+
 	@include set-var(card-fill, get-color(sidebar-fill));
 	@include set-var(card-radius, 0);
 	@include respond-to-m {
 		padding: get-space(s);
 		@include set-var(card-fill, get-color(fill));
 		@include set-var(card-radius, get-radius("l"));
+		width: 50%;
 	}
 
 	> * {
@@ -35,7 +49,8 @@
 	@include set-shadow(l);
 	@include set-shadow-var(color, get-color("paper-900"));
 	@include set-shadow-var(y, 0);
-	@include set-shadow-var(x, 10);
+	@include set-shadow-var(x, 0);
+	@include set-shadow-var(spread, 4px);
 	@include shadow;
 	@include dark {
 		background: black;

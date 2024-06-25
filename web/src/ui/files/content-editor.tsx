@@ -1,4 +1,4 @@
-import {useSearchParams} from "@solidjs/router"
+import {useParams, useSearchParams} from "@solidjs/router"
 import {ErrorBoundary, Show, Suspense, createEffect, on} from "solid-js"
 import {UnknownContent} from "../../plugins/content/unknown/unknown-view.tsx"
 
@@ -17,10 +17,10 @@ function makeCustomElementName(constructorName?: string) {
 }
 
 export default function ContentEditor() {
-	// todo use setSearch in project-page :)
+	const {fileId} = useParams<{fileId?: lb.FileId}>()
 	const [search] = useSearchParams<{file?: lb.FileId}>()
 
-	const [file] = useDocument<lb.File>(() => search.file)
+	const [file] = useDocument<lb.File>(() => fileId || search.file)
 
 	const [content, changeContent, contentHandle] = useContent<any>(
 		() => file()?.content,

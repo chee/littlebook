@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"outDir": ".",
+		"allowImportingTsExtensions": true,
+		"target": "ES2022",
+		"module": "Preserve",
+		"moduleResolution": "Bundler",
+		"noEmit": true,
+		"checkJs": false,
+		"strict": true,
+		"allowJs": false,
+		"skipLibCheck": true,
+	},
+	"include": ["epub.ts"],
+	"exclude": []
+}

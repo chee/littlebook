@@ -12,8 +12,6 @@ import type createLittlebookAPI from "./api/api.ts"
 import type {ParentComponent} from "solid-js"
 import type {
 	LooseUniformTypeDescriptor,
-	UniformType,
-	UniformTypeDescriptor,
 	UniformTypeIdentifier,
 } from "./contents/uniform-type.ts"
 

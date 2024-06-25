@@ -9,8 +9,7 @@ import {
 	indentUnit,
 	type LanguageSupport,
 } from "@codemirror/language"
-import {
-	UniformType,
+import UniformType, {
 	type UniformTypeIdentifier,
 } from "../../../contents/uniform-type.ts"
 import * as coders from "../../../contents/coders.ts"

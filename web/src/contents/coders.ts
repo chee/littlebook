@@ -1,4 +1,4 @@
-import {UniformType, type UniformTypeIdentifier} from "./uniform-type.ts"
+import UniformType, {type UniformTypeIdentifier} from "./uniform-type.ts"
 
 export class CodingError extends Error {}
 export class EncodingError extends CodingError {}
@@ -7,6 +7,10 @@ export class DecodingError extends CodingError {}
 export interface ContentCoder<Model extends lb.AnyContent> {
 	decode(bytes: Uint8Array): Model | DecodingError
 	encode(model: Model): Uint8Array | EncodingError
+}
+export interface AsyncContentCoder<Model extends lb.AnyContent> {
+	decode(bytes: Uint8Array): Promise<Model | DecodingError>
+	encode(model: Model): Promise<Uint8Array | EncodingError>
 }
 
 const utf8Encoder = new TextEncoder()
@@ -63,7 +67,10 @@ export function json<Type extends lb.AnyContent>(): ContentCoder<Type> {
 }
 
 export class ContentCoderRegistry {
-	private registry = new Map<UniformTypeIdentifier, ContentCoder<any>>()
+	private registry = new Map<
+		UniformTypeIdentifier,
+		ContentCoder<any> | AsyncContentCoder<any>
+	>()
 
 	register<Type extends lb.AnyContent>(
 		uniformType:

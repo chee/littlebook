@@ -1,5 +1,4 @@
-import {
-	UniformType,
+import UniformType, {
 	type ResolvableUniformTypes,
 } from "../contents/uniform-type.ts"
 import {

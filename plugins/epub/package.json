@@ -1,0 +1,23 @@
+{
+	"name": "@littlebook/epub",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"main": "epub.js",
+	"scripts": {
+		"mk": "esbuild --format=esm --target=firefox121,es2023 --bundle epub.ts > epub.js",
+		"tmk": "tsc && esbuild --format=esm --target=firefox121,es2023 --bundle epub.ts > epub.js",
+		"w": "pnpm mk --watch"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"epubjs": "^0.3.93",
+		"fflate": "^0.8.2",
+		"jszip": "^3.10.1"
+	},
+	"devDependencies": {
+		"esbuild": "^0.21.5"
+	}
+}

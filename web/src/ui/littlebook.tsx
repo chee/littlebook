@@ -55,11 +55,12 @@ const LittlebookAPIProvider: ParentComponent<{
 }
 
 import excalidraw from "@littlebook/excalidraw"
+import epub from "@littlebook/epub"
 import text from "../plugins/content/text/text.tsx"
 import image from "../plugins/content/image/image.tsx"
 import unknown from "../plugins/content/unknown/unknown.ts"
 
-const plugins = [excalidraw, text, image, unknown]
+const plugins = [excalidraw, text, image, unknown, epub]
 import pairDevice from "../auth/devices/pair-device.ts"
 import * as pluginAPI from "../plugins/plugin-api.ts"
 import PleaseReload from "./sw/please-reload.tsx"
@@ -129,6 +130,7 @@ export default function Littlebook() {
 							<Route path="/*" component={Fallback} />
 							<Route path="/projects/:projectId" component={ProjectPage} />
 						</Route>
+						<Route path="/files/:fileId" component={ContentViewer} />
 						<Route path="*" component={Fallback} />
 						{/* <Route path="/projects/:projectId" component={ProjectPage} /> */}
 					</Router>
@@ -155,6 +157,7 @@ window.EXCALIDRAW_ASSET_PATH = "/"
 
 import {removeDirectory} from "../lib/opfs.ts"
 import {render} from "solid-js/web"
+import ContentViewer from "./files/content-viewer.tsx"
 declare global {
 	interface Window {
 		clearOPFS: typeof removeDirectory

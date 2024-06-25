@@ -8,8 +8,7 @@ import {
 	removeItemFromDocument,
 } from "./documents.ts"
 import {addItemToProject, getProjectHandle} from "./projects.ts"
-import {
-	UniformType,
+import UniformType, {
 	type MIMEType,
 	type UniformTypeIdentifier,
 } from "../contents/uniform-type.ts"
