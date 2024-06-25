@@ -23,7 +23,7 @@ function makeCustomElementName(constructorName?: string) {
 function isWebComponent(
 	cons?: EditorViewConstructor<any>,
 ): cons is EditorViewWebComponent<any> {
-	return Boolean(cons && "DOCUMENT_NODE" in cons)
+	return Boolean(cons && cons.prototype instanceof HTMLElement)
 }
 
 export default function ContentEditor() {
@@ -39,33 +39,29 @@ export default function ContentEditor() {
 	const contentViews = () =>
 		file.latest && editorViewRegistry.get(file.latest!.contentType)
 
-	const editorConstructor = () => contentViews()?.next().value
+	const EditorConstructor = () => contentViews()?.next().value
 
 	const customElementName = () =>
-		editorConstructor()
-			? makeCustomElementName(editorConstructor()!.name)
+		EditorConstructor()
+			? makeCustomElementName(EditorConstructor()!.name)
 			: "unknown-view"
 
 	createEffect(() => {
-		const cons = editorConstructor()
-		if (
-			cons &&
-			isWebComponent(cons) &&
-			!customElements.get(customElementName())
-		) {
-			customElements.define(customElementName(), cons)
+		const E = EditorConstructor()
+		if (E && isWebComponent(E) && !customElements.get(customElementName())) {
+			customElements.define(customElementName(), E)
 		}
 	})
 
 	const Editor = () => {
-		const cons = editorConstructor()
+		const E = EditorConstructor()
 		return (
 			<Dynamic
 				component={
-					cons && isWebComponent(cons)
+					E && isWebComponent(E)
 						? customElementName()
-						: cons
-							? cons
+						: E
+							? E
 							: SomethingWentWrong
 				}
 				prop:doc={content.latest}

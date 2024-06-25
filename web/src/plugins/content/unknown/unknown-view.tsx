@@ -1,8 +1,6 @@
 import {EditorViewElement} from "../../../contents/content-view.ts"
 
 export class UnknownContent extends EditorViewElement<any> {
-	static displayName: "mystery meat"
-	static tag: "unknown"
 	#file?: lb.File
 	connectedCallback() {}
 

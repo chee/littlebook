@@ -31,7 +31,6 @@ const types = {
 }
 
 class CodemirrorTextEditorView extends EditorViewElement<string> {
-	static displayName = "fancy text editor"
 	codemirror!: EditorView
 	constructor() {
 		super()

@@ -37,6 +37,10 @@ export type SolidPreview<T extends lb.AnyContent> =
 
 // todo rethink all of this
 // todo make more webby with events
+/**
+ * this guy is used in the content-editor view, the correct values are always
+ * set before it is attached to the page
+ */
 export abstract class EditorViewElement<ContentType extends lb.AnyContent>
 	extends HTMLElement
 	implements EditorViewProps<ContentType>
@@ -78,7 +82,7 @@ export abstract class EditorViewElement<ContentType extends lb.AnyContent>
 		return this._file
 	}
 
-	change(_fn: ChangeFn<lb.Content<ContentType>>) {}
+	change!: (fn: ChangeFn<lb.Content<ContentType>>) => void
 }
 
 export abstract class PreviewElement<ContentType extends lb.AnyContent>
@@ -97,22 +101,14 @@ export abstract class PreviewElement<ContentType extends lb.AnyContent>
 }
 
 export type EditorViewWebComponent<T extends lb.AnyContent> =
-	(new () => EditorViewElement<T>) &
-		typeof EditorViewElement<T> & {
-			displayName?: string
-			name: string
-		}
-
-export type PreviewWebComponent<T extends lb.AnyContent> =
-	(new () => PreviewElement<T>) &
-		typeof PreviewElement<T> & {
-			displayName?: string
-			name: string
-		}
+	(new () => EditorViewElement<T>) & typeof EditorViewElement<T>
 
 export type EditorViewConstructor<ContentType extends lb.AnyContent> =
 	| EditorViewWebComponent<ContentType>
 	| SolidEditorView<ContentType>
+
+export type PreviewWebComponent<T extends lb.AnyContent> =
+	(new () => PreviewElement<T>) & typeof PreviewElement<T>
 
 export type PreviewConstructor<ContentType extends lb.AnyContent> =
 	| PreviewWebComponent<ContentType>
