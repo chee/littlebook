@@ -8,12 +8,22 @@ import useContent from "./use-content.ts"
 import {slugify} from "../../lib/slugify.ts"
 import {Dynamic} from "solid-js/web"
 import SomethingWentWrong from "./went-bad.tsx"
-import {editorViewRegistry} from "../../contents/content-view.ts"
+import {
+	editorViewRegistry,
+	type EditorViewConstructor,
+	type EditorViewWebComponent,
+} from "../../contents/content-view.ts"
 
 customElements.define("unknown-view", UnknownContent)
 
 function makeCustomElementName(constructorName?: string) {
 	return slugify(`editor-${constructorName}`.toLowerCase())
+}
+
+function isWebComponent(
+	cons?: EditorViewConstructor<any>,
+): cons is EditorViewWebComponent<any> {
+	return Boolean(cons && "DOCUMENT_NODE" in cons)
 }
 
 export default function ContentEditor() {
@@ -37,21 +47,35 @@ export default function ContentEditor() {
 			: "unknown-view"
 
 	createEffect(() => {
-		if (editorConstructor() && !customElements.get(customElementName())) {
-			customElements.define(customElementName(), editorConstructor()!)
+		const cons = editorConstructor()
+		if (
+			cons &&
+			isWebComponent(cons) &&
+			!customElements.get(customElementName())
+		) {
+			customElements.define(customElementName(), cons)
 		}
 	})
 
-	const Editor = () => (
-		<Dynamic
-			component={customElementName()}
-			prop:doc={content.latest}
-			prop:change={changeContent}
-			prop:handle={contentHandle()}
-			prop:value={content.latest?.value}
-			prop:file={file.latest}
-		/>
-	)
+	const Editor = () => {
+		const cons = editorConstructor()
+		return (
+			<Dynamic
+				component={
+					cons && isWebComponent(cons)
+						? customElementName()
+						: cons
+							? cons
+							: SomethingWentWrong
+				}
+				prop:doc={content.latest}
+				prop:change={changeContent}
+				prop:handle={contentHandle()}
+				prop:value={content.latest?.value}
+				prop:file={file.latest}
+			/>
+		)
+	}
 
 	return (
 		<div class="content-editor">

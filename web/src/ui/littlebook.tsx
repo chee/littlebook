@@ -55,12 +55,12 @@ const LittlebookAPIProvider: ParentComponent<{
 }
 
 import excalidraw from "@littlebook/excalidraw"
-import epub from "@littlebook/epub"
 import text from "../plugins/content/text/text.tsx"
-import image from "../plugins/content/image/image.tsx"
+import media from "../plugins/content/media/media.tsx"
 import unknown from "../plugins/content/unknown/unknown.ts"
+import books from "../plugins/content/books/books.ts"
 
-const plugins = [excalidraw, text, image, unknown, epub]
+const plugins = [excalidraw, text, media, unknown, books]
 import pairDevice from "../auth/devices/pair-device.ts"
 import * as pluginAPI from "../plugins/plugin-api.ts"
 import PleaseReload from "./sw/please-reload.tsx"

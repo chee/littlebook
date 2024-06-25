@@ -2,6 +2,7 @@ import type {ChangeFn} from "@automerge/automerge"
 import type {lb} from "../types.ts"
 import type {DocHandle} from "@automerge/automerge-repo"
 import UniformType, {type UniformTypeIdentifier} from "./uniform-type.ts"
+import type {ParentComponent, Component} from "solid-js"
 
 export interface EditorViewProps<ContentType extends lb.AnyContent> {
 	doc: lb.Content<ContentType>
@@ -21,10 +22,18 @@ export type EditorViewComponent<
 	C extends (props: any) => any | {new (props: any): C},
 > = (props: EditorViewProps<T>) => ReturnType<C>
 
+export type SolidEditorView<T extends lb.AnyContent> =
+	| Component<EditorViewProps<T>>
+	| ParentComponent<EditorViewProps<T>>
+
 export type PreviewComponent<
 	T extends lb.AnyContent,
 	C extends (props: any) => any | {new (props: any): C},
 > = (props: PreviewProps<T>) => ReturnType<C>
+
+export type SolidPreview<T extends lb.AnyContent> =
+	| Component<PreviewProps<T>>
+	| ParentComponent<PreviewProps<T>>
 
 // todo rethink all of this
 // todo make more webby with events
@@ -87,16 +96,27 @@ export abstract class PreviewElement<ContentType extends lb.AnyContent>
 	}
 }
 
-export type EditorViewConstructor<ContentType extends lb.AnyContent> =
-	(new () => EditorViewElement<ContentType>) &
-		typeof EditorViewElement<ContentType> & {
+export type EditorViewWebComponent<T extends lb.AnyContent> =
+	(new () => EditorViewElement<T>) &
+		typeof EditorViewElement<T> & {
 			displayName?: string
 			name: string
 		}
 
+export type PreviewWebComponent<T extends lb.AnyContent> =
+	(new () => PreviewElement<T>) &
+		typeof PreviewElement<T> & {
+			displayName?: string
+			name: string
+		}
+
+export type EditorViewConstructor<ContentType extends lb.AnyContent> =
+	| EditorViewWebComponent<ContentType>
+	| SolidEditorView<ContentType>
+
 export type PreviewConstructor<ContentType extends lb.AnyContent> =
-	(new () => PreviewElement<ContentType>) &
-		typeof PreviewElement<ContentType> & {displayName?: string; name: string}
+	| PreviewWebComponent<ContentType>
+	| SolidPreview<ContentType>
 
 export type ContentViewName<T extends lb.AnyContentView<any>> = string & {
 	"__content-view": T
