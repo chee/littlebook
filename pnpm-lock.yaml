@@ -241,9 +241,6 @@ importers:
       '@codemirror/view':
         specifier: ^6.28.2
         version: 6.28.2
-      '@littlebook/epub':
-        specifier: link:../plugins/epub
-        version: link:../plugins/epub
       '@littlebook/excalidraw':
         specifier: link:../plugins/excalidraw
         version: link:../plugins/excalidraw
@@ -280,6 +277,9 @@ importers:
       codemirror:
         specifier: ^6.0.1
         version: 6.0.1(@lezer/common@1.2.1)
+      dockview-core:
+        specifier: ^1.14.2
+        version: 1.14.2
       file-system-access:
         specifier: ^1.0.4
         version: 1.0.4

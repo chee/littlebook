@@ -38,6 +38,7 @@
 		"@tanstack/solid-table": "^8.17.3",
 		"clsx": "^2.1.1",
 		"codemirror": "^6.0.1",
+		"dockview-core": "^1.14.2",
 		"file-system-access": "^1.0.4",
 		"postcss": "^8.4.38",
 		"random": "^4.1.0",
