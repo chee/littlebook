@@ -1,7 +1,9 @@
 import clsx from "clsx"
-import store from "./sidebar-state.ts"
 
-function CuteSidebarIcon({open, flipped}: {open: boolean; flipped: boolean}) {
+function CuteSidebarIcon({
+	open,
+	flip: flipped,
+}: {open: boolean; flip: boolean}) {
 	return (
 		// biome-ignore lint/a11y/noSvgWithoutTitle: there is a label on the button
 		<svg
@@ -45,23 +47,22 @@ function CuteSidebarIcon({open, flipped}: {open: boolean; flipped: boolean}) {
 }
 
 export default function SidebarToggle({
-	which,
+	open,
+	flip = false,
+	toggle,
 }: {
-	which: "primary" | "secondary"
+	open: boolean
+	flip?: boolean
+	toggle: () => void
 }) {
-	const [state, updateState] = store
-	const open = state[which]
-
 	return (
 		<button
 			type="button"
 			class="small ghost button p-0 sideebar-toggle"
 			aria-label={open ? "hide projects sidebar" : "show projects sidebar"}
 			aria-pressed={true}
-			onClick={() => {
-				updateState(state => ({[which]: !state[which]}))
-			}}>
-			<CuteSidebarIcon open={open} flipped={which == "secondary"} />
+			onClick={toggle}>
+			<CuteSidebarIcon open={open} flip={flip} />
 		</button>
 	)
 }

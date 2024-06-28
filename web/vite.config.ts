@@ -63,12 +63,12 @@ export const config: UserConfig = {
 			},
 		},
 	},
-	server: {
-		headers: {
-			"Cross-Origin-Opener-Policy": "same-origin",
-			"Cross-Origin-Embedder-Policy": "require-corp",
-		},
-	},
+	// server: {
+	// 	headers: {
+	// 		"Cross-Origin-Opener-Policy": "same-origin",
+	// 		"Cross-Origin-Embedder-Policy": "require-corp",
+	// 	},
+	// },
 }
 
 export default defineConfig(config)

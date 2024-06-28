@@ -88,10 +88,9 @@ class CodemirrorTextEditorView extends EditorViewElement<string> {
 		const languageCompartment = new Compartment()
 		// const tabSize = new Compartment()
 		const lineNumbersCompartment = new Compartment()
-
 		if (typeof this.value == "string" && !this.codemirror) {
 			this.codemirror = new EditorView({
-				doc: this.value,
+				doc: this.doc.value,
 				extensions: [
 					minimalSetup,
 					indentUnit.of("\t"),

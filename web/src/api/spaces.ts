@@ -1,6 +1,11 @@
-import type {Repo} from "@automerge/automerge-repo"
+import type {DocHandle, Repo} from "@automerge/automerge-repo"
 import type {AutomergeList} from "../types.ts"
-import {createDocumentHandle, getDocumentHandle} from "./documents.ts"
+import {
+	addItemToDocument,
+	createDocumentHandle,
+	getDocumentHandle,
+	removeItemFromDocument,
+} from "./documents.ts"
 
 export function createSpaceHandle(
 	repo: Repo,
@@ -9,31 +14,39 @@ export function createSpaceHandle(
 	return createDocumentHandle<lb.Space>(repo, {
 		type: "space",
 		name: template.name || "",
-		areas: (template.areas || []) as AutomergeList<lb.AreaId>,
-		projects: (template.projects || []) as AutomergeList<lb.ProjectId>,
+		items: (template.items || []) as AutomergeList<lb.FolderId>,
 	})
+}
+
+export function fromMerged(
+	repo: Repo,
+	a: DocHandle<lb.Space>,
+	b: DocHandle<lb.Space>,
+) {
+	const freshHandle = createSpaceHandle(repo)
+	freshHandle.merge(a)
+	freshHandle.merge(b)
+	freshHandle.change(fresh => {
+		// @ts-expect-error
+		fresh.id = freshHandle.documentId
+	})
+	return freshHandle
 }
 
 export const getSpaceHandle = (repo: Repo, id: lb.SpaceId) =>
 	getDocumentHandle<lb.Space>(repo, id)
 
-export const addAreaToSpace = (id: lb.AreaId) => (space: lb.Space) =>
-	space.areas.push(id)
+export const addFolderToSpace = (id: lb.FolderId) => addItemToDocument(id)
 
-export const addProjectToSpace = (id: lb.ProjectId) => (space: lb.Space) =>
-	space.projects.push(id)
-
-export const removeProjectFromSpace = (id: lb.ProjectId) => (space: lb.Space) =>
-	space.projects.deleteAt(space.projects.indexOf(id))
-
-export const removeAreaFromSpace = (id: lb.AreaId) => (space: lb.Space) =>
-	space.areas.push(id)
+export const removeFolderFromSpace = (id: lb.FolderId) =>
+	removeItemFromDocument(id)
 
 export default function createSpacesAPI(repo: Repo) {
 	return {
 		createHandle: createSpaceHandle.bind(null, repo),
 		getHandle: getSpaceHandle.bind(null, repo),
-		addProject: addProjectToSpace,
-		removeProject: removeProjectFromSpace,
+		addFolder: addFolderToSpace,
+		removeFolder: removeFolderFromSpace,
+		fromMerged: fromMerged.bind(null, repo),
 	}
 }

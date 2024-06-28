@@ -5,6 +5,7 @@ import start from "../../repo/start-repo.ts"
 import type {BasicInvitation} from "../invitations/invitation-types.ts"
 import {parseBasicInvitation} from "../invitations/parse-invitation.ts"
 import createDevice from "./create-device.ts"
+import getDocIdFromTeam from "../teams/get-doc-id-from-team.ts"
 
 export interface PairDeviceOptions {
 	username: string
@@ -34,4 +35,9 @@ export default async function pairDevice({
 			yay({device, user, team, auth, repo})
 		})
 	})
+}
+
+export async function pairDeviceWithCombinedCode(combinedCode: string) {
+	const [username, invitationCode] = combinedCode.split(":")
+	return pairDevice({username, invitationCode})
 }

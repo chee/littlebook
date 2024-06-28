@@ -1,6 +1,6 @@
 import ContentEditor from "./content-editor.tsx"
 import ContentPreview from "./content-preview.tsx"
-import {useSearchParams, useParams} from "@solidjs/router"
+import {useParams} from "@solidjs/router"
 import useDocument from "../documents/use-document.ts"
 import {Show, createEffect} from "solid-js"
 import {
@@ -8,10 +8,11 @@ import {
 	previewRegistry,
 } from "../../contents/content-view.ts"
 
+// todo might be folder
 export default function ContentViewer() {
-	const {fileId} = useParams<{fileId?: lb.FileId}>()
-	const [search] = useSearchParams<{file?: lb.FileId}>()
-	const [file] = useDocument<lb.File>(() => fileId || search.file)
+	const params = useParams<{fileId?: lb.FileId}>()
+	const [file] = useDocument<lb.File>(() => params.fileId)
+
 	const hasEditorView = () =>
 		Boolean(file.latest && editorViewRegistry.getFirst(file.latest.contentType))
 

@@ -1,13 +1,6 @@
-import {createContext, useContext} from "solid-js"
-import type createLittlebookAPI from "../../api/api.ts"
-
-export const LittlebookAPIContext =
-	createContext<() => ReturnType<typeof createLittlebookAPI> | undefined>(
-		undefined,
-	)
-
+import createLittlebookAPI from "../../api/api.ts"
+import {useAutomerge} from "../automerge/use-automerge.ts"
 export function useLittlebookAPI() {
-	const lb = useContext(LittlebookAPIContext)
-	if (!lb) throw new Error("you gotta wrap me in a LittlebookProvider")
-	return lb
+	const automerge = useAutomerge()
+	return createLittlebookAPI(automerge.repo)
 }

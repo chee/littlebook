@@ -3,6 +3,10 @@ import {createSpaceHandle} from "../../api/spaces.ts"
 import start from "../../repo/start-repo.ts"
 import createDevice from "../devices/create-device.ts"
 import storeDocIdOnTeam from "./store-doc-id-on-team.ts"
+import {
+	getShareId,
+	type AuthProvider,
+} from "@localfirst/auth-provider-automerge-repo"
 
 export interface CreateTeamOptions {
 	teamName: string
@@ -40,4 +44,13 @@ export async function createDefaultTeam({
 	username: userName,
 }: CreateDefaultTeamOptions) {
 	return createTeam({username: userName, teamName: userName})
+}
+
+export async function createTeamForFolder(
+	auth: AuthProvider,
+	folder: lb.Folder,
+) {
+	const team = await auth.createTeam(folder.name)
+	storeDocIdOnTeam(team, folder.id)
+	return team
 }

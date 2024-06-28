@@ -4,11 +4,16 @@ export class CodingError extends Error {}
 export class EncodingError extends CodingError {}
 export class DecodingError extends CodingError {}
 
-export interface ContentCoder<Model extends lb.AnyContent> {
+// todo maybe Coders should have display names
+// todo and indicate if they are creatable/newable
+// todo because, say, a PDF is not. i suppose if something
+// todo has only a preview and not an editor then it is
+// todo not creatable?
+export interface ContentCoder<Model extends lb.AnyContentValue> {
 	decode(bytes: Uint8Array): Model | DecodingError
 	encode(model: Model): Uint8Array | EncodingError
 }
-export interface AsyncContentCoder<Model extends lb.AnyContent> {
+export interface AsyncContentCoder<Model extends lb.AnyContentValue> {
 	decode(bytes: Uint8Array): Promise<Model | DecodingError>
 	encode(model: Model): Promise<Uint8Array | EncodingError>
 }
@@ -44,7 +49,7 @@ export function binary(): ContentCoder<Uint8Array> {
 	}
 }
 
-export function json<Type extends lb.AnyContent>(): ContentCoder<Type> {
+export function json<Type extends lb.AnyContentValue>(): ContentCoder<Type> {
 	return {
 		encode(data) {
 			try {
@@ -72,7 +77,7 @@ export class ContentCoderRegistry {
 		ContentCoder<any> | AsyncContentCoder<any>
 	>()
 
-	register<Type extends lb.AnyContent>(
+	register<Type extends lb.AnyContentValue>(
 		uniformType:
 			| UniformType
 			| UniformTypeIdentifier
@@ -85,7 +90,7 @@ export class ContentCoderRegistry {
 		)
 	}
 
-	registerAll<Type extends lb.AnyContent>(
+	registerAll<Type extends lb.AnyContentValue>(
 		uniformTypes: (UniformType | UniformTypeIdentifier)[],
 		coder: ContentCoder<Type>,
 	) {
@@ -135,6 +140,10 @@ export class ContentCoderRegistry {
 		} else {
 			// todo throw or just silently accept?
 		}
+	}
+
+	getAllTypes() {
+		return this.registry.keys()
 	}
 }
 

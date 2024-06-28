@@ -1,18 +1,21 @@
-// todo
-//import createRepo from "./create-repo.ts"
+import {parseBasicInvitation} from "../invitations/parse-invitation.ts"
+import type {AuthProvider} from "@localfirst/auth-provider-automerge-repo"
+import type {Repo} from "@automerge/automerge-repo"
+import type {BasicInvitation} from "../invitations/invitation-types.ts"
 
-// export default async function joinTeam({userName, device, }) {
-// 	const {user, device} = getUserAndDevice()
-// 	const {auth, repo} = await createRepo({user, device})
+export default async function joinTeamWithCombinedInvitation(
+	auth: AuthProvider,
+	repo: Repo,
+	combinedInvitationCode: string,
+) {
+	const [userName, invitationCode] = combinedInvitationCode.split(":")
 
-// 	const {shareId, invitationSeed} = parseInvitationCode(invitationCode)
-// 	auth.addInvitation({shareId, invitationSeed, userName})
+	const {shareId, invitationSeed} = parseBasicInvitation(
+		invitationCode as BasicInvitation,
+	)
+	auth.addInvitation({shareId, invitationSeed, userName})
 
-// 	// Once we're admitted, we'll get the Team data and our User object
-// 	auth.once("joined", ({team, user}) => {
-// 		// Now we have our real userId, we can update the device
-// 		device.userId = user.userId
-
-// 		onSetup({device, user, team, auth, repo})
-// 	})
-// }
+	return new Promise(yay => {
+		auth.once("joined", yay)
+	})
+}

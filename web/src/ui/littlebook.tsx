@@ -1,169 +1,116 @@
 import "./littlebook.scss"
 
 import {MetaProvider, Title} from "@solidjs/meta"
-import {Navigate, Route, Router, useIsRouting, useParams} from "@solidjs/router"
+import {Navigate, Route, Router} from "@solidjs/router"
 
-import {
-	Match,
-	type ParentComponent,
-	type ResourceReturn,
-	Suspense,
-	Switch,
-	createMemo,
-	lazy,
-} from "solid-js"
+import {Suspense, Show} from "solid-js"
 
-import {
-	type ShareId,
-	getShareId,
-} from "@localfirst/auth-provider-automerge-repo"
-import createLittlebookAPI from "../api/api.ts"
-import type {PairDeviceOptions} from "../auth/devices/pair-device.ts"
-import {
-	type CreateDefaultTeamOptions,
-	createDefaultTeam,
-} from "../auth/teams/create-team.ts"
-import {LittlebookAPIContext} from "./api/use-api.ts"
+import {AutomergeContext, initialize} from "./automerge/use-automerge.ts"
 
-import * as local from "./automerge/local.ts"
-import {
-	AutomergeContext,
-	startFromLocal,
-	useAutomerge,
-} from "./automerge/use-automerge.ts"
-
-const Hello = lazy(() =>
-	import("./automerge/hello.tsx").then(mod => {
-		return {default: mod.Hello}
-	}),
-)
-const ProjectPage = lazy(() => import("./projects/project-page.tsx"))
-const SpacePage = lazy(() => import("./spaces/space-page.tsx"))
-
-const LittlebookAPIProvider: ParentComponent<{
-	automergeState: ResourceReturn<lb.AutomergeState | undefined>[0]
-}> = props => {
-	const api = createMemo(() => {
-		const state = props.automergeState()
-		return state?.repo && createLittlebookAPI(state.repo)
-	})
-	return (
-		<LittlebookAPIContext.Provider value={api}>
-			{props.children}
-		</LittlebookAPIContext.Provider>
-	)
-}
+import SpacePage from "./spaces/space-page.tsx"
 
 import excalidraw from "@littlebook/excalidraw"
 import text from "../plugins/content/text/text.tsx"
 import media from "../plugins/content/media/media.tsx"
 import unknown from "../plugins/content/unknown/unknown.ts"
 import books from "../plugins/content/books/books.ts"
-
-const plugins = [excalidraw, text, media, unknown, books]
-import pairDevice from "../auth/devices/pair-device.ts"
+import tldraw from "@littlebook/tldraw"
 import * as pluginAPI from "../plugins/plugin-api.ts"
 import PleaseReload from "./sw/please-reload.tsx"
+import {removeDirectory} from "../lib/opfs.ts"
+import {render} from "solid-js/web"
+import ContentViewer from "./files/content-viewer.tsx"
+import * as local from "./automerge/local.ts"
+import start from "../repo/start-repo.ts"
+import dbName from "../lib/db-name.ts"
+const plugins = [excalidraw, text, media, unknown, books, tldraw]
+import "@littlebook/tldraw/index.css"
 
 for (const plugin of plugins) {
 	plugin(pluginAPI)
 }
 
-export default function Littlebook() {
-	const [automergeState, control] = startFromLocal()
-
+export default function Littlebook({
+	automergeState,
+}: {automergeState: lb.AutomergeState}) {
 	return (
 		<>
-			<Switch>
-				<Match when={automergeState.state == "ready" && !automergeState()}>
-					<Suspense>
-						<Hello
-							pair={(opts: PairDeviceOptions) => {
-								pairDevice(opts)
-									.then(result => {
-										const team = result.team
-
-										local.set({
-											device: result.device,
-											homeShareId: getShareId(team),
-											user: result.user,
-										} satisfies Omit<
-											Required<lb.LocalAutomergeState>,
-											"username"
-										>)
-										control.refetch()
-									})
-									.catch(error => {
-										console.error(error)
-									})
-							}}
-							fresh={async (opts: CreateDefaultTeamOptions) => {
-								createDefaultTeam(opts).then(result => {
-									const team = result.team
-									local.set({
-										device: result.device,
-										homeShareId: getShareId(team),
-										user: result.user,
-									} satisfies Omit<
-										Required<lb.LocalAutomergeState>,
-										"username"
-									>)
-									control.refetch()
-								})
-							}}
-						/>
-					</Suspense>
-				</Match>
-				<Match when={automergeState.state == "ready"}>
-					<Router
-						root={props => (
-							<MetaProvider>
-								<Title>littlebook</Title>
-								<AutomergeContext.Provider value={automergeState!}>
-									<LittlebookAPIProvider automergeState={automergeState}>
-										<Suspense>{props.children}</Suspense>
-									</LittlebookAPIProvider>
-								</AutomergeContext.Provider>
-							</MetaProvider>
-						)}>
-						<Route path="/spaces/:shareId" component={SpacePage}>
-							<Route path="/*" component={Fallback} />
-							<Route path="/projects/:projectId" component={ProjectPage} />
-						</Route>
-						<Route path="/files/:fileId" component={ContentViewer} />
+			<Show when={automergeState}>
+				<Router
+					root={props => (
+						<MetaProvider>
+							<Title>littlebook</Title>
+							<AutomergeContext.Provider value={automergeState}>
+								<Suspense>{props.children}</Suspense>
+							</AutomergeContext.Provider>
+						</MetaProvider>
+					)}>
+					<Route path="/" component={SpacePage}>
+						<Route path="/documents/:fileId" component={ContentViewer} />
+						<Route path="/today" component={() => <div>today</div>} />
 						<Route path="*" component={Fallback} />
-						{/* <Route path="/projects/:projectId" component={ProjectPage} /> */}
-					</Router>
-				</Match>
-			</Switch>
+					</Route>
+				</Router>
+			</Show>
 			<PleaseReload />
 		</>
 	)
 }
 function Fallback() {
-	const params = useParams<{shareId?: ShareId}>()
-	const routing = useIsRouting()
-	const automerge = useAutomerge()
-	return (
-		<Switch>
-			<Match when={!routing() && automerge()?.shareId && !params.shareId}>
-				<Navigate href={`/spaces/${automerge()!.shareId}/today`} />
-			</Match>
-		</Switch>
-	)
+	return <Navigate href="/today" />
 }
 
 window.EXCALIDRAW_ASSET_PATH = "/"
 
-import {removeDirectory} from "../lib/opfs.ts"
-import {render} from "solid-js/web"
-import ContentViewer from "./files/content-viewer.tsx"
+async function destroy() {
+	localStorage.clear()
+
+	const proms: Promise<any>[] = []
+	for (const db of await indexedDB.databases()) {
+		proms.push(
+			new Promise((yay, boo) => {
+				const trans = indexedDB.deleteDatabase(db.name!)
+				trans.onsuccess = yay
+				trans.onerror = boo
+				trans.onblocked = boo
+			}),
+		)
+	}
+	removeDirectory()
+	Promise.allSettled(proms).then(() => location.reload())
+}
 declare global {
 	interface Window {
-		clearOPFS: typeof removeDirectory
+		destroy: () => void
 		EXCALIDRAW_ASSET_PATH: string
 	}
 }
-window.clearOPFS = removeDirectory
+window.destroy = destroy
 
-render(() => <Littlebook />, document.getElementById("littlebook")!)
+const {user, device, home} = local.state
+if (user && device && home) {
+	start({
+		user: {...user, keys: {...user.keys}},
+		device: {...device, keys: {...device.keys}},
+	}).then(({auth, repo}) => {
+		const team = auth.getTeam(home)
+		render(
+			() => (
+				<Littlebook
+					automergeState={
+						{
+							auth,
+							repo,
+							user: user!,
+							device: device!,
+							team,
+						} satisfies lb.AutomergeState
+					}
+				/>
+			),
+			document.getElementById("littlebook")!,
+		)
+	})
+} else {
+	initialize()
+}

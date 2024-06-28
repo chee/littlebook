@@ -1,0 +1,55 @@
+@use "../../styles/api" as *;
+
+.folder-card-link {
+	padding: get-space(m);
+	summary::before {
+		padding-right: 1em;
+	}
+	position: relative;
+
+	&:not([open]) > summary::before {
+		content: "▶";
+		display: block;
+	}
+
+	&[open] > summary::before {
+		content: "▼";
+		display: block;
+	}
+
+	summary {
+		margin-left: -0.5em;
+		display: flex;
+		justify-content: space-between;
+
+		a {
+			flex: 1;
+		}
+
+		button {
+			cursor: pointer;
+		}
+	}
+
+	a {
+		color: var(--littlebook-line);
+	}
+
+	[aria-current="page"] {
+		background: var(--littlebook-primary);
+	}
+
+	.new {
+		position: absolute;
+		background: var(--littlebook-fill);
+		top: 2rem;
+		left: 2rem;
+		padding: 1rem;
+		z-index: 1000;
+		@include shadow;
+	}
+
+	.folder-card-link {
+		padding: get-space(xs);
+	}
+}

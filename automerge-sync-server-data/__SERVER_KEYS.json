@@ -1,0 +1,14 @@
+{
+  "type": "SERVER",
+  "name": "star.littlebook.app",
+  "generation": 0,
+  "signature": {
+    "publicKey": "EiNiuk3sWGJ9ybKKiyKW9y85T2bLtJamT38MsCV6rXLC",
+    "secretKey": "4NkTA4L1JYYJ97FKwM22j26sr1Deqsa8t2bWpZmfnTFxtRaaAQpCU5ivtRMaMDicn9KHhMvWzB5T9hKvJN61oZ1z"
+  },
+  "encryption": {
+    "publicKey": "E8BrXCmKQLU12bibwWdTdNgRzVKSEkZDaXzEu2P662SY",
+    "secretKey": "6tRNeAwZUuuPzH8M5U8k35PsdhkRRjsabdiweQzTmygL"
+  },
+  "secretKey": "CdMepKkiViydmYjG9nuqJf3jhUnSkdD5hwtdopTvFDsY"
+}

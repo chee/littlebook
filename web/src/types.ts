@@ -1,8 +1,12 @@
 declare const __brand: unique symbol
 type Brand<B> = {[__brand]: B}
 type Branded<T, B> = T & Brand<B>
-import type {DocumentId, Repo} from "@automerge/automerge-repo"
-import type {AutomergeValue} from "@automerge/automerge/next"
+import type {
+	DocHandleChangePayload,
+	DocumentId,
+	Repo,
+} from "@automerge/automerge-repo"
+import type {AutomergeValue, ScalarValue} from "@automerge/automerge/next"
 import type * as Auth from "@localfirst/auth"
 import type {
 	AuthProvider,
@@ -14,6 +18,7 @@ import type {
 	LooseUniformTypeDescriptor,
 	UniformTypeIdentifier,
 } from "./contents/uniform-type.ts"
+import type {AnyContentValue} from "./global"
 
 export declare type ParentComponentProps<T = Record<any, any>> = Parameters<
 	ParentComponent<T>
@@ -25,6 +30,9 @@ export declare interface AutomergeList<T> extends Array<T> {
 	deleteAt(index: number, numDelete?: number): AutomergeList<T>
 }
 
+export declare type ContentHandleChangePayload<T extends AnyContentValue> =
+	DocHandleChangePayload<lb.Content<T>>
+
 export type WithoutId<DocType extends {id: any}> = Omit<DocType, "id">
 
 export type WithReadonly<Type, Key extends keyof Type> = Omit<Type, Key> &
@@ -32,132 +40,69 @@ export type WithReadonly<Type, Key extends keyof Type> = Omit<Type, Key> &
 
 export declare namespace lb {
 	type ContentId = Branded<DocumentId, "content-id">
-	type FileId = Branded<DocumentId, "file-id">
-	type DirectoryId = Branded<DocumentId, "folder-id">
-	type ProjectId = Branded<DocumentId, "project-id">
-	type AreaId = Branded<DocumentId, "area-id">
-	type WhenId = Branded<DocumentId, "when-id">
 	type SpaceId = Branded<DocumentId, "space-id">
+	type FolderId = Branded<DocumentId, "folder-id">
+	type FileId = Branded<DocumentId, "file-id">
+	type ItemId = FolderId | FileId
 	type InboxId = Branded<DocumentId, "inbox-id">
-
-	type FolderTypeIdentifier = Branded<
-		"public.folder",
-		"uniform-type-identifier"
-	>
-	type ContentCoder<Model extends AnyContent> =
-		import("./contents/coders.ts").ContentCoder<Model>
-	type ContentEditorView<Model extends AnyContent> =
-		import("./contents/content-view.ts").EditorViewConstructor<Model>
-	// type ContentMetadataView<Model extends AnyContent> =
-	// 	import("./contents/views/content-view.ts").MetadataView<Model>
-	type ContentPreview<Model extends AnyContent> =
-		import("./contents/content-view.ts").PreviewConstructor<Model>
-
-	type AnyContentView<Model extends AnyContent> =
-		| ContentEditorView<Model>
-		// | ContentMetadataView<Model>
-		| ContentPreview<Model>
-
-	type ContentEditorViewProps<Model extends AnyContent> =
-		import("./contents/content-view.ts").EditorViewProps<Model>
-
-	// type ContentMetadataViewProps<Model extends AnyContent> =
-	// 	import("./contents/views/content-view.ts").MetadataViewProps<Model>
-
-	type ContentPreviewProps<Model extends AnyContent> =
-		import("./contents/content-view.ts").PreviewProps<Model>
-
-	namespace plugins {
-		type API = typeof import("./plugins/plugin-api.ts")
-
-		interface ContentType<T extends lb.AnyContent> {
-			types: (UniformTypeIdentifier | LooseUniformTypeDescriptor)[]
-			coder?: lb.ContentCoder<T>
-			views?: {
-				editor?: ContentEditorView<T>
-				preview?: ContentPreview<T>
-				// metadata?: ContentMetadataView<T>
-			}
-		}
-	}
 
 	type API = ReturnType<typeof createLittlebookAPI>
 
 	type When = Date | "someday"
 
-	type AnyContent = AutomergeValue
+	type AnyContentValue =
+		| ScalarValue
+		| Record<string, AutomergeValue>
+		| Array<AutomergeValue>
 
-	type AnyDocument = Space | Area | Project | Folder | File
+	type AnyDocument = Space | Folder | File
 
-	type NamedDocument = Space | Area | Project | Folder | File
+	type AnyParentDocument = Space | Directory
+
+	type NamedDocument = Space | Folder | File
 
 	interface Space {
 		readonly type: "space"
 		readonly id: SpaceId
 		name: string
-		projects: AutomergeList<ProjectId>
-		areas: AutomergeList<AreaId>
+		items: AutomergeList<FolderId>
 	}
-
-	interface HomeSpace extends Space {
-		home: true
-		teams: AutomergeList<Auth.Team>
-	}
-
-	interface Area {
-		readonly type: "area"
-		readonly id: AreaId
-		// readonly parentId: SpaceId
-		name: string
-		projects: AutomergeList<ProjectId>
-	}
-
-	interface Project {
-		readonly type: "project"
-		readonly id: ProjectId
-		name: string
-		// readonly parentId: AreaId | SpaceId
-		items: AutomergeList<DirectoryId | FileId>
-		icon: string
-		when?: Date
-	}
-
-	type ProjectItemId = Project["items"][number]
 
 	interface Directory {
-		readonly type: "folder" | "package"
-		readonly id: DirectoryId
-		name: string
-		// readonly parentId: ProjectId | FolderId
-		items: AutomergeList<DirectoryId | FileId>
-		icon: string
-		when?: Date
-	}
-
-	interface Folder extends Directory {
 		readonly type: "folder"
-		contentType: FolderTypeIdentifier
+		readonly id: FolderId
+		name: string
+		items: AutomergeList<FolderId | FileId>
+		note: string
+		icon?: string
+		when?: When
+		contentType?: UniformTypeIdentifier
 	}
 
-	type FolderItem = Folder["items"][number]
+	interface Folder extends Omit<Directory, "contentType"> {}
 	interface Package extends Directory {
-		readonly type: "package"
 		contentType: UniformTypeIdentifier
 	}
 
+	// todo is it interesting that this is so like a folder?
 	interface File {
 		readonly type: "file"
 		readonly id: FileId
 		// todo
-		contentType: UniformTypeIdentifier
 		name: string
 		note: string
 		when?: When
+		contentType: UniformTypeIdentifier
+		icon?: string
 		content: ContentId
 		lastModified?: number
+		// a url?
+		source?: string
 	}
 
-	interface Content<ContentType extends AnyContent> {
+	type Item = File | Folder | Package
+
+	interface Content<ContentType extends AnyContentValue> {
 		value: ContentType
 	}
 
@@ -167,15 +112,42 @@ export declare namespace lb {
 		user: Auth.UserWithSecrets
 		device: Auth.DeviceWithSecrets
 		team: Auth.Team
-		shareId: ShareId
 	}
 
-	type LocalAutomergeState = {
-		// when they've chosen a name but not yet created a user?
-		// maybe this should just be in memory
-		username?: string
-		device?: Auth.DeviceWithSecrets
-		user?: Auth.UserWithSecrets
-		homeShareId?: ShareId
+	type ContentCoder<Model extends AnyContentValue> =
+		import("./contents/coders.ts").ContentCoder<Model>
+	type ContentEditorView<Model extends AnyContentValue> =
+		import("./contents/content-view.ts").EditorViewConstructor<Model>
+	// type ContentMetadataView<Model extends AnyContent> =
+	// 	import("./contents/views/content-view.ts").MetadataView<Model>
+	type ContentPreview<Model extends AnyContentValue> =
+		import("./contents/content-view.ts").PreviewConstructor<Model>
+
+	type AnyContentView<Model extends AnyContentValue> =
+		| ContentEditorView<Model>
+		// | ContentMetadataView<Model>
+		| ContentPreview<Model>
+
+	type ContentEditorViewProps<Model extends AnyContentValue> =
+		import("./contents/content-view.ts").EditorViewProps<Model>
+
+	// type ContentMetadataViewProps<Model extends AnyContent> =
+	// 	import("./contents/views/content-view.ts").MetadataViewProps<Model>
+
+	type ContentPreviewProps<Model extends AnyContentValue> =
+		import("./contents/content-view.ts").PreviewProps<Model>
+
+	namespace plugins {
+		type API = typeof import("./plugins/plugin-api.ts")
+
+		interface ContentType<T extends lb.AnyContentValue> {
+			types: (UniformTypeIdentifier | LooseUniformTypeDescriptor)[]
+			coder?: lb.ContentCoder<T>
+			views?: {
+				editor?: ContentEditorView<T>
+				preview?: ContentPreview<T>
+				// metadata?: ContentMetadataView<T>
+			}
+		}
 	}
 }

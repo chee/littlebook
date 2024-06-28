@@ -4,7 +4,7 @@ import type {DocHandle} from "@automerge/automerge-repo"
 import UniformType, {type UniformTypeIdentifier} from "./uniform-type.ts"
 import type {ParentComponent, Component} from "solid-js"
 
-export interface EditorViewProps<ContentType extends lb.AnyContent> {
+export interface EditorViewProps<ContentType extends lb.AnyContentValue> {
 	doc: lb.Content<ContentType>
 	change(fn: ChangeFn<lb.Content<ContentType>>): void
 	handle: DocHandle<lb.Content<ContentType>>
@@ -12,26 +12,26 @@ export interface EditorViewProps<ContentType extends lb.AnyContent> {
 	file: lb.File
 }
 
-export interface PreviewProps<ContentType extends lb.AnyContent> {
+export interface PreviewProps<ContentType extends lb.AnyContentValue> {
 	value: ContentType
 }
 
 // todo are these useful?
 export type EditorViewComponent<
-	T extends lb.AnyContent,
+	T extends lb.AnyContentValue,
 	C extends (props: any) => any | {new (props: any): C},
 > = (props: EditorViewProps<T>) => ReturnType<C>
 
-export type SolidEditorView<T extends lb.AnyContent> =
+export type SolidEditorView<T extends lb.AnyContentValue> =
 	| Component<EditorViewProps<T>>
 	| ParentComponent<EditorViewProps<T>>
 
 export type PreviewComponent<
-	T extends lb.AnyContent,
+	T extends lb.AnyContentValue,
 	C extends (props: any) => any | {new (props: any): C},
 > = (props: PreviewProps<T>) => ReturnType<C>
 
-export type SolidPreview<T extends lb.AnyContent> =
+export type SolidPreview<T extends lb.AnyContentValue> =
 	| Component<PreviewProps<T>>
 	| ParentComponent<PreviewProps<T>>
 
@@ -41,7 +41,7 @@ export type SolidPreview<T extends lb.AnyContent> =
  * this guy is used in the content-editor view, the correct values are always
  * set before it is attached to the page
  */
-export abstract class EditorViewElement<ContentType extends lb.AnyContent>
+export abstract class EditorViewElement<ContentType extends lb.AnyContentValue>
 	extends HTMLElement
 	implements EditorViewProps<ContentType>
 {
@@ -85,7 +85,7 @@ export abstract class EditorViewElement<ContentType extends lb.AnyContent>
 	change!: (fn: ChangeFn<lb.Content<ContentType>>) => void
 }
 
-export abstract class PreviewElement<ContentType extends lb.AnyContent>
+export abstract class PreviewElement<ContentType extends lb.AnyContentValue>
 	extends HTMLElement
 	implements PreviewProps<ContentType>
 {
@@ -100,17 +100,17 @@ export abstract class PreviewElement<ContentType extends lb.AnyContent>
 	}
 }
 
-export type EditorViewWebComponent<T extends lb.AnyContent> =
+export type EditorViewWebComponent<T extends lb.AnyContentValue> =
 	(new () => EditorViewElement<T>) & typeof EditorViewElement<T>
 
-export type EditorViewConstructor<ContentType extends lb.AnyContent> =
+export type EditorViewConstructor<ContentType extends lb.AnyContentValue> =
 	| EditorViewWebComponent<ContentType>
 	| SolidEditorView<ContentType>
 
-export type PreviewWebComponent<T extends lb.AnyContent> =
+export type PreviewWebComponent<T extends lb.AnyContentValue> =
 	(new () => PreviewElement<T>) & typeof PreviewElement<T>
 
-export type PreviewConstructor<ContentType extends lb.AnyContent> =
+export type PreviewConstructor<ContentType extends lb.AnyContentValue> =
 	| PreviewWebComponent<ContentType>
 	| SolidPreview<ContentType>
 

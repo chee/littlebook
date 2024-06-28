@@ -1,4 +1,4 @@
-import {useParams, useSearchParams} from "@solidjs/router"
+import {useParams} from "@solidjs/router"
 import {ErrorBoundary, Show, Suspense, createEffect, on} from "solid-js"
 import {UnknownContent} from "../../plugins/content/unknown/unknown-view.tsx"
 
@@ -27,14 +27,10 @@ function isWebComponent(
 }
 
 export default function ContentEditor() {
-	const {fileId} = useParams<{fileId?: lb.FileId}>()
-	const [search] = useSearchParams<{file?: lb.FileId}>()
+	const params = useParams<{fileId?: lb.FileId}>()
+	const [file] = useDocument<lb.File>(() => params.fileId)
 
-	const [file] = useDocument<lb.File>(() => fileId || search.file)
-
-	const [content, changeContent, contentHandle] = useContent<any>(
-		() => file()?.content,
-	)
+	const [content, change, handle] = useContent<any>(() => file()?.content)
 
 	const contentViews = () =>
 		file.latest && editorViewRegistry.get(file.latest!.contentType)
@@ -57,16 +53,10 @@ export default function ContentEditor() {
 		const E = EditorConstructor()
 		return (
 			<Dynamic
-				component={
-					E && isWebComponent(E)
-						? customElementName()
-						: E
-							? E
-							: SomethingWentWrong
-				}
+				component={!E || isWebComponent(E) ? customElementName() : E}
 				prop:doc={content.latest}
-				prop:change={changeContent}
-				prop:handle={contentHandle()}
+				prop:change={change}
+				prop:handle={handle()}
 				prop:value={content.latest?.value}
 				prop:file={file.latest}
 			/>
@@ -78,14 +68,13 @@ export default function ContentEditor() {
 			<ErrorBoundary
 				fallback={(error, reset) => {
 					createEffect(
-						on([() => search.file], () => {
+						on([() => params.fileId], () => {
 							reset()
 						}),
 					)
 					return <SomethingWentWrong error={error} />
 				}}>
-				<Show
-					when={content.latest && "value" in content.latest && contentHandle()}>
+				<Show when={content.latest && "value" in content.latest && handle()}>
 					<Suspense
 						fallback={
 							<div class="box content-editor content-editor--loading content-editor--file-loading" />

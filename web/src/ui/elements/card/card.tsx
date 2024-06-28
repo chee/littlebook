@@ -18,7 +18,7 @@ export const Card: ParentComponent<{
 }> = props => {
 	return (
 		<div class={cl("card", props.className, props.class)}>
-			<Show when={props.title}>
+			<Show when={props.title || props.headerAction}>
 				<header class="card-header">
 					<span>{props.title}</span>
 					<div>

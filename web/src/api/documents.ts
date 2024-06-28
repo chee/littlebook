@@ -30,9 +30,9 @@ export function getDocumentHandle<DocType extends lb.AnyDocument>(
 	return repo.find<DocType>(id)
 }
 
-export function addItemToDocument<
-	DocType extends lb.AnyDocument & {items: AutomergeList<string>},
->(id: DocType["items"][number]) {
+export function addItemToDocument<DocType extends lb.AnyParentDocument>(
+	id: DocType["items"][number],
+) {
 	return (doc: DocType) => {
 		console.info(`adding item ${id} to ${doc.type} ${doc.id}`)
 		doc.items.push(id)
@@ -52,5 +52,7 @@ export default function createDocumentsAPI(repo: Repo) {
 	return {
 		createHandle: createDocumentHandle.bind(null, repo),
 		getHandle: getDocumentHandle.bind(null, repo),
+		addItem: addItemToDocument,
+		removeItem: removeItemFromDocument,
 	}
 }

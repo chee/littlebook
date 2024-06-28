@@ -3,7 +3,7 @@ import {CodingError, coderRegistry} from "../contents/coders.ts"
 import type {AnyContent} from "../global.js"
 import type {UniformTypeIdentifier} from "../contents/uniform-type.ts"
 
-export function createContentHandle<ContentType extends lb.AnyContent>(
+export function createContentHandle<ContentType extends lb.AnyContentValue>(
 	repo: Repo,
 	value: ContentType,
 ) {
@@ -35,7 +35,7 @@ export function recodeContent(
 	)
 }
 
-export function getContentHandle<Type extends lb.AnyContent>(
+export function getContentHandle<Type extends lb.AnyContentValue>(
 	repo: Repo,
 	id: lb.ContentId,
 ) {

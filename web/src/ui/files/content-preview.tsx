@@ -1,24 +1,32 @@
-import {useSearchParams} from "@solidjs/router"
+import {useParams} from "@solidjs/router"
 import {ErrorBoundary, Show, Suspense, createEffect, on} from "solid-js"
 // import {UnknownContent} from "../../plugins/content/unknown/unknown-view.tsx"
-import {useLittlebookAPI} from "../api/use-api.ts"
 import useDocument from "../documents/use-document.ts"
 // import "./content-preview.scss"
 import useContent from "./use-content.ts"
 import {slugify} from "../../lib/slugify.ts"
 import {Dynamic} from "solid-js/web"
 import SomethingWentWrong from "./went-bad.tsx"
-import {previewRegistry} from "../../contents/content-view.ts"
+import {
+	previewRegistry,
+	type PreviewConstructor,
+	type PreviewWebComponent,
+} from "../../contents/content-view.ts"
 
 function makeCustomElementName(constructorName?: string) {
 	return slugify(`preview-${constructorName}`)
 }
 
+function isWebComponent(
+	cons?: PreviewConstructor<any>,
+): cons is PreviewWebComponent<any> {
+	return Boolean(cons && cons.prototype instanceof HTMLElement)
+}
+
 export default function ContentPreview() {
-	// todo use setSearch in project-page :)
-	const [search] = useSearchParams<{file?: lb.FileId}>()
-	const lb = useLittlebookAPI()
-	const [file] = useDocument<lb.File>(() => search.file)
+	const params = useParams<{fileId?: lb.FileId}>()
+
+	const [file] = useDocument<lb.File>(() => params.fileId)
 
 	const [content, changeContent, contentHandle] = useContent<any>(
 		() => file()?.content,
@@ -33,12 +41,14 @@ export default function ContentPreview() {
 		PreviewConstructor() && makeCustomElementName(PreviewConstructor()!.name)
 
 	createEffect(() => {
+		const preview = PreviewConstructor()
 		if (
-			PreviewConstructor() &&
+			preview &&
 			customElementName() &&
+			isWebComponent(preview) &&
 			!customElements.get(customElementName()!)
 		) {
-			customElements.define(customElementName()!, PreviewConstructor()!)
+			customElements.define(customElementName()!, preview)
 		}
 	})
 
@@ -66,7 +76,7 @@ export default function ContentPreview() {
 				<ErrorBoundary
 					fallback={(error, reset) => {
 						createEffect(
-							on([() => search.file], () => {
+							on([() => params.fileId], () => {
 								reset()
 							}),
 						)

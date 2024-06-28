@@ -1,16 +1,14 @@
-import {
-	type ResourceReturn,
-	createContext,
-	createResource,
-	useContext,
-	createEffect,
-} from "solid-js"
-import start from "../../repo/start-repo"
-import * as local from "./local"
-import getDocIdFromTeam from "../../auth/teams/get-doc-id-from-team.ts"
+import {createContext, useContext} from "solid-js"
+import start from "../../repo/start-repo.ts"
+import * as local from "./local.ts"
+import {createId} from "@paralleldrive/cuid2"
+import {createUser} from "@localfirst/auth"
+import {getShareId} from "@localfirst/auth-provider-automerge-repo"
+import {createSpaceHandle} from "../../api/spaces.ts"
+import storeDocIdOnTeam from "../../auth/teams/store-doc-id-on-team.ts"
+import createDevice from "../../auth/devices/create-device.ts"
 
-export const AutomergeContext =
-	createContext<ResourceReturn<lb.AutomergeState | undefined>[0]>()
+export const AutomergeContext = createContext<lb.AutomergeState>()
 
 export function useAutomerge() {
 	const context = useContext(AutomergeContext)
@@ -18,33 +16,25 @@ export function useAutomerge() {
 	return context
 }
 
-export function startFromLocal(): ResourceReturn<
-	lb.AutomergeState | undefined
-> {
-	const am = createResource(() => {
-		const user = local.state.user
-		const device = local.state.device
-		const shareId = local.state.homeShareId
-		return (
-			user &&
-			device &&
-			shareId &&
-			start({
-				user,
-				device,
-			}).then(({auth, repo}) => {
-				const team = auth.getTeam(shareId)
-				return {
-					team,
-					auth,
-					repo,
-					user,
-					device,
-					shareId,
-				} satisfies lb.AutomergeState
-			})
-		)
+export async function initialize() {
+	// random user and team name
+	const username = createId()
+	const teamname = username
+	const user = createUser(username)
+	const device = createDevice(user.userId)
+	console.log(user, user.userId)
+	console.log(device)
+	const {auth, repo} = await start({
+		user,
+		device,
 	})
-
-	return am
+	console.log({auth, repo}, "we started")
+	const team = await auth.createTeam(teamname)
+	const spaceHandle = createSpaceHandle(repo)
+	storeDocIdOnTeam(team, spaceHandle.documentId)
+	local.set({
+		user,
+		device,
+		home: getShareId(team),
+	})
 }

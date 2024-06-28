@@ -2,7 +2,7 @@ interface EditableNameProps<T extends lb.NamedDocument> {
 	id: T["id"]
 	name: string
 	saveName(name: string): void
-	which: "files" | "projects" // | "folders" | "spaces" | "areas"
+	which: "files" | "folders"
 }
 // todo pop up the renaming input in a pretty floating window with a shadow
 export default function EditableName<T extends lb.NamedDocument>({

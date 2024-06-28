@@ -1,0 +1,39 @@
+{
+	"name": "@littlebook/tldraw",
+	"description": "a littlebook content plugin for tldraw support",
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"mk": "node mk",
+		"w": "node mk/w",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@automerge/automerge": "^2.2.2",
+		"esbuild": "^0.21.5",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"tldraw": "^2.3.0",
+		"typescript": "^5.4.5"
+	},
+	"dependencies": {
+		"@tldraw/assets": "^2.3.0",
+		"@tldraw/editor": "^2.3.0",
+		"@tldraw/tldraw": "^2.3.0",
+		"@tldraw/tlschema": "^2.3.0",
+		"@types/react": "^18.3.3",
+		"@types/react-dom": "^18.3.0",
+		"@types/throttle-debounce": "^5.0.2",
+		"throttle-debounce": "^5.0.0",
+		"tldraw-vscode": "^1.28.2"
+	},
+	"peerDependencies": {
+		"@automerge/automerge": "^2.2.2",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"tldraw": "^2.3.0"
+	}
+}

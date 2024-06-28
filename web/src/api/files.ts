@@ -7,7 +7,7 @@ import {
 	getDocumentHandle,
 	removeItemFromDocument,
 } from "./documents.ts"
-import {addItemToProject, getProjectHandle} from "./projects.ts"
+import {addItemToFolder, getFolderHandle} from "./folders.ts"
 import UniformType, {
 	type MIMEType,
 	type UniformTypeIdentifier,
@@ -24,6 +24,7 @@ export function createFileHandle(
 ) {
 	const coder = coderRegistry.getFirst(fileTemplate.contentType) || binary()
 	const content = createContentHandle(repo, coder.decode(bytes))
+
 	return createDocumentHandle<lb.File>(repo, {
 		type: "file",
 		name: fileTemplate.name || "",
@@ -61,13 +62,9 @@ export function getFileHandle(repo: Repo, id: lb.FileId) {
 	return getDocumentHandle<lb.File>(repo, id)
 }
 
-export function deleteFile(
-	repo: Repo,
-	id: lb.FileId,
-	parentId?: lb.ProjectId | lb.DirectoryId,
-) {
+export function deleteFile(repo: Repo, id: lb.FileId, parentId?: lb.FolderId) {
 	if (parentId) {
-		const parentHandle = repo.find<lb.Project | lb.Folder>(parentId)
+		const parentHandle = getFolderHandle(repo, parentId)
 		parentHandle.change(removeItemFromDocument(id))
 	}
 
@@ -79,9 +76,9 @@ export function deleteFile(
 	fileHandle.delete()
 }
 
-export function createFileHandleInProject(
+export function createFileHandleInFolder(
 	repo: Repo,
-	projectId: lb.ProjectId,
+	folderId: lb.FolderId,
 	template: FileTemplate,
 ) {
 	const fileHandle = createFileHandle(repo, template)
@@ -92,10 +89,10 @@ export function createFileHandleInProject(
 		return fileHandle
 	}
 
-	const projectHandle = getProjectHandle(repo, projectId)
+	const folderHandle = getFolderHandle(repo, folderId)
 
 	fileHandle.doc().then(file => {
-		file && projectHandle.change(addItemToProject(file.id))
+		file && folderHandle.change(addItemToFolder(file.id))
 	})
 
 	return fileHandle
@@ -104,7 +101,7 @@ export function createFileHandleInProject(
 export default function createFilesAPI(repo: Repo) {
 	return {
 		createHandle: createFileHandle.bind(null, repo),
-		createHandleInProject: createFileHandleInProject.bind(null, repo),
+		createHandleInFolder: createFileHandleInFolder.bind(null, repo),
 		import: importFile.bind(null, repo),
 		getHandle: getFileHandle.bind(null, repo),
 		deleteFile: deleteFile.bind(null, repo),

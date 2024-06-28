@@ -1,15 +1,16 @@
 import {useLittlebookAPI} from "../api/use-api.ts"
-import {useParams, useSearchParams} from "@solidjs/router"
+import {useParams} from "@solidjs/router"
 import useDocument from "../documents/use-document.ts"
 import {For, Show, createSignal} from "solid-js"
 import useContent from "./use-content.ts"
 import UniformType from "../../contents/uniform-type.ts"
 
 export default function InfoPanel() {
-	const [search] = useSearchParams<{file?: lb.FileId}>()
-	const {projectId} = useParams<{projectId?: lb.ProjectId}>()
+	const params = useParams<{fileId?: lb.FileId}>()
+	// todo this'll be the last guy in the URL
+	// const {projectId} = useParams<{projectId?: lb.ProjectId}>()
 	const lb = useLittlebookAPI()
-	const [file, changeFile] = useDocument<lb.File>(() => search.file)
+	const [file, changeFile] = useDocument<lb.File>(() => params.fileId)
 
 	const [content] = useContent(() => file()?.content)
 
@@ -19,7 +20,11 @@ export default function InfoPanel() {
 			return
 		}
 
-		const convertedContentHandle = lb()?.contents.recode(from, to, content()!)
+		const convertedContentHandle = lb?.contents.recode(
+			from,
+			to.identifier,
+			content()!,
+		)
 
 		if (convertedContentHandle instanceof Error) {
 			// todo tell the user that it couldn't happen
@@ -43,7 +48,7 @@ export default function InfoPanel() {
 		if (!file()?.id) {
 			return
 		}
-		lb()?.files.deleteFile(file()!.id, projectId as lb.ProjectId)
+		// lb()?.files.deleteFile(file()!.id, projectId as lb.ProjectId)
 	}
 
 	const [typeDropdownActive, setTypeDropdownActive] = createSignal(false)
