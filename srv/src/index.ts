@@ -1,8 +1,7 @@
-import {LocalFirstAuthSyncServer} from "./auth-server.js"
+import {LocalFirstAuthSyncServer} from "@localfirst/auth-syncserver"
 
 const srv = new LocalFirstAuthSyncServer("https://star.littlebook.app")
 srv.listen({
 	port: 11124,
-	silent: false,
-	storageDir: "automerge-sync-server-data",
+	storageDir: "../automerge-sync-server-data",
 })
