@@ -6,7 +6,7 @@
 	"main": "output/index.js",
 	"type": "module",
 	"scripts": {
-		"start": "tsc && node .",
+		"start": "tsc && DEBUG=automerge*,localfirst* node .",
 		"mk": "tsc"
 	},
 	"keywords": [],
