@@ -14,7 +14,7 @@
 			"react": ["./node_modules/preact/compat/"],
 			"react-dom": ["./node_modules/preact/compat/"]
 		},
-		"outDir": "output"
+		"outDir": "."
 	},
-	"include": ["src"]
+	"files": ["index.ts"]
 }
