@@ -65810,7 +65810,7 @@ var init_MenuPanel = __esm({
     init_components();
     DefaultMenuPanel = memo14(function MenuPanel() {
       const breakpoint = useBreakpoint();
-      const { MainMenu, QuickActions, ActionsMenu, PageMenu } = useTldrawUiComponents();
+      const { MainMenu, QuickActions, ActionsMenu: ActionsMenu2, PageMenu } = useTldrawUiComponents();
       if (!MainMenu && !PageMenu && breakpoint < 6)
         return null;
       return /* @__PURE__ */ jsx127("div", { className: "tlui-menu-zone", children: /* @__PURE__ */ jsxs59("div", { className: "tlui-buttons__horizontal", children: [
@@ -65818,7 +65818,7 @@ var init_MenuPanel = __esm({
         PageMenu && /* @__PURE__ */ jsx127(PageMenu, {}),
         breakpoint < 6 ? null : /* @__PURE__ */ jsxs59(Fragment44, { children: [
           QuickActions && /* @__PURE__ */ jsx127(QuickActions, {}),
-          ActionsMenu && /* @__PURE__ */ jsx127(ActionsMenu, {})
+          ActionsMenu2 && /* @__PURE__ */ jsx127(ActionsMenu2, {})
         ] })
       ] }) });
     });
@@ -69746,13 +69746,13 @@ var init_DefaultToolbar = __esm({
       const breakpoint = useBreakpoint();
       const isReadonlyMode = useReadonly();
       const activeToolId = useValue("current tool id", () => editor.getCurrentToolId(), [editor]);
-      const { ActionsMenu, QuickActions } = useTldrawUiComponents();
+      const { ActionsMenu: ActionsMenu2, QuickActions } = useTldrawUiComponents();
       return /* @__PURE__ */ jsx146("div", { className: "tlui-toolbar", children: /* @__PURE__ */ jsxs72("div", { className: "tlui-toolbar__inner", children: [
         /* @__PURE__ */ jsxs72("div", { className: "tlui-toolbar__left", children: [
           !isReadonlyMode && /* @__PURE__ */ jsxs72("div", { className: "tlui-toolbar__extras", children: [
             breakpoint < PORTRAIT_BREAKPOINT.TABLET && /* @__PURE__ */ jsxs72("div", { className: "tlui-toolbar__extras__controls tlui-buttons__horizontal", children: [
               QuickActions && /* @__PURE__ */ jsx146(QuickActions, {}),
-              ActionsMenu && /* @__PURE__ */ jsx146(ActionsMenu, {})
+              ActionsMenu2 && /* @__PURE__ */ jsx146(ActionsMenu2, {})
             ] }),
             /* @__PURE__ */ jsx146(ToggleToolLockedButton, { activeToolId })
           ] }),
@@ -73211,7 +73211,8 @@ import {
   useEffect as useEffect57,
   Suspense,
   lazy,
-  useRef as useRef54
+  useRef as useRef54,
+  useLayoutEffect as useLayoutEffect16
 } from "react";
 import { createRoot as createRoot2 } from "react-dom/client";
 
@@ -73478,7 +73479,6 @@ function TldrawInner(props) {
           doc.value.records[index2] = next;
         }
         for (const [id, _rm] of Object.entries(removed)) {
-          console.log(id);
           for (const [index2, rec] of doc.value.records.entries()) {
             if (rec.id == id) doc.value.records.deleteAt(index2);
           }
@@ -73515,9 +73515,7 @@ function TldrawInner(props) {
     }
     editor.store.mergeRemoteChanges(() => {
       editor.store.remove(removals);
-      for (const put2 of puts) {
-        editor.store.put(puts);
-      }
+      editor.store.put(puts);
     });
   };
   useEffect57(() => {
@@ -73547,16 +73545,53 @@ function TldrawInner(props) {
       props.handle.removeListener("change", onremotechange);
     };
   }, [props.handle]);
+  useLayoutEffect16(() => {
+    setTimeout(() => {
+      const container = editor.getContainer();
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
+      const next = new Box(
+        rect.left || rect.x,
+        rect.top || rect.y,
+        Math.max(rect.width, 1),
+        Math.max(rect.height, 1)
+      );
+      editor.updateViewportScreenBounds(next);
+    });
+  });
+  return null;
+}
+function ActionsMenu() {
   return null;
 }
 var TldrawEditorView = ({ value, change, ...props }) => {
   if (!value) {
     return /* @__PURE__ */ jsx155("div", { children: "waiting for value" });
   }
-  return /* @__PURE__ */ jsx155(Suspense, { children: /* @__PURE__ */ jsx155(Tldraw2, { assetUrls: getAssetUrls({ baseUrl: "/tldraw-assets" }), children: /* @__PURE__ */ jsx155(TldrawInner, { value, change, ...props }) }) });
+  return /* @__PURE__ */ jsx155(Suspense, { children: /* @__PURE__ */ jsx155(
+    Tldraw2,
+    {
+      components: { ActionsMenu },
+      options: { maxPages: 1 },
+      autoFocus: true,
+      assetUrls: getAssetUrls({ baseUrl: "/tldraw-assets" }),
+      children: /* @__PURE__ */ jsx155(TldrawInner, { value, change, ...props })
+    }
+  ) });
 };
 var TldrawEditorElement = class extends EditorViewElement {
-  root = createRoot2(this);
+  shadowRoot = this.attachShadow({
+    mode: "open",
+    delegatesFocus: true
+  });
+  root = createRoot2(this.shadowRoot);
+  constructor() {
+    super();
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = import.meta.resolve("./node_modules/@tldraw/tldraw/tldraw.css");
+    this.shadowRoot.append(link);
+  }
   props = () => ({
     value: this.value,
     change: this.change,

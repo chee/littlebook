@@ -13,7 +13,6 @@ export const config: UserConfig = {
 		plugins: () => [wasm()],
 	},
 	plugins: [
-		// nodePolyfills(),
 		wasm(),
 		pwa({
 			registerType: "prompt",

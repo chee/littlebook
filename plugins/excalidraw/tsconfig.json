@@ -9,10 +9,10 @@
 		"checkJs": true,
 		"strict": true,
 		"allowJs": true,
-		/* Preact Config */
 		"jsx": "react-jsx",
-		// "jsxImportSource": "preact",
 		"skipLibCheck": true,
+		/* Preact Config */
+		// "jsxImportSource": "preact",
 		// "paths": {
 			// "react": ["./node_modules/preact/compat/"],
 			// "react-dom": ["./node_modules/preact/compat/"]

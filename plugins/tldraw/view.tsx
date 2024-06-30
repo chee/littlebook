@@ -1,10 +1,6 @@
 // things i'll need to make available in @littlebook/plugin
 import "../../web/src/types.ts"
-import type {
-	AutomergeList,
-	AutomergeDocHandleChangePayload,
-	ContentHandleChangePayload,
-} from "../../web/src/types.ts"
+import type {ContentHandleChangePayload} from "../../web/src/types.ts"
 
 import {
 	EditorViewElement,
@@ -14,19 +10,18 @@ import {
 import {
 	useCallback,
 	useEffect,
-	useMemo,
-	useState,
 	Suspense,
 	lazy,
 	type FunctionComponent,
 	useRef,
+	useLayoutEffect,
 } from "react"
 
 import type {TldrawFile} from "./shared.ts"
 import {createRoot} from "react-dom/client"
 
-import {useEditor} from "@tldraw/editor"
-import {parseTldrawJsonFile, serializeTldrawJson} from "tldraw"
+import {Box, useEditor} from "@tldraw/editor"
+import {parseTldrawJsonFile} from "tldraw"
 import type {
 	InsertPatch,
 	PutPatch,
@@ -34,7 +29,7 @@ import type {
 } from "@automerge/automerge/next"
 const Tldraw = lazy(() => import("tldraw").then(mod => ({default: mod.Tldraw})))
 import {getAssetUrls} from "@tldraw/assets/selfHosted"
-import type {HistoryEntry, TLRecord, Editor as TLEditor, RecordId} from "tldraw"
+import type {HistoryEntry, TLRecord, RecordId, Editor} from "tldraw"
 
 function insert(patch: InsertPatch, object: TLRecord) {
 	console.log("insert", patch.path)
@@ -75,7 +70,6 @@ function TldrawInner(props: lb.ContentEditorViewProps<TldrawFile>) {
 					doc.value.records[index] = next
 				}
 				for (const [id, _rm] of Object.entries(removed)) {
-					console.log(id)
 					for (const [index, rec] of doc.value.records.entries()) {
 						if (rec.id == id) doc.value.records.deleteAt(index)
 					}
@@ -118,11 +112,8 @@ function TldrawInner(props: lb.ContentEditorViewProps<TldrawFile>) {
 
 		editor.store.mergeRemoteChanges(() => {
 			editor.store.remove(removals)
-			for (const put of puts) {
-				editor.store.put(puts)
-			}
+			editor.store.put(puts)
 		})
-		// console.log(removals)
 	}
 
 	useEffect(() => {
@@ -156,6 +147,29 @@ function TldrawInner(props: lb.ContentEditorViewProps<TldrawFile>) {
 			props.handle.removeListener("change", onremotechange)
 		}
 	}, [props.handle])
+
+	useLayoutEffect(() => {
+		setTimeout(() => {
+			const container = editor.getContainer()
+			if (!container) return
+
+			const rect = container.getBoundingClientRect()
+
+			const next = new Box(
+				rect.left || rect.x,
+				rect.top || rect.y,
+				Math.max(rect.width, 1),
+				Math.max(rect.height, 1),
+			)
+
+			editor.updateViewportScreenBounds(next)
+		})
+	})
+
+	return null
+}
+
+function ActionsMenu() {
 	return null
 }
 
@@ -169,7 +183,11 @@ const TldrawEditorView: EditorViewComponent<
 
 	return (
 		<Suspense>
-			<Tldraw assetUrls={getAssetUrls({baseUrl: "/tldraw-assets"})}>
+			<Tldraw
+				components={{ActionsMenu}}
+				options={{maxPages: 1}}
+				autoFocus={true}
+				assetUrls={getAssetUrls({baseUrl: "/tldraw-assets"})}>
 				<TldrawInner value={value} change={change} {...props} />
 			</Tldraw>
 		</Suspense>
@@ -179,7 +197,20 @@ const TldrawEditorView: EditorViewComponent<
 import "@tldraw/tldraw/tldraw.css"
 
 export class TldrawEditorElement extends EditorViewElement<TldrawFile> {
-	root = createRoot(this)
+	shadowRoot = this.attachShadow({
+		mode: "open",
+		delegatesFocus: true,
+	})
+	root = createRoot(this.shadowRoot!)
+
+	constructor() {
+		super()
+		const link = document.createElement("link")
+		link.rel = "stylesheet"
+		link.href = import.meta.resolve("./node_modules/@tldraw/tldraw/tldraw.css")
+		this.shadowRoot.append(link)
+	}
+
 	props = () => ({
 		value: this.value,
 		change: this.change,

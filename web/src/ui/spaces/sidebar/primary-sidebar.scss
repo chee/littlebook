@@ -2,9 +2,6 @@
 
 .folder-card-link {
 	padding: get-space(m);
-	summary::before {
-		padding-right: 1em;
-	}
 	position: relative;
 
 	&:not([open]) > summary::before {
@@ -32,6 +29,7 @@
 	}
 
 	a {
+		padding-inline: 0.5rem;
 		color: var(--littlebook-line);
 	}
 
@@ -42,11 +40,18 @@
 	.new {
 		position: absolute;
 		background: var(--littlebook-fill);
-		top: 2rem;
-		left: 2rem;
+		top: 0;
+		right: 0;
 		padding: 1rem;
 		z-index: 1000;
-		@include shadow;
+		// @include shadow;
+		border: 2px solid var(--littlebook-line);
+		li button {
+			padding: 1rem;
+			&:hover {
+				background: var(--littlebook-primary-50);
+			}
+		}
 	}
 
 	.folder-card-link {

@@ -2,3 +2,4 @@ node_modules/
 *.sqlite
 output/
 app.config.timestamp*
+automerge-sync-server-data

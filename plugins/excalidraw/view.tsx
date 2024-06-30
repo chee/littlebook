@@ -7,10 +7,7 @@ import {
 	type EditorViewComponent,
 } from "../../web/src/contents/content-view.ts"
 
-// should i provide this from @littlebook/plugin? probably, right! like, plus
-// any other types i create with crdx? yeah, right now this is the only reason
-// we need to have wasm plugin, and as such why we need an esbuild script file
-import {Counter} from "@automerge/automerge"
+import {Counter} from "@automerge/automerge/slim/next"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 
 // internal to the plugin

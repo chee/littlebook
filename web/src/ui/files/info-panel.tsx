@@ -6,11 +6,11 @@ import useContent from "./use-content.ts"
 import UniformType from "../../contents/uniform-type.ts"
 
 export default function InfoPanel() {
-	const params = useParams<{fileId?: lb.FileId}>()
+	const params = useParams<{itemId?: lb.FileId}>()
 	// todo this'll be the last guy in the URL
 	// const {projectId} = useParams<{projectId?: lb.ProjectId}>()
 	const lb = useLittlebookAPI()
-	const [file, changeFile] = useDocument<lb.File>(() => params.fileId)
+	const [file, changeFile] = useDocument<lb.File>(() => params.itemId)
 
 	const [content] = useContent(() => file()?.content)
 

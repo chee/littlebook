@@ -108,10 +108,7 @@ export declare namespace lb {
 
 	type AutomergeState = {
 		repo: Repo
-		auth: AuthProvider
-		user: Auth.UserWithSecrets
-		device: Auth.DeviceWithSecrets
-		team: Auth.Team
+		home: SpaceId
 	}
 
 	type ContentCoder<Model extends AnyContentValue> =

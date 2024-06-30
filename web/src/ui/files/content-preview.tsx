@@ -24,9 +24,9 @@ function isWebComponent(
 }
 
 export default function ContentPreview() {
-	const params = useParams<{fileId?: lb.FileId}>()
+	const params = useParams<{itemId?: lb.FileId}>()
 
-	const [file] = useDocument<lb.File>(() => params.fileId)
+	const [file] = useDocument<lb.File>(() => params.itemId)
 
 	const [content, changeContent, contentHandle] = useContent<any>(
 		() => file()?.content,
@@ -76,7 +76,7 @@ export default function ContentPreview() {
 				<ErrorBoundary
 					fallback={(error, reset) => {
 						createEffect(
-							on([() => params.fileId], () => {
+							on([() => params.itemId], () => {
 								reset()
 							}),
 						)

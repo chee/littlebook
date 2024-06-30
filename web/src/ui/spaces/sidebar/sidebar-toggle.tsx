@@ -3,16 +3,15 @@ import clsx from "clsx"
 function CuteSidebarIcon({
 	open,
 	flip: flipped,
-}: {open: boolean; flip: boolean}) {
+}: {open: () => boolean; flip: boolean}) {
 	return (
-		// biome-ignore lint/a11y/noSvgWithoutTitle: there is a label on the button
 		<svg
 			height="32"
-			alt=""
 			viewBox="0 0 67 47"
 			class={clsx("has-paper-600-stroke", {
 				"rotate-180": flipped,
 			})}>
+			<title>toggle</title>
 			<g stroke-linecap="round">
 				<path
 					fill="#fff"
@@ -26,7 +25,7 @@ function CuteSidebarIcon({
 			</g>
 			<g stroke-linecap="round">
 				<path
-					class={clsx(open ? "has-paper-600-fill" : "has-white-fill")}
+					class={clsx(open() ? "has-paper-600-fill" : "has-white-fill")}
 					d="M14.75 10.33h7.5c2.5 0 3.75 1.25 3.75 3.75v17.5c0 2.5-1.25 3.75-3.75 3.75h-7.5c-2.5 0-3.75-1.25-3.75-3.75v-17.5c0-2.5 1.25-3.75 3.75-3.75"
 				/>
 				<path
@@ -36,7 +35,7 @@ function CuteSidebarIcon({
 				/>
 			</g>
 			<path
-				class={clsx(open && "has-white-stroke")}
+				class={clsx(open() && "has-white-stroke")}
 				fill="none"
 				stroke-linecap="round"
 				stroke-width="2"
@@ -46,12 +45,8 @@ function CuteSidebarIcon({
 	)
 }
 
-export default function SidebarToggle({
-	open,
-	flip = false,
-	toggle,
-}: {
-	open: boolean
+export default function SidebarToggle(props: {
+	open: () => boolean
 	flip?: boolean
 	toggle: () => void
 }) {
@@ -59,10 +54,12 @@ export default function SidebarToggle({
 		<button
 			type="button"
 			class="small ghost button p-0 sideebar-toggle"
-			aria-label={open ? "hide projects sidebar" : "show projects sidebar"}
+			aria-label={
+				props.open() ? "hide projects sidebar" : "show projects sidebar"
+			}
 			aria-pressed={true}
-			onClick={toggle}>
-			<CuteSidebarIcon open={open} flip={flip} />
+			onClick={props.toggle}>
+			<CuteSidebarIcon open={props.open} flip={Boolean(props.flip)} />
 		</button>
 	)
 }

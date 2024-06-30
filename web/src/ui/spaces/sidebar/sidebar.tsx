@@ -3,12 +3,12 @@ import cl from "../../lib/cl.ts"
 import "./sidebar.scss"
 
 const Sidebar: ParentComponent<{
-	open: boolean
+	open: () => boolean
 	class?: string
 	which: "primary" | "secondary"
 }> = props => (
 	<aside
-		aria-expanded={props.open}
+		aria-expanded={props.open()}
 		class={cl("sidebar", props.class, props.which)}>
 		{props.children}
 	</aside>

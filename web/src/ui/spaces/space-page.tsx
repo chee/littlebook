@@ -1,4 +1,4 @@
-import type {ParentComponent} from "solid-js"
+import {createEffect, type ParentComponent} from "solid-js"
 import PrimarySidebar from "./sidebar/primary-sidebar.tsx"
 import SidebarToggle from "./sidebar/sidebar-toggle.tsx"
 import "./topnav.scss"
@@ -9,7 +9,10 @@ import InfoPanel from "../files/info-panel.tsx"
 import MetadataViewer from "../files/metadata-viewer.tsx"
 import createBoolean from "../lib/create-boolean.ts"
 
-const SpacePage: ParentComponent<RouteSectionProps> = props => {
+import ContentViewer from "../files/content-viewer.tsx"
+import "dockview-core/dist/styles/dockview.css"
+
+const SpacePage: ParentComponent<RouteSectionProps> = () => {
 	const [primarySidebarOpen, togglePrimary] = createBoolean()
 	const [secondarySidebarOpen, toggleSecondary] = createBoolean()
 
@@ -17,25 +20,25 @@ const SpacePage: ParentComponent<RouteSectionProps> = props => {
 		<>
 			<header class="space-header topnav">
 				<section class="pl-xs topnav-left">
-					<SidebarToggle open={primarySidebarOpen()} toggle={togglePrimary} />
+					<SidebarToggle open={primarySidebarOpen} toggle={togglePrimary} />
 				</section>
 				<section class="left-section topnav-middle" />
 				<section class="right-section pl-r topnav-right">
 					<SidebarToggle
-						open={secondarySidebarOpen()}
+						open={secondarySidebarOpen}
 						flip={true}
 						toggle={toggleSecondary}
 					/>
 				</section>
 			</header>
 			<div class="flex grow">
-				<Sidebar open={primarySidebarOpen()} which="primary">
+				<Sidebar open={primarySidebarOpen} which="primary">
 					<PrimarySidebar />
 				</Sidebar>
 				<main id="main" class="flex grow">
-					{props.children}
+					<ContentViewer />
 				</main>
-				<Sidebar open={secondarySidebarOpen()} which="secondary">
+				<Sidebar open={secondarySidebarOpen} which="secondary">
 					<InfoPanel />
 					<MetadataViewer />
 				</Sidebar>

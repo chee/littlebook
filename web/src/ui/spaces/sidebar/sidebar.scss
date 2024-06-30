@@ -42,16 +42,16 @@
 		}
 	}
 
-	@include set-shadow(l);
-	@include set-shadow-var(color, fade(paper-900, 50%));
-	@include set-shadow-var(y, 0.5em);
-	@include set-shadow-var(x, 0.4em);
-	@include set-shadow-var(spread, 1em);
-	@include shadow;
+	// @include set-shadow(l);
+	// @include set-shadow-var(color, fade(paper-900, 50%));
+	// @include set-shadow-var(y, 0.5em);
+	// @include set-shadow-var(x, 0.4em);
+	// @include set-shadow-var(spread, 1em);
+	// @include shadow;
 	@include dark {
 		background: black;
 		color: white;
-		@include set-shadow-var(color, black);
+		// @include set-shadow-var(color, black);
 	}
 
 	&[aria-expanded="false"] {

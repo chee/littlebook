@@ -5,12 +5,13 @@
 	"main": "index.js",
 	"scripts": {
 		"mk": "pnpm -r mk",
-		"test": "pnpm -r t && node t"
+		"test": "pnpm -r t && node t",
+		"dev": "pnpm -F srv -F web dev"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "AGPL3.0+",
-	"packageManager": "pnpm@9.1.4",
+	"packageManager": "pnpm@9.4.0",
 	"pnpm": {
 		"peerDependencyRules": {
 			"ignoreMissing": ["@opentelemetry/*", "@netlify/*"]

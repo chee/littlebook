@@ -3,9 +3,9 @@ import "./littlebook.scss"
 import {MetaProvider, Title} from "@solidjs/meta"
 import {Navigate, Route, Router} from "@solidjs/router"
 
-import {Suspense, Show} from "solid-js"
+import {Suspense, Show, createEffect} from "solid-js"
 
-import {AutomergeContext, initialize} from "./automerge/use-automerge.ts"
+import {AutomergeContext, getAutomergeState} from "./automerge/use-automerge.ts"
 
 import SpacePage from "./spaces/space-page.tsx"
 
@@ -21,35 +21,36 @@ import {removeDirectory} from "../lib/opfs.ts"
 import {render} from "solid-js/web"
 import ContentViewer from "./files/content-viewer.tsx"
 import * as local from "./automerge/local.ts"
-import start from "../repo/start-repo.ts"
-import dbName from "../lib/db-name.ts"
+import start from "../automerge/start-repo.ts"
 const plugins = [excalidraw, text, media, unknown, books, tldraw]
 import "@littlebook/tldraw/index.css"
+import {createSpaceHandle} from "../api/spaces.ts"
 
 for (const plugin of plugins) {
 	plugin(pluginAPI)
 }
 
-export default function Littlebook({
-	automergeState,
-}: {automergeState: lb.AutomergeState}) {
+export default function Littlebook() {
+	const [automerge, _controlAutomerge] = getAutomergeState()
+
 	return (
 		<>
-			<Show when={automergeState}>
+			<Show when={automerge.latest}>
 				<Router
 					root={props => (
 						<MetaProvider>
 							<Title>littlebook</Title>
-							<AutomergeContext.Provider value={automergeState}>
+							<AutomergeContext.Provider value={automerge.latest}>
 								<Suspense>{props.children}</Suspense>
 							</AutomergeContext.Provider>
 						</MetaProvider>
 					)}>
-					<Route path="/" component={SpacePage}>
-						<Route path="/documents/:fileId" component={ContentViewer} />
+					<Route path="/documents/:itemId" component={ContentViewer} />
+					<Route path="/space" component={SpacePage}>
+						<Route path="/documents/:itemId" component={ContentViewer} />
 						<Route path="/today" component={() => <div>today</div>} />
-						<Route path="*" component={Fallback} />
 					</Route>
+					<Route path="*" component={Fallback} />
 				</Router>
 			</Show>
 			<PleaseReload />
@@ -57,7 +58,7 @@ export default function Littlebook({
 	)
 }
 function Fallback() {
-	return <Navigate href="/today" />
+	return <Navigate href="/space/today" />
 }
 
 window.EXCALIDRAW_ASSET_PATH = "/"
@@ -87,30 +88,13 @@ declare global {
 }
 window.destroy = destroy
 
-const {user, device, home} = local.state
-if (user && device && home) {
-	start({
-		user: {...user, keys: {...user.keys}},
-		device: {...device, keys: {...device.keys}},
-	}).then(({auth, repo}) => {
-		const team = auth.getTeam(home)
-		render(
-			() => (
-				<Littlebook
-					automergeState={
-						{
-							auth,
-							repo,
-							user: user!,
-							device: device!,
-							team,
-						} satisfies lb.AutomergeState
-					}
-				/>
-			),
-			document.getElementById("littlebook")!,
-		)
-	})
-} else {
-	initialize()
-}
+start().then(repo => {
+	let home = local.state.home
+	if (!home) {
+		const spaceHandle = createSpaceHandle(repo)
+		home = spaceHandle.docSync()!.id
+		local.set({home})
+	}
+})
+
+render(() => <Littlebook />, document.getElementById("littlebook")!)

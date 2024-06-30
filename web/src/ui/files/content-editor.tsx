@@ -27,8 +27,8 @@ function isWebComponent(
 }
 
 export default function ContentEditor() {
-	const params = useParams<{fileId?: lb.FileId}>()
-	const [file] = useDocument<lb.File>(() => params.fileId)
+	const params = useParams<{itemId?: lb.FileId}>()
+	const [file] = useDocument<lb.File>(() => params.itemId)
 
 	const [content, change, handle] = useContent<any>(() => file()?.content)
 
@@ -68,7 +68,7 @@ export default function ContentEditor() {
 			<ErrorBoundary
 				fallback={(error, reset) => {
 					createEffect(
-						on([() => params.fileId], () => {
+						on([() => params.itemId], () => {
 							reset()
 						}),
 					)

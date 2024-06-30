@@ -16,7 +16,7 @@ export function createFolderHandle(
 ) {
 	return createDocumentHandle<lb.Folder>(repo, {
 		type: "folder",
-		items: (template.items || []) as AutomergeList<lb.FileId | lb.FolderId>,
+		items: (template.items || []) as AutomergeList<lb.ItemId>,
 		icon: template.icon || random.choice(["🦔", "🍒", "🧀", "✨", "👽"])!,
 		name: template.name || "",
 		note: "",
@@ -27,13 +27,12 @@ export function getFolderHandle(repo: Repo, id: lb.FolderId) {
 	return getDocumentHandle<lb.Folder>(repo, id)
 }
 
-export const addItemToFolder = (id: lb.FolderId | lb.FileId) =>
-	addItemToDocument(id)
+export const addItemToFolder = (id: lb.ItemId) => addItemToDocument(id)
 
-export const removeItemFromFolder = (id: lb.FolderId | lb.FileId) =>
+export const removeItemFromFolder = (id: lb.ItemId) =>
 	removeItemFromDocument(id)
 
-export function deleteItemFromFolder(repo: Repo, id: lb.FolderId | lb.FileId) {
+export function deleteItemFromFolder(repo: Repo, id: lb.ItemId) {
 	const itemHandle = repo.find<lb.File | lb.Folder>(id)
 	itemHandle.doc().then(doc => {
 		if (doc && "content" in doc) {

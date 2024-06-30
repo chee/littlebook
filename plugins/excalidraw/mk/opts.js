@@ -17,6 +17,7 @@ export default {
 		"@automerge/automerge",
 		"react",
 		"react-dom",
+		"preact",
 		"@excalidraw/excalidraw",
 	],
 }

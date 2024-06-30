@@ -1,10 +1,12 @@
 import {createSignal} from "solid-js"
 
-export default function createBoolean(initialState = false) {
+export default function createBoolean(
+	initialState = false,
+): [() => boolean, () => void, (boolean: boolean) => void] {
 	const [signal, setSignal] = createSignal(initialState)
 	return [
 		signal,
-		(forcedValue?: boolean) =>
-			setSignal(val => (forcedValue == null ? !val : forcedValue)),
+		() => setSignal(val => !val),
+		(boolean: boolean) => setSignal(boolean),
 	]
 }
