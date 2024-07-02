@@ -17,7 +17,7 @@ import type {ParentComponent} from "solid-js"
 import type {
 	LooseUniformTypeDescriptor,
 	UniformTypeIdentifier,
-} from "./contents/uniform-type.ts"
+} from "./files/uniform-type.ts"
 import type {AnyContentValue} from "./global"
 
 export declare type ParentComponentProps<T = Record<any, any>> = Parameters<
@@ -43,7 +43,8 @@ export declare namespace lb {
 	type SpaceId = Branded<DocumentId, "space-id">
 	type FolderId = Branded<DocumentId, "folder-id">
 	type FileId = Branded<DocumentId, "file-id">
-	type ItemId = FolderId | FileId
+	type PackageId = Branded<DocumentId, "package-id">
+	type ItemId = FolderId | FileId | PackageId
 	type InboxId = Branded<DocumentId, "inbox-id">
 
 	type API = ReturnType<typeof createLittlebookAPI>
@@ -55,11 +56,12 @@ export declare namespace lb {
 		| Record<string, AutomergeValue>
 		| Array<AutomergeValue>
 
-	type AnyDocument = Space | Folder | File
+	type AnyDocument = Space | Package | Folder | File
+	type Item = File | Folder | Package
 
 	type AnyParentDocument = Space | Directory
 
-	type NamedDocument = Space | Folder | File
+	type NamedDocument = Space | Package | Folder | File
 
 	interface Space {
 		readonly type: "space"
@@ -69,18 +71,23 @@ export declare namespace lb {
 	}
 
 	interface Directory {
-		readonly type: "folder"
-		readonly id: FolderId
+		readonly type: "folder" | "package"
+		readonly id: FolderId | PackageId
 		name: string
-		items: AutomergeList<FolderId | FileId>
+		items: AutomergeList<FolderId | FileId | PackageId>
 		note: string
 		icon?: string
 		when?: When
 		contentType?: UniformTypeIdentifier
 	}
 
-	interface Folder extends Omit<Directory, "contentType"> {}
+	interface Folder extends Omit<Directory, "contentType"> {
+		readonly type: "folder"
+		readonly id: FolderId
+	}
 	interface Package extends Directory {
+		readonly type: "package"
+		readonly id: PackageId
 		contentType: UniformTypeIdentifier
 	}
 
@@ -100,8 +107,6 @@ export declare namespace lb {
 		source?: string
 	}
 
-	type Item = File | Folder | Package
-
 	interface Content<ContentType extends AnyContentValue> {
 		value: ContentType
 	}
@@ -112,13 +117,13 @@ export declare namespace lb {
 	}
 
 	type ContentCoder<Model extends AnyContentValue> =
-		import("./contents/coders.ts").ContentCoder<Model>
+		import("./files/content-coders.ts").ContentCoder<Model>
 	type ContentEditorView<Model extends AnyContentValue> =
-		import("./contents/content-view.ts").EditorViewConstructor<Model>
+		import("./files/content-view.ts").EditorViewConstructor<Model>
 	// type ContentMetadataView<Model extends AnyContent> =
 	// 	import("./contents/views/content-view.ts").MetadataView<Model>
 	type ContentPreview<Model extends AnyContentValue> =
-		import("./contents/content-view.ts").PreviewConstructor<Model>
+		import("./files/content-view.ts").PreviewConstructor<Model>
 
 	type AnyContentView<Model extends AnyContentValue> =
 		| ContentEditorView<Model>
@@ -126,13 +131,13 @@ export declare namespace lb {
 		| ContentPreview<Model>
 
 	type ContentEditorViewProps<Model extends AnyContentValue> =
-		import("./contents/content-view.ts").EditorViewProps<Model>
+		import("./files/content-view.ts").EditorViewProps<Model>
 
 	// type ContentMetadataViewProps<Model extends AnyContent> =
 	// 	import("./contents/views/content-view.ts").MetadataViewProps<Model>
 
 	type ContentPreviewProps<Model extends AnyContentValue> =
-		import("./contents/content-view.ts").PreviewProps<Model>
+		import("./files/content-view.ts").PreviewProps<Model>
 
 	namespace plugins {
 		type API = typeof import("./plugins/plugin-api.ts")

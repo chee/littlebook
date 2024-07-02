@@ -1,0 +1,14 @@
+@use "../api" as *;
+
+.submit-inline {
+	display: flex;
+	@include radius(s, right);
+	> input {
+		padding: get-space(1);
+		width: 100%;
+	}
+	> button {
+		@include radius(0, left);
+		@include radius(s, right);
+	}
+}

@@ -5,7 +5,7 @@ import type {ContentHandleChangePayload} from "../../web/src/types.ts"
 import {
 	EditorViewElement,
 	type EditorViewComponent,
-} from "../../web/src/contents/content-view.ts"
+} from "../../web/src/files/content-view.ts"
 
 import {
 	useCallback,
@@ -223,6 +223,5 @@ export class TldrawEditorElement extends EditorViewElement<TldrawFile> {
 	}
 	disconnectedCallback() {
 		this.root.unmount()
-		this.textContent = ""
 	}
 }

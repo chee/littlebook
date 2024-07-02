@@ -5,7 +5,7 @@ import {
 	EditorViewElement,
 	// ContentView,
 	type EditorViewComponent,
-} from "../../web/src/contents/content-view.ts"
+} from "../../web/src/files/content-view.ts"
 
 import {Counter} from "@automerge/automerge/slim/next"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
@@ -165,6 +165,5 @@ export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
 	disconnectedCallback() {
 		this.handle?.removeListener("change", this.render)
 		this.root.unmount()
-		this.textContent = ""
 	}
 }

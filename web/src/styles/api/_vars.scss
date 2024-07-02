@@ -1,0 +1,79 @@
+@use "sass:string";
+@use "sass:map";
+@use "sass:list";
+$custom-property-namespace: "littlebook" !default;
+
+@function get-var($name, $namespace: false) {
+	@if $namespace {
+		@if $name == default {
+			@return var(--#{$custom-property-namespace}-#{$namespace});
+		} @else {
+			@return var(--#{$custom-property-namespace}-#{$namespace}-#{$name});
+		}
+	}
+
+	@return var(--#{$custom-property-namespace}-#{$name});
+}
+
+@mixin set-var($name, $value, $namespace: false) {
+	@if $namespace {
+		@if $name == default {
+			--#{$custom-property-namespace}-#{$namespace}: #{$value};
+		} @else {
+			--#{$custom-property-namespace}-#{$namespace}-#{$name}: #{$value};
+		}
+	}
+	--#{$custom-property-namespace}-#{$name}: #{$value};
+}
+
+@mixin set-vars($variables, $namespace: "") {
+	@each $name, $value in $variables {
+		@include set-var($name, $value, $namespace);
+	}
+}
+
+@mixin set-root-var($name, $value, $namespace) {
+	:root {
+		@include set-var($name, $value, $namespace);
+	}
+}
+
+@mixin set-root-vars($variables, $namespace) {
+	:root {
+		@each $name, $value in $variables {
+			@include set-var($name, $value, $namespace);
+		}
+	}
+}
+
+@function self-reference($map, $namespace) {
+	@each $key, $_value in $map {
+		$map: map.set($map, $key, get-var($key, $namespace));
+	}
+	@return $map;
+}
+
+@mixin each-named-var(
+	$base-property-shorthands,
+	$property-suffix-shorthands,
+	$map
+) {
+	@each $short-property, $property in $base-property-shorthands {
+		@each $short-suffix, $suffixes in $property-suffix-shorthands {
+			@each $var-name, $value in $map {
+				@for $s from 1 through length($suffixes) {
+					$suffix: list.nth($suffixes, $s);
+					@if $var-name == "default" {
+						.#{$short-property}#{$short-suffix} {
+							#{$property}#{$suffix}: $value;
+						}
+					} @else {
+						.#{$short-property}#{$short-suffix}-#{$var-name} {
+							#{$property}#{$suffix}: $value;
+						}
+					}
+				}
+			}
+		}
+	}
+}

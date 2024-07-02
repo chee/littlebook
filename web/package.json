@@ -37,6 +37,7 @@
 		"codemirror": "^6.0.1",
 		"dockview-core": "^1.14.2",
 		"file-system-access": "^1.0.4",
+		"localforage": "^1.10.0",
 		"postcss": "^8.4.38",
 		"random": "^4.1.0",
 		"sass": "^1.77.6",
@@ -46,8 +47,9 @@
 		"solid-dockview": "^1.0.1",
 		"solid-element": "^1.8.0",
 		"solid-js": "^1.8.17",
+		"solid-new-window": "^0.0.4",
 		"solid-split-pane": "^0.0.5",
-		"styles": "link:src/ui/styles",
+		"styles": "link:src/styles",
 		"throttle-debounce": "^5.0.0",
 		"ua-parser-js": "^1.0.38",
 		"uuid": "^9.0.1"

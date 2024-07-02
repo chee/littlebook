@@ -1,0 +1,83 @@
+@use "styles/api" as *;
+
+.folder-card-item {
+	padding-inline: get-space(m);
+	padding-block: get-space(s);
+	position: relative;
+	overflow: hidden;
+
+	.card-item-name {
+		flex: 1;
+		text-align: left;
+		cursor: pointer;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 100%;
+		display: flex;
+		@include radius(m);
+
+		.editable-name {
+			align-items: center;
+			> input {
+				@include radius(s, left);
+				height: 50%;
+			}
+		}
+		> button {
+			text-align: left;
+			flex: 1;
+		}
+	}
+
+	&:not([open]) > summary::before {
+		content: "▶";
+		display: block;
+	}
+
+	&[open] > summary::before {
+		content: "▼";
+		display: block;
+	}
+
+	summary {
+		margin-left: calc((get-space(s) * -1) / 2);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		button {
+			cursor: pointer;
+		}
+	}
+
+	a {
+		padding-inline: 0.5rem;
+		color: var(--littlebook-line);
+	}
+
+	[aria-current="page"] {
+		background: var(--littlebook-primary);
+	}
+
+	.folder-card-item {
+		padding: get-space(xs);
+	}
+}
+
+.new-file-picker {
+	margin: 0;
+	position: absolute;
+	background: var(--littlebook-fill);
+	transform: translateX(-3rem) translateY(-0.5rem);
+	padding: 1rem;
+	z-index: 1000;
+	// @include shadow;
+	border: 2px solid var(--littlebook-line);
+	li button {
+		padding: 1rem;
+		&:hover {
+			background: var(--littlebook-primary-50);
+		}
+	}
+}

@@ -327,6 +327,9 @@ importers:
       file-system-access:
         specifier: ^1.0.4
         version: 1.0.4
+      localforage:
+        specifier: ^1.10.0
+        version: 1.10.0
       postcss:
         specifier: ^8.4.38
         version: 8.4.38
@@ -354,12 +357,15 @@ importers:
       solid-js:
         specifier: ^1.8.17
         version: 1.8.17
+      solid-new-window:
+        specifier: ^0.0.4
+        version: 0.0.4(solid-js@1.8.17)
       solid-split-pane:
         specifier: ^0.0.5
         version: 0.0.5
       styles:
-        specifier: link:src/ui/styles
-        version: link:src/ui/styles
+        specifier: link:src/styles
+        version: link:src/styles
       throttle-debounce:
         specifier: ^5.0.0
         version: 5.0.0
@@ -5766,6 +5772,11 @@ packages:
 
   solid-js@1.8.17:
     resolution: {integrity: sha512-E0FkUgv9sG/gEBWkHr/2XkBluHb1fkrHywUgA6o6XolPDCJ4g1HaLmQufcBBhiF36ee40q+HpG/vCZu7fLpI3Q==}
+
+  solid-new-window@0.0.4:
+    resolution: {integrity: sha512-Fhxu1evbof/3Ik/dtKr3Al5BobkITCJqOlPFhgQwM4wUaL7tI35mYBOQ4aDdAfTku5aQKUH6jzSG+gEfRlTS1Q==}
+    peerDependencies:
+      solid-js: ^1.8.11
 
   solid-refresh@0.6.3:
     resolution: {integrity: sha512-F3aPsX6hVw9ttm5LYlth8Q15x6MlI/J3Dn+o3EQyRTtTxidepSTwAYdozt01/YA+7ObcciagGEyXIopGZzQtbA==}
@@ -12581,6 +12592,10 @@ snapshots:
       csstype: 3.1.3
       seroval: 1.0.7
       seroval-plugins: 1.0.7(seroval@1.0.7)
+
+  solid-new-window@0.0.4(solid-js@1.8.17):
+    dependencies:
+      solid-js: 1.8.17
 
   solid-refresh@0.6.3(solid-js@1.8.17):
     dependencies:

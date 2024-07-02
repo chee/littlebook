@@ -1,6 +1,6 @@
-import {binary} from "../../../contents/coders.ts"
-import UniformType from "../../../contents/uniform-type.ts"
-import {PreviewElement} from "../../../contents/content-view.ts"
+import {binary} from "../../../files/content-coders.ts"
+import UniformType from "../../../files/uniform-type.ts"
+import {PreviewElement} from "../../../files/content-view.ts"
 
 class ImagePreview extends PreviewElement<Uint8Array> {
 	async blob() {

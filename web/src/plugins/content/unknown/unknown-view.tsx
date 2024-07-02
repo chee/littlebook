@@ -1,4 +1,4 @@
-import {EditorViewElement} from "../../../contents/content-view.ts"
+import {EditorViewElement} from "../../../files/content-view.ts"
 
 export class UnknownContent extends EditorViewElement<any> {
 	#file?: lb.File

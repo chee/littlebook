@@ -72419,7 +72419,7 @@ var init_dist_esm7 = __esm({
   }
 });
 
-// ../../web/src/contents/uniform-type.ts
+// ../../web/src/files/uniform-type.ts
 var UniformType = class _UniformType {
   constructor(identifier, description) {
     this.identifier = identifier;
@@ -73007,7 +73007,7 @@ var UniformType = class _UniformType {
   ]);
 };
 
-// ../../web/src/contents/content-view.ts
+// ../../web/src/files/content-view.ts
 var EditorViewElement = class extends HTMLElement {
   _doc;
   _handle;
@@ -73076,7 +73076,7 @@ var ContentViewRegistry = class {
 var editorViewRegistry = new ContentViewRegistry();
 var previewRegistry = new ContentViewRegistry();
 
-// ../../web/src/contents/coders.ts
+// ../../web/src/files/content-coders.ts
 var CodingError = class extends Error {
 };
 var EncodingError = class extends CodingError {
@@ -73604,7 +73604,6 @@ var TldrawEditorElement = class extends EditorViewElement {
   }
   disconnectedCallback() {
     this.root.unmount();
-    this.textContent = "";
   }
 };
 

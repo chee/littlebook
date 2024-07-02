@@ -1,5 +1,0 @@
-@use "../base/spacing" as *;
-
-.container > * + * {
-	margin-top: get-space(2);
-}

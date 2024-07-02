@@ -1,0 +1,66 @@
+@use "../../styles/api" as *;
+
+$button-namespace: "button" !default;
+
+@include set-root-vars(
+	(
+		border-width: 2px,
+		color: get-color("white"),
+	),
+	$button-namespace
+);
+
+@include set-root-color(fill, get-color("white"), button);
+@include set-root-color(line, get-color("black"), button);
+@include set-root-color(button-shadow, fade("black", 90%));
+
+.button {
+	transition: 0.2s box-shadow;
+	background: get-color(button-fill);
+	color: get-color(line, button);
+	display: inline-flex;
+	flex-direction: row;
+	gap: get-space(3);
+	padding-block: get-space(3);
+	padding-inline: get-space(4);
+	justify-content: space-evenly;
+	cursor: pointer;
+	@include radius(m);
+	font-family: get-var(family-sans);
+	@include set-shadow-direct(
+		(
+			x: 0,
+			y: 0,
+			spread: 3px,
+			offset: 1px,
+		)
+	);
+
+	&:not(.ghost:not(:hover)) {
+		@include shadow;
+	}
+
+	&:hover {
+		@include set-shadow-var(color, fade("black", 85%));
+	}
+	&:active {
+		@include set-shadow-var(inset, "inset");
+		@include set-shadow-var(color, fade("black", 80%));
+	}
+
+	&.is-primary {
+		background: get-color(primary);
+		// color: get-color(white);
+	}
+	&.small {
+		font-size: 0.875em;
+		padding: get-space(2);
+	}
+}
+
+.buttons {
+	justify-content: space-evenly;
+	display: flex;
+	flex-direction: row;
+	gap: get-space(2);
+}

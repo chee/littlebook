@@ -1,8 +1,0 @@
-@use "../api" as *;
-
-.submit-inline {
-	display: flex;
-	> input {
-		padding: get-space(1);
-	}
-}

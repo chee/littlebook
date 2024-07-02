@@ -1,5 +1,5 @@
 import type {Repo} from "@automerge/automerge-repo"
-import {binary, coderRegistry} from "../contents/coders.ts"
+import {binary, coderRegistry} from "../files/content-coders.ts"
 import {createContentHandle} from "./contents.ts"
 import {
 	type DocTemplate,
@@ -11,7 +11,7 @@ import {addItemToFolder, getFolderHandle} from "./folders.ts"
 import UniformType, {
 	type MIMEType,
 	type UniformTypeIdentifier,
-} from "../contents/uniform-type.ts"
+} from "../files/uniform-type.ts"
 
 type FileTemplate = DocTemplate<lb.File> & {
 	contentType: UniformTypeIdentifier

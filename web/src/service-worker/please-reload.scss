@@ -1,0 +1,17 @@
+@use "styles/api" as *;
+
+.sw-please-reload {
+	position: fixed;
+	right: get-space(4);
+	bottom: get-space(4);
+	background: get-color("white");
+	gap: get-space(3);
+	display: flex;
+	flex-direction: column;
+	width: 10em;
+	z-index: 1000;
+	padding: get-space(4);
+	@include set-shadow-var(color, shade("rose", 20%));
+	@include shadow;
+	@include radius;
+}

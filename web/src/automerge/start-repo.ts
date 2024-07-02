@@ -3,7 +3,7 @@ import {BrowserWebSocketClientAdapter} from "@automerge/automerge-repo-network-w
 import {BroadcastChannelNetworkAdapter} from "@automerge/automerge-repo-network-broadcastchannel"
 import {IndexedDBStorageAdapter} from "@automerge/automerge-repo-storage-indexeddb"
 export default async function start() {
-	const storage = new IndexedDBStorageAdapter("littlebook")
+	const storage = new IndexedDBStorageAdapter("lb-docs")
 
 	const socky = new BrowserWebSocketClientAdapter(
 		import.meta.env.DEV ? "ws://localhost:11124" : "wss://star.littlebook.app",

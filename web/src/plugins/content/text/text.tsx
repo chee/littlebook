@@ -1,4 +1,4 @@
-import {EditorViewElement} from "../../../contents/content-view.ts"
+import {EditorViewElement} from "../../../files/content-view.ts"
 import "./text.scss"
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
 import {EditorView, lineNumbers} from "@codemirror/view"
@@ -11,8 +11,8 @@ import {
 } from "@codemirror/language"
 import UniformType, {
 	type UniformTypeIdentifier,
-} from "../../../contents/uniform-type.ts"
-import * as coders from "../../../contents/coders.ts"
+} from "../../../files/uniform-type.ts"
+import * as coders from "../../../files/content-coders.ts"
 
 const python = UniformType.create("public.python-script", "python code", [
 	UniformType.script,

@@ -1,0 +1,23 @@
+@forward "preflight";
+
+@forward "corners";
+@forward "sides";
+
+@forward "borders";
+@forward "colors";
+@forward "shadows";
+@forward "spacing";
+@forward "transforms";
+@forward "transitions";
+@forward "typography";
+
+@forward "box";
+@forward "button";
+@forward "container";
+@forward "form";
+
+@forward "themes";
+
+@use "../api" as *;
+
+@include set-root-vars($breakpoints, $breakpoint-namespace);

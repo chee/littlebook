@@ -1,15 +1,15 @@
 import UniformType, {
 	type ResolvableUniformTypes,
-} from "../contents/uniform-type.ts"
+} from "../files/uniform-type.ts"
 import {
 	editorViewRegistry,
 	previewRegistry,
 	type EditorViewConstructor,
 	type PreviewConstructor,
-} from "../contents/content-view.ts"
-import {coderRegistry} from "../contents/coders.ts"
+} from "../files/content-view.ts"
+import {coderRegistry} from "../files/content-coders.ts"
 
-// todo register a destructor at this moment.
+// todo register a destructor at this moment.s
 
 export function registerEditorView<T extends lb.AnyContentValue>(
 	types: ResolvableUniformTypes,
