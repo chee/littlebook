@@ -1,19 +1,6 @@
-import {makePersisted, type AsyncStorage} from "@solid-primitives/storage"
+import {makePersisted} from "@solid-primitives/storage"
 import {createStore, type SetStoreFunction} from "solid-js/store"
 import {createId} from "@paralleldrive/cuid2"
-
-// const forageStorage: AsyncStorage = {
-// 	getItem: forage.getItem,
-// 	setItem: (key, value) => {
-// 		forage.setItem(key, value)
-// 	},
-// 	key: forage.key,
-// 	clear: forage.clear,
-// 	get length() {
-// 		return forage.length()
-// 	},
-// 	removeItem: forage.removeItem,
-// }
 
 type PaneId = string & {"__item-pane-id": true}
 
@@ -27,6 +14,7 @@ export type UI = {
 	sidebars: {
 		primary: boolean
 		secondary: boolean
+		sizes: number[]
 	}
 	panes: ItemPane[]
 	activePaneId?: PaneId
@@ -39,6 +27,7 @@ export function createUI(id: lb.SpaceId): [get: UI, set: SetStoreFunction<UI>] {
 			sidebars: {
 				primary: false,
 				secondary: false,
+				sizes: [],
 			},
 			panes: [],
 			activePaneId: undefined,

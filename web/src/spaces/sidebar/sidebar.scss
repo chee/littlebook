@@ -14,16 +14,18 @@
 	bottom: 0;
 	overflow-y: auto;
 	height: 95vh;
-	width: 100%;
+	width: 100vw;
 	padding: 0;
-
 	bottom: 0;
+	min-width: 100vw;
 
 	&.primary {
 		left: 0;
+		padding-right: 0;
 	}
 	&.secondary {
 		right: 0;
+		padding-left: 0;
 	}
 
 	@include set-var(card-fill, get-color(sidebar-fill));
@@ -32,7 +34,7 @@
 		padding: get-space(s);
 		@include set-var(card-fill, get-color(fill));
 		@include set-var(card-radius, get-radius("l"));
-		width: 24%;
+		min-width: unset;
 	}
 
 	> * {

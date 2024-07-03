@@ -1,8 +1,8 @@
-import {For, Show, type ParentComponent} from "solid-js"
+import {Show, type ParentComponent} from "solid-js"
 import PrimarySidebar from "./sidebar/primary-sidebar.tsx"
 import SidebarToggle from "./sidebar/sidebar-toggle.tsx"
 import "./topnav.scss"
-import "./resize-handle.scss"
+import "./gutter.scss"
 import Sidebar from "./sidebar/sidebar.tsx"
 
 import {useUI} from "../ui/use-ui-state.tsx"
@@ -39,7 +39,12 @@ const SpacePage: ParentComponent = () => {
 				</section>
 			</header>
 			<div class="flex grow">
-				<SplitPane>
+				<SplitPane
+					sizes={ui.sidebars.sizes}
+					gutterClass="gutter"
+					onDragEnd={sizes => {
+						updateUI("sidebars", "sizes", sizes)
+					}}>
 					<Sidebar open={() => ui.sidebars.primary} which="primary">
 						<PrimarySidebar />
 					</Sidebar>
