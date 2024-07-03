@@ -20,6 +20,8 @@ export default function PrimarySidebar() {
 	const automerge = useAutomerge()
 	const [space, changeSpace] = useDocument<lb.Space>(() => automerge.home)
 	const lb = useLittlebookAPI()
+	const [ui, setUI] = useUI()
+	const activeItemId = () => getActiveItemId(ui)
 
 	return (
 		<Show when={space()}>
@@ -32,30 +34,30 @@ export default function PrimarySidebar() {
 				<CardItem icon="🗃️" title="someday" href="someday" />
 			</Card>
 			<Card
-				// title="folders"
+				title="documents"
 				headerAction={{
 					label: "create folder",
 					icon: "🆕",
 					action() {
-						const projectHandle = lb.folders.createHandle()
-						projectHandle?.doc().then(prj => {
-							if (prj) {
-								const change = lb.spaces.addFolder(prj.id)
+						const folderHandle = lb.folders.createHandle()
+						folderHandle?.doc().then(folder => {
+							if (folder) {
+								const change = lb.spaces.addFolder(folder.id)
 								change && changeSpace(change)
-								setTimeout(() => {
-									// route({
-									// 	shareId: ui.space.shareId.value,
-									// 	project: prj,
-									// })
-									// ui.projects.renaming.value = prj.id
-								})
+								selectItem(folder.id, ui, setUI)
 							}
 						})
 					},
 				}}>
 				<For each={space()?.items}>
 					{id => {
-						return <FolderCardItem id={id} parentId={space()!.id} />
+						return (
+							<FolderCardItem
+								id={id}
+								parentId={space()!.id}
+								active={activeItemId() == id}
+							/>
+						)
 					}}
 				</For>
 			</Card>
@@ -100,6 +102,7 @@ function FolderCardItem(props: {
 }) {
 	const [folder, changeFolder] = useDocument<lb.Folder>(() => props.id)
 	const lb = useLittlebookAPI()
+	const {repo} = useAutomerge()
 	const [showingNewPicker, toggleShowingNewPicker, setShowingNewPicker] =
 		createBoolean()
 	const fileTypes = [...coderRegistry.getAllTypes()]
@@ -115,6 +118,8 @@ function FolderCardItem(props: {
 
 	const detailsBox = () => detailsRef() && detailsRef()!.getBoundingClientRect()
 	const [ui, setUI] = useUI()
+
+	// todo the button in the summary is not clickable on safari
 	return (
 		<Show when={folder.latest}>
 			<details class="folder-card-item" ref={setDetailsRef}>
@@ -148,6 +153,25 @@ function FolderCardItem(props: {
 									left: detailsBox()?.right + "px",
 								}}>
 								<ul class="new">
+									<li>
+										<button
+											type="button"
+											onclick={async () => {
+												const newFolderHandle = lb.folders.createHandle()
+
+												newFolderHandle.doc().then(folder => {
+													setShowingNewPicker(false)
+													if (!folder) {
+														return
+													}
+
+													changeFolder(lb.folders.addItem(folder.id))
+													selectItem(folder.id, ui, setUI)
+												})
+											}}>
+											folder
+										</button>
+									</li>
 									<For each={fileTypes}>
 										{type => (
 											<li>
@@ -163,7 +187,7 @@ function FolderCardItem(props: {
 															},
 														)
 
-														// file && nav("documents/" + file.docSync()!.id)
+														selectItem(file.docSync()!.id, ui, setUI)
 														setShowingNewPicker(false)
 													}}>
 													{type.description}
@@ -186,15 +210,13 @@ function FolderCardItem(props: {
 												const fileHandle = lb.files.import(computerFile, bytes)
 
 												fileHandle.doc().then(file => {
-													file &&
-														changeFolder(
-															lb.documents.addItem(
-																fileHandle.documentId as lb.FileId,
-															),
-														)
+													setShowingNewPicker(false)
+													if (!file) {
+														return
+													}
+													changeFolder(lb.folders.addItem(file.id))
+													selectItem(file.id, ui, setUI)
 												})
-												// fileHandle && nav("documents/" + fileHandle.documentId)
-												setShowingNewPicker(false)
 											}}>
 											import
 										</button>
@@ -203,19 +225,24 @@ function FolderCardItem(props: {
 										<button
 											type="button"
 											onclick={async () => {
-												const newFolderHandle = lb.folders.createHandle()
+												const id = window.prompt(
+													"ok what's the id",
+												) as lb.ItemId
+												const itemHandle = repo.find<lb.Item>(id)
+												itemHandle.doc().then(item => {
+													setShowingNewPicker(false)
+													if (
+														!item ||
+														!["folder", "package", "file"].includes(item.type)
+													) {
+														return
+													}
 
-												newFolderHandle.doc().then(folder => {
-													folder &&
-														changeFolder(
-															lb.documents.addItem(
-																newFolderHandle.documentId as lb.FolderId,
-															),
-														)
+													changeFolder(lb.folders.addItem(item.id))
+													selectItem(item.id, ui, setUI)
 												})
-												setShowingNewPicker(false)
 											}}>
-											folder
+											share
 										</button>
 									</li>
 								</ul>

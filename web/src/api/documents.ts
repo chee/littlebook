@@ -31,7 +31,7 @@ export function getDocumentHandle<DocType extends lb.AnyDocument>(
 }
 
 export function addItemToDocument<DocType extends lb.AnyParentDocument>(
-	id: DocType["items"][number],
+	id: lb.FolderId,
 ) {
 	return (doc: DocType) => {
 		console.info(`adding item ${id} to ${doc.type} ${doc.id}`)

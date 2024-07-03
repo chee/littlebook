@@ -1,6 +1,7 @@
 .editable-name {
 	overflow: hidden;
 	text-overflow: ellipsis;
+	min-height: 1em;
 	> input {
 		width: 100%;
 	}

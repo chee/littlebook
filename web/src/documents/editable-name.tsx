@@ -11,7 +11,8 @@ interface EditableNameProps<T extends lb.NamedDocument> {
 	name: string
 	saveName(name: string): void
 }
-// todo pop up the renaming input in a pretty floating window with a shadow
+
+// todo render the input in a portal, so it doesn't matter what it's inside of
 export default function EditableName<T extends lb.NamedDocument>(
 	props: EditableNameProps<T>,
 ) {

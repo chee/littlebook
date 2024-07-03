@@ -59,7 +59,7 @@ export declare namespace lb {
 	type AnyDocument = Space | Package | Folder | File
 	type Item = File | Folder | Package
 
-	type AnyParentDocument = Space | Directory
+	type AnyParentDocument = Space | Package | Folder
 
 	type NamedDocument = Space | Package | Folder | File
 
