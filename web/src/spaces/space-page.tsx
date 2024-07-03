@@ -5,12 +5,12 @@ import "./topnav.scss"
 import "./resize-handle.scss"
 import Sidebar from "./sidebar/sidebar.tsx"
 
-import "dockview-core/dist/styles/dockview.css"
 import {useUI} from "../ui/use-ui-state.tsx"
 import FileViewer from "../files/file-viewer.tsx"
 import {getActiveItemId, toggleSidebar} from "../ui/ui-state.ts"
 import useDocument from "../documents/use-document.ts"
 import InfoPanel from "../files/info-panel.tsx"
+import {SplitPane} from "solid-split-pane"
 
 const SpacePage: ParentComponent = () => {
 	const [ui, updateUI] = useUI()
@@ -39,21 +39,23 @@ const SpacePage: ParentComponent = () => {
 				</section>
 			</header>
 			<div class="flex grow">
-				<Sidebar open={() => ui.sidebars.primary} which="primary">
-					<PrimarySidebar />
-				</Sidebar>
-				<main id="main" class="flex grow">
-					<Show when={fileId()}>
-						<FileViewer fileId={fileId()} />
-					</Show>
-				</main>
-				<Sidebar open={() => ui.sidebars.secondary} which="secondary">
-					<Show when={fileId()}>
-						<InfoPanel fileId={fileId()} />
-					</Show>
+				<SplitPane>
+					<Sidebar open={() => ui.sidebars.primary} which="primary">
+						<PrimarySidebar />
+					</Sidebar>
+					<main id="main" class="flex grow">
+						<Show when={fileId()}>
+							<FileViewer fileId={fileId()} />
+						</Show>
+					</main>
+					<Sidebar open={() => ui.sidebars.secondary} which="secondary">
+						<Show when={fileId()}>
+							<InfoPanel fileId={fileId()} />
+						</Show>
 
-					{/* <MetadataViewer /> */}
-				</Sidebar>
+						{/* <MetadataViewer /> */}
+					</Sidebar>
+				</SplitPane>
 			</div>
 		</>
 	)

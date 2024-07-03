@@ -53,7 +53,7 @@ repo.addListener("document", doc => {
 		console.info("new: ", doc.handle.documentId)
 	}
 	doc.handle.addListener("change", change => {
-		console.info(change.patchInfo)
+		console.info("change", change.handle.documentId)
 	})
 })
 

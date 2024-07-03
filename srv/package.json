@@ -6,7 +6,9 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"start": "tsc && DEBUG=automerge*,localfirst* node .",
+		"dev:w": "tsc -w",
+		"dev:srv": "DEBUG=automerge*,localfirst* node .",
+		"dev": "pnpm run /dev:.*/",
 		"mk": "tsc"
 	},
 	"keywords": [],
@@ -32,8 +34,5 @@
 		"kysely": "^0.27.3",
 		"typescript": "^5.2.2",
 		"ws": "^8.17.0"
-	},
-	"devDependencies": {
-		"ts-node": "^10.9.2"
 	}
 }

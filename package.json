@@ -6,7 +6,7 @@
 	"scripts": {
 		"mk": "pnpm -r mk",
 		"test": "pnpm -r t && node t",
-		"dev": "pnpm -F srv -F web dev"
+		"dev": "pnpm run --parallel -r dev"
 	},
 	"keywords": [],
 	"author": "",

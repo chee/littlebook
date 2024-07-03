@@ -11,7 +11,11 @@ import {Counter} from "@automerge/automerge/slim/next"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 
 // internal to the plugin
-import type {ExcalidrawImperativeAPI} from "@excalidraw/excalidraw/types/types.d.ts"
+import type {
+	AppState,
+	BinaryFiles,
+	ExcalidrawImperativeAPI,
+} from "@excalidraw/excalidraw/types/types.d.ts"
 import type {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types.d.ts"
 import {
 	useCallback,
@@ -24,7 +28,11 @@ import {
 } from "react"
 
 import {throttle} from "throttle-debounce"
-import type {ExcalidrawJSON, MergeableExcalidrawElement} from "./shared.ts"
+import type {
+	ExcalidrawJSON,
+	MergeableExcalidrawElement,
+	WriteableExcalidrawElement,
+} from "./shared.ts"
 import {createRoot} from "react-dom/client"
 
 const sumVersion = (
@@ -32,19 +40,47 @@ const sumVersion = (
 	e: ExcalidrawElement | MergeableExcalidrawElement,
 ) => v + e.version.valueOf()
 
-function excalidrawToAutomerge(element: ExcalidrawElement) {
-	return {
-		...structuredClone(element),
-		customData: element.customData || null,
-		version: new Counter(element.version),
-	} as unknown as MergeableExcalidrawElement
+function merge(target: any, source: any) {
+	for (const [key, value] of Object.entries(source)) {
+		if (key == "version" || key == "versionNonce") {
+			if (typeof value == "number" && target[key]?.valueOf() != value) {
+				target[key] = new Counter(value)
+			}
+		} else if (["number", "string", "boolean"].includes(typeof value)) {
+			if (target[key] != source[key]) {
+				target[key] = source[key]
+			}
+		} else if (value == null) {
+			if (target[key] !== null) {
+				target[key] = null
+			}
+		} else if (Array.isArray(value)) {
+			if (!target[key]) {
+				target[key] = []
+			}
+			value.forEach((src, i) => {
+				if (target[key][i]) {
+					merge(target[key][i], src)
+				} else {
+					target[key][i] = src
+				}
+			})
+		} else {
+			if (target[key]) {
+				merge(target[key], value)
+			} else {
+				target[key] = value
+			}
+		}
+	}
 }
 
 function automergeToExcalidraw(element: MergeableExcalidrawElement) {
 	return {
 		...element,
-		customData: element.customData || null,
+		customData: element.customData || undefined,
 		version: element.version.valueOf(),
+		versionNonce: element.version.valueOf(),
 	} as unknown as ExcalidrawElement
 }
 
@@ -88,22 +124,46 @@ const ExcalidrawView: EditorViewComponent<
 	}, [value])
 
 	const onchange = useCallback(
-		throttle(500, (elements, appState, files) => {
-			// todo snapshot!
+		throttle(
+			10,
+			(
+				elements: readonly ExcalidrawElement[],
+				appState: AppState,
+				files: BinaryFiles,
+			) => {
+				// todo snapshot!
 
-			change(doc => {
-				if (!doc.value?.elements) return
-				const contentVersion = doc.value.elements.reduce(sumVersion, 0) || 0
-				const excaliVersion = elements.reduce(sumVersion, 0) || 0
-				if (excaliVersion > contentVersion) {
-					// content.value.appState = appState
-					// content.value.files = files
-					doc.value.elements = elements.map(
-						excalidrawToAutomerge,
-					) as AutomergeList<MergeableExcalidrawElement>
-				}
-			})
-		}),
+				change(doc => {
+					if (!doc.value?.elements) return
+					const contentVersion = doc.value.elements.reduce(sumVersion, 0) || 0
+					const excaliVersion = elements.reduce(sumVersion, 0) || 0
+					if (excaliVersion > contentVersion) {
+						// todo do i need to make it possible for a content view to
+						// create and manage its own entire automerge documents???
+						// i can't be keeping massive images as a string!
+
+						//merge(doc.value.files, files)
+						for (const element of elements) {
+							const target = doc.value.elements.find(el => el.id == element.id)
+							if (target) {
+								merge(target, element)
+							} else {
+								const target = {}
+								merge(target, element)
+								doc.value.elements.push(target as WriteableExcalidrawElement)
+							}
+						}
+						if (doc.value.elements.length > elements.length) {
+							for (const [index, target] of doc.value.elements.entries()) {
+								if (!elements.find(e => e.id == target.id)) {
+									doc.value.elements.deleteAt(index)
+								}
+							}
+						}
+					}
+				})
+			},
+		),
 		[],
 	)
 
