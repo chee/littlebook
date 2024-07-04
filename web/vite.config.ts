@@ -42,7 +42,18 @@ export const config: UserConfig = {
 				type: "module",
 			},
 		}),
-		solid(),
+		solid({
+			babel: {
+				plugins: [
+					[
+						"@locator/babel-jsx/dist",
+						{
+							env: "development",
+						},
+					],
+				],
+			},
+		}),
 		devtools({
 			autoname: true,
 		}),
