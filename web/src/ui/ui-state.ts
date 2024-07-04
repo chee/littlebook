@@ -38,8 +38,23 @@ export function createUI(): [get: UI, set: SetStoreFunction<UI>] {
 
 type UpdateUI = SetStoreFunction<UI>
 
-export function toggleSidebar(which: "primary" | "secondary", set: UpdateUI) {
-	return set("sidebars", which, val => !val)
+export function toggleSidebar(
+	which: "primary" | "secondary",
+	ui: UI,
+	set: UpdateUI,
+) {
+	set("sidebars", which, val => !val)
+	if (which == "primary") {
+		set("sidebars", "sizes", 0, ui.sidebars.primary ? 20 : 0)
+	}
+	if (which == "secondary") {
+		set("sidebars", "sizes", 2, ui.sidebars.secondary ? 20 : 0)
+	}
+	const total = ui.sidebars.sizes.reduce((a, b) => a + b)
+	if (total != 100) {
+		const [left, , right] = ui.sidebars.sizes
+		set("sidebars", "sizes", 1, 100 - left - right)
+	}
 }
 
 export function getItemId(ui: UI, paneId: PaneId) {

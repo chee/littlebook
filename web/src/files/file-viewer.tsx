@@ -17,7 +17,7 @@ export default function FileViewer(props: ContentViewerProps) {
 		Boolean(file.latest && previewRegistry.getFirst(file.latest.contentType))
 
 	return (
-		<div class="flex grow content-view-area">
+		<div class="flex grow content-view-area" style={{width: "100%"}}>
 			<Switch>
 				<Match when={file.latest && (hasEditorView() || !hasPreview())}>
 					<ContentEditor fileId={file.latest!.id} />

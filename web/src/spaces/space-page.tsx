@@ -1,4 +1,4 @@
-import {Suspense, type ParentComponent} from "solid-js"
+import {Show, Suspense, type ParentComponent} from "solid-js"
 import PrimarySidebar from "./sidebar/primary-sidebar.tsx"
 import SidebarToggle from "./sidebar/sidebar-toggle.tsx"
 import Sidebar from "./sidebar/sidebar.tsx"
@@ -26,41 +26,52 @@ const SpacePage: ParentComponent = () => {
 				<section class="topnav-left">
 					<SidebarToggle
 						open={() => ui.sidebars.primary}
-						toggle={() => toggleSidebar("primary", updateUI)}
+						toggle={() => toggleSidebar("primary", ui, updateUI)}
 					/>
 				</section>
 				<section class="topnav-middle" />
 				<section class="topnav-right">
-					<SidebarToggle
-						open={() => ui.sidebars.secondary}
-						flip={true}
-						toggle={() => toggleSidebar("secondary", updateUI)}
-					/>
+					<Show when={fileId()}>
+						<SidebarToggle
+							open={() => ui.sidebars.secondary}
+							flip={true}
+							toggle={() => toggleSidebar("secondary", ui, updateUI)}
+						/>
+					</Show>
 				</section>
 			</header>
 			<div class="flex grow split">
 				<Split
-					sizes={ui.sidebars.sizes.map(n => n || 33)}
-					// withInstance={split => {
-					// 	console.log(split)
-					// }}
-
+					sizes={ui.sidebars.sizes}
+					snapOffset={200}
+					gutterAlign="end"
+					minSize={[0, 300, 0]}
 					onDragEnd={sizes => {
+						const [left, _middle, right] = sizes
+
+						if (Math.floor(left) == 0) {
+							updateUI("sidebars", "primary", false)
+							ui.sidebars.primary = false
+						}
+						if (Math.floor(right) == 0) {
+							updateUI("sidebars", "secondary", false)
+							ui.sidebars.secondary = false
+						}
 						updateUI("sidebars", "sizes", sizes)
 					}}>
-					<Sidebar open={() => ui.sidebars.primary} which="primary">
+					<Sidebar which="primary" open={() => ui.sidebars.primary}>
 						<PrimarySidebar />
 					</Sidebar>
-					<main id="main" class="flex grow main">
+					<main id="main" class="main flex">
 						<Suspense>
 							<FileViewer fileId={fileId()} />
 						</Suspense>
 					</main>
-					<Sidebar open={() => ui.sidebars.secondary} which="secondary">
+					<Sidebar which="secondary" open={() => ui.sidebars.secondary}>
 						<Suspense>
 							<InfoPanel fileId={fileId()} />
 						</Suspense>
-
+						{/* <NoteEditor /> */}
 						{/* <MetadataViewer /> */}
 					</Sidebar>
 				</Split>
