@@ -1,9 +1,8 @@
 import {defineConfig, type UserConfig} from "vite"
 import {VitePWA as pwa} from "vite-plugin-pwa"
 import wasm from "vite-plugin-wasm"
-import solidPlugin from "vite-plugin-solid"
+import solid from "vite-plugin-solid"
 import devtools from "solid-devtools/vite"
-
 export const config: UserConfig = {
 	define: {
 		"process.env.IS_PREACT": JSON.stringify("true"),
@@ -43,10 +42,10 @@ export const config: UserConfig = {
 				type: "module",
 			},
 		}),
+		solid(),
 		devtools({
 			autoname: true,
 		}),
-		solidPlugin(),
 	],
 	build: {
 		outDir: "output",
