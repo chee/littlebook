@@ -6,6 +6,7 @@ import {
 	createEffect,
 } from "solid-js"
 import split, {type Options, type Instance} from "split.js"
+export type {Instance as SplitInstance}
 
 const Split: ParentComponent<
 	{
