@@ -63,14 +63,13 @@
 		max-width: 0;
 		overflow: hidden;
 		padding: 0;
-		transition: max-width 0.2s linear, padding 0s 0.2s;
 		display: none;
 		@include respond-to-m {
 			display: flex;
 		}
 	}
 
-	transition: max-width 0.2s linear;
+	transition: width 0.05s linear;
 }
 
 .sidebar-toggle {
