@@ -1,4 +1,13 @@
-import {For, Match, Show, Switch, createEffect, createSignal} from "solid-js"
+import {
+	For,
+	Match,
+	Show,
+	Suspense,
+	Switch,
+	createEffect,
+	createSignal,
+	onMount,
+} from "solid-js"
 import {useLittlebookAPI} from "../../api/use-api.ts"
 import {useAutomerge} from "../../automerge/use-automerge.ts"
 import useDocument from "../../documents/use-document.ts"
@@ -25,7 +34,7 @@ export default function PrimarySidebar() {
 	const activeItemId = () => getActiveItemId(ui)
 
 	return (
-		<Show when={space()}>
+		<Suspense>
 			<Card>
 				<CardItem icon="📥" title="inbox" href="inbox" />
 			</Card>
@@ -38,7 +47,7 @@ export default function PrimarySidebar() {
 				title="documents"
 				headerAction={{
 					label: "create folder",
-					icon: "🆕",
+					icon: "➕",
 					action() {
 						const folderHandle = lb.folders.createHandle()
 						folderHandle?.doc().then(folder => {
@@ -62,7 +71,7 @@ export default function PrimarySidebar() {
 					}}
 				</For>
 			</Card>
-		</Show>
+		</Suspense>
 	)
 }
 
@@ -125,7 +134,7 @@ function FolderCardItem(props: {
 
 	// todo the button in the summary is not clickable on safari
 	return (
-		<Show when={folder.latest}>
+		<Suspense>
 			<details class="folder-card-item" ref={setDetailsRef}>
 				<summary>
 					<button
@@ -133,10 +142,10 @@ function FolderCardItem(props: {
 						onclick={() => selectItem(folder.latest!.id, ui, setUI)}
 						aria-current={props.active ? "page" : "false"}
 						class="card-item-name">
-						{folder.latest!.icon || ""}
+						{folder.latest?.icon || ""}
 						<EditableName
 							id={props.id}
-							name={folder.latest!.name}
+							name={folder.latest?.name || ""}
 							saveName={name => {
 								changeFolder(folder => {
 									folder.name = name
@@ -154,7 +163,7 @@ function FolderCardItem(props: {
 								class="new-file-picker"
 								style={{
 									top: detailsBox()?.top + "px",
-									left: detailsBox()?.left + "px",
+									left: detailsBox()?.right + "px",
 								}}>
 								<ul class="new">
 									<li>
@@ -255,7 +264,7 @@ function FolderCardItem(props: {
 					</Show>
 				</summary>
 				<ul>
-					<For each={folder.latest!.items}>
+					<For each={folder.latest?.items}>
 						{id => (
 							<li>
 								<ItemCardLink
@@ -268,7 +277,7 @@ function FolderCardItem(props: {
 					</For>
 				</ul>
 			</details>
-		</Show>
+		</Suspense>
 	)
 }
 

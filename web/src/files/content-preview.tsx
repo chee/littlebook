@@ -62,31 +62,31 @@ export default function ContentPreview(props: {fileId: lb.FileId}) {
 		) : null
 
 	return (
-		<Show
-			when={
-				Preview() &&
-				content.latest &&
-				"value" in content.latest &&
-				contentHandle()
-			}>
-			<div class="content-preview">
-				<ErrorBoundary
-					fallback={(error, reset) => {
-						createEffect(
-							on([() => props.fileId], () => {
-								reset()
-							}),
-						)
-						return <SomethingWentWrong error={error} />
-					}}>
-					<Suspense
-						fallback={
-							<div class="box content-preview content-preview--loading content-preview--file-loading" />
+		<div class="content-preview">
+			<ErrorBoundary
+				fallback={(error, reset) => {
+					createEffect(
+						on([() => props.fileId], () => {
+							reset()
+						}),
+					)
+					return <SomethingWentWrong error={error} />
+				}}>
+				<Suspense
+					fallback={
+						<div class="box content-preview content-preview--loading content-preview--file-loading" />
+					}>
+					<Show
+						when={
+							Preview() &&
+							content.latest &&
+							"value" in content.latest &&
+							contentHandle()
 						}>
 						<Preview />
-					</Suspense>
-				</ErrorBoundary>
-			</div>
-		</Show>
+					</Show>
+				</Suspense>
+			</ErrorBoundary>
+		</div>
 	)
 }

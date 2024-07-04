@@ -1,7 +1,11 @@
 @use "styles" as *;
 
 :root {
-	--sidebar-color-fill: var(--color-paper-100);
+	--sidebar-color-fill: white;
+	@include respond-to-m {
+		--sidebar-color-fill: var(--color-paper-100);
+	}
+
 	--sidebar-color-line: black;
 	@include dark {
 		--sidebar-color-fill: black;
@@ -14,10 +18,7 @@
 	color: var(--sidebar-color-line);
 	display: flex;
 	flex-direction: column;
-	gap: var(--space-l);
-	@include respond-to-s {
-		gap: var(--space-m);
-	}
+	gap: var(--space-m);
 	top: 0;
 	bottom: 0;
 	overflow-y: auto;

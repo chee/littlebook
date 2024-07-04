@@ -1,13 +1,12 @@
+import "solid-devtools"
 import "./littlebook.scss"
 
 import {MetaProvider, Title} from "@solidjs/meta"
-
 import {Show, Suspense, lazy} from "solid-js"
 
 import {AutomergeContext, getAutomergeState} from "./automerge/use-automerge.ts"
 
 const SpacePage = lazy(() => import("./spaces/space-page.tsx"))
-
 import excalidraw from "@littlebook/excalidraw"
 import text from "./plugins/content/text/text.tsx"
 import media from "./plugins/content/media/media.tsx"
@@ -29,7 +28,6 @@ for (const plugin of plugins) {
 
 export default function Littlebook() {
 	const [automerge, _controlAutomerge] = getAutomergeState()
-
 	return (
 		<MetaProvider>
 			<Title>littlebook</Title>
