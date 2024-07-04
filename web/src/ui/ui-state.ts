@@ -10,7 +10,6 @@ type ItemPane = {
 }
 
 export type UI = {
-	id: lb.SpaceId
 	sidebars: {
 		primary: boolean
 		secondary: boolean
@@ -20,10 +19,9 @@ export type UI = {
 	activePaneId?: PaneId
 }
 
-export function createUI(id: lb.SpaceId): [get: UI, set: SetStoreFunction<UI>] {
+export function createUI(): [get: UI, set: SetStoreFunction<UI>] {
 	return makePersisted(
 		createStore<UI>({
-			id,
 			sidebars: {
 				primary: false,
 				secondary: false,
