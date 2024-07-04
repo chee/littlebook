@@ -142,10 +142,17 @@ const ExcalidrawView: EditorViewComponent<
 						// i can't be keeping massive images as a string!
 
 						//merge(doc.value.files, files)
-						for (const element of elements) {
-							const target = doc.value.elements.find(el => el.id == element.id)
+						for (const [index, element] of elements.entries()) {
+							const targetIndex = doc.value.elements.findIndex(
+								el => el.id == element.id,
+							)
+							const target = doc.value.elements.at(targetIndex)
 							if (target) {
 								merge(target, element)
+								if (index !== targetIndex) {
+									doc.value.elements.deleteAt(targetIndex)
+									doc.value.elements.insertAt(index, target)
+								}
 							} else {
 								const target = {}
 								merge(target, element)
