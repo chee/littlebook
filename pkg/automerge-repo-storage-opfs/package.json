@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@automerge/automerge-repo": "^1.0.19",
 		"conventional-github-releaser": "^3.1.5",
+		"file-system-access": "^1.0.4",
 		"standard-version": "^9.5.0",
 		"typescript": "^5.3.3"
 	},
