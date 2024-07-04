@@ -1,11 +1,12 @@
 import {type Resource, createEffect, createResource, on} from "solid-js"
 
-import type {ChangeFn, Doc} from "@automerge/automerge-repo"
+import type {ChangeFn, Doc, DocHandle} from "@automerge/automerge-repo"
 import useHandle from "../automerge/use-handle"
 
 type UseDocument<T extends lb.AnyDocument> = [
 	Resource<Doc<T> | undefined>,
 	(change: ChangeFn<T>) => void,
+	() => DocHandle<T> | undefined,
 ]
 
 export default function useDocument<T extends lb.AnyDocument>(
@@ -33,5 +34,6 @@ export default function useDocument<T extends lb.AnyDocument>(
 		(change: ChangeFn<T>) => {
 			handle()?.change(change)
 		},
+		handle,
 	]
 }
