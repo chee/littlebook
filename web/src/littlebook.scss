@@ -14,5 +14,12 @@
 		background: black;
 		color: white;
 	}
-	width: 100%;
+}
+
+.primary.sidebar[aria-expanded="false"] + .gutter {
+	width: 0 !important;
+}
+
+.gutter:has(+ .secondary.sidebar[aria-expanded="false"]) {
+	width: 0 !important;
 }
