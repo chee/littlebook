@@ -1,6 +1,5 @@
 import type {Repo} from "@automerge/automerge-repo"
 import {CodingError, coderRegistry} from "../files/content-coders.ts"
-import type {AnyContent} from "../global.js"
 import type {UniformTypeIdentifier} from "../files/uniform-type.ts"
 
 export function createContentHandle<ContentType extends lb.AnyContentValue>(
@@ -13,11 +12,14 @@ export function createContentHandle<ContentType extends lb.AnyContentValue>(
 	return handle
 }
 
+// todo this should probably be an async function that operates on handles
+// maybe, idk , or no
+
 export function recodeContent(
 	repo: Repo,
 	sourceType: UniformTypeIdentifier,
 	targetType: UniformTypeIdentifier,
-	source: lb.Content<AnyContent>,
+	source: lb.Content<lb.AnyContentValue>,
 ) {
 	const sourceCoder = coderRegistry.getFirst(sourceType)
 	const targetCoder = coderRegistry.getFirst(targetType)

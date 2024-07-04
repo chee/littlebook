@@ -1,6 +1,6 @@
 import {useLittlebookAPI} from "../api/use-api.ts"
 import useDocument from "../documents/use-document.ts"
-import {For, Show} from "solid-js"
+import {For, Show, createEffect} from "solid-js"
 import useContent from "./use-content.ts"
 import UniformType from "./uniform-type.ts"
 
@@ -11,18 +11,21 @@ export default function InfoPanel(props: {
 	const lb = useLittlebookAPI()
 	const [file, changeFile] = useDocument<lb.File>(() => props.fileId)
 
-	const [content] = useContent(() => file()?.content)
+	const [, , contentHandle] = useContent(() => file.latest?.content)
 
-	const switchContent = (to: UniformType) => {
-		const from = file()?.contentType
+	const switchContent = async (to: UniformType) => {
+		const from = file.latest?.contentType
+
 		if (!from) {
 			return
 		}
 
+		const content = await contentHandle()?.doc()
+
 		const convertedContentHandle = lb?.contents.recode(
 			from,
 			to.identifier,
-			content()!,
+			content!,
 		)
 
 		if (convertedContentHandle instanceof Error) {
