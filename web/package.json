@@ -58,6 +58,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.1",
+		"@locator/babel-jsx": "^0.4.3",
 		"@oddbird/blend": "^0.2.4",
 		"@types/micromatch": "^4.0.7",
 		"@types/ua-parser-js": "^0.7.39",
