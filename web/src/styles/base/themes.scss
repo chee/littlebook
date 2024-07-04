@@ -1,86 +1,54 @@
 @use "../api" as *;
-@use "colors" as *;
 @use "sass:list";
 
-$semantic-color-names: paper primary secondary;
-$status-color-names: good bad info warning;
-$use-case-color-names: fill line link;
-$theme-color-names: list.join(
-	list.join($semantic-color-names, $status-color-names),
-	$use-case-color-names
-);
+$color-scale: 50 100 200 300 400 500 600 700 800 900 950;
 
-@each $color in $theme-color-names {
-	@include set-up-color($color);
-	@each $scale-value in $color-scale {
-		.has-#{$color}-#{$scale-value}-background {
-			background: get-color(#{$color}-#{$scale-value});
-		}
-		.has-#{$color}-#{$scale-value}-text {
-			color: get-color(#{$color}-#{$scale-value});
-		}
-		.with-#{$color}-#{$scale-value}-background {
-			@include set-var(fill, #{$color}-#{$scale-value}, $color-namespace);
-		}
-		.with-#{$color}-#{$scale-value}-text {
-			@include set-var(line, #{$color}-#{$scale-value}, $color-namespace);
-		}
-	}
-	// @each $lightness in $color-scale {
-	// 	@debug #{$color}-#{$lightness};
-	// 	$scale: (1000 - $lightness);
-	// 	$step: math.div($scale, 10);
-	// 	@debug lighness $lightness scale $scale step $step;
-	// 	@include set-root-var(
-	// 		#{$color}-#{$scale},
-	// 		color-mix(in oklch, get-color($color) #{$step * 1%}, get-color(fill)),
-	// 		// okget-color($color) #{$lightness * 1%} c h,
-	// 		// color-mix(in srgb, get-color($color))
-	// 		$color-namespace
-	// 	);
-	// }
-}
+$theme-names: cherries;
 
 @mixin alias($theme-color, $palette-color) {
-	@include set-var($theme-color, get-color($palette-color), $color-namespace);
-	@include set-up-color($theme-color);
+	--color-#{$theme-color}: var(--color-#{$palette-color});
 	@each $scale-value in $color-scale {
 		$scaled-color-name: #{$theme-color}-#{$scale-value};
-		@include set-up-color($scaled-color-name);
-		@include set-var(
-			$scaled-color-name,
-			get-color(#{$palette-color}-#{$scale-value}),
-			$color-namespace
+		--color-#{$scaled-color-name}: var(
+			--color-#{$palette-color}-#{$scale-value}
 		);
 	}
 }
 
-@mixin theme($theme-palette) {
+@mixin theme($theme-palette, $dark-palette: ()) {
 	@each $theme-color, $palette-color in $theme-palette {
 		@include alias($theme-color, $palette-color);
 	}
-}
-
-@mixin create-theme($theme-name, $palette) {
-	:root[theme="#{$theme-name}"] {
-		@include theme($palette);
+	@include dark {
+		@each $theme-color, $palette-color in $dark-palette {
+			@include alias($theme-color, $palette-color);
+		}
 	}
 }
 
-$base-theme: (
-	fill: "white",
-	line: "black",
-	link: "blue",
-	paper: "stone",
-	primary: "blue",
-	secondary: "stone",
-	good: "green",
-	bad: "red",
-	info: "yellow",
-	warning: "orange",
-) !default;
+@mixin create-theme($theme-name, $palette, $dark-palette: ()) {
+	$theme-names: list.append($theme-name, $theme-names);
+	[theme="#{$theme-name}"] {
+		@include theme($palette, $dark-palette);
+	}
+}
 
-@include set-root-vars($base-theme, $color-namespace);
+:root {
+	@include dark {
+		--color-fill: black;
+		--color-line: white;
+	}
+	--color-fill: white;
+	--color-line: black;
+	--color-link: var(--color-blue);
+	--color-paper: var(--color-stone);
+	--color-primary: var(--color-blue);
+	--color-secondary: var(--color-stone);
+	--color-good: var(--color-green);
+	--color-bad: var(--color-red);
+	--color-info: var(--color-yellow);
+	--color-warning: var(--color-orange);
+}
 
 :root:not([theme]),
 :root[theme="cherries"] {
@@ -98,36 +66,43 @@ $base-theme: (
 			bad: "pink",
 			info: "sky",
 			warning: "yellow",
+		),
+		(
+			fill: "black",
+			line: "white",
 		)
 	);
 }
 
 @include create-theme(
-	"mynt",
+	mynt,
 	(
-		"paper": "green",
-		"primary": "green",
-		"secondary": "teal",
+		paper: "green",
+		primary: "green",
+		secondary: "teal",
 	)
 );
 
 @include create-theme(
-	"sky",
+	sky,
 	(
-		"paper": "blue",
-		"primary": "sky",
-		"secondary": "stone",
+		paper: "blue",
+		primary: "sky",
+		secondary: "stone",
 	)
 );
 
-$scrollbar-width: thin !default;
-@include set-root-var(width, $scrollbar-width, scrollbar);
-$scrollbar-base-color: get-color(paper-900);
-$scrollbar-handle-color: get-color(paper-900);
-@include set-root-color(base, get-color(paper-200), scrollbar);
-@include set-root-color(handle, get-color(paper-700), scrollbar);
+:root {
+	--scrollbar-width: thin;
+	--scrollbar-color-base: var(--color-paper-200);
+	--scrollbar-color-handle: var(--color-paper-700);
+}
 
 * {
-	scrollbar-width: get-var(width, scrollbar);
-	scrollbar-color: get-color(scrollbar-handle) get-color(scrollbar-base);
+	scrollbar-width: var(--scrollbar-width);
+	scrollbar-color: var(--scrollbar-color-handle) var(--scrollbar-color-base);
+}
+
+:root {
+	--theme-names: $theme-names;
 }

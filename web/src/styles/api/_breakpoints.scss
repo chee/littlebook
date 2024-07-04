@@ -1,5 +1,3 @@
-@use "vars" as *;
-
 $breakpoints: (
 	"s": 490px,
 	"m": 740px,
@@ -14,37 +12,31 @@ $breakpoints: (
 
 @forward "sass-mq/mq";
 
-$breakpoint-namespace: "breakpoint";
-
-@function get-breakpoint($name) {
-	@return get-var($name, $breakpoint-namespace);
-}
-
-@mixin respond-to-s() {
+@mixin respond-to-s {
 	@include mq.mq($from: s) {
 		@content;
 	}
 }
 
-@mixin respond-to-m() {
+@mixin respond-to-m {
 	@include mq.mq($from: m) {
 		@content;
 	}
 }
 
-@mixin respond-to-l() {
+@mixin respond-to-l {
 	@include mq.mq($from: l) {
 		@content;
 	}
 }
 
-@mixin respond-to-xl() {
+@mixin respond-to-xl {
 	@include mq.mq($from: xl) {
 		@content;
 	}
 }
 
-@mixin respond-to-2xl() {
+@mixin respond-to-2xl {
 	@include mq.mq($from: 2xl) {
 		@content;
 	}

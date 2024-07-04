@@ -1,8 +1,9 @@
 @use "../styles/api" as *;
 
 .gutter {
+	background: var(--sidebar-color-fill);
 	width: 1px !important;
 	@include respond-to-m {
-		width: var(--littlebook-space-3) !important;
+		width: var(--space-3) !important;
 	}
 }

@@ -2,6 +2,15 @@ import {EditorViewElement} from "../../../files/content-view.ts"
 
 export class UnknownContent extends EditorViewElement<any> {
 	#file?: lb.File
+	constructor() {
+		super()
+		const style = document.createElement("style")
+		style.textContent = /*css*/ `
+			background: var(--content-color-fill);
+			color: var(--content-color-line);
+			padding: var(--space-4);
+		`
+	}
 	connectedCallback() {}
 
 	set file(file: lb.File) {
@@ -11,7 +20,7 @@ export class UnknownContent extends EditorViewElement<any> {
 
 	render() {
 		this.innerHTML = /*html*/ `
-			<ul class="has-white-background p-4">
+			<ul>
 				<li>
 					file name: <code>${this.#file?.name}</code>
 				</li>

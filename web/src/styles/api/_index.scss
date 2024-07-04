@@ -3,10 +3,3 @@
 @forward "breakpoints";
 @forward "shadows";
 @forward "themes";
-@forward "vars";
-
-@use "vars" as *;
-$space-namespace: "space" !default;
-@function get-space($name) {
-	@return get-var($name, $space-namespace);
-}

@@ -1,14 +1,22 @@
-@use "../../styles/api" as *;
+@use "styles" as *;
 
-@include set-root-color(sidebar-fill, get-color(paper-100));
+:root {
+	--sidebar-color-fill: var(--color-paper-100);
+	--sidebar-color-line: black;
+	@include dark {
+		--sidebar-color-fill: black;
+		--sidebar-color-line: white;
+	}
+}
 
 .sidebar {
-	background: get-color(sidebar-fill);
+	background: var(--sidebar-color-fill);
+	color: var(--sidebar-color-line);
 	display: flex;
 	flex-direction: column;
-	gap: get-space(l);
+	gap: var(--space-l);
 	@include respond-to-s {
-		gap: get-space(m);
+		gap: var(--space-m);
 	}
 	top: 0;
 	bottom: 0;
@@ -28,35 +36,37 @@
 		padding-left: 0;
 	}
 
-	@include set-var(card-fill, get-color(sidebar-fill));
-	@include set-var(card-radius, 0);
+	--card-color-fill: var(--color-fill);
+	--card-radius: 0;
+
 	@include respond-to-m {
-		padding: get-space(s);
-		@include set-var(card-fill, get-color(fill));
-		@include set-var(card-radius, get-radius("l"));
+		padding: var(--space-xs);
+		--card-radius: var(--radius-l);
 		min-width: unset;
 	}
 
 	> * {
-		@include set-shadow-var(color, transparent);
+		--shadow-color: transparent;
 		@include respond-to-m {
-			@include set-shadow-var(color, get-color("paper-200"));
+			--shadow-color: var(--color-paper-200);
 		}
 	}
 
-	// @include set-shadow(l);
-	// @include set-shadow-var(color, fade(paper-900, 50%));
-	// @include set-shadow-var(y, 0.5em);
-	// @include set-shadow-var(x, 0.4em);
-	// @include set-shadow-var(spread, 1em);
-	// @include shadow;
 	@include dark {
 		background: black;
 		color: white;
-		// @include set-shadow-var(color, black);
 	}
 
 	&[aria-expanded="false"] {
 		display: none;
+	}
+}
+
+.sidebar-toggle {
+	@include radius(m);
+	padding: 0;
+	margin: 2px;
+	&[aria-pressed="true"] {
+		background: var(--color-paper-300);
 	}
 }

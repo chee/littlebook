@@ -26,4 +26,4 @@ dev-dist/
 output/
 public/excalidraw-assets
 
-*.config.timestamp*.js
+*.config.*timestamp*js

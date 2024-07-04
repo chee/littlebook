@@ -42,10 +42,7 @@ export default function Reload() {
 							Reload
 						</button>
 					</Show>
-					<button
-						type="button"
-						class="has-primary-300-background button"
-						onclick={() => close()}>
+					<button type="button" class="primary button" onclick={() => close()}>
 						close
 					</button>
 				</div>

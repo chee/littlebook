@@ -15,6 +15,7 @@ import {Portal} from "solid-js/web"
 import {getActiveItemId, selectItem} from "../../ui/ui-state.ts"
 import {useUI} from "../../ui/use-ui-state.tsx"
 import EditableName from "../../documents/editable-name.tsx"
+import {createShortcut} from "@solid-primitives/keyboard"
 
 export default function PrimarySidebar() {
 	const automerge = useAutomerge()
@@ -115,6 +116,9 @@ function FolderCardItem(props: {
 	useClickOutside(detailsRef, () => {
 		setShowingNewPicker(false)
 	})
+	createShortcut(["Escape"], () => {
+		setShowingNewPicker(false)
+	})
 
 	const detailsBox = () => detailsRef() && detailsRef()!.getBoundingClientRect()
 	const [ui, setUI] = useUI()
@@ -150,7 +154,7 @@ function FolderCardItem(props: {
 								class="new-file-picker"
 								style={{
 									top: detailsBox()?.top + "px",
-									left: detailsBox()?.right + "px",
+									left: detailsBox()?.left + "px",
 								}}>
 								<ul class="new">
 									<li>

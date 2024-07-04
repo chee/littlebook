@@ -1,4 +1,4 @@
-@mixin dark() {
+@mixin dark {
 	:root[color-scheme="dark"] {
 		@content;
 	}

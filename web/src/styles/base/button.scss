@@ -1,60 +1,47 @@
-@use "../../styles/api" as *;
+@use "../api" as *;
 
-$button-namespace: "button" !default;
-
-@include set-root-vars(
-	(
-		border-width: 2px,
-		color: get-color("white"),
-	),
-	$button-namespace
-);
-
-@include set-root-color(fill, get-color("white"), button);
-@include set-root-color(line, get-color("black"), button);
-@include set-root-color(button-shadow, fade("black", 90%));
+:root {
+	--button-border-width: 2px;
+	--button-color-fill: white;
+	--button-color-line: black;
+	--button-color-shadow: var(--shadow-color);
+}
 
 .button {
 	transition: 0.2s box-shadow;
-	background: get-color(button-fill);
-	color: get-color(line, button);
+	background: var(--button-color-fill);
+	color: var(--button-color-line);
 	display: inline-flex;
 	flex-direction: row;
-	gap: get-space(3);
-	padding-block: get-space(3);
-	padding-inline: get-space(4);
+	gap: var(--space-3);
+	padding-block: var(--space-3);
+	padding-inline: var(--space-4);
 	justify-content: space-evenly;
 	cursor: pointer;
 	@include radius(m);
-	font-family: get-var(family-sans);
-	@include set-shadow-direct(
-		(
-			x: 0,
-			y: 0,
-			spread: 3px,
-			offset: 1px,
-		)
-	);
+	font-family: var(--family-sans);
+	--ring-width: 3px;
+	box-shadow: ring();
 
 	&:not(.ghost:not(:hover)) {
-		@include shadow;
+		box-shadow: ring(), shadow();
+		--ring-color: var(--button-color-line);
 	}
 
 	&:hover {
-		@include set-shadow-var(color, fade("black", 85%));
+		--shadow-color: fade(black, 85%);
 	}
 	&:active {
-		@include set-shadow-var(inset, "inset");
-		@include set-shadow-var(color, fade("black", 80%));
+		--shadow-inset: "inset";
+		--shadow-color: fade(black, 80%);
 	}
 
 	&.is-primary {
-		background: get-color(primary);
-		// color: get-color(white);
+		background: var(--color-primary);
 	}
 	&.small {
 		font-size: 0.875em;
-		padding: get-space(2);
+		padding: var(--space-2);
 	}
 }
 
@@ -62,5 +49,5 @@ $button-namespace: "button" !default;
 	justify-content: space-evenly;
 	display: flex;
 	flex-direction: row;
-	gap: get-space(2);
+	gap: var(--space-2);
 }

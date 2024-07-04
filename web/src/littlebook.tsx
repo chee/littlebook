@@ -2,11 +2,11 @@ import "./littlebook.scss"
 
 import {MetaProvider, Title} from "@solidjs/meta"
 
-import {Show, Suspense, createEffect} from "solid-js"
+import {Show, Suspense, lazy} from "solid-js"
 
 import {AutomergeContext, getAutomergeState} from "./automerge/use-automerge.ts"
 
-import SpacePage from "./spaces/space-page.tsx"
+const SpacePage = lazy(() => import("./spaces/space-page.tsx"))
 
 import excalidraw from "@littlebook/excalidraw"
 import text from "./plugins/content/text/text.tsx"
@@ -19,10 +19,10 @@ import PleaseReload from "./service-worker/please-reload.tsx"
 import {removeDirectory} from "./lib/opfs.ts"
 import {render} from "solid-js/web"
 import "@littlebook/tldraw/index.css"
-import {createUI} from "./ui/ui-state.ts"
 import {UIProvider} from "./ui/use-ui-state.tsx"
 const plugins = [excalidraw, text, media, unknown, books, tldraw]
 
+// todo add a manifest to plugins so they can be imported dynamically
 for (const plugin of plugins) {
 	plugin(pluginAPI)
 }

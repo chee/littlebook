@@ -1,40 +1,18 @@
-@use "../api" as *;
-@use "sass:math";
-@use "sass:map";
+:root {
+	--shadow-inset: "";
+	--shadow-x: 0;
+	--shadow-y: 4px;
+	--shadow-spread: 6px;
+	--shadow-offset: -1px;
+	--shadow-color-l: 0%;
+	--shadow-color-c: 0;
+	--shadow-color-h: 0;
+	--shadow-color-a: 0.9;
+	--shadow-color: oklch(
+		var(--shadow-color-l) var(--shadow-color-c) var(--shadow-color-h) /
+			var(var(--shadow-color-a))
+	);
 
-@include set-root-vars(map.get($shadows, default), $shadow-namespace);
-@include set-root-var(color, fade(black, 90%), shadow);
-@include set-root-var(inset, "", shadow);
-
-/* todo
-$ring-namespace: "namespace";
-$default-ring: (
-		"offset": 0,
-		inset: "",
-		color: get-color("highlight"),
-		size: 0,
-	)!default;
-
-@include set-root-vars(
-	$default-ring,
-	$ring-namespace
-);
-@function get-ring-var($prop) {
-	@return get-var($prop, $ring-namespace);
+	--ring-color: var(--color-primary);
+	--ring-width: 1px;
 }
-@mixin set-ring-var($prop, $value) {
-	@include set-var($prop, $value, $ring-namespace);
-}
-@mixin set-ring($ring) {
-	@include set-vars($ring, $ring-namespace);
-}
-
-@mixin ring() {
-	box-shadow: get-ring-var(inset) 0 0 0 get-ring-var(size) get-ring-var(color);
-}
-
-// todo
-.has-ring {
-}
-
- */

@@ -4,7 +4,7 @@
 	display: flex;
 	@include radius(s, right);
 	> input {
-		padding: get-space(1);
+		padding: var(--space-1);
 		width: 100%;
 	}
 	> button {

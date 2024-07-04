@@ -39,7 +39,8 @@ class CodemirrorTextEditorView extends EditorViewElement<string> {
 		style.textContent = /*css*/ `
 			:host {
 				height: 100%;
-				background: var(--littlebook-content-fill);
+				background: var(--content-color-fill);
+				color: var(--content-color-line);
 			}
 			.cm-editor {
 				height: 100%;

@@ -73,7 +73,7 @@ export default function ContentPreview(props: {fileId: lb.FileId}) {
 				<ErrorBoundary
 					fallback={(error, reset) => {
 						createEffect(
-							on([() => params.itemId], () => {
+							on([() => props.fileId], () => {
 								reset()
 							}),
 						)

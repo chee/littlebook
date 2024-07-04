@@ -1,8 +1,5 @@
 @forward "preflight";
 
-@forward "corners";
-@forward "sides";
-
 @forward "borders";
 @forward "colors";
 @forward "shadows";
@@ -17,7 +14,3 @@
 @forward "form";
 
 @forward "themes";
-
-@use "../api" as *;
-
-@include set-root-vars($breakpoints, $breakpoint-namespace);

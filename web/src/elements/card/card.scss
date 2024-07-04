@@ -1,21 +1,16 @@
-@use "../../styles/api" as *;
+@use "styles" as *;
 
-$card-namespace: card;
-@include set-root-vars(
-	(
-		radius: get-radius(l),
-	),
-	$card-namespace
-);
+:root {
+	--card-radius: var(--radius-l);
+	--card-color-fill: var(--color-fill);
+	--card-color-line: var(--color-line);
+}
 
-@include set-root-color(fill, get-color(fill), $card-namespace);
-@include set-root-color(line, get-color(line), $card-namespace);
 .card {
-	background: get-color(fill, $card-namespace);
-	color: get-color(line, $card-namespace);
-	border-radius: get-var(card-radius);
+	background: var(--card-color-fill);
+	color: var(--card-line);
+	border-radius: var(--card-radius);
 	display: block;
-	@include set-shadow;
 	@include shadow;
 }
 
@@ -25,33 +20,33 @@ $card-namespace: card;
 	align-items: center;
 	background: inherit;
 	color: inherit;
-	gap: get-space(1);
-	padding-inline: get-space(3);
-	padding-block: get-space(2);
+	gap: var(--space-1);
+	padding-inline: var(--space-3);
+	padding-block: var(--space-2);
 	width: 100%;
 
 	&:is(a, button)[aria-current="page"] {
-		background: get-color(primary-300);
+		background: var(--color-primary-300);
 		@include dark {
-			background: get-color(primary-800);
+			background: var(--color-primary-800);
 		}
 	}
 
 	&:is(a, button):not([aria-current="page"]):hover {
-		background: get-color(primary-50);
+		background: var(--color-primary-50);
 		@include dark {
-			background: get-color(primary-950);
+			background: var(--color-primary-950);
 		}
 	}
 
 	.card > &:first-child {
-		border-top-left-radius: get-var(card-radius);
-		border-top-right-radius: get-var(card-radius);
+		border-top-left-radius: var(--card-radius);
+		border-top-right-radius: var(--card-radius);
 	}
 
 	.card > &:last-child {
-		border-bottom-left-radius: get-var(card-radius);
-		border-bottom-right-radius: get-var(card-radius);
+		border-bottom-left-radius: var(--card-radius);
+		border-bottom-right-radius: var(--card-radius);
 	}
 
 	font-weight: 500;
@@ -60,10 +55,10 @@ $card-namespace: card;
 .card-header {
 	display: flex;
 	justify-content: space-between;
-	padding-inline: get-space(3);
-	padding-block: get-space(2);
+	padding-inline: var(--space-3);
+	padding-block: var(--space-2);
 	font-weight: 600;
 	font-size: 1.2rem;
 	border-bottom: 1px solid
-		color-mix(in oklch, get-color(secondary-100) 50%, get-color(card-fill));
+		mix(var(--color-secondary-100) 50%, var(--card-color-fill));
 }

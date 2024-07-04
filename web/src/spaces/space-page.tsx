@@ -23,14 +23,14 @@ const SpacePage: ParentComponent = () => {
 	return (
 		<>
 			<header class="space-header topnav">
-				<section class="pl-xs topnav-left">
+				<section class="topnav-left">
 					<SidebarToggle
 						open={() => ui.sidebars.primary}
 						toggle={() => toggleSidebar("primary", updateUI)}
 					/>
 				</section>
-				<section class="left-section topnav-middle" />
-				<section class="right-section pl-r topnav-right">
+				<section class="topnav-middle" />
+				<section class="topnav-right">
 					<SidebarToggle
 						open={() => ui.sidebars.secondary}
 						flip={true}
@@ -48,7 +48,7 @@ const SpacePage: ParentComponent = () => {
 					<Sidebar open={() => ui.sidebars.primary} which="primary">
 						<PrimarySidebar />
 					</Sidebar>
-					<main id="main" class="flex grow">
+					<main id="main" class="flex grow main">
 						<Show when={fileId()}>
 							<FileViewer fileId={fileId()} />
 						</Show>

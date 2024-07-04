@@ -1,1 +1,17 @@
-@use "styles";
+@use "styles/base";
+@use "styles/api" as *;
+
+// todo elsewhere
+:root {
+	--content-color-fill: var(--color-fill);
+	--content-color-line: var(--color-line);
+}
+
+#main {
+	// todo this should just be `color-paper` but then the theming stuff would need to be improved
+	background-color: var(--color-paper-100);
+	@include dark {
+		background: black;
+		color: white;
+	}
+}

@@ -1,21 +1,22 @@
-/*flex items-center justify-between sticky top-0 pt-1
-			z-40 w-full bg-paper border-b-1 border-paper-300 bg-paper-200 dark:bg-paper-950*/
 @use "styles/api" as *;
 
 .topnav {
-	@include set-color(fill, get-color(paper-200), button);
+	--button-color-fill: var(--color-paper-200);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	position: sticky;
 	top: 0;
 	z-index: 10;
-	background-color: get-color(paper-200);
-	border-bottom: solid 1px get-color(paper-100);
-	// @include shadow(paper-500, 0.1);
+	background-color: var(--color-paper-200);
+	border-bottom: solid 1px var(--color-paper-100);
 	@include dark {
-		background-color: get-color(paper-900);
+		background-color: var(--color-paper-950);
 	}
+}
+
+.topnav-left {
+	padding-left: var(--space-xs);
 }
 
 .topnav-middle {
@@ -23,4 +24,8 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.topnav-right {
+	padding-right: var(--space-xs);
 }

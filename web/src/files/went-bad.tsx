@@ -11,9 +11,15 @@ export default function SomethingWentWrong({error}: {error: Error}) {
 					// "flex-direction": "column",
 					height: "100%",
 				}}>
-				<code>{error.message}</code>
-				<code>{JSON.stringify(error)}</code>
-				<code>{error.stack}</code>
+				<pre>
+					<code>{error.message}</code>
+				</pre>
+				<pre>
+					<code>{JSON.stringify(error)}</code>
+				</pre>
+				<pre>
+					<code>{error.stack}</code>
+				</pre>
 			</div>
 		</details>
 	)

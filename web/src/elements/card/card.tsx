@@ -57,7 +57,7 @@ export interface CardItemProps {
 	icon: string
 	href: string
 	unread?: number
-	onClick?: (event: HTMLElementEventMap["click"]) => void
+	onclick?: (event: HTMLElementEventMap["click"]) => void
 	current?: boolean
 }
 
@@ -66,16 +66,13 @@ export const CardItem: ParentComponent<CardItemProps> = props => {
 		<button
 			{...props}
 			type="button"
-			onClick={props.onClick}
 			class="card-item"
 			aria-current={props.current ? "page" : "false"}>
 			<span>{props.icon}</span>
 			<p>{props.children || props.title}</p>
 			{props.unread && (
 				// todo
-				<span class="rounded-full ring-primary-200 text-primary-300 bg-primary-100 ring-1">
-					{props.unread}
-				</span>
+				<span>{props.unread}</span>
 			)}
 		</button>
 	)

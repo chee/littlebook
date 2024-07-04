@@ -3,7 +3,7 @@ import {createBreakpoints} from "@solid-primitives/media"
 export const getStyle = (
 	property: string,
 	element = document.documentElement,
-) => getComputedStyle(element).getPropertyValue("--littlebook-" + property)
+) => getComputedStyle(element).getPropertyValue("--" + property)
 
 export const getBreakpoint = (bp: string, el = document.documentElement) => {
 	return getStyle("breakpoint-" + bp, el)

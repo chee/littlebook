@@ -1,8 +1,8 @@
 @use "styles/api" as *;
 
 .folder-card-item {
-	padding-inline: get-space(m);
-	padding-block: get-space(s);
+	padding-inline: var(--space-m);
+	padding-block: var(--space-s);
 	position: relative;
 	overflow: hidden;
 
@@ -41,7 +41,7 @@
 	}
 
 	summary {
-		margin-left: calc((get-space(s) * -1) / 2);
+		margin-left: calc((var(--space-s) * -1) / 2);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -53,31 +53,31 @@
 
 	a {
 		padding-inline: 0.5rem;
-		color: var(--littlebook-line);
+		color: var(--color-line);
 	}
 
 	[aria-current="page"] {
-		background: var(--littlebook-primary);
+		background: var(--color-primary);
 	}
 
 	.folder-card-item {
-		padding: get-space(xs);
+		padding: var(--space-xs);
 	}
 }
 
 .new-file-picker {
 	margin: 0;
 	position: absolute;
-	background: var(--littlebook-fill);
-	transform: translateX(-3rem) translateY(-0.5rem);
+	background: var(--color-fill);
+	transform: translateX(1rem) translateY(-0.5rem);
 	padding: 1rem;
 	z-index: 1000;
 	// @include shadow;
-	border: 2px solid var(--littlebook-line);
+	border: 2px solid var(--color-line);
 	li button {
 		padding: 1rem;
 		&:hover {
-			background: var(--littlebook-primary-50);
+			background: var(--color-primary-50);
 		}
 	}
 }

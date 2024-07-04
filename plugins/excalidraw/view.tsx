@@ -1,6 +1,5 @@
 // things i'll need to make available in @littlebook/plugin
 import "../../web/src/types.ts"
-import type {AutomergeList} from "../../web/src/types.ts"
 import {
 	EditorViewElement,
 	// ContentView,

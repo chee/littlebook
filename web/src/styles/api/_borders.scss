@@ -1,16 +1,11 @@
-@use "vars" as *;
-$border-width-namespace: "border-width";
-@function get-border-width($name: "default") {
-	@return get-var($name, $border-width-namespace);
-}
+@mixin radius($name: false, $dir: all) {
+	$radius: "";
+	@if $name {
+		$radius: var(--radius-#{$name});
+	} @else {
+		$radius: var(--radius);
+	}
 
-$border-radius-namespace: "radius" !default;
-@function get-radius($name: "default") {
-	@return get-var($name, $border-radius-namespace);
-}
-
-@mixin radius($name: default, $dir: all) {
-	$radius: get-var($name, "radius");
 	@if $dir == "top" {
 		border-top-left-radius: $radius;
 		border-top-right-radius: $radius;

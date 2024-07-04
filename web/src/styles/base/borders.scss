@@ -1,40 +1,9 @@
 @use "../api" as *;
-@use "corners" as *;
-@use "sass:map";
-@use "sass:meta";
 
-$default-border-radius: 4px !default;
-$border-radiuses: (
-	"0": 0,
-	"s": 2px,
-	default: 4px,
-	"m": 8px,
-	"l": 14px,
-	"full": 999rem,
-) !default;
-
-@include set-root-vars($border-radiuses, $border-radius-namespace);
-
-@include each-corner(
-	("radius", "border-radius"),
-	self-reference($border-radiuses, $border-radius-namespace)
-);
-
-$default-border-width: 1px !default;
-$named-border-widths: 2 4 8;
-
-$border-widths: (
-	0: 0,
-	default: 1px,
-	2: 2px,
-	4: 4px,
-	8: 8px,
-) !default;
-
-@include set-root-vars($border-widths, $border-width-namespace);
-
-// @include each-side(
-// 	(border-width, border-width),
-// 	map.keys($border-widths),
-// 	meta.get-function(get-border-width)
-// );
+:root {
+	--radius: 4px;
+	--radius-s: 2px;
+	--radius-m: 8px;
+	--radius-l: 14px;
+	--radius-full: 987rem;
+}
