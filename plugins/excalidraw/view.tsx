@@ -146,7 +146,7 @@ const ExcalidrawView: EditorViewComponent<
 							const targetIndex = doc.value.elements.findIndex(
 								el => el.id == element.id,
 							)
-							const target = doc.value.elements.at(targetIndex)
+							const target = doc.value.elements[targetIndex]
 							if (target) {
 								merge(target, element)
 								if (index !== targetIndex) {
