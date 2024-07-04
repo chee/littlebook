@@ -1,4 +1,4 @@
-@use "../api/colors" as colors;
+@use "../api/colors";
 
 :root {
 	--color-stone-50: #f5f6f6;
@@ -214,7 +214,7 @@
 	--color-black: black;
 	--color-transparent: transparent;
 
-	--color-selection: colors.fade(var(--color-primary), 20%);
+	--color-selection: #{colors.fade(var(--color-primary), 50%)};
 }
 
 ::selection {
