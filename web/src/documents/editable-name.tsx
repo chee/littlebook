@@ -20,10 +20,12 @@ export default function EditableName<T extends lb.NamedDocument>(
 	const activeId = () => getActiveItemId(ui)
 	const [renaming, , setRenaming] = createBoolean(false)
 	const [renamer, setRenamer] = createSignal<HTMLInputElement>()
-
 	createShortcut(["Escape"], cancel)
 
 	let localName = props.name
+	createEffect(() => {
+		localName = props.name
+	})
 
 	function cancel() {
 		localName = props.name
