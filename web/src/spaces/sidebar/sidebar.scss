@@ -58,9 +58,19 @@
 		color: white;
 	}
 
+	max-width: 100%;
 	&[aria-expanded="false"] {
+		max-width: 0;
+		overflow: hidden;
+		padding: 0;
+		transition: max-width 0.2s linear, padding 0s 0.2s;
 		display: none;
+		@include respond-to-m {
+			display: flex;
+		}
 	}
+
+	transition: max-width 0.2s linear;
 }
 
 .sidebar-toggle {
