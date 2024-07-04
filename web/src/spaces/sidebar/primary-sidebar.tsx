@@ -302,16 +302,16 @@ function ItemCardLink(props: {
 	})
 
 	return (
-		<Show when={item()}>
+		<Suspense>
 			<Switch>
-				<Match when={item()?.type == "folder"}>
+				<Match when={item.latest?.type == "folder"}>
 					<FolderCardItem
 						id={props.id as lb.FolderId}
 						parentId={props.parentId}
 						active={isActive()}
 					/>
 				</Match>
-				<Match when={item()?.type == "file"}>
+				<Match when={item.latest?.type == "file"}>
 					<FileCardItem
 						id={props.id as lb.FileId}
 						parentId={props.parentId}
@@ -319,6 +319,6 @@ function ItemCardLink(props: {
 					/>{" "}
 				</Match>
 			</Switch>
-		</Show>
+		</Suspense>
 	)
 }
