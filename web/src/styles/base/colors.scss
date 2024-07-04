@@ -211,6 +211,8 @@
 	--color-white: white;
 	--color-black: black;
 	--color-transparent: transparent;
+
+	--color-selection: var(--color-primary);
 }
 
 ::selection {
