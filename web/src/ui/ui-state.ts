@@ -25,7 +25,7 @@ export function createUI(): [get: UI, set: SetStoreFunction<UI>] {
 			sidebars: {
 				primary: false,
 				secondary: false,
-				sizes: [],
+				sizes: [20, 60, 20],
 			},
 			panes: [],
 			activePaneId: undefined,
