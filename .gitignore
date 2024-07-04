@@ -3,3 +3,5 @@ node_modules/
 output/
 app.config.timestamp*
 automerge-sync-server-data
+*.js.map
+*.css.map
