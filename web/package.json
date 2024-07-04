@@ -50,6 +50,7 @@
 		"solid-js": "^1.8.17",
 		"solid-new-window": "^0.0.4",
 		"solid-split-pane": "^0.0.5",
+		"split.js": "^1.6.5",
 		"styles": "link:src/styles",
 		"throttle-debounce": "^5.0.0",
 		"ua-parser-js": "^1.0.38",

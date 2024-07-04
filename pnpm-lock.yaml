@@ -365,6 +365,9 @@ importers:
       solid-split-pane:
         specifier: ^0.0.5
         version: 0.0.5
+      split.js:
+        specifier: ^1.6.5
+        version: 1.6.5
       styles:
         specifier: link:src/styles
         version: link:src/styles
