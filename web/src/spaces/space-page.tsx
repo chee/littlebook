@@ -43,7 +43,7 @@ const SpacePage: ParentComponent = () => {
 			<div class="flex grow split">
 				<Split
 					sizes={ui.sidebars.sizes}
-					snapOffset={200}
+					snapOffset={140}
 					gutterAlign="end"
 					minSize={[0, 300, 0]}
 					onDragEnd={sizes => {

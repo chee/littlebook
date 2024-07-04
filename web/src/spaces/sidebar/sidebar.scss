@@ -58,7 +58,6 @@
 		color: white;
 	}
 
-	max-width: 100%;
 	&[aria-expanded="false"] {
 		max-width: 0;
 		overflow: hidden;
@@ -68,8 +67,6 @@
 			display: flex;
 		}
 	}
-
-	transition: width 0.05s linear;
 }
 
 .sidebar-toggle {
