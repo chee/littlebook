@@ -72,10 +72,7 @@ export function json<Type extends lb.AnyContentValue>(): ContentCoder<Type> {
 }
 
 export class ContentCoderRegistry {
-	private registry = new Map<
-		UniformTypeIdentifier,
-		ContentCoder<any> | AsyncContentCoder<any>
-	>()
+	private registry = new Map<UniformTypeIdentifier, ContentCoder<any>>()
 
 	register<Type extends lb.AnyContentValue>(
 		uniformType:
