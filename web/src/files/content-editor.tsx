@@ -72,14 +72,14 @@ export default function ContentEditor(props: {fileId: lb.FileId}) {
 					)
 					return <SomethingWentWrong error={error} />
 				}}>
-				<Show when={content.latest && "value" in content.latest && handle()}>
-					<Suspense
-						fallback={
-							<div class="box content-editor content-editor--loading content-editor--file-loading" />
-						}>
+				<Suspense
+					fallback={
+						<div class="box content-editor content-editor--loading content-editor--file-loading" />
+					}>
+					<Show when={content.latest && "value" in content.latest && handle()}>
 						<Editor />
-					</Suspense>
-				</Show>
+					</Show>
+				</Suspense>
 			</ErrorBoundary>
 		</div>
 	)
