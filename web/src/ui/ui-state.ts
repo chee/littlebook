@@ -23,7 +23,7 @@ export function createUI(): [get: UI, set: SetStoreFunction<UI>] {
 	return makePersisted(
 		createStore<UI>({
 			sidebars: {
-				primary: false,
+				primary: true,
 				secondary: false,
 				sizes: [20, 60, 20],
 			},
