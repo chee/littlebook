@@ -302,12 +302,18 @@ importers:
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
+      '@solid-primitives/intersection-observer':
+        specifier: ^2.1.6
+        version: 2.1.6(solid-js@1.8.17)
       '@solid-primitives/keyboard':
         specifier: ^1.2.8
         version: 1.2.8(solid-js@1.8.17)
       '@solid-primitives/media':
         specifier: ^2.2.9
         version: 2.2.9(solid-js@1.8.17)
+      '@solid-primitives/scroll':
+        specifier: ^2.0.23
+        version: 2.0.23(solid-js@1.8.17)
       '@solid-primitives/storage':
         specifier: ^3.7.1
         version: 3.7.1(solid-js@1.8.17)
@@ -2636,6 +2642,11 @@ packages:
     peerDependencies:
       solid-js: ^1.6.12
 
+  '@solid-primitives/intersection-observer@2.1.6':
+    resolution: {integrity: sha512-SeiCmN/R46Z+o9+5HhIQzSor0DqVPyo4ROLQMvCI8AsGZl/5nHlWzHTTbWPeukVUXTgb04wfC3DUo9IzF/XloA==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
   '@solid-primitives/keyboard@1.2.8':
     resolution: {integrity: sha512-pJtcbkjozS6L1xvTht9rPpyPpX55nAkfBzbFWdf3y0Suwh6qClTibvvObzKOf7uzQ+8aZRDH4LsoGmbTKXtJjQ==}
     peerDependencies:
@@ -2668,6 +2679,11 @@ packages:
 
   '@solid-primitives/scheduled@1.4.3':
     resolution: {integrity: sha512-HfWN5w7b7FEc6VPLBKnnE302h90jsLMuR28Fcf7neRGGf8jBj6wm6/UFQ00VlKexHFMR6KQ2u4VBh5a1ZcqM8g==}
+    peerDependencies:
+      solid-js: ^1.6.12
+
+  '@solid-primitives/scroll@2.0.23':
+    resolution: {integrity: sha512-kO0YpXKEUHaAnHp3zIsHYmxxuKXO3/LxVhZQHHmhqsmUY6A5IBObkSkoQ/ChIPl/WMKE7ynxEq40OgRmhvyUSw==}
     peerDependencies:
       solid-js: ^1.6.12
 
@@ -9287,6 +9303,11 @@ snapshots:
       '@solid-primitives/utils': 6.2.3(solid-js@1.8.17)
       solid-js: 1.8.17
 
+  '@solid-primitives/intersection-observer@2.1.6(solid-js@1.8.17)':
+    dependencies:
+      '@solid-primitives/utils': 6.2.3(solid-js@1.8.17)
+      solid-js: 1.8.17
+
   '@solid-primitives/keyboard@1.2.8(solid-js@1.8.17)':
     dependencies:
       '@solid-primitives/event-listener': 2.3.3(solid-js@1.8.17)
@@ -9326,6 +9347,13 @@ snapshots:
 
   '@solid-primitives/scheduled@1.4.3(solid-js@1.8.17)':
     dependencies:
+      solid-js: 1.8.17
+
+  '@solid-primitives/scroll@2.0.23(solid-js@1.8.17)':
+    dependencies:
+      '@solid-primitives/event-listener': 2.3.3(solid-js@1.8.17)
+      '@solid-primitives/rootless': 1.4.5(solid-js@1.8.17)
+      '@solid-primitives/static-store': 0.0.8(solid-js@1.8.17)
       solid-js: 1.8.17
 
   '@solid-primitives/static-store@0.0.5(solid-js@1.8.17)':
