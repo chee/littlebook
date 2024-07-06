@@ -8,6 +8,7 @@ import {
 
 import {Counter} from "@automerge/automerge/slim/next"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
+import {useMediaQuery} from "usehooks-ts"
 
 // internal to the plugin
 import type {
@@ -101,6 +102,8 @@ const ExcalidrawView: EditorViewComponent<
 		() => value.elements.map(automergeToExcalidraw),
 		[],
 	)
+
+	const isDark = useMediaQuery("(prefers-color-scheme: dark)")
 
 	useEffect(() => {
 		const elements = excalidrawAPI?.getSceneElements()
@@ -198,6 +201,7 @@ const ExcalidrawView: EditorViewComponent<
 						...value,
 						elements: initialElements,
 					}}
+					theme={isDark ? "dark" : "light"}
 					handleKeyboardGlobally={false}
 					onChange={onchange}
 				/>

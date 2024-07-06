@@ -73571,6 +73571,7 @@ var TldrawEditorView = ({ value, change, ...props }) => {
   return /* @__PURE__ */ jsx155(Suspense, { children: /* @__PURE__ */ jsx155(
     Tldraw2,
     {
+      inferDarkMode: true,
       components: { ActionsMenu },
       options: { maxPages: 1 },
       autoFocus: true,

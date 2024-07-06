@@ -184,6 +184,7 @@ const TldrawEditorView: EditorViewComponent<
 	return (
 		<Suspense>
 			<Tldraw
+				inferDarkMode
 				components={{ActionsMenu}}
 				options={{maxPages: 1}}
 				autoFocus={true}

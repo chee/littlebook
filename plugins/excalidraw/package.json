@@ -27,7 +27,8 @@
 		"@types/throttle-debounce": "^5.0.2",
 		"component-register": "^0.7.1",
 		"component-register-preact": "^0.1.1",
-		"throttle-debounce": "^5.0.0"
+		"throttle-debounce": "^5.0.0",
+		"usehooks-ts": "^3.1.0"
 	},
 	"peerDependencies": {
 		"@automerge/automerge": "^2.2.2",
