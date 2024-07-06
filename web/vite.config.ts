@@ -42,7 +42,8 @@ export const config: UserConfig = {
 				type: "module",
 			},
 		}),
-		solid({
+		solid(
+			/* {
 			babel: {
 				plugins: [
 					[
@@ -53,7 +54,8 @@ export const config: UserConfig = {
 					],
 				],
 			},
-		}),
+		} */
+		),
 		devtools({
 			autoname: true,
 		}),

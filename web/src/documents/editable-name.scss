@@ -4,13 +4,13 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	min-height: 1em;
+	text-align: left;
 	> input {
 		width: 100%;
 	}
 }
 
 .editable-name-editor {
-	z-index: 100;
 	width: 100%;
 	max-width: 28ch;
 	position: absolute;

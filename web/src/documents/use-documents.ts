@@ -1,7 +1,7 @@
 import {createEffect, createResource, on} from "solid-js"
 import type {AutomergeList} from "../types"
 
-import useHandle from "../automerge/use-handle"
+import useHandle from "../automerge/use-handle.ts"
 
 export default function useDocuments<T extends lb.AnyDocument>(
 	ids: () => T["id"][] | AutomergeList<T["id"]> | undefined,

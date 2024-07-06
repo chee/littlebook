@@ -1,0 +1,69 @@
+@use "styles" as *;
+
+:root {
+	--gutter-color-fill: var(--color-primary);
+
+	--headstrip-item-size: 1.6rem;
+	--headstrip-space-block: var(--space-2);
+	// --headstrip-color-border: var(--color-paper-200);
+	--headstrip-height: 40px;
+
+	// todo content elsewhere
+	--content-color-fill: var(--color-fill);
+	--content-color-line: var(--color-line);
+}
+
+.headstrip {
+	display: flex;
+	border-bottom: 1px solid var(--headstrip-color-border);
+	padding-block: var(--headstrip-space-block);
+	align-items: center;
+	gap: var(--space-1);
+	max-height: var(--headstrip-height);
+	min-height: var(--headstrip-height);
+	padding-left: var(--space-1);
+	justify-content: space-between;
+}
+
+.space {
+	display: flex;
+	flex: 1;
+}
+
+.space-areas {
+	// todo this should just be `color-paper` but then the theming stuff would need to be improved
+	background-color: var(--color-fill);
+	display: flex;
+
+	@include dark {
+		background: black;
+		color: white;
+	}
+
+	height: 100vh;
+	overflow: scroll;
+}
+
+.gutter {
+	position: relative;
+	background: var(--gutter-color-fill);
+	opacity: 0;
+
+	&:hover {
+		transition: opacity 0.5s;
+		opacity: 1;
+	}
+
+	&[style*="cursor"],
+	&:active {
+		transition: none;
+	}
+}
+
+.gutter.gutter-vertical {
+	cursor: ns-resize;
+}
+
+.gutter.gutter-horizontal {
+	cursor: ew-resize;
+}

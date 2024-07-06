@@ -1,0 +1,21 @@
+.file-viewer {
+	display: flex;
+	flex-grow: 1;
+	width: 100%;
+	flex-direction: column;
+}
+
+.file-viewer-head {
+	--sidebar-toggle-color-hover-fill: var(--color-paper-50);
+}
+
+.file-viewer-head-file-name {
+	font-weight: 500;
+	display: flex;
+	gap: var(--space-1);
+}
+
+.file-viewer-body {
+	display: flex;
+	flex-grow: 1;
+}

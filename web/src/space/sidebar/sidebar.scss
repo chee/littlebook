@@ -1,0 +1,89 @@
+@use "styles" as *;
+
+:root {
+	@include dark {
+		--sidebar-color-fill: black;
+		--sidebar-color-line: white;
+		--sidebar-card-color-fill: black;
+	}
+
+	--sidebar-color-fill: var(--color-paper-100);
+	--sidebar-color-line: black;
+
+	--sidebar-card-color-fill: white;
+	--sidebar-card-color-line: var(--sidebar-color-line);
+	--sidebar-card-radius: var(--radius-l);
+	--sidebar-card-color-current-fill: var(--color-primary-300);
+	--sidebar-card-color-current-line: var(--sidebar-card-color-line);
+
+	@include dark {
+		--sidebar-card-color-current-fill: var(--color-primary-800);
+		--sidebar-card-color-current-line: white;
+	}
+
+	--sidebar-card-color-hover-fill: var(--color-primary-50);
+	--sidebar-card-color-hover-line: var(--sidebar-card-color-line);
+
+	@include dark {
+		--sidebar-card-color-hover-fill: var(--color-primary-950);
+		--sidebar-card-color-hover-line: white;
+	}
+
+	--folder-tree-color-current-fill: var(--sidebar-card-color-current-fill);
+	--folder-tree-color-current-line: var(--sidebar-card-color-current-line);
+	--folder-tree-color-hover-fill: var(--sidebar-card-color-hover-fill);
+	--folder-tree-color-hover-line: var(--sidebar-card-color-hover-line);
+}
+
+.sidebar {
+	background: var(--sidebar-color-fill);
+	color: var(--sidebar-color-line);
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+
+	height: 100vh;
+	overflow: scroll;
+
+	> * {
+		--shadow-color: transparent;
+		@include respond-to-m {
+			--shadow-color: var(--color-paper-200);
+		}
+		&:not(:first-child) {
+			margin-inline: var(--space-xs);
+		}
+
+		&:not(:last-child) {
+			margin-bottom: var(--space-m);
+		}
+		&:first-child {
+			margin-bottom: var(--space-2);
+		}
+	}
+
+	@include dark {
+		background: black;
+		color: white;
+	}
+}
+
+:root {
+	--sidebar-toggle-color-hover-fill: var(--color-paper-200);
+}
+
+.sidebar-toggle {
+	@include radius(m);
+	padding: var(--space-2);
+	height: var(--headstrip-item-size);
+	width: var(--headstrip-item-size);
+	background-size: 80%;
+	background-repeat: no-repeat;
+	background-position: center;
+	&:hover {
+		background-color: var(--sidebar-toggle-color-hover-fill);
+	}
+	// &[aria-pressed="true"] {
+	// 	background: var(--sidebar-toggle-color-open-fill);
+	// }
+}

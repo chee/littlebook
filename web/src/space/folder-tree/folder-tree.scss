@@ -1,0 +1,111 @@
+:root {
+	--folder-tree-indent: 1em;
+}
+
+.folder-tree {
+	header {
+		justify-content: space-between;
+		padding-left: calc(var(--folder-tree-indent));
+	}
+
+	> header .folder-tree-folder-name {
+		font-weight: 700;
+	}
+
+	button {
+		padding: 0;
+	}
+}
+
+.folder-tree-folder-name {
+	font-weight: 600;
+	letter-spacing: -0.5px;
+}
+
+.folder-tree-file-name {
+	font-weight: 500;
+	letter-spacing: -0.5px;
+}
+
+.folder-tree-row {
+	&:hover {
+		background-color: var(--folder-tree-color-hover-fill);
+		color: var(--folder-tree-color-hover-line);
+	}
+	&.current {
+		background-color: var(--folder-tree-color-current-fill);
+		color: var(--folder-tree-color-current-line);
+	}
+}
+
+.folder-tree header,
+.folder-tree-file {
+	cursor: pointer;
+	display: flex;
+	padding-inline: var(--space-xs);
+	padding-block: 0.5ex;
+}
+
+.folder-tree-folder-name,
+.folder-tree-file-name {
+	// &::before {
+	// 	content: "";
+	// 	display: block;
+	// 	position: absolute;
+	// 	// translate: -1em;
+	// 	left: 2em;
+	// 	top: 0;
+	// 	width: 1px;
+	// 	height: 4em;
+	// 	background: black;
+	// }
+	display: inline-block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 100%;
+	text-align: left;
+}
+
+.folder-tree ul {
+	position: relative;
+}
+
+.folder-tree-indent::before {
+	height: var(--folder-tree-indent);
+	width: var(--folder-tree-indent);
+
+	// &::before {
+	// 	content: "";
+	// 	display: block;
+	// 	position: absolute;
+	// 	left: 50%;
+	// 	width: 1px;
+	// 	height: 1em;
+	// 	background: black;
+	// }
+}
+
+.folder-tree-expander {
+	.folder-tree-item & {
+		margin-left: calc(var(--folder-tree-indent) / 2);
+	}
+	width: var(--folder-tree-indent);
+	height: var(--folder-tree-indent);
+}
+
+.folder-tree-item-name__icon {
+	width: var(--folder-tree-indent);
+	height: var(--folder-tree-indent);
+	margin-right: calc(var(--folder-tree-indent) / 4);
+	margin-left: calc(var(--folder-tree-indent) / 4);
+}
+
+[aria-expanded] > header > .folder-tree-expander::before {
+	display: block;
+	content: "▶︎";
+}
+
+[aria-expanded="true"] > header > .folder-tree-expander::before {
+	content: "▼";
+}

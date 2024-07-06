@@ -1,0 +1,30 @@
+@use "styles" as *;
+
+.sidebar-card {
+	background: var(--sidebar-card-color-fill);
+	color: var(--sidebar-card-color-line);
+	border-radius: var(--sidebar-card-radius);
+	display: block;
+	@include shadow;
+}
+
+.sidebar-card > .sidebar-card-item:first-child {
+	border-top-left-radius: var(--sidebar-card-radius);
+	border-top-right-radius: var(--sidebar-card-radius);
+}
+
+.sidebar-card > .sidebar-card-item:last-child {
+	border-bottom-left-radius: var(--sidebar-card-radius);
+	border-bottom-right-radius: var(--sidebar-card-radius);
+}
+
+.sidebar-card-header {
+	display: flex;
+	justify-content: space-between;
+	padding-inline: var(--space-3);
+	padding-block: var(--space-2);
+	font-weight: 600;
+	font-size: 1.2rem;
+	border-bottom: 1px solid
+		mix(var(--color-secondary-100) 50%, var(--sidebar-card-color-fill));
+}

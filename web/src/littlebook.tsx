@@ -6,7 +6,7 @@ import {Show, Suspense, lazy} from "solid-js"
 
 import {AutomergeContext, getAutomergeState} from "./automerge/use-automerge.ts"
 
-const SpacePage = lazy(() => import("./spaces/space-page.tsx"))
+const SpacePage = lazy(() => import("./space/space.tsx"))
 import excalidraw from "@littlebook/excalidraw"
 import text from "./plugins/content/text/text.tsx"
 import media from "./plugins/content/media/media.tsx"

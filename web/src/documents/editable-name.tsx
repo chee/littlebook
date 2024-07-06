@@ -1,43 +1,35 @@
 import {Show, createEffect, createSignal, on} from "solid-js"
-import createBoolean from "../lib/create-boolean.ts"
-import {getActiveItemId} from "../ui/ui-state.ts"
-import {useUI} from "../ui/use-ui-state.tsx"
 import useClickOutside from "solid-click-outside"
 import {createShortcut} from "@solid-primitives/keyboard"
 import "./editable-name.scss"
 import {Portal} from "solid-js/web"
 import {createScrollPosition} from "@solid-primitives/scroll"
 
-interface EditableNameProps<T extends lb.NamedDocument> {
-	id: T["id"]
-	name: string
-	saveName(name: string): void
+interface EditableNameProps {
+	name(): string | undefined
+	renaming(): boolean
+	save(name: string): void
+	cancel(): void
 }
 
 // todo render the input in a portal, so it doesn't matter what it's inside of
-export default function EditableName<T extends lb.NamedDocument>(
-	props: EditableNameProps<T>,
-) {
-	const [ui] = useUI()
-	const activeId = () => getActiveItemId(ui)
-	const [renaming, , setRenaming] = createBoolean(false)
+export default function EditableName(props: EditableNameProps) {
 	const [renamer, setRenamer] = createSignal<HTMLInputElement>()
 	const [buttonRef, setButtonRef] = createSignal<HTMLButtonElement>()
 	createShortcut(["Escape"], cancel)
 
-	let localName = props.name
+	let localName = props.name() || ""
 	createEffect(() => {
-		localName = props.name
+		localName = props.name() || ""
 	})
 
 	function cancel() {
-		localName = props.name
-		setRenaming(false)
+		localName = props.name() || ""
+		cancel()
 	}
 
 	function save() {
-		props.saveName(localName)
-		setRenaming(false)
+		props.save(localName)
 	}
 
 	const scroll = createScrollPosition(
@@ -45,7 +37,7 @@ export default function EditableName<T extends lb.NamedDocument>(
 	)
 
 	const buttonBox = () =>
-		renaming() && scroll.y != null
+		props.renaming() && scroll.y != null
 			? buttonRef()?.getBoundingClientRect()
 			: undefined
 
@@ -55,15 +47,10 @@ export default function EditableName<T extends lb.NamedDocument>(
 			<button
 				ref={setButtonRef}
 				type="button"
-				class="editable-name not-editing"
-				onclick={() => {
-					if (activeId() && activeId() == props.id) {
-						setRenaming(true)
-					}
-				}}>
-				{props.name}
+				class="editable-name not-editing">
+				{props.name()}
 			</button>
-			<Show when={renaming()}>
+			<Show when={props.renaming()}>
 				<Portal>
 					<form
 						class="editable-name-editor submit-inline"
@@ -75,12 +62,12 @@ export default function EditableName<T extends lb.NamedDocument>(
 							autofocus
 							ref={input => {
 								createEffect(
-									on([renaming], () => {
+									on([props.renaming], () => {
 										input.selectionStart = 0
 										input.selectionEnd = input?.value.lastIndexOf(".")
 										input.selectionDirection = "forward"
 										input.focus()
-										useClickOutside(() => renamer(), cancel)
+										useClickOutside(renamer, cancel)
 									}),
 								)
 								setRenamer(input)

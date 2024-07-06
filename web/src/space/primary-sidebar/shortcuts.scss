@@ -1,0 +1,31 @@
+@use "styles" as *;
+
+.sidebar-shortcuts {
+	background: var(--sidebar-card-color-fill);
+	color: var(--sidebar-card-color-line);
+	border-radius: var(--sidebar-card-radius);
+	display: block;
+	@include shadow;
+}
+
+.sidebar-shortcut {
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+	background: inherit;
+	color: inherit;
+	gap: var(--space-1);
+	padding-inline: var(--space-3);
+	padding-block: var(--space-2);
+	width: 100%;
+
+	&:is(a, button)[aria-current="page"] {
+		background: var(--sidebar-card-color-current);
+	}
+
+	&:is(a, button):not([aria-current="page"]):hover {
+		background: var(--sidebar-card-color-hover);
+	}
+
+	font-weight: 500;
+}

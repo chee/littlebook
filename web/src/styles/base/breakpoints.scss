@@ -1,0 +1,7 @@
+@use "../api/breakpoints" as *;
+
+:root {
+	@each $name, $value in $breakpoints {
+		--breakpoint-#{$name}: #{$value};
+	}
+}

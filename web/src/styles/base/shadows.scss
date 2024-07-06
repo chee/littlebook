@@ -10,7 +10,7 @@
 	--shadow-color-a: 0.9;
 	--shadow-color: oklch(
 		var(--shadow-color-l) var(--shadow-color-c) var(--shadow-color-h) /
-			var(var(--shadow-color-a))
+			var(--shadow-color-a)
 	);
 
 	--ring-color: var(--color-primary);

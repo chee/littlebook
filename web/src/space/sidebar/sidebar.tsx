@@ -1,6 +1,6 @@
 import type {ParentComponent} from "solid-js"
-import cl from "../../lib/cl.ts"
 import "./sidebar.scss"
+import clsx from "clsx"
 
 const Sidebar: ParentComponent<{
 	open: () => boolean
@@ -9,7 +9,7 @@ const Sidebar: ParentComponent<{
 }> = props => (
 	<aside
 		aria-expanded={props.open()}
-		class={cl("sidebar", props.class, props.which)}>
+		class={clsx("sidebar", props.class, props.which)}>
 		{props.children}
 	</aside>
 )

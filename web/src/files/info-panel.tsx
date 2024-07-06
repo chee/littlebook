@@ -6,7 +6,7 @@ import UniformType from "./uniform-type.ts"
 
 export default function InfoPanel(props: {
 	fileId?: lb.FileId
-	folderId: lb.FolderId
+	// folderId: lb.FolderId
 }) {
 	const lb = useLittlebookAPI()
 	const [file, changeFile] = useDocument<lb.File>(() => props.fileId)
@@ -50,7 +50,7 @@ export default function InfoPanel(props: {
 		if (!file()?.id) {
 			return
 		}
-		lb.files.deleteFile(file()!.id, props.folderId)
+		// lb.files.deleteFile(file()!.id, props.folderId)
 	}
 
 	return (

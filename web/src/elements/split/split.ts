@@ -8,18 +8,50 @@ import {
 import split, {type Options, type Instance} from "split.js"
 export type {Instance as SplitInstance}
 
+type GutterClickFn = (
+	index: number,
+	direction: "horizontal" | "vertical",
+	event: MouseEvent,
+) => void
+
 const Split: ParentComponent<
 	{
 		withInstance?(instance: Instance): void
+		onGutterClick?: GutterClickFn | (GutterClickFn | undefined)[]
 	} & Options
 > = props => {
 	const children = resolveChildren(() => props.children)
 
 	createEffect(() => {
-		const [_, splitJSOptions] = splitProps(props, ["children"])
-		const instance = split(children() as HTMLElement[], splitJSOptions)
+		const [_, splitJSOptions] = splitProps(props, ["children", "ongutterclick"])
+		const destruction: (() => void)[] = []
+		const instance = split(children() as HTMLElement[], {
+			...splitJSOptions,
+			gutter(index: number, direction: "horizontal" | "vertical") {
+				const gutter = document.createElement("div")
+				gutter.classList.add("gutter")
+				gutter.classList.add(`gutter-${direction}`)
+				const ongutterclick = _.onGutterClick
+				const ogc =
+					typeof ongutterclick == "function"
+						? ongutterclick
+						: ongutterclick?.[index]
+
+				if (ogc) {
+					const handle = (event: MouseEvent) => {
+						ogc(index, direction, event)
+					}
+					gutter.addEventListener("click", handle)
+					destruction.push(() => gutter.removeEventListener("click", handle))
+				}
+				return gutter
+			},
+		})
 		props.withInstance?.(instance)
-		onCleanup(() => instance.destroy())
+		onCleanup(() => {
+			for (const destroy of destruction) destroy()
+			instance.destroy()
+		})
 	})
 
 	return children()

@@ -93,7 +93,11 @@ $theme-names: cherries;
 );
 
 :root {
-	--scrollbar-width: thin;
+	--scrollbar-width: auto;
+	@include dark {
+		--scrollbar-color-base: var(--color-paper-800);
+		--scrollbar-color-handle: var(--color-paper-900);
+	}
 	--scrollbar-color-base: var(--color-paper-200);
 	--scrollbar-color-handle: var(--color-paper-700);
 }

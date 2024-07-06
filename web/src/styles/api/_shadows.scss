@@ -1,6 +1,11 @@
 @function shadow() {
-	@return var(--shadow-inset) var(--shadow-color) var(--shadow-x)
-		var(--shadow-y) var(--shadow-spread) var(--shadow-offset);
+	@return var(--shadow-color) var(--shadow-x) var(--shadow-y)
+		var(--shadow-spread) var(--shadow-offset);
+}
+
+@function inset-shadow() {
+	@return inset var(--shadow-color) var(--shadow-x) var(--shadow-y)
+		var(--shadow-spread) var(--shadow-offset);
 }
 
 @function ring() {
