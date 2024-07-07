@@ -21,6 +21,7 @@ import {useLittlebookAPI} from "../../api/use-api.ts"
 import {Portal} from "solid-js/web"
 import Popout from "../../elements/popout/popout.tsx"
 import Menu from "../../elements/menu/menu.tsx"
+
 export function FolderTree(props: {
 	id(): lb.FolderId | undefined
 	parentId(): lb.AnyParentDocument["id"] | undefined
@@ -196,7 +197,15 @@ export function FolderTreeFolderInner(props: {
 					</Popout>
 				</Portal>
 			</Show>
-			<header class={clsx("folder-tree-row", props.current() && "current")}>
+			<header
+				class={clsx("folder-tree-row", props.current() && "current")}
+				onclick={() =>
+					props.folder() && selectItem(props.folder()!.id, ui, updateUI)
+				}
+				oncontextmenu={event => {
+					event.preventDefault()
+					setMenuShowing(true)
+				}}>
 				<div
 					class="folder-tree-indent"
 					style={{width: `calc(var(--folder-tree-indent) * ${props.depth})`}}
@@ -205,17 +214,13 @@ export function FolderTreeFolderInner(props: {
 					type="button"
 					class="folder-tree-expander"
 					aria-controls={elementID()}
-					onclick={() => props.setExpanded(val => !val)}
+					onclick={event => {
+						event.stopPropagation()
+						props.setExpanded(val => !val)
+					}}
 				/>
 				<button
 					type="button"
-					onclick={() =>
-						props.folder() && selectItem(props.folder()!.id, ui, updateUI)
-					}
-					oncontextmenu={event => {
-						event.preventDefault()
-						setMenuShowing(true)
-					}}
 					class="folder-tree-item-name folder-tree-folder-name">
 					<span class="folder-tree-item-name__icon">
 						{props.folder()?.icon || ""}
@@ -283,7 +288,14 @@ function FolderTreeFile(props: {
 				role="treeitem"
 				data-depth={props.depth}
 				aria-selected={props.current()}
-				aria-current={props.current()}>
+				aria-current={props.current()}
+				onclick={() => {
+					file.latest && selectItem(file.latest!.id, ui, updateUI)
+				}}
+				oncontextmenu={event => {
+					event.preventDefault()
+					setMenuShowing(true)
+				}}>
 				<Show when={menuShowing()}>
 					<Portal>
 						<Popout
@@ -311,13 +323,6 @@ function FolderTreeFile(props: {
 				/>
 				<button
 					type="button"
-					onclick={() => {
-						file.latest && selectItem(file.latest!.id, ui, updateUI)
-					}}
-					oncontextmenu={event => {
-						event.preventDefault()
-						setMenuShowing(true)
-					}}
 					class="folder-tree-item-name folder-tree-file-name">
 					<span class="folder-tree-item-name__icon">
 						{file.latest?.icon || "📄"}

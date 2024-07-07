@@ -29,15 +29,13 @@ export default function Popout(props: PopoutProps) {
 
 	createEffect(() => {
 		const listener = (event: MouseEvent) => {
-			console.log(event)
 			const element = dialog()
-			console.log(event.target, element, event.target == element)
+
 			if (
 				element &&
 				event.target instanceof HTMLElement &&
 				(element == event.target || !element.contains(event.target))
 			) {
-				console.log(event.target, element)
 				props.close()
 				dialog()?.close()
 			}
@@ -65,6 +63,7 @@ export default function Popout(props: PopoutProps) {
 			<dialog
 				ref={setDialog}
 				class={clsx("popout", props.class)}
+				onclick={event => event.stopPropagation()}
 				style={{
 					...mouseStyle(),
 					...props.style,
@@ -73,12 +72,4 @@ export default function Popout(props: PopoutProps) {
 			</dialog>
 		</Portal>
 	)
-}
-
-export function usePopout(
-	dialog: () => HTMLDialogElement | undefined,
-	close: () => void,
-) {
-	useClickOutside(dialog, close)
-	createShortcut(["Escape"], close)
 }

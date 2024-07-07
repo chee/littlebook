@@ -16,7 +16,6 @@ import {editorViewRegistry, previewRegistry} from "../content-view.ts"
 import "./file-area.scss"
 
 import type {DocHandleEphemeralMessagePayload} from "@automerge/automerge-repo"
-import {produce} from "solid-js/store"
 import {Set as set} from "immutable"
 
 type FileAreaProps = {

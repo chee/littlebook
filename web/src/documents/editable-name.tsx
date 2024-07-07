@@ -1,8 +1,6 @@
 import {Show, createEffect, createSignal, on} from "solid-js"
-import useClickOutside from "solid-click-outside"
 import {createShortcut} from "@solid-primitives/keyboard"
 import "./editable-name.scss"
-import {Portal} from "solid-js/web"
 import {createScrollPosition} from "@solid-primitives/scroll"
 import Popout from "../elements/popout/popout.tsx"
 

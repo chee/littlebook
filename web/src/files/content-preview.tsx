@@ -1,4 +1,4 @@
-import {ErrorBoundary, Show, Suspense, createEffect, on} from "solid-js"
+import {ErrorBoundary, Suspense, createEffect, on} from "solid-js"
 // import {UnknownContent} from "../../plugins/content/unknown/unknown-view.tsx"
 import useDocument from "../documents/use-document.ts"
 // import "./content-preview.scss"
