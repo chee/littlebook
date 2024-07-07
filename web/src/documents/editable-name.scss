@@ -5,26 +5,28 @@
 	text-overflow: ellipsis;
 	min-height: 1em;
 	text-align: left;
-	> input {
-		width: 100%;
-	}
+	font-weight: inherit;
 }
 
 .editable-name-editor {
+	margin: 0;
 	width: 100%;
-	max-width: 28ch;
+	max-width: 22ch;
 	position: absolute;
-	@include radius(l);
 	@include ring;
-	translate: calc(var(--space-1) * -1) -2px;
+	translate: calc(var(--space-1) * -1) -8px;
 
-	font-size: 1.2rem;
-	border: 4px solid black;
-	> input {
+	font-size: 1rem;
+	&,
+	&.popout {
+		@include radius(l);
+		border: 4px solid black;
+	}
+	input {
 		@include radius(l, left);
 		outline: 0;
 	}
-	> button {
+	button {
 		background: var(--color-primary);
 		@include radius(m, right);
 	}

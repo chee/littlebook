@@ -1,4 +1,11 @@
-import {type Resource, createEffect, createResource, on} from "solid-js"
+import {
+	type Resource,
+	createEffect,
+	createResource,
+	on,
+	onCleanup,
+	onMount,
+} from "solid-js"
 
 import type {ChangeFn, Doc, DocHandle} from "@automerge/automerge-repo"
 import useHandle from "../automerge/use-handle"
@@ -20,23 +27,41 @@ export default function useDocument<T extends lb.AnyDocument>(
 	const [doc, control] = createResource(() => handle()?.doc())
 
 	createEffect(
-		on([handle], () => {
-			handle()?.on("change", control.refetch)
-			handle()?.on("delete", control.refetch)
-			handle()?.broadcast({
-				hello: automerge.repo.networkSubsystem.peerId,
+		on([handle], ([prev]) => {
+			function up() {
+				handle()?.on("change", control.refetch)
+				handle()?.on("delete", control.refetch)
+				handle()?.broadcast("hello")
+			}
+			function down() {
+				prev?.removeListener("change", control.refetch)
+				prev?.removeListener("delete", control.refetch)
+				prev?.broadcast("goodbye")
+			}
+			if (prev != handle()) {
+				down()
+				up()
+			}
+			onMount(() => {
+				up()
+				control.refetch()
 			})
-			control.refetch()
+			onCleanup(() => {
+				down()
+			})
 		}),
 	)
 
-	createEffect(() => {
-		id()
-		handle()?.broadcast({
-			goodbye: automerge.repo.networkSubsystem.peerId,
-		})
-		control.mutate(undefined)
-	})
+	createEffect(
+		on([id], ([previousID]) => {
+			if (previousID != id()) {
+				handle()?.broadcast({
+					goodbye: automerge.repo.networkSubsystem.peerId,
+				})
+				control.mutate(undefined)
+			}
+		}),
+	)
 
 	return [
 		doc,

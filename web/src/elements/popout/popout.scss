@@ -1,0 +1,23 @@
+@use "styles" as *;
+
+:root {
+	--popout-shadow-color: #{fade(var(--color-line), 80%)};
+	--popout-border-color: #{fade(var(--color-line), 84%)};
+}
+
+.popout {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	overlay: auto;
+	@include radius(m);
+	--shadow-color: var(--popout-shadow-color);
+	border: 1px solid var(--popout-border-color);
+	border-top: 0;
+	@include shadow;
+}
+
+::backdrop {
+	overscroll-behavior: contain;
+	background: transparent;
+}

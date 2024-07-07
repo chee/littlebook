@@ -17,6 +17,7 @@ import "./space.scss"
 import {makeResizeObserver} from "@solid-primitives/resize-observer"
 import {throttle} from "@solid-primitives/scheduled"
 import SidebarToggle from "./sidebar/sidebar-toggle.tsx"
+import mouse from "../lib/mouse.ts"
 
 export default function Space() {
 	const [ui, updateUI] = useUI()
@@ -34,6 +35,7 @@ export default function Space() {
 	)
 
 	observe(document.body)
+	mouse()
 
 	return (
 		<>

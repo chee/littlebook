@@ -4,6 +4,7 @@ import {createShortcut} from "@solid-primitives/keyboard"
 import "./editable-name.scss"
 import {Portal} from "solid-js/web"
 import {createScrollPosition} from "@solid-primitives/scroll"
+import Popout from "../elements/popout/popout.tsx"
 
 interface EditableNameProps {
 	name(): string | undefined
@@ -14,7 +15,6 @@ interface EditableNameProps {
 
 // todo render the input in a portal, so it doesn't matter what it's inside of
 export default function EditableName(props: EditableNameProps) {
-	const [renamer, setRenamer] = createSignal<HTMLInputElement>()
 	const [buttonRef, setButtonRef] = createSignal<HTMLButtonElement>()
 	createShortcut(["Escape"], cancel)
 
@@ -25,7 +25,7 @@ export default function EditableName(props: EditableNameProps) {
 
 	function cancel() {
 		localName = props.name() || ""
-		cancel()
+		props.cancel()
 	}
 
 	function save() {
@@ -44,20 +44,18 @@ export default function EditableName(props: EditableNameProps) {
 	// purple stairwell, purple lift, deck 5
 	return (
 		<>
-			<button
-				ref={setButtonRef}
-				type="button"
-				class="editable-name not-editing">
+			<span ref={setButtonRef} class="editable-name not-editing">
 				{props.name()}
-			</button>
+			</span>
 			<Show when={props.renaming()}>
-				<Portal>
-					<form
-						class="editable-name-editor submit-inline"
-						style={{
-							left: buttonBox()?.left + "px",
-							top: buttonBox()?.top + "px",
-						}}>
+				<Popout
+					close={cancel}
+					class="editable-name-editor"
+					style={{
+						left: buttonBox()?.left + "px",
+						top: buttonBox()?.top + "px",
+					}}>
+					<form class="submit-inline">
 						<input
 							autofocus
 							ref={input => {
@@ -67,10 +65,8 @@ export default function EditableName(props: EditableNameProps) {
 										input.selectionEnd = input?.value.lastIndexOf(".")
 										input.selectionDirection = "forward"
 										input.focus()
-										useClickOutside(renamer, cancel)
 									}),
 								)
-								setRenamer(input)
 							}}
 							value={localName}
 							onInput={event => {
@@ -87,7 +83,7 @@ export default function EditableName(props: EditableNameProps) {
 							ok
 						</button>
 					</form>
-				</Portal>
+				</Popout>
 			</Show>
 		</>
 	)

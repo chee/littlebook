@@ -1,0 +1,39 @@
+@use "styles" as *;
+
+:root {
+	--menu-color-fill: var(--color-fill);
+	--menu-color-line: var(--color-line);
+	--menu-color-hover-fill: var(--color-primary);
+	--menu-color-selected-fill: var(--color-primary);
+}
+
+.menu {
+	background: var(--menu-color-fill);
+	color: var(--menu-color-line);
+	padding-block: var(--space-2);
+	padding-inline: var(--space-2);
+	@include radius(m);
+	min-width: 200px;
+}
+
+.menu-items {
+	@include radius(m);
+	display: flex;
+	flex-direction: column;
+}
+
+.menu-item {
+	width: 100%;
+	padding-block: var(--space-1);
+	@include radius(m);
+	text-align: left;
+	font-weight: 500;
+
+	&:hover {
+		background: var(--menu-color-hover-fill);
+	}
+
+	&[aria-pressed="true"] {
+		background: var(--menu-color-selected-fill);
+	}
+}

@@ -7,7 +7,7 @@
 	"type": "module",
 	"scripts": {
 		"dev:w": "tsc -w",
-		"dev:srv": "DEBUG=automerge*,localfirst* node .",
+		"dev:srv": "node .",
 		"dev": "pnpm run /dev:.*/",
 		"mk": "tsc"
 	},

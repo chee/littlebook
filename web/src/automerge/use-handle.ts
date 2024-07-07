@@ -6,5 +6,6 @@ export default function useHandle<T extends lb.AnyDocument>(
 ): () => DocHandle<T> | undefined {
 	const automerge = useAutomerge()
 	const handle = () => id() && automerge.repo.find<T>(id()!)
+
 	return handle
 }

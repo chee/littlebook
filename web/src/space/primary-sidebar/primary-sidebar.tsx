@@ -1,4 +1,4 @@
-import {For, Suspense} from "solid-js"
+import {createEffect, For, Suspense} from "solid-js"
 import {useLittlebookAPI} from "../../api/use-api.ts"
 import {useAutomerge} from "../../automerge/use-automerge.ts"
 import useDocument from "../../documents/use-document.ts"
@@ -19,6 +19,7 @@ import breakpoints from "../../styles/breakpoints.ts"
 import {SidebarShortcut} from "./shortcuts.tsx"
 import {FolderTree} from "../folder-tree/folder-tree.tsx"
 import SidebarToggle from "../sidebar/sidebar-toggle.tsx"
+import useParents from "../../documents/use-parents.ts"
 
 function select(itemId: lb.ItemId, ui: UI, set: UpdateUI) {
 	selectItem(itemId, ui, set)

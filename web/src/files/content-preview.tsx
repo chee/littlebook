@@ -49,18 +49,6 @@ export default function ContentPreview(props: {fileId: lb.FileId}) {
 		}
 	})
 
-	const Preview = () =>
-		customElementName() ? (
-			<Dynamic
-				component={customElementName()!}
-				prop:doc={content.latest}
-				prop:change={changeContent}
-				prop:handle={contentHandle()}
-				prop:value={content.latest?.value}
-				prop:file={file.latest}
-			/>
-		) : null
-
 	return (
 		<div class="content-preview">
 			<ErrorBoundary
@@ -72,19 +60,15 @@ export default function ContentPreview(props: {fileId: lb.FileId}) {
 					)
 					return <SomethingWentWrong error={error} />
 				}}>
-				<Suspense
-					fallback={
-						<div class="box content-preview content-preview--loading content-preview--file-loading" />
-					}>
-					<Show
-						when={
-							Preview() &&
-							content.latest &&
-							"value" in content.latest &&
-							contentHandle()
-						}>
-						<Preview />
-					</Show>
+				<Suspense>
+					<Dynamic
+						component={customElementName()!}
+						prop:doc={content.latest}
+						prop:change={changeContent}
+						prop:handle={contentHandle()}
+						prop:value={content.latest?.value}
+						prop:file={file.latest}
+					/>
 				</Suspense>
 			</ErrorBoundary>
 		</div>

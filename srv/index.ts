@@ -48,15 +48,6 @@ const repo = new Repo({
 	sharePolicy: async () => false,
 })
 
-repo.addListener("document", doc => {
-	if (doc.isNew) {
-		console.info("new: ", doc.handle.documentId)
-	}
-	doc.handle.addListener("change", change => {
-		console.info("change", change.handle.documentId)
-	})
-})
-
 srv.listen(Number.parseInt(process.env.PORT || "11124"))
 
 process.on("uncaughtException", error => {

@@ -6,6 +6,9 @@
 	border-radius: var(--sidebar-card-radius);
 	display: block;
 	@include shadow;
+	@include dark {
+		--shadow-color: var(--sidebar-color-fill) !important;
+	}
 }
 
 .sidebar-card > .sidebar-card-item:first-child {
