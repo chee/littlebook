@@ -3,6 +3,24 @@
 	"description": "a littlebook content plugin for tldraw support",
 	"version": "1.0.0",
 	"type": "module",
+	"main": "index.js",
+	"littlebook": {
+		"contentViews": [
+			{
+				"identifier": "littlebook-tldraw",
+				"contentTypes": ["com.tldraw.file"]
+			}
+		],
+		"contentTypes": [
+			{
+				"identifier": "com.tldraw.file",
+				"description": "tldraw",
+				"conformingTo": ["public.json"],
+				"filenameExtensions": ["tldraw"],
+				"mimeTypes": ["application/vnd.tldraw+json", "application/json"]
+			}
+		]
+	},
 	"scripts": {
 		"mk": "node mk",
 		"w": "node mk/w",
@@ -10,8 +28,8 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
-	"author": "",
-	"license": "ISC",
+	"author": "chee",
+	"license": "AGPL-3.0+",
 	"devDependencies": {
 		"@automerge/automerge": "^2.2.2",
 		"esbuild": "^0.21.5",

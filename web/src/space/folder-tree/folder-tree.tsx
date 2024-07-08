@@ -168,35 +168,31 @@ export function FolderTreeFolderInner(props: {
 
 	return (
 		<Suspense>
-			<Show when={menuShowing()}>
-				<Portal>
-					<Popout
-						mouse
-						close={() => setMenuShowing(false)}
-						style={{position: "fixed"}}>
-						<Menu
-							options={{
-								rename: "rename",
-								delete: "delete",
-							}}
-							select={option => {
-								setMenuShowing(false)
-								if (option == "rename") {
-									return setRenaming(true)
-								}
-								if (option == "delete") {
-									const [_parent, changeParent] = useDocument(() =>
-										props.parentId(),
-									)
-									return changeParent(
-										lb.folders.deleteItem(props.folder()?.id!),
-									)
-								}
-							}}
-						/>
-					</Popout>
-				</Portal>
-			</Show>
+			<Popout
+				when={menuShowing}
+				mouse
+				close={() => setMenuShowing(false)}
+				style={{position: "fixed"}}>
+				<Menu
+					options={{
+						rename: "rename",
+						delete: "delete",
+					}}
+					select={option => {
+						setMenuShowing(false)
+						if (option == "rename") {
+							return setRenaming(true)
+						}
+						if (option == "delete") {
+							const [_parent, changeParent] = useDocument(() =>
+								props.parentId(),
+							)
+							return changeParent(lb.folders.deleteItem(props.folder()?.id!))
+						}
+					}}
+				/>
+			</Popout>
+
 			<header
 				class={clsx("folder-tree-row", props.current() && "current")}
 				onclick={() =>
@@ -204,6 +200,7 @@ export function FolderTreeFolderInner(props: {
 				}
 				oncontextmenu={event => {
 					event.preventDefault()
+					event.stopImmediatePropagation()
 					setMenuShowing(true)
 				}}>
 				<div
@@ -278,6 +275,24 @@ function FolderTreeFile(props: {
 
 	return (
 		<Suspense>
+			<Popout
+				mouse
+				when={menuShowing}
+				close={() => setMenuShowing(false)}
+				style={{position: "fixed"}}>
+				<FileMenu
+					select={option => {
+						setMenuShowing(false)
+						if (option == "rename") {
+							return setRenaming(true)
+						}
+						if (option == "delete") {
+							console.log(file()?.name, props.id(), props.parentId())
+							return lb.files.deleteFile(props.id()!, props.parentId())
+						}
+					}}
+				/>
+			</Popout>
 			<div
 				class={clsx(
 					"folder-tree-item folder-tree-file folder-tree-row",
@@ -295,28 +310,8 @@ function FolderTreeFile(props: {
 				oncontextmenu={event => {
 					event.preventDefault()
 					setMenuShowing(true)
+					event.stopImmediatePropagation()
 				}}>
-				<Show when={menuShowing()}>
-					<Portal>
-						<Popout
-							mouse
-							close={() => setMenuShowing(false)}
-							style={{position: "fixed"}}>
-							<FileMenu
-								select={option => {
-									setMenuShowing(false)
-									if (option == "rename") {
-										return setRenaming(true)
-									}
-									if (option == "delete") {
-										console.log(file()?.name, props.id(), props.parentId())
-										return lb.files.deleteFile(props.id()!, props.parentId())
-									}
-								}}
-							/>
-						</Popout>
-					</Portal>
-				</Show>
 				<div
 					class="folder-tree-indent"
 					style={{width: `calc(var(--folder-tree-indent) * ${props.depth})`}}

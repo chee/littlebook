@@ -33,13 +33,7 @@ async function configureRepoNetworkPort(port: MessagePort) {
 		await repoPromise
 	const repo = new Repo({
 		storage: new IndexedDBStorageAdapter(),
-		network: [
-			new BrowserWebSocketClientAdapter(
-				import.meta.env.DEV
-					? "ws://localhost:11124"
-					: "wss://star.littlebook.app",
-			),
-		],
+		network: [new BrowserWebSocketClientAdapter(import.meta.env.LB_SRV_HOST)],
 		peerId: "lightwork" as PeerId,
 		sharePolicy: async peerId => peerId.startsWith("starlight"),
 	})

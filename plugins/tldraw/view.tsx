@@ -3,9 +3,9 @@ import "../../web/src/types.ts"
 import type {ContentHandleChangePayload} from "../../web/src/types.ts"
 
 import {
-	EditorViewElement,
-	type EditorViewComponent,
-} from "../../web/src/files/content-view.ts"
+	ContentViewElement,
+	type ContentViewComponent,
+} from "../../web/src/files/contents/content-view.ts"
 
 import {
 	useCallback,
@@ -21,28 +21,25 @@ import type {TldrawFile} from "./shared.ts"
 import {createRoot} from "react-dom/client"
 
 import {Box, useEditor} from "@tldraw/editor"
-import {parseTldrawJsonFile} from "tldraw"
+import {parseTldrawJsonFile, Tldraw} from "tldraw"
 import type {
 	InsertPatch,
 	PutPatch,
 	SpliceTextPatch,
 } from "@automerge/automerge/next"
-const Tldraw = lazy(() => import("tldraw").then(mod => ({default: mod.Tldraw})))
+
 import {getAssetUrls} from "@tldraw/assets/selfHosted"
 import type {HistoryEntry, TLRecord, RecordId, Editor} from "tldraw"
 
 function insert(patch: InsertPatch, object: TLRecord) {
-	console.log("insert", patch.path)
 	return object
 }
 
 function put(patch: PutPatch, object: TLRecord) {
-	console.log("put", patch.path)
 	return object
 }
 
 function splice(patch: SpliceTextPatch, object: TLRecord) {
-	console.log("splice", patch.path)
 	return object
 }
 
@@ -173,7 +170,7 @@ function ActionsMenu() {
 	return null
 }
 
-const TldrawEditorView: EditorViewComponent<
+const TldrawEditorView: ContentViewComponent<
 	TldrawFile,
 	FunctionComponent<lb.ContentEditorViewProps<TldrawFile>>
 > = ({value, change, ...props}) => {
@@ -182,22 +179,20 @@ const TldrawEditorView: EditorViewComponent<
 	}
 
 	return (
-		<Suspense>
-			<Tldraw
-				inferDarkMode
-				components={{ActionsMenu}}
-				options={{maxPages: 1}}
-				autoFocus={true}
-				assetUrls={getAssetUrls({baseUrl: "/tldraw-assets"})}>
-				<TldrawInner value={value} change={change} {...props} />
-			</Tldraw>
-		</Suspense>
+		<Tldraw
+			inferDarkMode
+			components={{ActionsMenu}}
+			options={{maxPages: 1}}
+			autoFocus={true}
+			assetUrls={getAssetUrls({baseUrl: "/tldraw-assets"})}>
+			<TldrawInner value={value} change={change} {...props} />
+		</Tldraw>
 	)
 }
 
 import "@tldraw/tldraw/tldraw.css"
 
-export class TldrawEditorElement extends EditorViewElement<TldrawFile> {
+export default class TldrawEditorElement extends ContentViewElement<TldrawFile> {
 	shadowRoot = this.attachShadow({
 		mode: "open",
 		delegatesFocus: true,

@@ -45,44 +45,44 @@ export default function EditableName(props: EditableNameProps) {
 			<span ref={setButtonRef} class="editable-name not-editing">
 				{props.name()}
 			</span>
-			<Show when={props.renaming()}>
-				<Popout
-					close={cancel}
-					class="editable-name-editor"
-					style={{
-						left: buttonBox()?.left + "px",
-						top: buttonBox()?.top + "px",
-					}}>
-					<form class="submit-inline">
-						<input
-							autofocus
-							ref={input => {
-								createEffect(
-									on([props.renaming], () => {
-										input.selectionStart = 0
-										input.selectionEnd = input?.value.lastIndexOf(".")
-										input.selectionDirection = "forward"
-										input.focus()
-									}),
-								)
-							}}
-							value={localName}
-							onInput={event => {
-								if (!(event.target instanceof HTMLInputElement)) return
-								localName = event.target.value
-							}}
-						/>
-						<button
-							type="submit"
-							onClick={event => {
-								event.preventDefault()
-								save()
-							}}>
-							ok
-						</button>
-					</form>
-				</Popout>
-			</Show>
+
+			<Popout
+				when={props.renaming}
+				close={cancel}
+				class="editable-name-editor"
+				style={{
+					left: buttonBox()?.left + "px",
+					top: buttonBox()?.top + "px",
+				}}>
+				<form class="submit-inline">
+					<input
+						autofocus
+						ref={input => {
+							createEffect(
+								on([props.renaming], () => {
+									input.selectionStart = 0
+									input.selectionEnd = input?.value.lastIndexOf(".")
+									input.selectionDirection = "forward"
+									input.focus()
+								}),
+							)
+						}}
+						value={localName}
+						onInput={event => {
+							if (!(event.target instanceof HTMLInputElement)) return
+							localName = event.target.value
+						}}
+					/>
+					<button
+						type="submit"
+						onClick={event => {
+							event.preventDefault()
+							save()
+						}}>
+						ok
+					</button>
+				</form>
+			</Popout>
 		</>
 	)
 }

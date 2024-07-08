@@ -1,11 +1,16 @@
-import {Show, type Component, type ParentComponent} from "solid-js"
+import {
+	Show,
+	type Component,
+	type JSXElement,
+	type ParentComponent,
+} from "solid-js"
 import cl from "../../../lib/cl.ts"
 import "./sidebar-card.scss"
 import clsx from "clsx"
 import {Dynamic} from "solid-js/web"
 
 interface CardHeaderAction {
-	icon: string
+	icon: string | JSXElement
 	label: string
 	action(...any: any[]): any
 }

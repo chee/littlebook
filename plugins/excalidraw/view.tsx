@@ -1,10 +1,10 @@
 // things i'll need to make available in @littlebook/plugin
 import "../../web/src/types.ts"
 import {
-	EditorViewElement,
+	ContentViewElement,
 	// ContentView,
-	type EditorViewComponent,
-} from "../../web/src/files/content-view.ts"
+	type ContentViewComponent,
+} from "../../web/src/files/contents/content-view.ts"
 
 import {Counter} from "@automerge/automerge/slim/next"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
@@ -89,9 +89,9 @@ const Excalidraw = lazy(async () => {
 	return {default: module.Excalidraw}
 })
 
-const ExcalidrawView: EditorViewComponent<
+const ExcalidrawView: ContentViewComponent<
 	ExcalidrawJSON,
-	FunctionComponent<lb.ContentEditorViewProps<ExcalidrawJSON>>
+	FunctionComponent<lb.ContentViewProps<ExcalidrawJSON>>
 > = ({value, change, ...props}) => {
 	if (!value) {
 		return <div>waiting for value</div>
@@ -212,7 +212,7 @@ const ExcalidrawView: EditorViewComponent<
 
 export default ExcalidrawView
 
-export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
+export class ExcalidrawEditorElement extends ContentViewElement<ExcalidrawJSON> {
 	root = createRoot(this)
 	props = () => ({
 		value: this.value,
@@ -235,5 +235,6 @@ export class ExcalidrawEditorElement extends EditorViewElement<ExcalidrawJSON> {
 	disconnectedCallback() {
 		this.handle?.removeListener("change", this.render)
 		this.root.unmount()
+		this.root = createRoot(this)
 	}
 }

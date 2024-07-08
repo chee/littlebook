@@ -1,4 +1,3 @@
-import {type ContentCoder, json} from "../../web/src/files/content-coders.ts"
 import type {AutomergeList} from "../../web/src/types.ts"
 import type {TldrawFile} from "./shared.ts"
 import {createTLSchema} from "@tldraw/tlschema"
@@ -9,20 +8,24 @@ export const defaultFileContents: TldrawFile = {
 	records: toAutomergeList([]),
 }
 
-const jsonCoder = json<TldrawFile>()
 function toAutomergeList<T>(array: T[]): AutomergeList<T> {
 	return array as AutomergeList<T>
 }
 
-export default {
-	encode(string) {
-		return jsonCoder.encode(string)
-	},
-	decode(bytes) {
-		if (bytes.length == 0) {
-			return defaultFileContents
-		}
-		const decoded = jsonCoder.decode(bytes)
-		return decoded
-	},
-} satisfies ContentCoder<TldrawFile>
+export default function create(
+	lb: lb.plugins.API,
+): lb.ContentCoder<TldrawFile> {
+	const json = lb.coders.json<TldrawFile>()
+	return {
+		encode(string) {
+			return json.encode(string)
+		},
+		decode(bytes) {
+			if (bytes.length == 0) {
+				return structuredClone(defaultFileContents)
+			}
+			const decoded = json.decode(bytes)
+			return decoded
+		},
+	}
+}

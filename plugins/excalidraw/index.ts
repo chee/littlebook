@@ -11,6 +11,6 @@ export default function excalidraw(lb: lb.plugins.API) {
 		["application/x-excalidraw", "application/json"],
 	)
 
-	lb.registerCoder(excalidraw, coder)
+	lb.registerContentCoder(excalidraw, coder)
 	lb.registerEditorView(excalidraw, ExcalidrawEditorElement)
 }

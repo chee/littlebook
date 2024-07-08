@@ -1,6 +1,6 @@
-import {EditorViewElement} from "../../../files/content-view.ts"
+import {ContentViewElement} from "../contents/content-view.ts"
 
-export class UnknownContent extends EditorViewElement<any> {
+export class UnknownContent extends ContentViewElement<any> {
 	#file?: lb.File
 	constructor() {
 		super()

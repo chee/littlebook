@@ -1,10 +1,9 @@
 import {For} from "solid-js"
 import {useLittlebookAPI} from "../../api/use-api.ts"
 import useDocument from "../../documents/use-document.ts"
-import {coderRegistry} from "../content-coders.ts"
-import UniformType from "../uniform-type.ts"
-import {editorViewRegistry} from "../content-view.ts"
-import {showOpenFilePicker} from "file-system-access"
+import {coderRegistry} from "../contents/content-coders.ts"
+import UniformType from "../contents/uniform-type.ts"
+import {contentViewRegistry} from "../contents/content-view.ts"
 import type {DocHandle} from "@automerge/automerge-repo"
 
 export default function NewFilePicker(props: {
@@ -17,7 +16,7 @@ export default function NewFilePicker(props: {
 	const fileTypes = [...coderRegistry.getAllTypes()]
 		.map(UniformType.get)
 		.filter(type => type.preferredFilenameExtension)
-		.filter(type => editorViewRegistry.getFirst(type))
+		.filter(type => contentViewRegistry.getFirst(type))
 
 	return (
 		<ul class="new">
@@ -58,13 +57,12 @@ export default function NewFilePicker(props: {
 				)}
 			</For>
 			<li>
-				<button
-					type="button"
+				<input
+					value="import"
+					type="file"
 					onclick={async () => {
-						const [computerFileHandle] = await showOpenFilePicker({
-							_preferPolyfill: false,
-							multiple: false,
-						})
+						// const [computerFileHandle] = await showOpenFilePicker()
+
 						const computerFile = await computerFileHandle.getFile()
 						const bytes = new Uint8Array(await computerFile.arrayBuffer())
 						const fileHandle = lb.files.import(computerFile, bytes)
@@ -76,9 +74,8 @@ export default function NewFilePicker(props: {
 							changeFolder(lb.folders.addItem(file.id))
 							props.select(file.id)
 						})
-					}}>
-					import
-				</button>
+					}}
+				/>
 			</li>
 			<li>
 				<button

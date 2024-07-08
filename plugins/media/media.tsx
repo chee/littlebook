@@ -1,8 +1,8 @@
-import {binary} from "../../../files/content-coders.ts"
-import UniformType from "../../../files/uniform-type.ts"
-import {PreviewElement} from "../../../files/content-view.ts"
+import {binary} from "../../web/src/files/contents/content-coders.ts"
+import UniformType from "../../web/src/files/contents/uniform-type.ts"
+import {ContentViewElement} from "../../web/src/files/contents/content-view.ts"
 
-class ImagePreview extends PreviewElement<Uint8Array> {
+class ImagePreview extends ContentViewElement<Uint8Array> {
 	async blob() {
 		const blob = new Blob([this.value])
 		const url = URL.createObjectURL(blob)
@@ -25,7 +25,7 @@ class ImagePreview extends PreviewElement<Uint8Array> {
 
 const coder = binary()
 
-class VideoPreview extends PreviewElement<Uint8Array> {
+class VideoPreview extends ContentViewElement<Uint8Array> {
 	async blob() {
 		const blob = new Blob([this.value])
 		const url = URL.createObjectURL(blob)
@@ -47,7 +47,7 @@ class VideoPreview extends PreviewElement<Uint8Array> {
 	}
 }
 
-class AudioPreview extends PreviewElement<Uint8Array> {
+class AudioPreview extends ContentViewElement<Uint8Array> {
 	async blob() {
 		const blob = new Blob([this.value])
 		const url = URL.createObjectURL(blob)
@@ -69,13 +69,15 @@ class AudioPreview extends PreviewElement<Uint8Array> {
 	}
 }
 
-export default function image(lb: lb.plugins.API) {
-	// todo narrow these to just the types we actually support in these things
-	// not midi probably, or some movie types and image types
-	lb.registerPreview(UniformType.image, ImagePreview)
-	lb.registerPreview(UniformType.movie, VideoPreview)
-	lb.registerPreview(UniformType.audio, AudioPreview)
-	lb.registerCoder(UniformType.movie, coder)
-	lb.registerCoder(UniformType.image, coder)
-	lb.registerCoder(UniformType.audio, coder)
-}
+export default function () {}
+
+// export default function image(lb: lb.plugins.API) {
+// 	// todo narrow these to just the types we actually support in these things
+// 	// not midi probably, or some movie types and image types
+// 	lb.registerPreview(UniformType.image, ImagePreview)
+// 	lb.registerPreview(UniformType.movie, VideoPreview)
+// 	lb.registerPreview(UniformType.audio, AudioPreview)
+// 	lb.registerCoder(UniformType.movie, coder)
+// 	lb.registerCoder(UniformType.image, coder)
+// 	lb.registerCoder(UniformType.audio, coder)
+// }

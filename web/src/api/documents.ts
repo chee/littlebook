@@ -44,7 +44,8 @@ export function removeItemFromDocument<
 >(id: DocType["items"][number]) {
 	return (doc: DocType) => {
 		const index = doc.items.indexOf(id)
-		doc.items.deleteAt(index)
+		console.log(index, doc.items[index])
+		// doc.items.deleteAt(index)
 	}
 }
 

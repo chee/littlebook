@@ -1,4 +1,7 @@
-import {type ContentCoder, json} from "../../web/src/files/content-coders.ts"
+import {
+	type ContentCoder,
+	json,
+} from "../../web/src/files/contents/content-coders.ts"
 import type {AutomergeList} from "../../web/src/types.ts"
 import type {ExcalidrawJSON} from "./shared.ts"
 

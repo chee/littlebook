@@ -1,5 +1,5 @@
 import type {Repo} from "@automerge/automerge-repo"
-import {binary, coderRegistry} from "../files/content-coders.ts"
+import {binary, coderRegistry} from "../files/contents/content-coders.ts"
 import {createContentHandle} from "./contents.ts"
 import {
 	type DocTemplate,
@@ -11,7 +11,7 @@ import {addItemToFolder, getFolderHandle} from "./folders.ts"
 import UniformType, {
 	type MIMEType,
 	type UniformTypeIdentifier,
-} from "../files/uniform-type.ts"
+} from "../files/contents/uniform-type.ts"
 
 type FileTemplate = DocTemplate<lb.File> & {
 	contentType: UniformTypeIdentifier
@@ -21,8 +21,9 @@ export function createFileHandle(
 	repo: Repo,
 	fileTemplate: FileTemplate,
 	bytes = new Uint8Array(),
+	coder: lb.ContentCoder<any> = binary(),
 ) {
-	const coder = coderRegistry.getFirst(fileTemplate.contentType) || binary()
+	// const coder = coderRegistry.getFirst(fileTemplate.contentType) || binary()
 	const content = createContentHandle(repo, coder.decode(bytes))
 
 	return createDocumentHandle<lb.File>(repo, {
@@ -65,6 +66,7 @@ export function getFileHandle(repo: Repo, id: lb.FileId) {
 export function deleteFile(repo: Repo, id: lb.FileId, parentId?: lb.FolderId) {
 	if (parentId) {
 		const parentHandle = getFolderHandle(repo, parentId)
+		removeItemFromDocument(id)
 		parentHandle.change(removeItemFromDocument(id))
 	}
 
@@ -73,7 +75,7 @@ export function deleteFile(repo: Repo, id: lb.FileId, parentId?: lb.FolderId) {
 		file && repo.find<lb.Content<any>>(file.content).delete()
 	})
 
-	fileHandle.delete()
+	// fileHandle.delete()
 }
 
 export function createFileHandleInFolder(

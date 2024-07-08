@@ -1,23 +1,8 @@
-import ContentEditor from "../content-editor.tsx"
-import ContentPreview from "../content-preview.tsx"
+import ContentViewer from "../content-viewer/content-viewer.tsx"
 import useDocument from "../../documents/use-document.ts"
-import {
-	createEffect,
-	createSignal,
-	For,
-	Match,
-	on,
-	onMount,
-	Suspense,
-	Switch,
-	type JSXElement,
-} from "solid-js"
-import {editorViewRegistry, previewRegistry} from "../content-view.ts"
+import {Suspense, type JSXElement} from "solid-js"
+
 import "./file-area.scss"
-
-import type {DocHandleEphemeralMessagePayload} from "@automerge/automerge-repo"
-import {Set as set} from "immutable"
-
 type FileAreaProps = {
 	fileId?: lb.FileId
 	headerItems?: {
@@ -26,47 +11,9 @@ type FileAreaProps = {
 	}
 }
 export default function FileArea(props: FileAreaProps) {
-	const [file, _change, handle] = useDocument<lb.File>(() => props.fileId)
+	const [file, _change] = useDocument<lb.File>(() => props.fileId)
 
-	const hasEditorView = () =>
-		Boolean(file.latest && editorViewRegistry.getFirst(file.latest.contentType))
-
-	const hasPreview = () =>
-		Boolean(file.latest && previewRegistry.getFirst(file.latest.contentType))
-
-	const [friends, setFriends] = createSignal(set<string>())
-	function addFriend(name: string) {
-		setFriends(friends().add(name))
-	}
-
-	function removeFriend(name: string) {
-		setFriends(friends().delete(name))
-	}
-
-	function updateFriends(payload: DocHandleEphemeralMessagePayload<lb.File>) {
-		const {message, senderId} = payload
-		if (message == "hello") {
-			addFriend(senderId)
-		} else if (message == "goodbye") {
-			removeFriend(senderId)
-		}
-	}
-
-	createEffect(
-		on([handle], ([prevHandle]) => {
-			if (prevHandle != handle()) {
-				prevHandle?.removeListener("ephemeral-message", updateFriends)
-				handle()?.on("ephemeral-message", updateFriends)
-			}
-			onMount(() => {
-				handle()?.on("ephemeral-message", updateFriends)
-			})
-		}),
-	)
-
-	createEffect(() => {
-		console.log(friends())
-	})
+	// todo file pane menu
 
 	return (
 		<Suspense>
@@ -86,24 +33,17 @@ export default function FileArea(props: FileAreaProps) {
 						</div>
 					</div>
 					<div class="file-viewer-head-right headstrip-right">
-						<div class="friends">
-							<For each={friends().toArray()}>
-								{name => <span>{name}</span>}
-							</For>
-						</div>
+						<button type="button" onclick={() => {}}>
+							...
+						</button>
 
 						{props.headerItems?.right}
 					</div>
 				</header>
 				<div class="file-viewer-body" style={{width: "100%"}}>
-					<Switch>
-						<Match when={file.latest && (hasEditorView() || !hasPreview())}>
-							<ContentEditor fileId={file.latest!.id} />
-						</Match>
-						<Match when={hasPreview()}>
-							<ContentPreview fileId={file.latest!.id} />
-						</Match>
-					</Switch>
+					<Suspense>
+						<ContentViewer fileId={props.fileId} />
+					</Suspense>
 				</div>
 			</div>
 		</Suspense>

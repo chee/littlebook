@@ -1,17 +1,24 @@
-import {UniformType} from "../../web/src/plugins/plugin-api.ts"
-import coder from "./coder.ts"
-import {TldrawEditorElement} from "./view.tsx"
-import {TLDRAW_FILE_EXTENSION} from "tldraw"
+import createCoder from "./coder.ts"
+import view from "./view.tsx"
+import pkg from "./package.json" with {type: "json"}
 
-export default function tldraw(lb: lb.plugins.API) {
-	const tldraw = lb.UniformType.create(
-		"com.tldraw.file",
-		"tldraw",
-		[UniformType.json],
-		[TLDRAW_FILE_EXTENSION.slice(1)],
-		["application/vnd.tldraw+json", "application/json"],
-	)
+const config = pkg.littlebook
 
-	lb.registerCoder(tldraw, coder)
-	lb.registerEditorView(tldraw, TldrawEditorElement)
+const activate: lb.plugins.activate = (lb: lb.plugins.API) => {
+	const [tldrawType] = config.contentTypes
+	const coder = createCoder(lb)
+	const type = lb.UniformType.get(tldrawType.identifier)
+	const disposers = [lb.registerContentCoder(type, coder)]
+	const tag = config.contentViews[0].identifier
+	if (!customElements.get(tag)) {
+		customElements.define(tag, view)
+	}
+
+	return () => {
+		for (const fn of disposers) {
+			fn()
+		}
+	}
 }
+
+export default activate

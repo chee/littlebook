@@ -1,4 +1,4 @@
-import {createEffect, For, Suspense} from "solid-js"
+import {createSignal, For, Suspense} from "solid-js"
 import {useLittlebookAPI} from "../../api/use-api.ts"
 import {useAutomerge} from "../../automerge/use-automerge.ts"
 import useDocument from "../../documents/use-document.ts"
@@ -19,7 +19,10 @@ import breakpoints from "../../styles/breakpoints.ts"
 import {SidebarShortcut} from "./shortcuts.tsx"
 import {FolderTree} from "../folder-tree/folder-tree.tsx"
 import SidebarToggle from "../sidebar/sidebar-toggle.tsx"
-import useParents from "../../documents/use-parents.ts"
+import {Portal} from "solid-js/web"
+import Menu from "../../elements/menu/menu.tsx"
+
+import Popout from "../../elements/popout/popout.tsx"
 
 function select(itemId: lb.ItemId, ui: UI, set: UpdateUI) {
 	selectItem(itemId, ui, set)
@@ -34,9 +37,25 @@ export default function PrimarySidebar() {
 	const [space, changeSpace] = useDocument<lb.Space>(() => automerge.home)
 	const lb = useLittlebookAPI()
 	const [ui, updateUI] = useUI()
+	const [showingSettings, setShowingSettings] = createSignal(false)
 
 	return (
 		<Suspense>
+			<Popout when={showingSettings} close={() => setShowingSettings(false)}>
+				<Menu
+					options={{
+						dir: "choose littlebook directory",
+					}}
+					select={async option => {
+						if (option == "dir") {
+							const dir = await showDirectoryPicker()
+							if (dir) {
+								console.log(dir)
+							}
+						}
+					}}
+				/>
+			</Popout>
 			<header class="primary-sidebar-header headstrip">
 				<div class="headstrip-left">
 					<SidebarToggle
@@ -46,7 +65,11 @@ export default function PrimarySidebar() {
 					/>
 				</div>
 				<div class="headstrip-middle" />
-				<div class="headstrip-right" />
+				<div class="headstrip-right">
+					<button type="button" onclick={() => setShowingSettings(true)}>
+						...
+					</button>
+				</div>
 			</header>
 			<SidebarCard>
 				<SidebarShortcut icon="📥" title="inbox" />
@@ -60,7 +83,7 @@ export default function PrimarySidebar() {
 				title="documents"
 				headerAction={{
 					label: "create folder",
-					icon: "➕",
+					icon: <strong>+</strong>,
 					action() {
 						const folderHandle = lb.folders.createHandle()
 						folderHandle?.doc().then(folder => {

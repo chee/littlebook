@@ -1,35 +1,21 @@
 import UniformType, {
 	type ResolvableUniformTypes,
-} from "../files/uniform-type.ts"
+} from "../files/contents/uniform-type.ts"
+
 import {
-	editorViewRegistry,
-	previewRegistry,
-	type EditorViewConstructor,
-	type PreviewConstructor,
-} from "../files/content-view.ts"
-import {coderRegistry} from "../files/content-coders.ts"
+	text,
+	json,
+	binary,
+	coderRegistry,
+} from "../files/contents/content-coders.ts"
 
-// todo register a destructor at this moment.s
-
-export function registerEditorView<T extends lb.AnyContentValue>(
+export function registerContentCoder(
 	types: ResolvableUniformTypes,
-	view: EditorViewConstructor<T>,
-) {
-	editorViewRegistry.register(types, view)
-}
-
-export function registerPreview<T extends lb.AnyContentValue>(
-	types: ResolvableUniformTypes,
-	view: PreviewConstructor<T>,
-) {
-	previewRegistry.register(types, view)
-}
-
-export function registerCoder<T extends lb.AnyContentValue>(
-	types: ResolvableUniformTypes,
-	coder: lb.ContentCoder<T>,
+	coder: lb.ContentCoder<any>,
 ) {
 	coderRegistry.register(types, coder)
+	return () => coderRegistry.remove(types, coder)
 }
 
+export const coders = {text, json, binary}
 export {UniformType}

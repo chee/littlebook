@@ -13,33 +13,7 @@ const exws = ws(express())
 const srv = exws.app
 const websocket = exws.getWss()
 srv.ws("/", () => {})
-srv.get("/", (_, reply) => {
-	reply.send(
-		/*html*/ `
-			<!doctype html>
-			<meta charset=utf-8>
-			<meta name=viewport content=width=device-width,initial-scale=1.0>
-			<title> starlight </title>
-			<style> body {
-				margin: 0;
-				background: #124;
-				color: #def;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				height: 100vh;
-				font-family: system-ui, sans-serif;
-				font-size: 3em;
-			} h1 span {
-				text-decoration: underline;
-				text-decoration-color: #38F8C0;
-				text-decoration-style: double;
-				text-decoration-skip-ink: none;
-			} </style>
-			<h1> ✨ <span>hello starlight</span> ✨ </h1>
-		`,
-	)
-})
+srv.use(express.static("public"))
 
 const repo = new Repo({
 	network: [new NodeWSServerAdapter(websocket)],

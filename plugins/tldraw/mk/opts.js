@@ -13,5 +13,5 @@ export default {
 		"process.env.IS_PREACT": JSON.stringify("true"),
 	},
 	target: ["safari17", "firefox127"],
-	external: ["react", "react-dom"],
+	loader: {".svg": "dataurl"},
 }

@@ -7,20 +7,22 @@ export type ResolvableUniformTypes =
 	| ResolvableUniformType
 	| ResolvableUniformType[]
 
+// expecting this to be something that can be passed to `<img src=` rn
+export type UniformTypeIcon = string
+
 export type UniformTypeDescriptor = {
 	identifier: UniformTypeIdentifier
 	description: string
 	conformingTo?: UniformType[]
 	filenameExtensions?: FilenameExtension[]
 	mimeTypes?: MIMEType[]
+	icon?: UniformTypeIcon
 }
 
-export type LooseUniformTypeDescriptor = {
+export type UniformTypeJSON = {
 	identifier: string
-	description?: string
-	conformingTo?: UniformType[]
-	filenameExtensions?: string[]
-	mimeTypes?: string[]
+	description: string
+	supertypes: UniformTypeJSON[]
 }
 
 export default class UniformType {
@@ -33,6 +35,7 @@ export default class UniformType {
 	constructor(
 		readonly identifier: UniformTypeIdentifier,
 		readonly description: string,
+		readonly icon?: UniformTypeIcon,
 	) {}
 
 	static add({
@@ -41,15 +44,19 @@ export default class UniformType {
 		conformingTo,
 		filenameExtensions,
 		mimeTypes,
+		icon,
 	}: UniformTypeDescriptor) {
 		const type = new UniformType(
 			identifier as UniformTypeIdentifier,
 			description,
+			icon,
 		)
+
 		if (conformingTo) {
 			for (const supertype of conformingTo) {
-				type.supertypes.add(supertype)
-				for (const superdupertype of supertype.supertypes) {
+				const u = UniformType.get(supertype)
+				type.supertypes.add(u)
+				for (const superdupertype of u.supertypes) {
 					type.supertypes.add(superdupertype)
 				}
 			}
@@ -64,28 +71,13 @@ export default class UniformType {
 		return type
 	}
 
-	static addLoose({
-		identifier,
-		description,
-		conformingTo,
-		filenameExtensions,
-		mimeTypes,
-	}: LooseUniformTypeDescriptor) {
-		return UniformType.add({
-			identifier: identifier as UniformTypeIdentifier,
-			description: description || identifier,
-			conformingTo: conformingTo,
-			filenameExtensions: filenameExtensions as FilenameExtension[],
-			mimeTypes: mimeTypes as MIMEType[],
-		})
-	}
-
 	static create(
 		identifier: string,
 		description?: string,
 		conformingTo?: UniformType[],
 		filenameExtensions?: string[],
 		mimeTypes?: string[],
+		icon?: UniformTypeIcon,
 	) {
 		return UniformType.add({
 			identifier: identifier as UniformTypeIdentifier,
@@ -93,6 +85,7 @@ export default class UniformType {
 			conformingTo: conformingTo,
 			filenameExtensions: filenameExtensions as FilenameExtension[],
 			mimeTypes: mimeTypes as MIMEType[],
+			icon,
 		})
 	}
 
@@ -177,8 +170,11 @@ export default class UniformType {
 		return UniformType.extensions.get(filenameExtension)
 	}
 
-	static get(type: UniformTypeIdentifier | UniformType) {
-		const full = typeof type == "string" ? UniformType.types.get(type) : type
+	static get(type: UniformTypeIdentifier | UniformType | string) {
+		const full =
+			typeof type == "string"
+				? UniformType.types.get(type as UniformTypeIdentifier)
+				: type
 		if (!full) {
 			throw `no such type ${type}`
 		}
@@ -709,4 +705,17 @@ export default class UniformType {
 	static spreadsheet = UniformType.create("public.spreadsheet", "spreadsheet", [
 		UniformType.content,
 	])
+
+	toJSON(): UniformTypeJSON {
+		const supertypes: UniformTypeJSON[] = []
+
+		for (const type of this.supertypes) {
+			supertypes.push(type.toJSON())
+		}
+		return {
+			identifier: this.identifier as string,
+			description: this.description as string,
+			supertypes,
+		}
+	}
 }

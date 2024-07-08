@@ -1,19 +1,21 @@
-import UniformType, {type UniformTypeIdentifier} from "./uniform-type.ts"
+import UniformType, {
+	type ResolvableUniformType,
+	type ResolvableUniformTypes,
+	type UniformTypeIdentifier,
+} from "./uniform-type.ts"
 
 export class CodingError extends Error {}
 export class EncodingError extends CodingError {}
 export class DecodingError extends CodingError {}
 
 // todo maybe Coders should have display names
-// todo and indicate if they are creatable/newable
-// todo because, say, a PDF is not. i suppose if something
-// todo has only a preview and not an editor then it is
-// todo not creatable?
 export interface ContentCoder<Model extends lb.AnyContentValue> {
+	description?: string
 	decode(bytes: Uint8Array): Model | DecodingError
 	encode(model: Model): Uint8Array | EncodingError
 }
 export interface AsyncContentCoder<Model extends lb.AnyContentValue> {
+	description?: string
 	decode(bytes: Uint8Array): Promise<Model | DecodingError>
 	encode(model: Model): Promise<Uint8Array | EncodingError>
 }
@@ -71,26 +73,19 @@ export function json<Type extends lb.AnyContentValue>(): ContentCoder<Type> {
 	}
 }
 
-export class ContentCoderRegistry {
-	private registry = new Map<UniformTypeIdentifier, ContentCoder<any>>()
+type AnyContentCoder = ContentCoder<any> | AsyncContentCoder<any>
 
-	register<Type extends lb.AnyContentValue>(
-		uniformType:
-			| UniformType
-			| UniformTypeIdentifier
-			| (UniformType | UniformTypeIdentifier)[],
-		coder: ContentCoder<Type>,
-	) {
+export class ContentCoderRegistry {
+	private registry = new Map<UniformTypeIdentifier, AnyContentCoder>()
+
+	register(uniformType: ResolvableUniformTypes, coder: AnyContentCoder) {
 		this.registerAll(
 			Array.isArray(uniformType) ? uniformType : [uniformType],
 			coder,
 		)
 	}
 
-	registerAll<Type extends lb.AnyContentValue>(
-		uniformTypes: (UniformType | UniformTypeIdentifier)[],
-		coder: ContentCoder<Type>,
-	) {
+	registerAll(uniformTypes: ResolvableUniformType[], coder: AnyContentCoder) {
 		for (const type of uniformTypes) {
 			const typeName = UniformType.getIdentifier(type)
 			if (this.registry.get(typeName)) {
@@ -104,7 +99,7 @@ export class ContentCoderRegistry {
 
 	getstar = function* (
 		registry: ContentCoderRegistry["registry"],
-		type: UniformTypeIdentifier | UniformType,
+		type: ResolvableUniformType,
 	) {
 		const uniformType = UniformType.get(type)
 		const direct = registry.get(uniformType.identifier)
@@ -118,24 +113,26 @@ export class ContentCoderRegistry {
 		}
 	}
 
-	get(type: UniformTypeIdentifier | UniformType) {
+	get(type: ResolvableUniformType) {
 		return this.getstar(this.registry, type)
 	}
 
-	getFirst(type: UniformTypeIdentifier | UniformType) {
+	getFirst(type: ResolvableUniformType) {
 		return this.get(type).next().value
 	}
 
-	getExact(type: UniformTypeIdentifier | UniformType) {
+	getExact(type: ResolvableUniformType) {
 		return this.registry.get(UniformType.getIdentifier(type))
 	}
 
-	remove(type: UniformTypeIdentifier | UniformType, coder: ContentCoder<any>) {
-		const identifier = UniformType.getIdentifier(type)
-		if (this.registry.get(identifier) == coder) {
-			this.registry.delete(identifier)
-		} else {
-			// todo throw or just silently accept?
+	remove(types: ResolvableUniformTypes, coder: AnyContentCoder) {
+		for (const type of Array.isArray(types) ? types : [types]) {
+			const identifier = UniformType.getIdentifier(type)
+			if (this.registry.get(identifier) == coder) {
+				this.registry.delete(identifier)
+			} else {
+				// todo throw or just silently accept?
+			}
 		}
 	}
 

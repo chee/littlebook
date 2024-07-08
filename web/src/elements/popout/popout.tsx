@@ -6,6 +6,8 @@ import {
 	createEffect,
 	onCleanup,
 	onMount,
+	Show,
+	untrack,
 } from "solid-js"
 import {Portal} from "solid-js/web"
 import mousePosition from "../../lib/mouse.ts"
@@ -13,63 +15,72 @@ import "./popout.scss"
 import clsx from "clsx"
 
 type PopoutProps = {
+	when(): boolean
 	close(): void
 	children: JSXElement
 	style?: JSX.CSSProperties
 	class?: string
 	mouse?: boolean
-	open?: boolean
 }
 
 export default function Popout(props: PopoutProps) {
-	const [dialog, setDialog] = createSignal<HTMLDialogElement>()
+	const [popover, setPopover] = createSignal<HTMLDivElement>()
+
 	onMount(() => {
-		dialog()?.showModal()
+		if (props.when()) {
+			popover()?.showPopover()
+		}
 	})
 
 	createEffect(() => {
-		const listener = (event: MouseEvent) => {
-			const element = dialog()
-
-			if (
-				element &&
-				event.target instanceof HTMLElement &&
-				(element == event.target || !element.contains(event.target))
-			) {
-				props.close()
-				dialog()?.close()
-			}
+		if (props.when()) {
+			popover()?.showPopover()
+		} else {
+			popover()?.hidePopover()
 		}
-		document.addEventListener("click", listener)
-		document.addEventListener("contextmenu", listener)
-		onCleanup(() => {
-			document.removeEventListener("click", listener)
-			document.removeEventListener("contextmenu", listener)
-		})
 	})
+
 	createShortcut(["Escape"], props.close)
-	const {x, y} = mousePosition()
 
 	const mouseStyle: () => JSX.CSSProperties | undefined = () => {
 		if (!props.mouse) return
 
+		const {x, y} = untrack(mousePosition)
 		return {
-			left: x + "px",
-			top: y + "px",
+			left: x - 1 + "px",
+			top: y - 16 + "px",
 		}
 	}
+
 	return (
-		<Portal>
-			<dialog
-				ref={setDialog}
-				class={clsx("popout", props.class)}
-				onclick={event => event.stopPropagation()}
-				style={{
-					...mouseStyle(),
-					...props.style,
-				}}>
-				{props.children}
-			</dialog>
-		</Portal>
+		<Show when={props.when()}>
+			<Portal>
+				<div
+					ref={setPopover}
+					popover
+					class={clsx("popout", props.class)}
+					onclick={event => event.stopImmediatePropagation()}
+					oncontextmenu={event => event.stopImmediatePropagation()}
+					ontoggle={event => {
+						if (event.newState == "closed") {
+							props.close()
+						}
+					}}
+					style={{
+						...untrack(mouseStyle),
+						...props.style,
+					}}>
+					{props.children}
+				</div>
+			</Portal>
+		</Show>
 	)
+}
+
+declare module "solid-js" {
+	namespace JSX {
+		interface HTMLAttributes<T> {
+			ontoggle?(event: ToggleEvent): void
+		}
+	}
 }

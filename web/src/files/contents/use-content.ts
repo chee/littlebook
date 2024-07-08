@@ -7,7 +7,7 @@ import {
 } from "solid-js"
 
 import type {ChangeFn, Doc, DocHandle} from "@automerge/automerge-repo"
-import {useAutomerge} from "../automerge/use-automerge.ts"
+import {useAutomerge} from "../../automerge/use-automerge.ts"
 
 type UseContent<T extends lb.AnyContentValue> = [
 	Resource<Doc<lb.Content<T>> | undefined>,

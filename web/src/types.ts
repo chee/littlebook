@@ -7,17 +7,8 @@ import type {
 	Repo,
 } from "@automerge/automerge-repo"
 import type {AutomergeValue, ScalarValue} from "@automerge/automerge/next"
-import type * as Auth from "@localfirst/auth"
-import type {
-	AuthProvider,
-	ShareId,
-} from "@localfirst/auth-provider-automerge-repo"
 import type createLittlebookAPI from "./api/api.ts"
 import type {ParentComponent} from "solid-js"
-import type {
-	LooseUniformTypeDescriptor,
-	UniformTypeIdentifier,
-} from "./files/uniform-type.ts"
 import type {AnyContentValue} from "./global"
 
 export declare type ParentComponentProps<T = Record<any, any>> = Parameters<
@@ -117,39 +108,43 @@ export declare namespace lb {
 	}
 
 	type ContentCoder<Model extends AnyContentValue> =
-		import("./files/content-coders.ts").ContentCoder<Model>
-	type ContentEditorView<Model extends AnyContentValue> =
-		import("./files/content-view.ts").EditorViewConstructor<Model>
-	// type ContentMetadataView<Model extends AnyContent> =
-	// 	import("./contents/views/content-view.ts").MetadataView<Model>
-	type ContentPreview<Model extends AnyContentValue> =
-		import("./files/content-view.ts").PreviewConstructor<Model>
+		import("./files/contents/content-coders.ts").ContentCoder<Model>
 
-	type AnyContentView<Model extends AnyContentValue> =
-		| ContentEditorView<Model>
-		// | ContentMetadataView<Model>
-		| ContentPreview<Model>
+	type ContentViewProps<Model extends AnyContentValue> =
+		import("./files/contents/content-view.ts").ContentViewProps<Model>
 
-	type ContentEditorViewProps<Model extends AnyContentValue> =
-		import("./files/content-view.ts").EditorViewProps<Model>
-
-	// type ContentMetadataViewProps<Model extends AnyContent> =
-	// 	import("./contents/views/content-view.ts").MetadataViewProps<Model>
-
-	type ContentPreviewProps<Model extends AnyContentValue> =
-		import("./files/content-view.ts").PreviewProps<Model>
+	type FilenameExtension =
+		import("./files/contents/uniform-type.ts").FilenameExtension
+	type MIMEType = import("./files/contents/uniform-type.ts").MIMEType
+	type UniformTypeIdentifier =
+		import("./files/contents/uniform-type.ts").UniformTypeIdentifier
 
 	namespace plugins {
 		type API = typeof import("./plugins/plugin-api.ts")
+		type activate = (lb: API) => () => void
 
-		interface ContentType<T extends lb.AnyContentValue> {
-			types: (UniformTypeIdentifier | LooseUniformTypeDescriptor)[]
-			coder?: lb.ContentCoder<T>
-			views?: {
-				editor?: ContentEditorView<T>
-				preview?: ContentPreview<T>
-				// metadata?: ContentMetadataView<T>
-			}
+		interface Manifest {
+			/**
+			 * if you declare this in the manifest, you need to
+			 * registerContentView with an element in the activate
+			 * hook
+			 */
+			contentViews?: {
+				identifier: string
+				contentTypes: string[]
+			}[]
+			/**
+			 * if you declare this in the manifest, you need to
+			 * registerContentCoder with a coder in the activate hook
+			 */
+			contentTypes?: {
+				identifier: string
+				description?: string
+				conformingTo?: string[]
+				filenameExtensions?: string[]
+				mimeTypes?: string[]
+				icon?: string
+			}[]
 		}
 	}
 }

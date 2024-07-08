@@ -1,4 +1,4 @@
-import {EditorViewElement} from "../../../files/content-view.ts"
+import {ContentViewElement} from "../../web/src/files/contents/content-view.ts"
 import "./text.scss"
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
 import {EditorView, lineNumbers} from "@codemirror/view"
@@ -11,8 +11,8 @@ import {
 } from "@codemirror/language"
 import UniformType, {
 	type UniformTypeIdentifier,
-} from "../../../files/uniform-type.ts"
-import * as coders from "../../../files/content-coders.ts"
+} from "../../web/src/files/contents/uniform-type.ts"
+import * as coders from "../../web/src/files/contents/content-coders.ts"
 
 const python = UniformType.create("public.python-script", "python code", [
 	UniformType.script,
@@ -30,7 +30,7 @@ const types = {
 	html: UniformType.html.identifier,
 }
 
-class CodemirrorTextEditorView extends EditorViewElement<string> {
+class CodemirrorTextEditorView extends ContentViewElement<string> {
 	codemirror!: EditorView
 	constructor() {
 		super()
@@ -122,5 +122,5 @@ class CodemirrorTextEditorView extends EditorViewElement<string> {
 
 export default function text(lb: lb.plugins.API) {
 	lb.registerEditorView(UniformType.plainText, CodemirrorTextEditorView)
-	lb.registerCoder(UniformType.plainText, coders.text())
+	lb.registerContentCoder(UniformType.plainText, coders.text())
 }

@@ -1,6 +1,6 @@
 import type {Repo} from "@automerge/automerge-repo"
-import {CodingError, coderRegistry} from "../files/content-coders.ts"
-import type {UniformTypeIdentifier} from "../files/uniform-type.ts"
+import {CodingError, coderRegistry} from "../files/contents/content-coders.ts"
+import type {UniformTypeIdentifier} from "../files/contents/uniform-type.ts"
 
 export function createContentHandle<ContentType extends lb.AnyContentValue>(
 	repo: Repo,
