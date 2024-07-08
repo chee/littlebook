@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"outDir": ".",
+		"allowImportingTsExtensions": true,
+		"target": "ES2022",
+		"module": "Preserve",
+		"moduleResolution": "Bundler",
+		"noEmit": true,
+		"checkJs": true,
+		"strict": true,
+		"allowJs": true,
+
+		"jsx": "react-jsx",
+
+		"skipLibCheck": true,
+	},
+
+	"files": ["text.ts"]
+}

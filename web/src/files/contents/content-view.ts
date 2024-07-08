@@ -109,7 +109,7 @@ export class ContentViewRegistry {
 		}
 		for (const [view, types] of registry.entries()) {
 			for (const type of types) {
-				if (uniformType.conforms(UniformType.get(type))) {
+				if (uniformType.conforms(type)) {
 					yield view
 				}
 			}

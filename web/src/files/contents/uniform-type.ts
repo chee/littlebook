@@ -31,7 +31,6 @@ export default class UniformType {
 	private static extensions = new Map<FilenameExtension, Set<UniformType>>()
 
 	supertypes = new Set<UniformType>()
-
 	constructor(
 		readonly identifier: UniformTypeIdentifier,
 		readonly description: string,
@@ -719,3 +718,19 @@ export default class UniformType {
 		}
 	}
 }
+
+UniformType.create(
+	"net.daringfireball.markdown",
+	"markdown",
+	[UniformType.plainText],
+	["md", "markdown"],
+	["text/markdown"],
+)
+
+UniformType.create(
+	"public.python-script",
+	"python code",
+	[UniformType.script, UniformType.sourceCode],
+	["py"],
+	["text/x-python"],
+)

@@ -142,3 +142,5 @@ export class ContentCoderRegistry {
 }
 
 export const coderRegistry = new ContentCoderRegistry()
+
+coderRegistry.register(UniformType.plainText, text())

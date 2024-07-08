@@ -1,5 +1,5 @@
 import {ContentViewElement} from "../../web/src/files/contents/content-view.ts"
-import "./text.scss"
+import "./text.css"
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
 import {EditorView, lineNumbers} from "@codemirror/view"
 import {Compartment} from "@codemirror/state"
@@ -9,25 +9,25 @@ import {
 	indentUnit,
 	type LanguageSupport,
 } from "@codemirror/language"
-import UniformType, {
-	type UniformTypeIdentifier,
-} from "../../web/src/files/contents/uniform-type.ts"
-import * as coders from "../../web/src/files/contents/content-coders.ts"
 
-const python = UniformType.create("public.python-script", "python code", [
+import pkg from "./package.json" with {type: "json"}
+const config = pkg.littlebook
+
+/* const python = UniformType.create("public.python-script", "python code", [
 	UniformType.script,
 	UniformType.sourceCode,
 ])
 
 const markdown = UniformType.create("net.daringfireball.markdown", "markdown", [
 	UniformType.plainText,
-])
+]) */
 
+// todo put UniformType on window?
 const types = {
-	python: python.identifier,
-	markdown: markdown.identifier,
-	javascript: UniformType.javaScript.identifier,
-	html: UniformType.html.identifier,
+	python: "public.python-script",
+	markdown: "net.daringfireball.markdown",
+	javascript: "com.netscape.javascript-source",
+	html: "public.html",
 }
 
 class CodemirrorTextEditorView extends ContentViewElement<string> {
@@ -50,7 +50,7 @@ class CodemirrorTextEditorView extends ContentViewElement<string> {
 	}
 
 	languages: {
-		[key: UniformTypeIdentifier]: () => Promise<LanguageSupport>
+		[key: string]: () => Promise<LanguageSupport>
 	} = {
 		[types.python]: () =>
 			import("@codemirror/lang-python").then(mod => mod.python()),
@@ -120,7 +120,9 @@ class CodemirrorTextEditorView extends ContentViewElement<string> {
 	}
 }
 
-export default function text(lb: lb.plugins.API) {
-	lb.registerEditorView(UniformType.plainText, CodemirrorTextEditorView)
-	lb.registerContentCoder(UniformType.plainText, coders.text())
+export default function activate(lb: lb.plugins.API) {
+	const tag = config.contentViews[0].identifier
+	if (!customElements.get(tag)) {
+		customElements.define(tag, CodemirrorTextEditorView)
+	}
 }

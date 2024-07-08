@@ -38323,6 +38323,20 @@ var UniformType = class _UniformType {
     };
   }
 };
+UniformType.create(
+  "net.daringfireball.markdown",
+  "markdown",
+  [UniformType.plainText],
+  ["md", "markdown"],
+  ["text/markdown"]
+);
+UniformType.create(
+  "public.python-script",
+  "python code",
+  [UniformType.script, UniformType.sourceCode],
+  ["py"],
+  ["text/x-python"]
+);
 
 // ../../web/src/files/contents/content-view.ts
 var ContentViewElement = class extends HTMLElement {
@@ -38377,7 +38391,7 @@ var ContentViewRegistry = class {
     }
     for (const [view, types] of registry.entries()) {
       for (const type2 of types) {
-        if (uniformType.conforms(UniformType.get(type2))) {
+        if (uniformType.conforms(type2)) {
           yield view;
         }
       }
@@ -91251,9 +91265,9 @@ var package_default = {
     ]
   },
   scripts: {
-    mk: "node mk",
+    mk: "NODE_ENV=production node mk",
     w: "node mk/w",
-    dev: "node mk/w",
+    dev: "NODE_ENV=development node mk/w",
     test: 'echo "Error: no test specified" && exit 1'
   },
   keywords: [],
