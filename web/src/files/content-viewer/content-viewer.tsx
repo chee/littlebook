@@ -19,6 +19,14 @@ export default function ContentViewer(props: {fileId: lb.FileId}) {
 		file.latest && contentViewRegistry.get(file.latest!.contentType)
 	// todo this needs to be selectable in the UI
 	const view = () => contentViews()?.next().value || "unknown-content"
+	createEffect(() => {
+		const detail = view()
+		if (typeof detail == "string") {
+			document.dispatchEvent(
+				new CustomEvent<string>("contentviewrequest", {detail}),
+			)
+		}
+	})
 
 	return (
 		<div class="content-editor">

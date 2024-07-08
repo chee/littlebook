@@ -14,6 +14,11 @@ const srv = exws.app
 const websocket = exws.getWss()
 srv.ws("/", () => {})
 srv.use(express.static("public"))
+srv.get("/installed-plugins", (request, response) => {
+	fs.readdir("public/plugins", (error, paths) => {
+		response.json(paths)
+	})
+})
 
 const repo = new Repo({
 	network: [new NodeWSServerAdapter(websocket)],

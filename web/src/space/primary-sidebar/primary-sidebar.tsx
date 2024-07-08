@@ -19,7 +19,6 @@ import breakpoints from "../../styles/breakpoints.ts"
 import {SidebarShortcut} from "./shortcuts.tsx"
 import {FolderTree} from "../folder-tree/folder-tree.tsx"
 import SidebarToggle from "../sidebar/sidebar-toggle.tsx"
-import {Portal} from "solid-js/web"
 import Menu from "../../elements/menu/menu.tsx"
 
 import Popout from "../../elements/popout/popout.tsx"
