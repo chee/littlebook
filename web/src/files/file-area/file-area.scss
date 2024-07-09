@@ -1,8 +1,15 @@
+@use "styles" as *;
+
 .file-viewer {
 	display: flex;
 	flex-grow: 1;
 	width: 100%;
 	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+	&.active .file-viewer-head {
+		box-shadow: inset 0 0 2px var(--color-primary);
+	}
 }
 
 .file-viewer-head {
@@ -18,4 +25,5 @@
 .file-viewer-body {
 	display: flex;
 	flex-grow: 1;
+	min-height: calc(100% - var(--headstrip-height));
 }

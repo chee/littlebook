@@ -6,21 +6,23 @@ import {
 	Switch,
 	createEffect,
 	createSignal,
+	getOwner,
+	runWithOwner,
 } from "solid-js"
-import {useUI} from "../../ui/use-ui-state.tsx"
 import useDocument from "../../documents/use-document.ts"
 
-import {getActiveItemId, selectItem} from "../../ui/ui-state.ts"
+import getDock, {getActiveItemId, selectItem} from "../area/dock.ts"
 import "./folder-tree.scss"
 import type {ChangeFn} from "@automerge/automerge/next"
 import clsx from "clsx"
 import EditableName from "../../documents/editable-name.tsx"
 import useParents from "../../documents/use-parents.ts"
 import FileMenu from "../../files/file-menu/file-menu.tsx"
-import {useLittlebookAPI} from "../../api/use-api.ts"
-import {Portal} from "solid-js/web"
 import Popout from "../../elements/popout/popout.tsx"
 import Menu from "../../elements/menu/menu.tsx"
+import NewFilePicker from "../../files/new-file-picker/new-file-picker.tsx"
+import {useAutomerge} from "../../automerge/use-automerge.ts"
+import useHandle from "../../documents/use-document-handle.ts"
 
 export function FolderTree(props: {
 	id(): lb.FolderId | undefined
@@ -31,9 +33,9 @@ export function FolderTree(props: {
 }) {
 	const [folder, change] = useDocument<lb.Folder>(props.id)
 	const [expanded, setExpanded] = createSignal(false)
-	const [ui] = useUI()
+	const [dock] = getDock()
 	const elementID = () => `folder-tree-${props.id()}`
-	const isCurrent = () => getActiveItemId(ui) == props.id()
+	const isCurrent = () => getActiveItemId(dock) == props.id()
 	const parents = useParents()
 	createEffect(() => {
 		parents().set(props.id()!, props.parentId()!)
@@ -74,8 +76,8 @@ function FolderTreeItem(props: {
 	depth: number
 }) {
 	const [item] = useDocument<lb.Item>(props.id)
-	const [ui] = useUI()
-	const isActive = () => getActiveItemId(ui) == props.id()
+	const [grid] = getDock()
+	const isActive = () => getActiveItemId(grid) == props.id()
 
 	const parents = useParents()
 	createEffect(() => {
@@ -161,20 +163,18 @@ export function FolderTreeFolderInner(props: {
 	current(): boolean
 }) {
 	const elementID = () => `folder-tree-folder-${props.folder()?.id}`
-	const [ui, updateUI] = useUI()
+	const [grid, updateGrid] = getDock()
 	const [renaming, setRenaming] = createSignal(false)
-	const lb = useLittlebookAPI()
 	const [menuShowing, setMenuShowing] = createSignal(false)
+	const [newFilePickerShowing, setNewFilePickerShowing] = createSignal(false)
+	const owner = getOwner()
 
 	return (
 		<Suspense>
-			<Popout
-				when={menuShowing}
-				mouse
-				close={() => setMenuShowing(false)}
-				style={{position: "fixed"}}>
+			<Popout when={menuShowing} mouse close={() => setMenuShowing(false)}>
 				<Menu
 					options={{
+						new: "new",
 						rename: "rename",
 						delete: "delete",
 					}}
@@ -184,19 +184,42 @@ export function FolderTreeFolderInner(props: {
 							return setRenaming(true)
 						}
 						if (option == "delete") {
-							const [_parent, changeParent] = useDocument(() =>
-								props.parentId(),
-							)
-							return changeParent(lb.folders.deleteItem(props.folder()?.id!))
+							runWithOwner(owner, () => {
+								const [_parent, changeParent] =
+									useDocument<lb.AnyParentDocument>(() => props.parentId())
+								changeParent(parent => {
+									// todo recursively delete item
+									console.log("hello", parent.id, props.folder()?.id, [
+										...parent.items,
+									])
+								})
+							})
+						}
+						if (option == "new") {
+							setNewFilePickerShowing(true)
 						}
 					}}
 				/>
 			</Popout>
 
+			<Popout
+				when={newFilePickerShowing}
+				close={() => setNewFilePickerShowing(false)}>
+				<Show when={newFilePickerShowing()}>
+					<NewFilePicker
+						select={id => {
+							selectItem(id, grid, updateGrid)
+							setNewFilePickerShowing(false)
+						}}
+						parentFolderId={() => props.folder()!.id}
+					/>
+				</Show>
+			</Popout>
+
 			<header
 				class={clsx("folder-tree-row", props.current() && "current")}
 				onclick={() =>
-					props.folder() && selectItem(props.folder()!.id, ui, updateUI)
+					props.folder() && selectItem(props.folder()!.id, grid, updateGrid)
 				}
 				oncontextmenu={event => {
 					event.preventDefault()
@@ -267,11 +290,12 @@ function FolderTreeFile(props: {
 	depth: number
 	current(): boolean
 }) {
-	const [file, change] = useDocument<lb.File>(props.id)
-	const [ui, updateUI] = useUI()
+	const [file, change, fileHandle] = useDocument<lb.File>(props.id)
+	const [grid, updateGrid] = getDock()
 	const [renaming, setRenaming] = createSignal(false)
 	const [menuShowing, setMenuShowing] = createSignal(false)
-	const lb = useLittlebookAPI()
+	const owner = getOwner()
+	const automerge = useAutomerge()
 
 	return (
 		<Suspense>
@@ -287,8 +311,26 @@ function FolderTreeFile(props: {
 							return setRenaming(true)
 						}
 						if (option == "delete") {
-							console.log(file()?.name, props.id(), props.parentId())
-							return lb.files.deleteFile(props.id()!, props.parentId())
+							runWithOwner(owner, () => {
+								const parentHandle = useHandle<lb.Folder>(() =>
+									props.parentId(),
+								)
+								// todo make a deleteFile
+								const contentHandle = automerge.repo.find(file()!.content)
+								contentHandle.delete()
+								parentHandle()
+									?.doc()
+									.then(parent => {
+										if (!parent) {
+											return
+										}
+										const index = parent.items.indexOf(props.id()!)
+										parent.items.splice(index, 1)
+										fileHandle()?.delete()
+									})
+							})
+
+							return
 						}
 					}}
 				/>
@@ -305,7 +347,7 @@ function FolderTreeFile(props: {
 				aria-selected={props.current()}
 				aria-current={props.current()}
 				onclick={() => {
-					file.latest && selectItem(file.latest!.id, ui, updateUI)
+					file.latest && selectItem(file.latest!.id, grid, updateGrid)
 				}}
 				oncontextmenu={event => {
 					event.preventDefault()

@@ -1,0 +1,11 @@
+@use "styles/api" as *;
+
+.secondary-sidebar-header {
+	padding-left: var(--space-2);
+	.headstrip-left {
+		margin-left: var(--space-1);
+	}
+	.headstrip-right {
+		margin-right: var(--space-3);
+	}
+}

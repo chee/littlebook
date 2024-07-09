@@ -4,7 +4,6 @@ import {
 	type JSXElement,
 	type JSX,
 	createEffect,
-	onCleanup,
 	onMount,
 	Show,
 	untrack,
@@ -13,6 +12,7 @@ import {Portal} from "solid-js/web"
 import mousePosition from "../../lib/mouse.ts"
 import "./popout.scss"
 import clsx from "clsx"
+import createPreventScroll from "solid-prevent-scroll"
 
 type PopoutProps = {
 	when(): boolean
@@ -21,10 +21,15 @@ type PopoutProps = {
 	style?: JSX.CSSProperties
 	class?: string
 	mouse?: boolean
+	box?: DOMRect
 }
 
 export default function Popout(props: PopoutProps) {
 	const [popover, setPopover] = createSignal<HTMLDivElement>()
+
+	createPreventScroll({
+		enabled: props.when,
+	})
 
 	onMount(() => {
 		if (props.when()) {
@@ -49,6 +54,14 @@ export default function Popout(props: PopoutProps) {
 		return {
 			left: x - 1 + "px",
 			top: y - 16 + "px",
+		}
+	}
+
+	const boxStyle: () => JSX.CSSProperties | undefined = () => {
+		if (!props.box) return
+		return {
+			left: props.box.left,
+			top: props.box.bottom,
 		}
 	}
 

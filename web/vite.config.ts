@@ -45,9 +45,19 @@ export const config: UserConfig = {
 			},
 			workbox: {
 				globPatterns: ["**/*.{js,css,html,svg,png,ico,wasm}"],
-				cleanupOutdatedCaches: true,
+				cleanupOutdatedCaches: false,
 				clientsClaim: true,
 				maximumFileSizeToCacheInBytes: 999999999999999,
+				additionalManifestEntries: [],
+				runtimeCaching: [
+					{
+						urlPattern: /.*plugins\/.*?/,
+						handler: "StaleWhileRevalidate",
+						options: {
+							cacheName: "plugins",
+						},
+					},
+				],
 			},
 			devOptions: {
 				enabled: true,

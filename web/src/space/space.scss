@@ -34,7 +34,7 @@
 .space-areas {
 	// todo this should just be `color-paper` but then the theming stuff would need to be improved
 	background-color: var(--color-fill);
-	display: flex;
+	// display: flex;
 
 	@include dark {
 		background: black;
@@ -45,20 +45,22 @@
 	overflow: scroll;
 }
 
-.gutter {
+.gutter,
+[data-corvu-resizable-handle] {
 	position: relative;
-	background: var(--gutter-color-fill);
-	opacity: 0;
+	background-color: var(--color-fill);
 
-	&:hover {
-		transition: opacity 0.5s;
-		opacity: 1;
+	&:hover,
+	&[data-active] {
+		transition: background-color 0.5s;
+		background-color: var(--gutter-color-fill);
 	}
 
-	&[style*="cursor"],
+	&[data-dragging],
 	&:active {
 		transition: none;
 	}
+	padding: 2.5px;
 }
 
 .gutter.gutter-vertical {

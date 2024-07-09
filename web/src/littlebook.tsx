@@ -12,7 +12,6 @@ const getStartPlugins = () => import("./plugins/start-plugins.ts")
 const PleaseReload = lazy(() => import("./service-worker/please-reload.tsx"))
 
 import {render} from "solid-js/web"
-import {UIProvider} from "./ui/use-ui-state.tsx"
 
 export default function Littlebook() {
 	const [automerge, _controlAutomerge] = getAutomergeState()
@@ -22,14 +21,12 @@ export default function Littlebook() {
 			<Title>littlebook</Title>
 			<Show when={automerge.latest}>
 				<AutomergeContext.Provider value={automerge.latest}>
-					<UIProvider>
-						<Suspense>
-							<SpacePage />
-						</Suspense>
-						<Suspense>
-							<PleaseReload />
-						</Suspense>
-					</UIProvider>
+					<Suspense>
+						<SpacePage />
+					</Suspense>
+					<Suspense>
+						<PleaseReload />
+					</Suspense>
 				</AutomergeContext.Provider>
 			</Show>
 		</MetaProvider>

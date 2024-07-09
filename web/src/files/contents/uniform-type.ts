@@ -54,6 +54,10 @@ export default class UniformType {
 		if (conformingTo) {
 			for (const supertype of conformingTo) {
 				const u = UniformType.get(supertype)
+				if (!u) {
+					console.warn(`couldn't add supertype ${u}. doesn't exist`)
+					continue
+				}
 				type.supertypes.add(u)
 				for (const superdupertype of u.supertypes) {
 					type.supertypes.add(superdupertype)
@@ -175,13 +179,13 @@ export default class UniformType {
 				? UniformType.types.get(type as UniformTypeIdentifier)
 				: type
 		if (!full) {
-			throw `no such type ${type}`
+			throw new Error(`no such type ${type}`)
 		}
 		return full
 	}
 
 	static getIdentifier(type: UniformTypeIdentifier | UniformType) {
-		return UniformType.get(type).identifier
+		return UniformType.get(type)?.identifier
 	}
 
 	static forFilename(filename: string) {

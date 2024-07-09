@@ -22,7 +22,8 @@
 	flex-direction: column;
 }
 
-.menu-item {
+.menu-item,
+ul.menu-items li button {
 	width: 100%;
 	padding-block: var(--space-1);
 	@include radius(m);

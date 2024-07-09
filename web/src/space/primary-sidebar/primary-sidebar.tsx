@@ -1,5 +1,4 @@
 import {createSignal, For, Suspense} from "solid-js"
-import {useLittlebookAPI} from "../../api/use-api.ts"
 import {useAutomerge} from "../../automerge/use-automerge.ts"
 import useDocument from "../../documents/use-document.ts"
 import {
@@ -7,14 +6,8 @@ import {
 	SidebarCardItem,
 } from "../sidebar/sidebar-card/sidebar-card.tsx"
 import "./primary-sidebar.scss"
-import {
-	closeSidebar,
-	selectItem,
-	toggleSidebar,
-	type UI,
-	type UpdateUI,
-} from "../../ui/ui-state.ts"
-import {useUI} from "../../ui/use-ui-state.tsx"
+import getLayout, {closeSidebar, toggleSidebar} from "../space-layout.ts"
+import getGrid, {selectItem, type Dock, type UpdateGrid} from "../area/dock.ts"
 import breakpoints from "../../styles/breakpoints.ts"
 import {SidebarShortcut} from "./shortcuts.tsx"
 import {FolderTree} from "../folder-tree/folder-tree.tsx"
@@ -23,19 +16,15 @@ import Menu from "../../elements/menu/menu.tsx"
 
 import Popout from "../../elements/popout/popout.tsx"
 
-function select(itemId: lb.ItemId, ui: UI, set: UpdateUI) {
-	selectItem(itemId, ui, set)
-	if (!breakpoints.m) {
-		closeSidebar("primary", ui, set)
-		closeSidebar("secondary", ui, set)
-	}
-}
+import type {AutomergeList} from "../../types.ts"
+import random from "random"
+import createDocumentHandle from "../../documents/create-document-handle.ts"
 
 export default function PrimarySidebar() {
 	const automerge = useAutomerge()
 	const [space, changeSpace] = useDocument<lb.Space>(() => automerge.home)
-	const lb = useLittlebookAPI()
-	const [ui, updateUI] = useUI()
+	const [grid, updateGrid] = getGrid()
+	const [layout, updateLayout] = getLayout()
 	const [showingSettings, setShowingSettings] = createSignal(false)
 
 	return (
@@ -58,16 +47,16 @@ export default function PrimarySidebar() {
 			<header class="primary-sidebar-header headstrip">
 				<div class="headstrip-left">
 					<SidebarToggle
-						open={() => ui.layout.primary.open}
-						toggle={() => toggleSidebar("primary", ui, updateUI)}
+						open={() => layout.primary.open}
+						toggle={() => toggleSidebar("primary", layout, updateLayout)}
 						flip={false}
 					/>
 				</div>
 				<div class="headstrip-middle" />
 				<div class="headstrip-right">
-					<button type="button" onclick={() => setShowingSettings(true)}>
+					{/* <button type="button" onclick={() => setShowingSettings(true)}>
 						...
-					</button>
+					</button> */}
 				</div>
 			</header>
 			<SidebarCard>
@@ -84,14 +73,38 @@ export default function PrimarySidebar() {
 					label: "create folder",
 					icon: <strong>+</strong>,
 					action() {
-						const folderHandle = lb.folders.createHandle()
-						folderHandle?.doc().then(folder => {
-							if (folder) {
-								const change = lb.spaces.addFolder(folder.id)
-								change && changeSpace(change)
-								select(folder.id, ui, updateUI)
-							}
+						const newFolderHandle = createDocumentHandle<lb.Folder>(
+							automerge.repo,
+							{
+								type: "folder",
+								items: [] as lb.ItemId[] as AutomergeList<lb.ItemId>,
+								icon: random.choice([
+									"🦔",
+									"🍒",
+									"🧀",
+									"✨",
+									"👽",
+									"⭐",
+									"💜",
+									"🐰",
+									"🐷",
+								])!,
+								name: "",
+								note: "",
+							},
+						)
+						changeSpace(space => {
+							space.items.push(newFolderHandle.documentId as lb.FolderId)
 						})
+						selectItem(
+							newFolderHandle.documentId as lb.FolderId,
+							grid,
+							updateGrid,
+						)
+						if (!breakpoints.m) {
+							closeSidebar("primary", layout, updateLayout)
+							closeSidebar("secondary", layout, updateLayout)
+						}
 					},
 				}}>
 				<For each={space()?.items}>

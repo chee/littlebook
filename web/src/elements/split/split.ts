@@ -23,9 +23,9 @@ const Split: ParentComponent<
 	const children = resolveChildren(() => props.children)
 
 	createEffect(() => {
-		const [_, splitJSOptions] = splitProps(props, ["children", "ongutterclick"])
+		const [_, splitJSOptions] = splitProps(props, ["children", "onGutterClick"])
 		const destruction: (() => void)[] = []
-		const instance = split(children() as HTMLElement[], {
+		const instance = split(children.toArray() as HTMLElement[], {
 			...splitJSOptions,
 			gutter(index: number, direction: "horizontal" | "vertical") {
 				const gutter = document.createElement("div")
@@ -56,8 +56,5 @@ const Split: ParentComponent<
 
 	return children()
 }
-
-// todo split-grid
-//https://split.js.org/#/split-grid?rows=2&columns=3
 
 export default Split

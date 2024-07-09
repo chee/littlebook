@@ -1,4 +1,3 @@
-import type {ChangeFn} from "@automerge/automerge"
 import type {lb} from "../../types.ts"
 import type {DocHandle} from "@automerge/automerge-repo"
 import UniformType, {
@@ -9,10 +8,8 @@ import UniformType, {
 import type {ParentComponent, Component} from "solid-js"
 
 export interface ContentViewProps<ContentType extends lb.AnyContentValue> {
-	doc: lb.Content<ContentType>
-	change(fn: ChangeFn<lb.Content<ContentType>>): void
+	content: lb.Content<ContentType>
 	handle: DocHandle<lb.Content<ContentType>>
-	value: ContentType
 	file: lb.File
 }
 
@@ -34,17 +31,16 @@ export abstract class ContentViewElement<ContentType extends lb.AnyContentValue>
 	extends HTMLElement
 	implements ContentViewProps<ContentType>
 {
-	protected _doc!: lb.Content<ContentType>
+	protected _content!: lb.Content<ContentType>
 	protected _handle!: DocHandle<lb.Content<ContentType>>
-	protected _value!: ContentType
 	protected _file!: lb.File
 
-	set doc(doc) {
-		this._doc = doc
+	set content(content) {
+		this._content = content
 	}
 
-	get doc() {
-		return this._doc
+	get content() {
+		return this._content
 	}
 
 	set handle(handle) {
@@ -55,14 +51,6 @@ export abstract class ContentViewElement<ContentType extends lb.AnyContentValue>
 		return this._handle
 	}
 
-	set value(value) {
-		this._value = value
-	}
-
-	get value() {
-		return this._value
-	}
-
 	set file(file) {
 		this._file = file
 	}
@@ -70,13 +58,12 @@ export abstract class ContentViewElement<ContentType extends lb.AnyContentValue>
 	get file() {
 		return this._file
 	}
-
-	change!: (fn: ChangeFn<lb.Content<ContentType>>) => void
 }
 
 export type ContentViewWebComponent<T extends lb.AnyContentValue> =
 	(new () => ContentViewElement<T>) & typeof ContentViewElement<T>
 
+// todo displayName
 export class ContentViewRegistry {
 	private registry = new Map<
 		string | SolidContentView<any>,
@@ -101,18 +88,27 @@ export class ContentViewRegistry {
 		registry: ContentViewRegistry["registry"],
 		type: ResolvableUniformType,
 	) {
-		const uniformType = UniformType.get(type)
-		for (const [view, types] of registry.entries()) {
-			if (types.includes(uniformType.identifier)) {
-				yield view
-			}
-		}
-		for (const [view, types] of registry.entries()) {
-			for (const type of types) {
-				if (uniformType.conforms(type)) {
+		try {
+			const uniformType = UniformType.get(type)
+
+			for (const [view, types] of registry.entries()) {
+				if (types.includes(uniformType.identifier)) {
 					yield view
 				}
 			}
+			for (const [view, types] of registry.entries()) {
+				for (const type of types) {
+					const supertype = UniformType.get(type)
+					if (!supertype) {
+						return
+					}
+					if (uniformType.conforms(supertype)) {
+						yield view
+					}
+				}
+			}
+		} catch (error) {
+			console.warn(error)
 		}
 	}
 
@@ -122,6 +118,14 @@ export class ContentViewRegistry {
 
 	getFirst(type: ResolvableUniformType) {
 		return this.get(type).next().value
+	}
+
+	request(identifier: UniformTypeIdentifier) {
+		document.dispatchEvent(
+			new CustomEvent<string>("contentviewrequest", {
+				detail: identifier,
+			}),
+		)
 	}
 }
 

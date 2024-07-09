@@ -66,6 +66,10 @@
 		background: black;
 		color: white;
 	}
+
+	&[aria-expanded="false"] {
+		display: none;
+	}
 }
 
 :root {

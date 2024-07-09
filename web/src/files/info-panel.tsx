@@ -1,19 +1,22 @@
-import {useLittlebookAPI} from "../api/use-api.ts"
 import useDocument from "../documents/use-document.ts"
-import {For, Show, createEffect} from "solid-js"
+import {For, Show} from "solid-js"
 import useContent from "./contents/use-content.ts"
 import UniformType from "./contents/uniform-type.ts"
+import recodeContent from "./contents/recode.ts"
+import {useAutomerge} from "../automerge/use-automerge.ts"
+import {coderRegistry} from "./contents/content-coders.ts"
 
 export default function InfoPanel(props: {
 	fileId?: lb.FileId
 	// folderId: lb.FolderId
 }) {
-	const lb = useLittlebookAPI()
+	const {repo} = useAutomerge()
 	const [file, changeFile] = useDocument<lb.File>(() => props.fileId)
 
 	const [, , contentHandle] = useContent(() => file.latest?.content)
 
 	const switchContent = async (to: UniformType) => {
+		coderRegistry.request(to.identifier)
 		const from = file.latest?.contentType
 
 		if (!from) {
@@ -22,7 +25,8 @@ export default function InfoPanel(props: {
 
 		const content = await contentHandle()?.doc()
 
-		const convertedContentHandle = lb.contents.recode(
+		const convertedContentHandle = await recodeContent(
+			repo,
 			from,
 			to.identifier,
 			content!,

@@ -7,7 +7,7 @@ import type {
 	Repo,
 } from "@automerge/automerge-repo"
 import type {AutomergeValue, ScalarValue} from "@automerge/automerge/next"
-import type createLittlebookAPI from "./api/api.ts"
+
 import type {ParentComponent} from "solid-js"
 import type {AnyContentValue} from "./global"
 
@@ -37,8 +37,6 @@ export declare namespace lb {
 	type PackageId = Branded<DocumentId, "package-id">
 	type ItemId = FolderId | FileId | PackageId
 	type InboxId = Branded<DocumentId, "inbox-id">
-
-	type API = ReturnType<typeof createLittlebookAPI>
 
 	type When = Date | "someday"
 
@@ -91,6 +89,7 @@ export declare namespace lb {
 		note: string
 		when?: When
 		contentType: UniformTypeIdentifier
+		contentTypeConformingTo?: UniformTypeIdentifier[]
 		icon?: string
 		content: ContentId
 		lastModified?: number

@@ -139,6 +139,14 @@ export class ContentCoderRegistry {
 	getAllTypes() {
 		return this.registry.keys()
 	}
+
+	request(identifier: UniformTypeIdentifier) {
+		document.dispatchEvent(
+			new CustomEvent<string>("contentcoderrequest", {
+				detail: identifier,
+			}),
+		)
+	}
 }
 
 export const coderRegistry = new ContentCoderRegistry()

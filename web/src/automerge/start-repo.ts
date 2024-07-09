@@ -5,7 +5,6 @@ import {OPFSStorageAdapter} from "@chee/automerge-repo-storage-opfs"
 
 export default async function start() {
 	const AutomergeRepo = await import("@automerge/automerge-repo")
-	console.log({AutomergeRepo})
 
 	const idb = new IndexedDBStorageAdapter("lb-docs")
 	const opfs = new OPFSStorageAdapter("lb-docs")

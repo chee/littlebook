@@ -6,8 +6,9 @@ import {
 } from "solid-js"
 import * as local from "./local.ts"
 import start from "./start-repo.ts"
-import {createSpaceHandle} from "../api/spaces.ts"
+import type {AutomergeList} from "../types.ts"
 export const AutomergeContext = createContext<lb.AutomergeState>()
+import createDocumentHandle from "../documents/create-document-handle.ts"
 
 export function useAutomerge() {
 	const context = useContext(AutomergeContext)
@@ -20,7 +21,11 @@ export function getAutomergeState(): ResourceReturn<lb.AutomergeState> {
 		const repo = await start()
 		let home = local.state.home
 		if (!home) {
-			const spaceHandle = createSpaceHandle(repo)
+			const spaceHandle = createDocumentHandle<lb.Space>(repo, {
+				type: "space",
+				name: "",
+				items: [] as lb.FolderId[] as AutomergeList<lb.FolderId>,
+			})
 			home = spaceHandle.docSync()!.id
 			local.set({home})
 		}

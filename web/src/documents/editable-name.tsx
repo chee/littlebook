@@ -1,4 +1,4 @@
-import {Show, createEffect, createSignal, on} from "solid-js"
+import {createEffect, createSignal, on} from "solid-js"
 import {createShortcut} from "@solid-primitives/keyboard"
 import "./editable-name.scss"
 import {createScrollPosition} from "@solid-primitives/scroll"

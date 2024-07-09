@@ -1,35 +1,33 @@
-import {Suspense} from "solid-js"
+import {For, Match, Suspense, Switch} from "solid-js"
 import PrimarySidebar from "./primary-sidebar/primary-sidebar.tsx"
 import Sidebar from "./sidebar/sidebar.tsx"
-import {useUI} from "../ui/use-ui-state.tsx"
+
 import FileArea from "../files/file-area/file-area.tsx"
 import {
-	getActiveItemId,
 	getSplitSizes,
 	stabilizeSidebars,
 	toggleSidebar,
 	updateSidebarsFromSplitSizes,
-} from "../ui/ui-state.ts"
-import useDocument from "../documents/use-document.ts"
-// import InfoPanel from "../files/info-panel.tsx"
-import Split from "../elements/split/split.ts"
+} from "./space-layout.ts"
 import "./space.scss"
-import {makeResizeObserver} from "@solid-primitives/resize-observer"
-import {throttle} from "@solid-primitives/scheduled"
+
 import SidebarToggle from "./sidebar/sidebar-toggle.tsx"
 import observeMouse from "../lib/mouse.ts"
+import SecondarySidebar from "./secondary-sidebar/secondary-sidebar.tsx"
+import Split from "../elements/split/split.ts"
+import {throttle} from "@solid-primitives/scheduled"
+import {makeResizeObserver} from "@solid-primitives/resize-observer"
+import getSpaceLayout from "./space-layout.ts"
+import getDock, {isTopLeft, isTopRight, type PaneId} from "./area/dock.ts"
+import Resizable from "@corvu/resizable"
 
 export default function Space() {
-	const [ui, updateUI] = useUI()
-	const active = () => getActiveItemId(ui)
-	const [activeDoc] = useDocument<lb.Item>(active)
-	const fileId = () => {
-		const doc = activeDoc.latest
-		return (doc?.type == "file" && doc.id) || undefined
-	}
+	const [layout, updateLayout] = getSpaceLayout()
+	const [dock] = getDock()
+
 	const {observe: observeResize} = makeResizeObserver(
 		throttle(() => {
-			stabilizeSidebars(ui, updateUI)
+			stabilizeSidebars(layout, updateLayout)
 		}, 100),
 		{box: "content-box"},
 	)
@@ -38,52 +36,90 @@ export default function Space() {
 	observeMouse()
 
 	return (
+		<div class="space">
+			<Split
+				sizes={getSplitSizes(layout)}
+				snapOffset={140}
+				gutterSize={4}
+				gutterAlign="end"
+				minSize={0}
+				onGutterClick={index => {
+					toggleSidebar(
+						index == 1 ? "primary" : "secondary",
+						layout,
+						updateLayout,
+					)
+				}}
+				onDragEnd={sizes => {
+					updateSidebarsFromSplitSizes(sizes, layout, updateLayout)
+				}}>
+				<Sidebar which="primary" open={() => layout.primary.open}>
+					<PrimarySidebar />
+				</Sidebar>
+				<main id="main" class="space-areas">
+					<Suspense>
+						<Resizable>
+							<For each={dock.grid}>
+								{pane => <Grid pane={pane} orientation="horizontal" />}
+							</For>
+						</Resizable>
+					</Suspense>
+				</main>
+				<Sidebar open={() => layout.secondary.open} which="secondary">
+					<SecondarySidebar />
+				</Sidebar>
+			</Split>
+		</div>
+	)
+}
+
+function Grid(props: {
+	pane: PaneId | PaneId[]
+	orientation: "horizontal" | "vertical"
+}) {
+	const [layout, updateLayout] = getSpaceLayout()
+	const [dock, _updateDock] = getDock()
+
+	const orient = props.orientation == "vertical" ? "horizontal" : "vertical"
+
+	return (
 		<>
-			<div class="space">
-				<Split
-					sizes={getSplitSizes(ui)}
-					snapOffset={140}
-					gutterSize={4}
-					gutterAlign="end"
-					minSize={0}
-					onGutterClick={index => {
-						toggleSidebar(index == 1 ? "primary" : "secondary", ui, updateUI)
-					}}
-					onDragEnd={sizes => {
-						updateSidebarsFromSplitSizes(sizes, ui, updateUI)
-					}}>
-					<Sidebar which="primary" open={() => ui.layout.primary.open}>
-						<PrimarySidebar />
-					</Sidebar>
-					<main id="main" class="space-areas">
-						<Suspense>
-							<FileArea
-								fileId={fileId()}
-								headerItems={{
-									left: ui.layout.primary.open || (
-										<SidebarToggle
-											open={() => false}
-											toggle={() => toggleSidebar("primary", ui, updateUI)}
-										/>
-									),
-								}}
-							/>
-						</Suspense>
-						{/* <Show when={fileId()}>
-							<Sidebar which="secondary" open={() => false}>
-								<Suspense>
-									<InfoPanel fileId={fileId()} />
-								</Suspense>
-								{/* <NoteEditor /> */
-						/*}
-								{/* <MetadataViewer /> */
-						/*}
-							</Sidebar>
-						</Show>
-						*/}
-					</main>
-				</Split>
-			</div>
+			<Switch>
+				<Match when={Array.isArray(props.pane)}>
+					<Resizable orientation={orient}>
+						<For each={props.pane as PaneId[]}>
+							{pane => <Grid pane={pane} orientation={orient} />}
+						</For>
+					</Resizable>
+				</Match>
+				<Match when={!Array.isArray(props.pane)}>
+					<Resizable.Panel>
+						<FileArea
+							paneId={props.pane as PaneId}
+							fileId={dock.panes[props.pane as PaneId].itemId as lb.FileId}
+							headerItems={{
+								left: isTopLeft(props.pane as PaneId) && (
+									<SidebarToggle
+										open={() => false}
+										toggle={() =>
+											toggleSidebar("primary", layout, updateLayout)
+										}
+									/>
+								),
+								right: isTopRight(props.pane as PaneId) && (
+									<SidebarToggle
+										open={() => false}
+										toggle={() =>
+											toggleSidebar("secondary", layout, updateLayout)
+										}
+									/>
+								),
+							}}
+						/>
+					</Resizable.Panel>
+					<Resizable.Handle />
+				</Match>
+			</Switch>
 		</>
 	)
 }

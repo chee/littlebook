@@ -8,7 +8,7 @@ import {
 } from "solid-js"
 
 import type {ChangeFn, Doc, DocHandle} from "@automerge/automerge-repo"
-import useHandle from "../automerge/use-handle"
+import useHandle from "./use-document-handle.ts"
 import {useAutomerge} from "../automerge/use-automerge.ts"
 
 type UseDocument<T extends lb.AnyDocument> = [
