@@ -14002,7 +14002,6 @@ var ContentViewRegistry = class {
     return this.getstar(this.registry, type);
   }
   getFirst(type) {
-    console.log(this.get(type).next().value);
     return this.get(type).next().value;
   }
   request(identifier) {
@@ -66880,7 +66879,7 @@ var package_default = {
       {
         identifier: "com.tldraw.file",
         description: "tldraw",
-        conformingTo: ["public.json"],
+        conformingTo: [],
         filenameExtensions: ["tldraw"],
         mimeTypes: ["application/vnd.tldraw+json", "application/json"]
       }

@@ -81,15 +81,6 @@ export function isTopRight(id: PaneId) {
 
 export function selectItem(itemId: lb.ItemId) {
 	const [dock, update] = store()
-	if (getActiveItemId(dock) == itemId) {
-		return
-	}
-
-	const existingPane = getItemPane(itemId)
-	if (existingPane) {
-		update("active", existingPane.id)
-		return
-	}
 
 	if (dock.active) {
 		update(
@@ -100,6 +91,12 @@ export function selectItem(itemId: lb.ItemId) {
 		)
 		return
 	}
+
+	openToTheSide(itemId)
+}
+
+export function openToTheSide(itemId: lb.ItemId) {
+	const [, update] = store()
 	const paneId = createId() as PaneId
 	update(
 		produce(dock => {

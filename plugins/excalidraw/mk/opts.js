@@ -13,11 +13,5 @@ export default {
 		"process.env.IS_PREACT": JSON.stringify("true"),
 	},
 	target: ["safari17", "firefox127"],
-	external: [
-		"@automerge/automerge",
-		"react",
-		"react-dom",
-		"preact",
-		"@excalidraw/excalidraw",
-	],
+	external: [],
 }

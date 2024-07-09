@@ -1,4 +1,4 @@
-import {For, Match, Suspense, Switch} from "solid-js"
+import {For, Match, Show, Suspense, Switch} from "solid-js"
 import PrimarySidebar from "./primary-sidebar/primary-sidebar.tsx"
 import Sidebar from "./sidebar/sidebar.tsx"
 
@@ -60,7 +60,13 @@ export default function Space() {
 					<Suspense>
 						<Resizable>
 							<For each={dock.grid}>
-								{pane => <Grid pane={pane} orientation="horizontal" />}
+								{(pane, index) => (
+									<Grid
+										pane={pane}
+										orientation="horizontal"
+										last={dock.grid.length == index() + 1}
+									/>
+								)}
 							</For>
 						</Resizable>
 					</Suspense>
@@ -76,6 +82,7 @@ export default function Space() {
 function Grid(props: {
 	pane: PaneId | PaneId[]
 	orientation: "horizontal" | "vertical"
+	last: boolean
 }) {
 	const [layout, updateLayout] = getSpaceLayout()
 	const [dock, _updateDock] = getDock()
@@ -88,7 +95,13 @@ function Grid(props: {
 				<Match when={Array.isArray(props.pane)}>
 					<Resizable orientation={orient}>
 						<For each={props.pane as PaneId[]}>
-							{pane => <Grid pane={pane} orientation={orient} />}
+							{(pane, index) => (
+								<Grid
+									pane={pane}
+									orientation={orient}
+									last={(props.pane as PaneId[]).length == index() + 1}
+								/>
+							)}
 						</For>
 					</Resizable>
 				</Match>
@@ -117,7 +130,9 @@ function Grid(props: {
 							}}
 						/>
 					</Resizable.Panel>
-					<Resizable.Handle />
+					<Show when={!props.last}>
+						<Resizable.Handle />
+					</Show>
 				</Match>
 			</Switch>
 		</>

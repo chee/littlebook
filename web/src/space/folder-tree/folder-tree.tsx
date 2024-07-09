@@ -11,13 +11,16 @@ import {
 } from "solid-js"
 import useDocument from "../../documents/use-document.ts"
 
-import getDock, {getActiveItemId, selectItem} from "../area/dock.ts"
+import getDock, {
+	getActiveItemId,
+	openToTheSide,
+	selectItem,
+} from "../area/dock.ts"
 import "./folder-tree.scss"
 import type {ChangeFn} from "@automerge/automerge/next"
 import clsx from "clsx"
 import EditableName from "../../documents/editable-name.tsx"
 import useParents from "../../documents/use-parents.ts"
-import FileMenu from "../../files/file-menu/file-menu.tsx"
 import Popout from "../../elements/popout/popout.tsx"
 import Menu from "../../elements/menu/menu.tsx"
 import NewFilePicker from "../../files/new-file-picker/new-file-picker.tsx"
@@ -208,7 +211,7 @@ export function FolderTreeFolderInner(props: {
 				<Show when={newFilePickerShowing()}>
 					<NewFilePicker
 						select={id => {
-							selectItem(id, grid, updateGrid)
+							selectItem(id)
 							setNewFilePickerShowing(false)
 						}}
 						parentFolderId={() => props.folder()!.id}
@@ -218,9 +221,7 @@ export function FolderTreeFolderInner(props: {
 
 			<header
 				class={clsx("folder-tree-row", props.current() && "current")}
-				onclick={() =>
-					props.folder() && selectItem(props.folder()!.id, grid, updateGrid)
-				}
+				onclick={() => props.folder() && selectItem(props.folder()!.id)}
 				oncontextmenu={event => {
 					event.preventDefault()
 					event.stopImmediatePropagation()
@@ -304,7 +305,12 @@ function FolderTreeFile(props: {
 				when={menuShowing}
 				close={() => setMenuShowing(false)}
 				style={{position: "fixed"}}>
-				<FileMenu
+				<Menu
+					options={{
+						rename: "Rename",
+						delete: "Delete",
+						side: "Open to the side",
+					}}
 					select={option => {
 						setMenuShowing(false)
 						if (option == "rename") {
@@ -330,6 +336,10 @@ function FolderTreeFile(props: {
 									})
 							})
 
+							return
+						}
+						if (option == "side") {
+							openToTheSide(props.id()!)
 							return
 						}
 					}}

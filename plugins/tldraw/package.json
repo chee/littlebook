@@ -15,7 +15,7 @@
 			{
 				"identifier": "com.tldraw.file",
 				"description": "tldraw",
-				"conformingTo": ["public.json"],
+				"conformingTo": [],
 				"filenameExtensions": ["tldraw"],
 				"mimeTypes": ["application/vnd.tldraw+json", "application/json"]
 			}

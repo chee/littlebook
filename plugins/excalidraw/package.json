@@ -13,14 +13,14 @@
 		"contentViews": [
 			{
 				"identifier": "littlebook-excalidraw",
-				"contentTypes": ["com.tldraw.file"]
+				"contentTypes": ["com.excalidraw.json"]
 			}
 		],
 		"contentTypes": [
 			{
 				"identifier": "com.excalidraw.json",
 				"description": "Excalidrawing",
-				"conformingTo": ["public.json"],
+				"conformingTo": [],
 				"filenameExtensions": ["excalidraw"],
 				"mimeTypes": ["application/x-excalidraw", "application/json"]
 			}

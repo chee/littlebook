@@ -96,11 +96,7 @@ export default function PrimarySidebar() {
 						changeSpace(space => {
 							space.items.push(newFolderHandle.documentId as lb.FolderId)
 						})
-						selectItem(
-							newFolderHandle.documentId as lb.FolderId,
-							grid,
-							updateGrid,
-						)
+						selectItem(newFolderHandle.documentId as lb.FolderId)
 						if (!breakpoints.m) {
 							closeSidebar("primary", layout, updateLayout)
 							closeSidebar("secondary", layout, updateLayout)

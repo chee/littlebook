@@ -86,11 +86,6 @@ export default function FileArea(props: FileAreaProps) {
 				}}
 				onfocusin={() => {
 					updateDock("active", props.paneId)
-				}}
-				onfocusout={() => {
-					if (props.paneId == dock.active) {
-						updateDock("active", undefined)
-					}
 				}}>
 				<header class="file-viewer-head headstrip">
 					<div class="file-viewer-head-left headstrip-left">
