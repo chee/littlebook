@@ -13,6 +13,7 @@ import mousePosition from "../../lib/mouse.ts"
 import "./popout.scss"
 import clsx from "clsx"
 import createPreventScroll from "solid-prevent-scroll"
+import type {NullableBounds} from "@solid-primitives/bounds"
 
 type PopoutProps = {
 	when(): boolean
@@ -21,7 +22,7 @@ type PopoutProps = {
 	style?: JSX.CSSProperties
 	class?: string
 	mouse?: boolean
-	box?: DOMRect
+	box?: NullableBounds
 }
 
 export default function Popout(props: PopoutProps) {
@@ -60,8 +61,9 @@ export default function Popout(props: PopoutProps) {
 	const boxStyle: () => JSX.CSSProperties | undefined = () => {
 		if (!props.box) return
 		return {
-			left: props.box.left,
-			top: props.box.bottom,
+			left: props.box.left + "px",
+			top: props.box.bottom + "px",
+			translate: "-50%",
 		}
 	}
 
@@ -81,6 +83,7 @@ export default function Popout(props: PopoutProps) {
 					}}
 					style={{
 						...untrack(mouseStyle),
+						...boxStyle(),
 						...props.style,
 					}}>
 					{props.children}

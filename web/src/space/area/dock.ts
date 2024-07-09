@@ -32,7 +32,9 @@ const store = createSingletonRoot(() =>
 	),
 )
 
-export default store
+export default function getDock() {
+	return store()
+}
 
 export type UpdateGrid = SetStoreFunction<Dock>
 

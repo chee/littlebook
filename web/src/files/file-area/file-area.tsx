@@ -1,6 +1,12 @@
 import ContentViewer from "../content-viewer/content-viewer.tsx"
 import useDocument from "../../documents/use-document.ts"
-import {createSignal, Suspense, type JSXElement} from "solid-js"
+import {
+	createSignal,
+	getOwner,
+	runWithOwner,
+	Suspense,
+	type JSXElement,
+} from "solid-js"
 
 import "./file-area.scss"
 import Popout from "../../elements/popout/popout.tsx"
@@ -11,6 +17,10 @@ import {
 	type SolidContentView,
 } from "../contents/content-view.ts"
 import clsx from "clsx"
+
+import {getElementBounds} from "@solid-primitives/bounds"
+import getLayout from "../../space/space-layout.ts"
+
 type FileAreaProps = {
 	paneId?: PaneId
 	fileId?: lb.FileId
@@ -28,6 +38,7 @@ export default function FileArea(props: FileAreaProps) {
 	>()
 
 	const [dock, updateDock] = getDock()
+	const [dotdotdot, setDotdotdot] = createSignal<HTMLButtonElement>()
 
 	const views = () =>
 		file() &&
@@ -46,9 +57,18 @@ export default function FileArea(props: FileAreaProps) {
 			{} as Record<string, string>,
 		)
 
+	const [layout] = getLayout()
+
+	const translate = () => (layout.secondary.open ? "-50%" : "-100%")
+	const owner = getOwner()
+
 	return (
 		<Suspense>
-			<Popout when={showingMenu} close={() => setShowingMenu(false)}>
+			<Popout
+				when={showingMenu}
+				close={() => setShowingMenu(false)}
+				box={getElementBounds(dotdotdot())}
+				style={{translate: translate()}}>
 				<Menu
 					options={{
 						view: "select view",
@@ -61,13 +81,20 @@ export default function FileArea(props: FileAreaProps) {
 							return
 						}
 						if (option == "close") {
-							rm(props.paneId!)
+							runWithOwner(owner, () => {
+								rm(props.paneId!)
+							})
+
 							// updateDock("active", undefined)
 						}
 					}}
 				/>
 			</Popout>
-			<Popout when={showingViewSelector} close={() => setShowingMenu(false)}>
+			<Popout
+				when={showingViewSelector}
+				close={() => setShowingMenu(false)}
+				box={getElementBounds(dotdotdot())}
+				style={{translate: translate()}}>
 				<Menu
 					options={views() || {}}
 					select={option => {
@@ -103,6 +130,7 @@ export default function FileArea(props: FileAreaProps) {
 					</div>
 					<div class="file-viewer-head-right headstrip-right">
 						<button
+							ref={setDotdotdot}
 							type="button"
 							onclick={() => {
 								setShowingMenu(true)

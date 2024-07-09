@@ -211,8 +211,10 @@ export function FolderTreeFolderInner(props: {
 				<Show when={newFilePickerShowing()}>
 					<NewFilePicker
 						select={id => {
-							selectItem(id)
-							setNewFilePickerShowing(false)
+							runWithOwner(owner, () => {
+								selectItem(id)
+								setNewFilePickerShowing(false)
+							})
 						}}
 						parentFolderId={() => props.folder()!.id}
 					/>
@@ -221,7 +223,12 @@ export function FolderTreeFolderInner(props: {
 
 			<header
 				class={clsx("folder-tree-row", props.current() && "current")}
-				onclick={() => props.folder() && selectItem(props.folder()!.id)}
+				onclick={() =>
+					runWithOwner(
+						owner,
+						() => props.folder() && selectItem(props.folder()!.id),
+					)
+				}
 				oncontextmenu={event => {
 					event.preventDefault()
 					event.stopImmediatePropagation()
@@ -339,7 +346,10 @@ function FolderTreeFile(props: {
 							return
 						}
 						if (option == "side") {
-							openToTheSide(props.id()!)
+							runWithOwner(owner, () => {
+								openToTheSide(props.id()!)
+							})
+
 							return
 						}
 					}}
@@ -357,7 +367,9 @@ function FolderTreeFile(props: {
 				aria-selected={props.current()}
 				aria-current={props.current()}
 				onclick={() => {
-					file.latest && selectItem(file.latest!.id, grid, updateGrid)
+					runWithOwner(owner, () => {
+						file.latest && selectItem(file.latest!.id)
+					})
 				}}
 				oncontextmenu={event => {
 					event.preventDefault()

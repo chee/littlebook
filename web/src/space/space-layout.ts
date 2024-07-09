@@ -1,6 +1,6 @@
 import {createSingletonRoot} from "@solid-primitives/rootless"
 import {makePersisted} from "@solid-primitives/storage"
-import {createStore} from "solid-js/store"
+import {createStore, produce} from "solid-js/store"
 
 type SpaceLayout = {
 	primary: {
@@ -19,49 +19,53 @@ const store = createSingletonRoot(() =>
 	makePersisted(
 		createStore({
 			primary: {
-				size: 20,
+				size: 0.2,
 				open: true,
 			},
 			main: {
-				size: 60,
+				size: 0.6,
 			},
 			secondary: {
-				size: 20,
+				size: 0.2,
 				open: false,
 			},
 		} satisfies SpaceLayout as SpaceLayout),
 		{name: "space-layout"},
 	),
 )
-export default store
+export default function getLayout() {
+	return store()
+}
 
 type UpdateSpaceLayout = ReturnType<typeof store>["1"]
 
-export function updateSidebar(
-	which: "primary" | "secondary",
-	size: number,
-	layout: SpaceLayout,
-	update: UpdateSpaceLayout,
-) {
-	const s = Math.floor(size)
-	if (s) {
-		update(which, "size", s)
-		update(which, "open", true)
-	} else {
-		update(which, "open", false)
-	}
-	stabilizeSidebars(layout, update)
-}
-
 export function updateSidebarsFromSplitSizes(
 	sizes: number[],
-	layout: SpaceLayout,
+	_layout: SpaceLayout,
 	update: UpdateSpaceLayout,
 ) {
 	const [left, main, right] = sizes
-	update("main", "size", main)
-	updateSidebar("primary", left, layout, update)
-	updateSidebar("secondary", right, layout, update)
+	update(
+		produce(layout => {
+			layout.main.size = main
+			if (left) {
+				layout.primary.size = left
+				if (!layout.primary.open) {
+					layout.primary.open = true
+				}
+			} else if (layout.primary.open) {
+				layout.primary.open = false
+			}
+			if (right) {
+				layout.secondary.size = right
+				if (!layout.secondary.open) {
+					layout.secondary.open = true
+				}
+			} else if (layout.secondary.open) {
+				layout.secondary.open = false
+			}
+		}),
+	)
 }
 
 export function stabilizeSidebars(
@@ -71,8 +75,8 @@ export function stabilizeSidebars(
 	const left = layout.primary.open ? layout.primary.size : 0
 	const right = layout.secondary.open ? layout.secondary.size : 0
 	const total = left + layout.main.size + right
-	if (total != 100) {
-		update("main", "size", 100 - left - right)
+	if (total != 1) {
+		update("main", "size", 1 - left - right)
 	}
 }
 

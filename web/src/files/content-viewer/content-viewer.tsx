@@ -7,6 +7,8 @@ import {Dynamic} from "solid-js/web"
 import SomethingWentWrong from "./went-bad.tsx"
 import {
 	contentViewRegistry,
+	type ContentViewComponent,
+	type ContentViewProps,
 	type SolidContentView,
 } from "../contents/content-view.ts"
 import "./content-viewer.scss"
