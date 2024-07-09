@@ -16,7 +16,9 @@ export default async function recodeContent(
 		if (bytes instanceof Error) {
 			return bytes
 		}
-		return repo.create<lb.Content<any>>(await targetCoder.decode(bytes))
+		return repo.create<lb.Content<any>>({
+			value: await targetCoder.decode(bytes),
+		})
 	}
 
 	return new CodingError(

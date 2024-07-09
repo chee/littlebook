@@ -1,10 +1,11 @@
-import useDocument from "../documents/use-document.ts"
-import {For, Show} from "solid-js"
-import useContent from "./contents/use-content.ts"
-import UniformType from "./contents/uniform-type.ts"
-import recodeContent from "./contents/recode.ts"
-import {useAutomerge} from "../automerge/use-automerge.ts"
-import {coderRegistry} from "./contents/content-coders.ts"
+import useDocument from "../../documents/use-document.ts"
+import {createEffect, For, Show} from "solid-js"
+import useContent from "../contents/use-content.ts"
+import UniformType from "../contents/uniform-type.ts"
+import recodeContent from "../contents/recode.ts"
+import {useAutomerge} from "../../automerge/use-automerge.ts"
+import {coderRegistry} from "../contents/content-coders.ts"
+import "./info-panel.scss"
 
 export default function InfoPanel(props: {
 	fileId?: lb.FileId
@@ -14,6 +15,9 @@ export default function InfoPanel(props: {
 	const [file, changeFile] = useDocument<lb.File>(() => props.fileId)
 
 	const [, , contentHandle] = useContent(() => file.latest?.content)
+	createEffect(() => {
+		contentHandle()
+	})
 
 	const switchContent = async (to: UniformType) => {
 		coderRegistry.request(to.identifier)
@@ -33,6 +37,7 @@ export default function InfoPanel(props: {
 		)
 
 		if (convertedContentHandle instanceof Error) {
+			console.error(convertedContentHandle)
 			// todo tell the user that it couldn't happen
 			// todo notification provider
 		} else {
@@ -49,13 +54,6 @@ export default function InfoPanel(props: {
 
 	const possibleTypes = () =>
 		file.latest && UniformType.forFilename(file.latest.name)
-
-	const deleteFile = () => {
-		if (!file()?.id) {
-			return
-		}
-		// lb.files.deleteFile(file()!.id, props.folderId)
-	}
 
 	return (
 		<Show when={file.latest}>
@@ -92,9 +90,6 @@ export default function InfoPanel(props: {
 						)}
 					</For>
 				</Show>
-				<button type="button" onClick={deleteFile}>
-					destroy file
-				</button>
 			</div>
 		</Show>
 	)

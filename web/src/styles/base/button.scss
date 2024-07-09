@@ -20,20 +20,20 @@
 	cursor: pointer;
 	@include radius(m);
 	font-family: var(--family-sans);
-	--ring-width: 3px;
+	--ring-width: 1px;
+	--ring-color: var(--button-color-line);
 	box-shadow: ring();
 
-	&:not(.ghost:not(:hover)) {
+	&:hover {
 		box-shadow: ring(), shadow();
-		--ring-color: var(--button-color-line);
+		--shadow-color: #{fade(black, 85%)};
 	}
 
-	&:hover {
-		--shadow-color: fade(black, 85%);
-	}
 	&:active {
-		--shadow-inset: "inset";
-		--shadow-color: fade(black, 80%);
+		box-shadow: ring(), inset-shadow();
+		--shadow-color: #{fade(black, 80%)};
+		--shadow-y: 1px;
+		background: #{fade(var(--color-primary), 90%)};
 	}
 
 	&.primary {

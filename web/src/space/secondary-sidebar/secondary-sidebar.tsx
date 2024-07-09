@@ -3,7 +3,7 @@ import getDock, {getActiveItemId} from "../area/dock.ts"
 import getLayout, {toggleSidebar} from "../space-layout.ts"
 
 import SidebarToggle from "../sidebar/sidebar-toggle.tsx"
-import InfoPanel from "../../files/info-panel.tsx"
+import InfoPanel from "../../files/info-panel/info-panel.tsx"
 import {Show, Suspense} from "solid-js"
 import "./secondary-sidebar.scss"
 

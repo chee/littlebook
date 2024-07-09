@@ -1,0 +1,12 @@
+.info-panel {
+	padding: var(--space-s);
+	display: flex;
+	flex-direction: column;
+	label {
+		display: flex;
+		justify-content: space-between;
+		span {
+			font-weight: bold;
+		}
+	}
+}

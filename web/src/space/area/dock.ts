@@ -52,7 +52,6 @@ export function getItemPane(id: lb.ItemId, dock = store()[0]) {
 }
 
 export function rm(paneId: PaneId, dock = store()[0], updateDock = store()[1]) {
-	console.log("removing", paneId)
 	updateDock(
 		produce(dock => {
 			const isActive = dock.active == paneId
@@ -60,7 +59,7 @@ export function rm(paneId: PaneId, dock = store()[0], updateDock = store()[1]) {
 			// todo recurse
 			const indexInGrid = dock.grid.indexOf(paneId)
 			dock.grid.splice(indexInGrid, 1)
-			console.log("spliced", indexInGrid, dock.grid)
+
 			if (isActive) {
 				dock.active = Object.values(dock.panes)[0]?.id
 			}
@@ -69,20 +68,20 @@ export function rm(paneId: PaneId, dock = store()[0], updateDock = store()[1]) {
 }
 
 export function isTopLeft(id: PaneId) {
-	const [dock] = store()
+	const [dock] = getDock()
 	const [layout] = getLayout()
 
 	return dock.grid.indexOf(id) == 0 && !layout.primary.open
 }
 
 export function isTopRight(id: PaneId) {
-	const [dock] = store()
+	const [dock] = getDock()
 	const [layout] = getLayout()
 	return dock.grid.indexOf(id) == dock.grid.length - 1 && !layout.secondary.open
 }
 
 export function selectItem(itemId: lb.ItemId) {
-	const [dock, update] = store()
+	const [dock, update] = getDock()
 
 	if (dock.active) {
 		update(
@@ -100,6 +99,7 @@ export function selectItem(itemId: lb.ItemId) {
 export function openToTheSide(itemId: lb.ItemId) {
 	const [, update] = store()
 	const paneId = createId() as PaneId
+	// todo open next to the active panel
 	update(
 		produce(dock => {
 			dock.panes[paneId] = {
@@ -111,3 +111,7 @@ export function openToTheSide(itemId: lb.ItemId) {
 		}),
 	)
 }
+
+// todo open beneath
+// this finds the index of the current item in its parent,
+// and then it changes that to an array of [current, new]
