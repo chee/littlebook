@@ -13,15 +13,6 @@ import {
 import pkg from "./package.json" with {type: "json"}
 const config = pkg.littlebook
 
-/* const python = UniformType.create("public.python-script", "python code", [
-	UniformType.script,
-	UniformType.sourceCode,
-])
-
-const markdown = UniformType.create("net.daringfireball.markdown", "markdown", [
-	UniformType.plainText,
-]) */
-
 // todo put UniformType on window?
 const types = {
 	python: "public.python-script",
@@ -89,9 +80,9 @@ class CodemirrorTextEditorView extends ContentViewElement<string> {
 		const languageCompartment = new Compartment()
 		// const tabSize = new Compartment()
 		const lineNumbersCompartment = new Compartment()
-		if (typeof this.value == "string" && !this.codemirror) {
+		if (typeof this.content.value == "string" && !this.codemirror) {
 			this.codemirror = new EditorView({
-				doc: this.doc.value,
+				doc: this.content.value,
 				extensions: [
 					minimalSetup,
 					indentUnit.of("\t"),
@@ -120,7 +111,7 @@ class CodemirrorTextEditorView extends ContentViewElement<string> {
 	}
 }
 
-export default function activate(lb: lb.plugins.API) {
+export default function activate() {
 	const tag = config.contentViews[0].identifier
 	if (!customElements.get(tag)) {
 		customElements.define(tag, CodemirrorTextEditorView)

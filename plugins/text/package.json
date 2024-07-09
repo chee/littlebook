@@ -4,6 +4,7 @@
 	"version": "1.0.0",
 	"type": "module",
 	"main": "output/text.js",
+	"styles": "output/text.css",
 	"littlebook": {
 		"contentViews": [
 			{
@@ -27,9 +28,11 @@
 	"keywords": [],
 	"author": "chee",
 	"license": "AGPL-3.0+",
-	"dependencies": {
+	"dependencies": {},
+	"devDependencies": {
 		"@automerge/automerge": "^2.2.4",
 		"@automerge/automerge-codemirror": "^0.0.11",
+		"@automerge/automerge-repo": "^1.2.0",
 		"@codemirror/lang-html": "^6.4.9",
 		"@codemirror/lang-javascript": "^6.2.2",
 		"@codemirror/lang-markdown": "^6.2.5",
@@ -37,10 +40,8 @@
 		"@codemirror/language": "^6.10.2",
 		"@codemirror/state": "^6.4.1",
 		"@codemirror/view": "^6.28.2",
-		"codemirror": "^6.0.1"
-	},
-	"devDependencies": {
 		"@types/node": "^20.14.10",
+		"codemirror": "^6.0.1",
 		"esbuild": "^0.21.5"
 	}
 }

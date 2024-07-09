@@ -92,14 +92,14 @@ const Excalidraw = lazy(async () => {
 const ExcalidrawView: ContentViewComponent<
 	ExcalidrawJSON,
 	FunctionComponent<lb.ContentViewProps<ExcalidrawJSON>>
-> = ({value, change, ...props}) => {
-	if (!value) {
+> = ({content, handle, ...props}) => {
+	if (!content.value) {
 		return <div>waiting for value</div>
 	}
 	const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI>()
 
 	const initialElements = useMemo(
-		() => value.elements.map(automergeToExcalidraw),
+		() => content.value.elements.map(automergeToExcalidraw),
 		[],
 	)
 
@@ -107,7 +107,7 @@ const ExcalidrawView: ContentViewComponent<
 
 	useEffect(() => {
 		const elements = excalidrawAPI?.getSceneElements()
-		const contentVersion = value.elements.reduce(sumVersion, 0) || 0
+		const contentVersion = content.value.elements.reduce(sumVersion, 0) || 0
 		const excaliVersion = elements?.reduce(sumVersion, 0) || 0
 		if (contentVersion > excaliVersion) {
 			const state = excalidrawAPI?.getAppState()
@@ -120,10 +120,10 @@ const ExcalidrawView: ContentViewComponent<
 				return
 			}
 			excalidrawAPI?.updateScene({
-				elements: value.elements.map(automergeToExcalidraw),
+				elements: content.value.elements.map(automergeToExcalidraw),
 			})
 		}
-	}, [value])
+	}, [content.value])
 
 	const onchange = useCallback(
 		throttle(
@@ -135,7 +135,7 @@ const ExcalidrawView: ContentViewComponent<
 			) => {
 				// todo snapshot!
 
-				change(doc => {
+				handle.change(doc => {
 					if (!doc.value?.elements) return
 					const contentVersion = doc.value.elements.reduce(sumVersion, 0) || 0
 					const excaliVersion = elements.reduce(sumVersion, 0) || 0
@@ -198,7 +198,7 @@ const ExcalidrawView: ContentViewComponent<
 				<Excalidraw
 					excalidrawAPI={api => setExcalidrawAPI(api)}
 					initialData={{
-						...value,
+						...content.value,
 						elements: initialElements,
 					}}
 					theme={isDark ? "dark" : "light"}
@@ -210,15 +210,11 @@ const ExcalidrawView: ContentViewComponent<
 	)
 }
 
-export default ExcalidrawView
-
-export class ExcalidrawEditorElement extends ContentViewElement<ExcalidrawJSON> {
+export default class ExcalidrawEditorElement extends ContentViewElement<ExcalidrawJSON> {
 	root = createRoot(this)
 	props = () => ({
-		value: this.value,
-		change: this.change,
 		handle: this.handle,
-		doc: this.doc,
+		content: this.content,
 		file: this.file,
 	})
 	connectedCallback() {
@@ -227,9 +223,7 @@ export class ExcalidrawEditorElement extends ContentViewElement<ExcalidrawJSON> 
 	}
 
 	render = (payload: DocHandleChangePayload<lb.Content<ExcalidrawJSON>>) => {
-		this.root.render(
-			<ExcalidrawView {...this.props()} value={payload.doc.value} />,
-		)
+		this.root.render(<ExcalidrawView {...this.props()} content={payload.doc} />)
 	}
 
 	disconnectedCallback() {

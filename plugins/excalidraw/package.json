@@ -9,6 +9,23 @@
 		"dev": "node mk/w",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
+	"littlebook": {
+		"contentViews": [
+			{
+				"identifier": "littlebook-excalidraw",
+				"contentTypes": ["com.tldraw.file"]
+			}
+		],
+		"contentTypes": [
+			{
+				"identifier": "com.excalidraw.json",
+				"description": "Excalidrawing",
+				"conformingTo": ["public.json"],
+				"filenameExtensions": ["excalidraw"],
+				"mimeTypes": ["application/x-excalidraw", "application/json"]
+			}
+		]
+	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",

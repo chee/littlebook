@@ -3,7 +3,7 @@
 	"description": "a littlebook content plugin for tldraw support",
 	"version": "1.0.0",
 	"type": "module",
-	"main": "index.js",
+	"main": "output/index.js",
 	"littlebook": {
 		"contentViews": [
 			{

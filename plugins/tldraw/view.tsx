@@ -43,7 +43,7 @@ function splice(patch: SpliceTextPatch, object: TLRecord) {
 	return object
 }
 
-function TldrawInner(props: lb.ContentEditorViewProps<TldrawFile>) {
+function TldrawInner(props: lb.ContentViewProps<TldrawFile>) {
 	const editor = useEditor()
 	const applyingLocal = useRef(false)
 
@@ -54,7 +54,7 @@ function TldrawInner(props: lb.ContentEditorViewProps<TldrawFile>) {
 			const {added, removed, updated} = history.changes
 
 			applyingLocal.current = true
-			props.change(doc => {
+			props.handle.change(doc => {
 				for (const add of Object.values(added)) {
 					doc.value.records.push(add)
 				}
@@ -77,8 +77,8 @@ function TldrawInner(props: lb.ContentEditorViewProps<TldrawFile>) {
 	}, [])
 
 	const object = useCallback(
-		(doc: typeof props.doc, path: (string | number)[]) => {
-			return doc.value.records[+path[2]]
+		(content: typeof props.content, path: (string | number)[]) => {
+			return content.value.records[+path[2]]
 		},
 		[],
 	)
@@ -114,7 +114,7 @@ function TldrawInner(props: lb.ContentEditorViewProps<TldrawFile>) {
 	}
 
 	useEffect(() => {
-		const json = JSON.stringify(props.value)
+		const json = JSON.stringify(props.content.value)
 
 		const serializedStore = parseTldrawJsonFile({
 			json,
@@ -172,9 +172,9 @@ function ActionsMenu() {
 
 const TldrawEditorView: ContentViewComponent<
 	TldrawFile,
-	FunctionComponent<lb.ContentEditorViewProps<TldrawFile>>
-> = ({value, change, ...props}) => {
-	if (!value) {
+	FunctionComponent<lb.ContentViewProps<TldrawFile>>
+> = props => {
+	if (!props.content.value) {
 		return <div>waiting for value</div>
 	}
 
@@ -185,12 +185,12 @@ const TldrawEditorView: ContentViewComponent<
 			options={{maxPages: 1}}
 			autoFocus={true}
 			assetUrls={getAssetUrls({baseUrl: "/tldraw-assets"})}>
-			<TldrawInner value={value} change={change} {...props} />
+			<TldrawInner {...props} />
 		</Tldraw>
 	)
 }
 
-import "@tldraw/tldraw/tldraw.css"
+import css from "@tldraw/tldraw/tldraw.css"
 
 export default class TldrawEditorElement extends ContentViewElement<TldrawFile> {
 	shadowRoot = this.attachShadow({
@@ -201,17 +201,14 @@ export default class TldrawEditorElement extends ContentViewElement<TldrawFile> 
 
 	constructor() {
 		super()
-		const link = document.createElement("link")
-		link.rel = "stylesheet"
-		link.href = import.meta.resolve("./node_modules/@tldraw/tldraw/tldraw.css")
-		this.shadowRoot.append(link)
+		const style = document.createElement("style")
+		style.textContent = css
+		this.shadowRoot.append(style)
 	}
 
 	props = () => ({
-		value: this.value,
-		change: this.change,
 		handle: this.handle,
-		doc: this.doc,
+		content: this.content,
 		file: this.file,
 	})
 	connectedCallback() {

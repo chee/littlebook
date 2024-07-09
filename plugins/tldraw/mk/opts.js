@@ -8,10 +8,10 @@ export default {
 	sourcemap: true,
 	minify: globalThis.process.env.NODE_ENV != "development",
 	format: "esm",
-	outfile: "index.js",
+	outdir: "output",
 	define: {
 		"process.env.IS_PREACT": JSON.stringify("true"),
 	},
 	target: ["safari17", "firefox127"],
-	loader: {".svg": "dataurl"},
+	loader: {".svg": "dataurl", ".css": "text"},
 }
