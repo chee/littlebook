@@ -3,6 +3,7 @@ import {
 	createSignal,
 	For,
 	Match,
+	on,
 	Show,
 	Suspense,
 	Switch,
@@ -26,13 +27,12 @@ import {throttle} from "@solid-primitives/scheduled"
 import {makeResizeObserver} from "@solid-primitives/resize-observer"
 import getSpaceLayout from "./space-layout.ts"
 import getDock, {isTopLeft, isTopRight, type PaneId} from "./area/dock.ts"
-import Resizable, {type ContextValue as ResizeContext} from "@corvu/resizable"
+import Resizable from "@corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
 
 export default function Space() {
 	const [layout, updateLayout] = getSpaceLayout()
 	const [dock] = getDock()
-	const [resizeContext, setResizeContext] = createSignal<ResizeContext>()
 
 	const {observe: observeResize} = makeResizeObserver(
 		throttle(() => {
@@ -44,13 +44,32 @@ export default function Space() {
 	observeResize(document.body)
 	observeMouse()
 
-	createEffect(() => {
-		stabilizeSidebars(layout, updateLayout)
-		resizeContext()?.resize(0, layout.primary.size)
-	})
-
 	const [columns, setColumns] = makePersisted(createSignal<number[]>(), {
 		name: "workspace-columns",
+	})
+
+	const [dragging, setDragging] = createSignal(false)
+	const [hidePrimaryHandle, setHidePrimaryHandle] = createSignal(false)
+	const [hideSecondaryHandle, setHideSecondaryHandle] = createSignal(false)
+
+	createEffect(() => {
+		if (!dragging()) {
+			if (layout.primary.open) {
+				setHidePrimaryHandle(false)
+			} else {
+				setHidePrimaryHandle(true)
+			}
+		}
+	})
+
+	createEffect(() => {
+		if (!dragging()) {
+			if (layout.secondary.open) {
+				setHideSecondaryHandle(false)
+			} else {
+				setHideSecondaryHandle(true)
+			}
+		}
 	})
 
 	return (
@@ -59,47 +78,47 @@ export default function Space() {
 			onSizesChange={sizes => {
 				updateSidebarsFromSplitSizes(sizes, layout, updateLayout)
 			}}>
-			{() => {
-				setResizeContext(Resizable.useContext())
-				return (
-					<>
-						<Resizable.Panel minSize={0.15} collapsible>
-							<Sidebar which="primary" open={() => layout.primary.open}>
-								<PrimarySidebar />
-							</Sidebar>
-						</Resizable.Panel>
-						<Resizable.Handle />
-						<Resizable.Panel>
-							<main id="main" class="space-areas">
-								<Suspense>
-									<Resizable sizes={columns()} onSizesChange={setColumns}>
-										{() => {
-											return (
-												<For each={dock.grid}>
-													{(pane, index) => (
-														<Grid
-															index={index}
-															length={() => dock.grid.length}
-															pane={pane}
-															orientation="horizontal"
-														/>
-													)}
-												</For>
-											)
-										}}
-									</Resizable>
-								</Suspense>
-							</main>
-						</Resizable.Panel>
-						<Resizable.Handle />
-						<Resizable.Panel minSize={0.15} collapsible>
-							<Sidebar open={() => layout.secondary.open} which="secondary">
-								<SecondarySidebar />
-							</Sidebar>
-						</Resizable.Panel>
-					</>
-				)
-			}}
+			<Resizable.Panel minSize={0.15} collapsible>
+				<Sidebar which="primary" open={() => layout.primary.open}>
+					<PrimarySidebar />
+				</Sidebar>
+			</Resizable.Panel>
+			<Show when={!hidePrimaryHandle()}>
+				<Resizable.Handle
+					onHandleDragStart={() => setDragging(true)}
+					onHandleDragEnd={() => setDragging(false)}
+				/>
+			</Show>
+			<Resizable.Panel>
+				<main id="main" class="space-areas">
+					<Suspense>
+						<Resizable sizes={columns()} onSizesChange={setColumns}>
+							{() => {
+								return (
+									<For each={dock.grid}>
+										{(pane, index) => (
+											<Grid
+												index={index}
+												length={() => dock.grid.length}
+												pane={pane}
+												orientation="horizontal"
+											/>
+										)}
+									</For>
+								)
+							}}
+						</Resizable>
+					</Suspense>
+				</main>
+			</Resizable.Panel>
+			<Show when={!hideSecondaryHandle()}>
+				<Resizable.Handle />
+			</Show>
+			<Resizable.Panel minSize={0.15} collapsible>
+				<Sidebar open={() => layout.secondary.open} which="secondary">
+					<SecondarySidebar />
+				</Sidebar>
+			</Resizable.Panel>
 		</Resizable>
 	)
 }

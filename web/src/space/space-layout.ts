@@ -41,7 +41,7 @@ type UpdateSpaceLayout = ReturnType<typeof store>["1"]
 
 export function updateSidebarsFromSplitSizes(
 	sizes: number[],
-	_layout: SpaceLayout,
+	layout: SpaceLayout,
 	update: UpdateSpaceLayout,
 ) {
 	const [left, main, right] = sizes
@@ -49,7 +49,7 @@ export function updateSidebarsFromSplitSizes(
 		produce(layout => {
 			layout.main.size = main
 			if (left) {
-				layout.primary.size = left
+				layout.primary.size = Math.abs(left)
 				if (!layout.primary.open) {
 					layout.primary.open = true
 				}
@@ -57,7 +57,7 @@ export function updateSidebarsFromSplitSizes(
 				layout.primary.open = false
 			}
 			if (right) {
-				layout.secondary.size = right
+				layout.secondary.size = Math.abs(right)
 				if (!layout.secondary.open) {
 					layout.secondary.open = true
 				}
@@ -66,6 +66,7 @@ export function updateSidebarsFromSplitSizes(
 			}
 		}),
 	)
+	stabilizeSidebars(layout, update)
 }
 
 export function stabilizeSidebars(

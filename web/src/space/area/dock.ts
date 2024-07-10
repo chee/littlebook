@@ -2,7 +2,7 @@ import {createSingletonRoot} from "@solid-primitives/rootless"
 import {makePersisted} from "@solid-primitives/storage"
 import {createStore, produce, type SetStoreFunction} from "solid-js/store"
 import {createId} from "@paralleldrive/cuid2"
-import getLayout from "../space-layout.ts"
+import getLayout, {stabilizeSidebars} from "../space-layout.ts"
 
 export type PaneId = string & {"__item-pane-id": true}
 

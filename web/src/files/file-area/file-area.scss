@@ -8,7 +8,7 @@
 	height: 100%;
 	overflow: hidden;
 	&.active .file-viewer-head {
-		box-shadow: inset 0 0 2px var(--color-primary);
+		background: var(--color-primary);
 	}
 }
 
