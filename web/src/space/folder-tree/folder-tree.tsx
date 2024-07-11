@@ -264,7 +264,7 @@ export function FolderTreeFolderInner(props: {
 				}
 				oncontextmenu={event => {
 					event.preventDefault()
-					event.stopImmediatePropagation()
+					event.stopPropagation()
 					setMenuShowing(true)
 				}}>
 				<div
@@ -283,16 +283,15 @@ export function FolderTreeFolderInner(props: {
 						event.stopPropagation()
 						props.setExpanded(val => !val)
 					}}
-					ondblclick={event => {
-						event.preventDefault()
-						setMenuShowing(true)
-						event.stopImmediatePropagation()
-					}}
 				/>
 				<button
 					aria-pressed={props.current()}
 					type="button"
-					class="folder-tree-item-name folder-tree-folder-name">
+					class="folder-tree-item-name folder-tree-folder-name"
+					ondblclick={event => {
+						event.preventDefault()
+						setMenuShowing(true)
+					}}>
 					<span class="folder-tree-item-name__icon">
 						{props.folder()?.icon || ""}
 					</span>
