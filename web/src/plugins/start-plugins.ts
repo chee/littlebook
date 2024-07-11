@@ -12,14 +12,14 @@ import {getOwner} from "solid-js"
 import {runWithOwner} from "solid-js"
 import * as pluginAPI from "../plugins/plugin-api.ts"
 
-let contentCoderActivators = {} as Record<
+export let contentCoderActivators = {} as Record<
 	UniformTypeIdentifier,
 	{
 		active: boolean
 		activate: (() => Promise<void>)[]
 	}
 >
-let contentViewActivators = {} as Record<
+export let contentViewActivators = {} as Record<
 	ContentViewName,
 	{
 		active: boolean

@@ -27,7 +27,7 @@ export default function NewFilePicker(props: {
 							<button
 								type="button"
 								onclick={async () => {
-									coderRegistry.request(type.identifier)
+									await coderRegistry.request(type.identifier)
 									let coder =
 										coderRegistry.getFirst(type.identifier) || binary()
 									let value = await coder.decode(new Uint8Array())
