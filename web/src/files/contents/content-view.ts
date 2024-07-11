@@ -149,12 +149,11 @@ export const contentViewRegistry = {
 		return cv.ready[element]
 	},
 	async request(identifier: ContentViewName) {
-		let [_cv, update] = contentViewStore()
+		let [cv, update] = contentViewStore()
 		let [plugins] = pluginStore
 		let activator = plugins.views[identifier]
-		if (activator) {
+		if (activator && !activator.active && !cv.ready[identifier]) {
 			await activator.activate()
-			activator.active = true
 			update("ready", identifier, true)
 		} else {
 			console.warn(`can't activate ${identifier}. never heard of her`)

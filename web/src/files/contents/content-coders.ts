@@ -146,7 +146,7 @@ export class ContentCoderRegistry {
 	async request(identifier: UniformTypeIdentifier) {
 		let [plugins] = pluginStore
 		let activator = plugins.coders[identifier]
-		if (activator) {
+		if (activator && !activator.active) {
 			return activator.activate()
 		}
 		console.warn(`can't activate coder:${identifier}. she never `)
