@@ -13,7 +13,7 @@ interface EditableNameProps {
 
 // todo render the input in a portal, so it doesn't matter what it's inside of
 export default function EditableName(props: EditableNameProps) {
-	const [buttonRef, setButtonRef] = createSignal<HTMLButtonElement>()
+	let [buttonRef, setButtonRef] = createSignal<HTMLButtonElement>()
 	createShortcut(["Escape"], cancel)
 
 	let localName = props.name() || ""
@@ -30,11 +30,9 @@ export default function EditableName(props: EditableNameProps) {
 		props.save(localName)
 	}
 
-	const scroll = createScrollPosition(
-		document.querySelector(".primary.sidebar")!,
-	)
+	let scroll = createScrollPosition(document.querySelector(".primary.sidebar")!)
 
-	const buttonBox = () =>
+	let buttonBox = () =>
 		props.renaming() && scroll.y != null
 			? buttonRef()?.getBoundingClientRect()
 			: undefined

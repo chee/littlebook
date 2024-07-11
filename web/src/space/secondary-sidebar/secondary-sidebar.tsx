@@ -3,14 +3,15 @@ import getDock, {getActiveItemId} from "../area/dock.ts"
 import getLayout, {toggleSidebar} from "../space-layout.ts"
 
 import SidebarToggle from "../sidebar/sidebar-toggle.tsx"
-import InfoPanel from "../../files/info-panel/info-panel.tsx"
-import {Show, Suspense} from "solid-js"
+import InfoPanel from "./info-panel/info-panel.tsx"
+// import Notes from "./notes/notes.tsx"
+import {createEffect, ErrorBoundary, on, Show, Suspense} from "solid-js"
 import "./secondary-sidebar.scss"
 
 export default function SecondarySidebar() {
-	const [layout, updateLayout] = getLayout()
-	const [dock] = getDock()
-	const activeItemId = () => getActiveItemId(dock)
+	let [layout, updateLayout] = getLayout()
+	let [dock] = getDock()
+	let activeItemId = () => getActiveItemId(dock)
 
 	return (
 		<Suspense>
@@ -26,8 +27,40 @@ export default function SecondarySidebar() {
 				</div>
 			</header>
 			<Show when={activeItemId()}>
+				<ErrorBoundary
+					fallback={(error, reset) => {
+						createEffect(
+							on([activeItemId], () => {
+								reset()
+							}),
+						)
+						return (
+							<pre>
+								<code>{JSON.stringify(error, null, "\t")}</code>
+							</pre>
+						)
+					}}>
+					<SidebarCard>
+						<InfoPanel fileId={activeItemId()!} />
+					</SidebarCard>
+				</ErrorBoundary>
 				<SidebarCard>
-					<InfoPanel fileId={activeItemId()!} />
+					<ErrorBoundary
+						fallback={(error, reset) => {
+							createEffect(
+								on([activeItemId], () => {
+									reset()
+								}),
+							)
+							return (
+								<pre>
+									<code>{JSON.stringify(error, null, "\t")}</code>
+								</pre>
+							)
+						}}>
+						<div />
+						{/* <Notes itemId={activeItemId} /> */}
+					</ErrorBoundary>
 				</SidebarCard>
 			</Show>
 		</Suspense>

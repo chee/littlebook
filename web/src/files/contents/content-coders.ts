@@ -20,8 +20,8 @@ export interface AsyncContentCoder<Model extends lb.AnyContentValue> {
 	encode(model: Model): Promise<Uint8Array | EncodingError>
 }
 
-const utf8Encoder = new TextEncoder()
-const utf8Decoder = new TextDecoder()
+let utf8Encoder = new TextEncoder()
+let utf8Decoder = new TextDecoder()
 
 export function text(): ContentCoder<string> {
 	return {
@@ -63,7 +63,7 @@ export function json<Type extends lb.AnyContentValue>(): ContentCoder<Type> {
 		},
 		decode(bytes) {
 			try {
-				const json = text().decode(bytes)
+				let json = text().decode(bytes)
 				return json instanceof DecodingError ? json : JSON.parse(json)
 			} catch (error) {
 				console.error(error)
@@ -86,8 +86,8 @@ export class ContentCoderRegistry {
 	}
 
 	registerAll(uniformTypes: ResolvableUniformType[], coder: AnyContentCoder) {
-		for (const type of uniformTypes) {
-			const typeName = UniformType.getIdentifier(type)
+		for (let type of uniformTypes) {
+			let typeName = UniformType.getIdentifier(type)
 			if (this.registry.get(typeName)) {
 				throw new Error(
 					`there is already a coder for ${typeName}. remove it first`,
@@ -101,12 +101,14 @@ export class ContentCoderRegistry {
 		registry: ContentCoderRegistry["registry"],
 		type: ResolvableUniformType,
 	) {
-		const uniformType = UniformType.get(type)
-		const direct = registry.get(uniformType.identifier)
+		let uniformType = UniformType.get(type)
+
+		let direct = registry.get(uniformType.identifier)
 		if (direct) {
 			yield direct
 		}
-		for (const [registeredType, coder] of registry.entries()) {
+		for (let [registeredType, coder] of registry.entries()) {
+			// todo make .supertypes a set of identifiers, rather than uniform types
 			if (uniformType.conforms(UniformType.get(registeredType))) {
 				yield coder
 			}
@@ -126,8 +128,8 @@ export class ContentCoderRegistry {
 	}
 
 	remove(types: ResolvableUniformTypes, coder: AnyContentCoder) {
-		for (const type of Array.isArray(types) ? types : [types]) {
-			const identifier = UniformType.getIdentifier(type)
+		for (let type of Array.isArray(types) ? types : [types]) {
+			let identifier = UniformType.getIdentifier(type)
 			if (this.registry.get(identifier) == coder) {
 				this.registry.delete(identifier)
 			} else {
@@ -149,6 +151,6 @@ export class ContentCoderRegistry {
 	}
 }
 
-export const coderRegistry = new ContentCoderRegistry()
+export let coderRegistry = new ContentCoderRegistry()
 
 coderRegistry.register(UniformType.plainText, text())

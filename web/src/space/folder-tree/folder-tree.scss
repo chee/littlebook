@@ -28,10 +28,12 @@
 }
 
 .folder-tree-row {
-	&:hover {
+	&:hover,
+	&.menuing {
 		background-color: var(--folder-tree-color-hover-fill);
 		color: var(--folder-tree-color-hover-line);
 	}
+
 	&.current {
 		background-color: var(--folder-tree-color-current-fill);
 		color: var(--folder-tree-color-current-line);

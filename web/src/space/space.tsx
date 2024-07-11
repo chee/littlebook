@@ -31,10 +31,10 @@ import Resizable from "@corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
 
 export default function Space() {
-	const [layout, updateLayout] = getSpaceLayout()
-	const [dock] = getDock()
+	let [layout, updateLayout] = getSpaceLayout()
+	let [dock] = getDock()
 
-	const {observe: observeResize} = makeResizeObserver(
+	let {observe: observeResize} = makeResizeObserver(
 		throttle(() => {
 			stabilizeSidebars(layout, updateLayout)
 		}, 100),
@@ -44,13 +44,13 @@ export default function Space() {
 	observeResize(document.body)
 	observeMouse()
 
-	const [columns, setColumns] = makePersisted(createSignal<number[]>(), {
+	let [columns, setColumns] = makePersisted(createSignal<number[]>(), {
 		name: "workspace-columns",
 	})
 
-	const [dragging, setDragging] = createSignal(false)
-	const [hidePrimaryHandle, setHidePrimaryHandle] = createSignal(false)
-	const [hideSecondaryHandle, setHideSecondaryHandle] = createSignal(false)
+	let [dragging, setDragging] = createSignal(false)
+	let [hidePrimaryHandle, setHidePrimaryHandle] = createSignal(false)
+	let [hideSecondaryHandle, setHideSecondaryHandle] = createSignal(false)
 
 	createEffect(() => {
 		if (!dragging()) {
@@ -91,6 +91,12 @@ export default function Space() {
 			</Show>
 			<Resizable.Panel>
 				<main id="main" class="space-areas">
+					<Show when={!dock.grid.length && !layout.primary.open}>
+						<SidebarToggle
+							open={() => false}
+							toggle={() => toggleSidebar("primary", layout, updateLayout)}
+						/>
+					</Show>
 					<Suspense>
 						<Resizable sizes={columns()} onSizesChange={setColumns}>
 							{() => {
@@ -129,11 +135,11 @@ function Grid(props: {
 	index(): number
 	length(): number
 }) {
-	const [layout, updateLayout] = getSpaceLayout()
-	const [dock, _updateDock] = getDock()
+	let [layout, updateLayout] = getSpaceLayout()
+	let [dock, _updateDock] = getDock()
 
-	const orient = props.orientation == "vertical" ? "horizontal" : "vertical"
-	const last = () => props.length() == props.index() + 1
+	let orient = props.orientation == "vertical" ? "horizontal" : "vertical"
+	let last = () => props.length() == props.index() + 1
 	return (
 		<Switch>
 			<Match when={Array.isArray(props.pane) && props.pane.length}>

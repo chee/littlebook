@@ -21,7 +21,7 @@ export type Dock = {
 	grid: DockGrid
 }
 
-const store = createSingletonRoot(() =>
+let store = createSingletonRoot(() =>
 	makePersisted(
 		createStore({
 			active: undefined,
@@ -43,7 +43,7 @@ export function getActivePane(dock = store()[0]) {
 }
 
 export function getActiveItemId(dock = store()[0]) {
-	const pane = getActivePane(dock)
+	let pane = getActivePane(dock)
 	return pane?.itemId
 }
 
@@ -54,10 +54,10 @@ export function getItemPane(id: lb.ItemId, dock = store()[0]) {
 export function rm(paneId: PaneId, dock = store()[0], updateDock = store()[1]) {
 	updateDock(
 		produce(dock => {
-			const isActive = dock.active == paneId
+			let isActive = dock.active == paneId
 			delete dock.panes[paneId]
 			// todo recurse
-			const indexInGrid = dock.grid.indexOf(paneId)
+			let indexInGrid = dock.grid.indexOf(paneId)
 			dock.grid.splice(indexInGrid, 1)
 
 			if (isActive) {
@@ -68,25 +68,25 @@ export function rm(paneId: PaneId, dock = store()[0], updateDock = store()[1]) {
 }
 
 export function isTopLeft(id: PaneId) {
-	const [dock] = getDock()
-	const [layout] = getLayout()
+	let [dock] = getDock()
+	let [layout] = getLayout()
 
 	return dock.grid.indexOf(id) == 0 && !layout.primary.open
 }
 
 export function isTopRight(id: PaneId) {
-	const [dock] = getDock()
-	const [layout] = getLayout()
+	let [dock] = getDock()
+	let [layout] = getLayout()
 	return dock.grid.indexOf(id) == dock.grid.length - 1 && !layout.secondary.open
 }
 
 export function selectItem(itemId: lb.ItemId) {
-	const [dock, update] = getDock()
+	let [dock, update] = getDock()
 
 	if (dock.active) {
 		update(
 			produce(dock => {
-				const active = getActivePane(dock)
+				let active = getActivePane(dock)
 				active!.itemId = itemId
 			}),
 		)
@@ -97,8 +97,8 @@ export function selectItem(itemId: lb.ItemId) {
 }
 
 export function openToTheSide(itemId: lb.ItemId) {
-	const [, update] = store()
-	const paneId = createId() as PaneId
+	let [, update] = store()
+	let paneId = createId() as PaneId
 	// todo open next to the active panel
 	update(
 		produce(dock => {

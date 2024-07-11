@@ -15,6 +15,8 @@ import type {
 	AppState,
 	BinaryFiles,
 	ExcalidrawImperativeAPI,
+	ExcalidrawProps,
+	Gesture,
 } from "@excalidraw/excalidraw/types/types.d.ts"
 import type {ExcalidrawElement} from "@excalidraw/excalidraw/types/element/types.d.ts"
 import {
@@ -133,8 +135,6 @@ const ExcalidrawView: ContentViewComponent<
 				appState: AppState,
 				files: BinaryFiles,
 			) => {
-				// todo snapshot!
-
 				handle.change(doc => {
 					if (!doc.value?.elements) return
 					const contentVersion = doc.value.elements.reduce(sumVersion, 0) || 0
@@ -145,20 +145,30 @@ const ExcalidrawView: ContentViewComponent<
 						// i can't be keeping massive images as a string!
 
 						//merge(doc.value.files, files)
-						for (const [index, element] of elements.entries()) {
-							const targetIndex = doc.value.elements.findIndex(
-								el => el.id == element.id,
+						for (const [excaliIndex, excaliElement] of elements.entries()) {
+							const automergeIndex = doc.value.elements.findIndex(
+								el => el.id == excaliElement.id,
 							)
-							const target = doc.value.elements[targetIndex]
-							if (target) {
-								merge(target, element)
-								if (index !== targetIndex) {
-									doc.value.elements.deleteAt(targetIndex)
-									doc.value.elements.insertAt(index, target)
+							const automergeElement = doc.value.elements[automergeIndex]
+							if (automergeElement) {
+								console.log(
+									excaliIndex,
+									excaliElement.id,
+									automergeIndex,
+									automergeElement.id,
+									doc.value.elements[excaliIndex],
+								)
+								merge(automergeElement, excaliElement)
+								if (excaliIndex !== automergeIndex) {
+									doc.value.elements.deleteAt(automergeIndex)
+
+									doc.value.elements.insertAt(excaliIndex, {
+										...automergeElement,
+									})
 								}
 							} else {
 								const target = {}
-								merge(target, element)
+								merge(target, excaliElement)
 								doc.value.elements.push(target as WriteableExcalidrawElement)
 							}
 						}
@@ -175,6 +185,43 @@ const ExcalidrawView: ContentViewComponent<
 		),
 		[],
 	)
+
+	const onpointer = useCallback(
+		(payload: {
+			pointer: {
+				x: number
+				y: number
+				tool: "pointer" | "laser"
+			}
+			button: "down" | "up"
+			pointersMap: Gesture["pointers"]
+		}) => {
+			handle.broadcast(payload)
+		},
+		[handle],
+	)
+
+	useEffect(() => {
+		handle.on("ephemeral-message", payload => {
+			const message = payload.message as {
+				pointer: {
+					x: number
+					y: number
+					tool: "pointer" | "laser"
+				}
+				button: "down" | "up"
+				pointersMap: Gesture["pointers"]
+			}
+			if (message.pointer) {
+				const as = excalidrawAPI?.getAppState()
+				as?.collaborators.set(payload.senderId, {
+					button: message.button,
+					username: payload.senderId,
+					pointer: message.pointer,
+				})
+			}
+		})
+	})
 
 	return (
 		<>
@@ -204,6 +251,7 @@ const ExcalidrawView: ContentViewComponent<
 					theme={isDark ? "dark" : "light"}
 					handleKeyboardGlobally={false}
 					onChange={onchange}
+					onPointerUpdate={onpointer}
 				/>
 			</Suspense>
 		</>

@@ -2,12 +2,12 @@
 
 import type {PeerId} from "@automerge/automerge-repo"
 
-declare const self: SharedWorkerGlobalScope
-export const ok = true
+declare let self: SharedWorkerGlobalScope
+export let ok = true
 
 console.log("the most difficult job on the planet")
 self.addEventListener("connect", (event: MessageEvent) => {
-	const [port] = event.ports
+	let [port] = event.ports
 	port.start()
 	configureRepoNetworkPort(port)
 })
@@ -17,27 +17,27 @@ self.addEventListener("connect", (event: MessageEvent) => {
 // module is loaded. This promise lets us block until the module loads
 // even if the event arrives first.
 // Ideally Chrome would fix this upstream but this isn't a terrible hack.
-const repoPromise = (async () => {
-	const {Repo} = await import("@automerge/automerge-repo")
-	const {IndexedDBStorageAdapter} = await import(
+let repoPromise = (async () => {
+	let {Repo} = await import("@automerge/automerge-repo")
+	let {IndexedDBStorageAdapter} = await import(
 		"@automerge/automerge-repo-storage-indexeddb"
 	)
-	const {BrowserWebSocketClientAdapter} = await import(
+	let {BrowserWebSocketClientAdapter} = await import(
 		"@automerge/automerge-repo-network-websocket"
 	)
 	return {Repo, IndexedDBStorageAdapter, BrowserWebSocketClientAdapter}
 })()
 
 async function configureRepoNetworkPort(port: MessagePort) {
-	const {Repo, IndexedDBStorageAdapter, BrowserWebSocketClientAdapter} =
+	let {Repo, IndexedDBStorageAdapter, BrowserWebSocketClientAdapter} =
 		await repoPromise
-	const repo = new Repo({
+	let repo = new Repo({
 		storage: new IndexedDBStorageAdapter(),
 		network: [new BrowserWebSocketClientAdapter(import.meta.env.LB_SRV_HOST)],
 		peerId: "lightwork" as PeerId,
 		sharePolicy: async peerId => peerId.startsWith("starlight"),
 	})
-	const {MessageChannelNetworkAdapter} = await import(
+	let {MessageChannelNetworkAdapter} = await import(
 		"@automerge/automerge-repo-network-messagechannel"
 	)
 	// be careful to not accidentally create a strong reference to port

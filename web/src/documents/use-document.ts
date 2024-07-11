@@ -20,11 +20,11 @@ type UseDocument<T extends lb.AnyDocument> = [
 export default function useDocument<T extends lb.AnyDocument>(
 	id: () => T["id"] | undefined,
 ): UseDocument<T> {
-	const automerge = useAutomerge()
+	let automerge = useAutomerge()
 
-	const handle = useHandle(id)
+	let handle = useHandle(id)
 
-	const [doc, control] = createResource(() => handle()?.doc())
+	let [doc, control] = createResource(() => handle()?.doc())
 
 	createEffect(
 		on([handle], ([prev]) => {

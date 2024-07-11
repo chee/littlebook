@@ -6,12 +6,12 @@ import UniformType from "../contents/uniform-type.ts"
 
 class ImagePreview extends ContentViewElement<Uint8Array> {
 	async blob() {
-		const blob = new Blob([this.content.value])
-		const url = URL.createObjectURL(blob)
+		let blob = new Blob([this.content.value])
+		let url = URL.createObjectURL(blob)
 		return url
 	}
 	connectedCallback() {
-		const img = document.createElement("img")
+		let img = document.createElement("img")
 		this.blob().then(url => {
 			img.src = url
 			this.replaceChildren(img)
@@ -27,12 +27,12 @@ class ImagePreview extends ContentViewElement<Uint8Array> {
 
 class VideoPreview extends ContentViewElement<Uint8Array> {
 	async blob() {
-		const blob = new Blob([this.content.value])
-		const url = URL.createObjectURL(blob)
+		let blob = new Blob([this.content.value])
+		let url = URL.createObjectURL(blob)
 		return url
 	}
 	connectedCallback() {
-		const video = document.createElement("video")
+		let video = document.createElement("video")
 		this.blob().then(url => {
 			video.src = url
 			video.controls = true
@@ -49,12 +49,12 @@ class VideoPreview extends ContentViewElement<Uint8Array> {
 
 class AudioPreview extends ContentViewElement<Uint8Array> {
 	async blob() {
-		const blob = new Blob([this.content.value])
-		const url = URL.createObjectURL(blob)
+		let blob = new Blob([this.content.value])
+		let url = URL.createObjectURL(blob)
 		return url
 	}
 	connectedCallback() {
-		const audio = document.createElement("audio")
+		let audio = document.createElement("audio")
 		this.blob().then(url => {
 			audio.src = url
 			audio.controls = true
@@ -70,11 +70,25 @@ class AudioPreview extends ContentViewElement<Uint8Array> {
 }
 
 export default function register() {
-	customElements.define("image-preview", ImagePreview)
-	customElements.define("video-preview", VideoPreview)
-	customElements.define("audio-preview", AudioPreview)
-	contentViewRegistry.register(UniformType.image, "image-preview")
-	contentViewRegistry.register(UniformType.video, "video-preview")
-	contentViewRegistry.register(UniformType.movie, "video-preview")
-	contentViewRegistry.register(UniformType.audio, "audio-preview")
+	customElements.get("image-preview") ||
+		customElements.define("image-preview", ImagePreview)
+	customElements.get("video-preview") ||
+		customElements.define("video-preview", VideoPreview)
+	customElements.get("audio-preview") ||
+		customElements.define("audio-preview", AudioPreview)
+	contentViewRegistry.addPreview({
+		displayName: "Image",
+		element: "image-preview",
+		contentTypes: [UniformType.image.identifier],
+	})
+	contentViewRegistry.addPreview({
+		displayName: "Movie",
+		element: "video-preview",
+		contentTypes: [UniformType.video.identifier, UniformType.movie.identifier],
+	})
+	contentViewRegistry.addPreview({
+		displayName: "Sound",
+		element: "audio-preview",
+		contentTypes: [UniformType.audio.identifier],
+	})
 }

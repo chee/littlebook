@@ -7,21 +7,21 @@ import {
 import * as local from "./local.ts"
 import start from "./start-repo.ts"
 import type {AutomergeList} from "../types.ts"
-export const AutomergeContext = createContext<lb.AutomergeState>()
+export let AutomergeContext = createContext<lb.AutomergeState>()
 import createDocumentHandle from "../documents/create-document-handle.ts"
 
 export function useAutomerge() {
-	const context = useContext(AutomergeContext)
+	let context = useContext(AutomergeContext)
 	if (!context) throw new Error("you gotta wrap me in a AutomergeContext")
 	return context
 }
 
 export function getAutomergeState(): ResourceReturn<lb.AutomergeState> {
 	return createResource(async () => {
-		const repo = await start()
+		let repo = await start()
 		let home = local.state.home
 		if (!home) {
-			const spaceHandle = createDocumentHandle<lb.Space>(repo, {
+			let spaceHandle = createDocumentHandle<lb.Space>(repo, {
 				type: "space",
 				name: "",
 				items: [] as lb.FolderId[] as AutomergeList<lb.FolderId>,

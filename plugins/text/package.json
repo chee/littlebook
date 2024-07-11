@@ -6,10 +6,10 @@
 	"main": "output/text.js",
 	"styles": "output/text.css",
 	"littlebook": {
-		"contentViews": [
+		"editors": [
 			{
-				"identifier": "text-editor",
-				"displayName": "codemirror",
+				"element": "codemirror-text",
+				"displayName": "Codemirror",
 				"contentTypes": [
 					"public.plain-text",
 					"public.python-script",

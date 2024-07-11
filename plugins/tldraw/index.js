@@ -2277,7 +2277,7 @@ var require_own_keys = __commonJS({
     var getOwnPropertySymbolsModule = require_object_get_own_property_symbols();
     var anObject = require_an_object();
     var concat = uncurryThis([].concat);
-    module.exports = getBuiltIn("Reflect", "ownKeys") || function ownKeys3(it) {
+    module.exports = getBuiltIn("Reflect", "ownKeys") || function ownKeys4(it) {
       var keys = getOwnPropertyNamesModule.f(anObject(it));
       var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
       return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
@@ -2290,11 +2290,11 @@ var require_copy_constructor_properties = __commonJS({
   "../../node_modules/.pnpm/core-js@3.37.1/node_modules/core-js/internals/copy-constructor-properties.js"(exports, module) {
     "use strict";
     var hasOwn = require_has_own_property();
-    var ownKeys3 = require_own_keys();
+    var ownKeys4 = require_own_keys();
     var getOwnPropertyDescriptorModule = require_object_get_own_property_descriptor();
     var definePropertyModule = require_object_define_property();
     module.exports = function(target, source, exceptions) {
-      var keys = ownKeys3(source);
+      var keys = ownKeys4(source);
       var defineProperty = definePropertyModule.f;
       var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
       for (var i = 0; i < keys.length; i++) {
@@ -13351,20 +13351,20 @@ var UniformType = class _UniformType {
     mimeTypes,
     icon
   }) {
-    const type = new _UniformType(
+    let type = new _UniformType(
       identifier,
       description,
       icon
     );
     if (conformingTo) {
-      for (const supertype of conformingTo) {
-        const u = _UniformType.get(supertype);
+      for (let supertype of conformingTo) {
+        let u = _UniformType.get(supertype);
         if (!u) {
           console.warn(`couldn't add supertype ${u}. doesn't exist`);
           continue;
         }
         type.supertypes.add(u);
-        for (const superdupertype of u.supertypes) {
+        for (let superdupertype of u.supertypes) {
           type.supertypes.add(superdupertype);
         }
       }
@@ -13389,7 +13389,7 @@ var UniformType = class _UniformType {
     });
   }
   associateWithFilenameExtensions(filenameExtensions) {
-    for (const ext of filenameExtensions) {
+    for (let ext of filenameExtensions) {
       let associations = _UniformType.extensions.get(ext);
       if (!associations) {
         associations = /* @__PURE__ */ new Set();
@@ -13399,7 +13399,7 @@ var UniformType = class _UniformType {
     }
   }
   associateWithMIMETypes(mimeTypes) {
-    for (const mime of mimeTypes) {
+    for (let mime of mimeTypes) {
       let associations = _UniformType.mimes.get(mime);
       if (!associations) {
         associations = /* @__PURE__ */ new Set();
@@ -13418,12 +13418,12 @@ var UniformType = class _UniformType {
     return of.supertypes.has(this);
   }
   static mimeTypes = function* (type) {
-    for (const [mime, uts] of _UniformType.mimes) {
+    for (let [mime, uts] of _UniformType.mimes) {
       if (uts.has(type)) {
         yield mime;
       }
     }
-    for (const supertype of type.supertypes) {
+    for (let supertype of type.supertypes) {
       yield* _UniformType.mimeTypes(supertype);
     }
   };
@@ -13431,12 +13431,12 @@ var UniformType = class _UniformType {
     return _UniformType.mimeTypes(this);
   }
   static filenameExtensions = function* (type) {
-    for (const [mime, uts] of _UniformType.extensions) {
+    for (let [mime, uts] of _UniformType.extensions) {
       if (uts.has(type)) {
         yield mime;
       }
     }
-    for (const supertype of type.supertypes) {
+    for (let supertype of type.supertypes) {
       yield* _UniformType.filenameExtensions(supertype);
     }
   };
@@ -13456,20 +13456,23 @@ var UniformType = class _UniformType {
     return _UniformType.extensions.get(filenameExtension);
   }
   static get(type) {
-    const full = typeof type == "string" ? _UniformType.types.get(type) : type;
+    let full = typeof type == "string" ? _UniformType.types.get(type) : type;
     if (!full) {
       throw new Error(`no such type ${type}`);
     }
     return full;
   }
+  static all() {
+    return _UniformType.types.values();
+  }
   static getIdentifier(type) {
     return _UniformType.get(type)?.identifier;
   }
   static forFilename(filename) {
-    const extmatch = filename.match(/(\.[\.a-zA-Z_0-9]+)$/);
+    let extmatch = filename.match(/(\.[\.a-zA-Z_0-9]+)$/);
     if (extmatch) {
       for (let extension = extmatch[1]; extension.length > 0; extension = extension.replace(/^\.+[a-zA-Z_0-9]+/, "")) {
-        const utis = _UniformType.extensions.get(
+        let utis = _UniformType.extensions.get(
           extension.replace(/^\.+/, "")
         );
         if (utis) {
@@ -13577,24 +13580,24 @@ var UniformType = class _UniformType {
   ]);
   static plainText = _UniformType.create(
     "public.plain-text",
-    "plain text",
+    "Plain text",
     [_UniformType.content, _UniformType.data],
     ["txt", "text"],
     ["text/plain"]
   );
   static utf8PlainText = _UniformType.create(
     "public.utf8-plain-text",
-    "utf-8 text",
+    "UTF-8 text",
     [_UniformType.plainText]
   );
   static utf16PlainText = _UniformType.create(
     "public.utf16-plain-text",
-    "utf-16 text (native endian)",
+    "UTF-16 text (native endian)",
     [_UniformType.plainText]
   );
   static utf16ExternalPlainText = _UniformType.create(
     "public.utf16-external-plain-text",
-    "utf-16 text (big endian)",
+    "UTF-16 text (big endian)",
     [_UniformType.plainText]
   );
   static delimitedText = _UniformType.create(
@@ -13913,8 +13916,8 @@ var UniformType = class _UniformType {
     _UniformType.content
   ]);
   toJSON() {
-    const supertypes = [];
-    for (const type of this.supertypes) {
+    let supertypes = [];
+    for (let type of this.supertypes) {
       supertypes.push(type.toJSON());
     }
     return {
@@ -13938,6 +13941,787 @@ UniformType.create(
   ["py"],
   ["text/x-python"]
 );
+
+// ../../node_modules/.pnpm/solid-js@1.8.17/node_modules/solid-js/dist/solid.js
+var equalFn = (a, b) => a === b;
+var $PROXY = Symbol("solid-proxy");
+var $TRACK = Symbol("solid-track");
+var $DEVCOMP = Symbol("solid-dev-component");
+var signalOptions = {
+  equals: equalFn
+};
+var ERROR = null;
+var runEffects = runQueue;
+var STALE = 1;
+var PENDING = 2;
+var UNOWNED = {
+  owned: null,
+  cleanups: null,
+  context: null,
+  owner: null
+};
+var Owner = null;
+var Transition = null;
+var Scheduler = null;
+var ExternalSourceConfig = null;
+var Listener = null;
+var Updates = null;
+var Effects = null;
+var ExecCount = 0;
+function createRoot(fn, detachedOwner) {
+  const listener = Listener, owner = Owner, unowned = fn.length === 0, current = detachedOwner === void 0 ? owner : detachedOwner, root = unowned ? UNOWNED : {
+    owned: null,
+    cleanups: null,
+    context: current ? current.context : null,
+    owner: current
+  }, updateFn = unowned ? fn : () => fn(() => untrack(() => cleanNode(root)));
+  Owner = root;
+  Listener = null;
+  try {
+    return runUpdates(updateFn, true);
+  } finally {
+    Listener = listener;
+    Owner = owner;
+  }
+}
+function createSignal(value, options) {
+  options = options ? Object.assign({}, signalOptions, options) : signalOptions;
+  const s = {
+    value,
+    observers: null,
+    observerSlots: null,
+    comparator: options.equals || void 0
+  };
+  const setter = (value2) => {
+    if (typeof value2 === "function") {
+      if (Transition && Transition.running && Transition.sources.has(s)) value2 = value2(s.tValue);
+      else value2 = value2(s.value);
+    }
+    return writeSignal(s, value2);
+  };
+  return [readSignal.bind(s), setter];
+}
+function createRenderEffect(fn, value, options) {
+  const c = createComputation(fn, value, false, STALE);
+  if (Scheduler && Transition && Transition.running) Updates.push(c);
+  else updateComputation(c);
+}
+function createMemo(fn, value, options) {
+  options = options ? Object.assign({}, signalOptions, options) : signalOptions;
+  const c = createComputation(fn, value, true, 0);
+  c.observers = null;
+  c.observerSlots = null;
+  c.comparator = options.equals || void 0;
+  if (Scheduler && Transition && Transition.running) {
+    c.tState = STALE;
+    Updates.push(c);
+  } else updateComputation(c);
+  return readSignal.bind(c);
+}
+function batch(fn) {
+  return runUpdates(fn, false);
+}
+function untrack(fn) {
+  if (!ExternalSourceConfig && Listener === null) return fn();
+  const listener = Listener;
+  Listener = null;
+  try {
+    if (ExternalSourceConfig) return ExternalSourceConfig.untrack(fn);
+    return fn();
+  } finally {
+    Listener = listener;
+  }
+}
+function onCleanup(fn) {
+  if (Owner === null) ;
+  else if (Owner.cleanups === null) Owner.cleanups = [fn];
+  else Owner.cleanups.push(fn);
+  return fn;
+}
+function getListener() {
+  return Listener;
+}
+function getOwner() {
+  return Owner;
+}
+function startTransition(fn) {
+  if (Transition && Transition.running) {
+    fn();
+    return Transition.done;
+  }
+  const l = Listener;
+  const o = Owner;
+  return Promise.resolve().then(() => {
+    Listener = l;
+    Owner = o;
+    let t2;
+    if (Scheduler || SuspenseContext) {
+      t2 = Transition || (Transition = {
+        sources: /* @__PURE__ */ new Set(),
+        effects: [],
+        promises: /* @__PURE__ */ new Set(),
+        disposed: /* @__PURE__ */ new Set(),
+        queue: /* @__PURE__ */ new Set(),
+        running: true
+      });
+      t2.done || (t2.done = new Promise((res) => t2.resolve = res));
+      t2.running = true;
+    }
+    runUpdates(fn, false);
+    Listener = Owner = null;
+    return t2 ? t2.done : void 0;
+  });
+}
+var [transPending, setTransPending] = /* @__PURE__ */ createSignal(false);
+function createContext(defaultValue, options) {
+  const id = Symbol("context");
+  return {
+    id,
+    Provider: createProvider(id),
+    defaultValue
+  };
+}
+function children(fn) {
+  const children2 = createMemo(fn);
+  const memo27 = createMemo(() => resolveChildren(children2()));
+  memo27.toArray = () => {
+    const c = memo27();
+    return Array.isArray(c) ? c : c != null ? [c] : [];
+  };
+  return memo27;
+}
+var SuspenseContext;
+function readSignal() {
+  const runningTransition = Transition && Transition.running;
+  if (this.sources && (runningTransition ? this.tState : this.state)) {
+    if ((runningTransition ? this.tState : this.state) === STALE) updateComputation(this);
+    else {
+      const updates = Updates;
+      Updates = null;
+      runUpdates(() => lookUpstream(this), false);
+      Updates = updates;
+    }
+  }
+  if (Listener) {
+    const sSlot = this.observers ? this.observers.length : 0;
+    if (!Listener.sources) {
+      Listener.sources = [this];
+      Listener.sourceSlots = [sSlot];
+    } else {
+      Listener.sources.push(this);
+      Listener.sourceSlots.push(sSlot);
+    }
+    if (!this.observers) {
+      this.observers = [Listener];
+      this.observerSlots = [Listener.sources.length - 1];
+    } else {
+      this.observers.push(Listener);
+      this.observerSlots.push(Listener.sources.length - 1);
+    }
+  }
+  if (runningTransition && Transition.sources.has(this)) return this.tValue;
+  return this.value;
+}
+function writeSignal(node, value, isComp) {
+  let current = Transition && Transition.running && Transition.sources.has(node) ? node.tValue : node.value;
+  if (!node.comparator || !node.comparator(current, value)) {
+    if (Transition) {
+      const TransitionRunning = Transition.running;
+      if (TransitionRunning || !isComp && Transition.sources.has(node)) {
+        Transition.sources.add(node);
+        node.tValue = value;
+      }
+      if (!TransitionRunning) node.value = value;
+    } else node.value = value;
+    if (node.observers && node.observers.length) {
+      runUpdates(() => {
+        for (let i = 0; i < node.observers.length; i += 1) {
+          const o = node.observers[i];
+          const TransitionRunning = Transition && Transition.running;
+          if (TransitionRunning && Transition.disposed.has(o)) continue;
+          if (TransitionRunning ? !o.tState : !o.state) {
+            if (o.pure) Updates.push(o);
+            else Effects.push(o);
+            if (o.observers) markDownstream(o);
+          }
+          if (!TransitionRunning) o.state = STALE;
+          else o.tState = STALE;
+        }
+        if (Updates.length > 1e6) {
+          Updates = [];
+          if (false) ;
+          throw new Error();
+        }
+      }, false);
+    }
+  }
+  return value;
+}
+function updateComputation(node) {
+  if (!node.fn) return;
+  cleanNode(node);
+  const time2 = ExecCount;
+  runComputation(
+    node,
+    Transition && Transition.running && Transition.sources.has(node) ? node.tValue : node.value,
+    time2
+  );
+  if (Transition && !Transition.running && Transition.sources.has(node)) {
+    queueMicrotask(() => {
+      runUpdates(() => {
+        Transition && (Transition.running = true);
+        Listener = Owner = node;
+        runComputation(node, node.tValue, time2);
+        Listener = Owner = null;
+      }, false);
+    });
+  }
+}
+function runComputation(node, value, time2) {
+  let nextValue;
+  const owner = Owner, listener = Listener;
+  Listener = Owner = node;
+  try {
+    nextValue = node.fn(value);
+  } catch (err) {
+    if (node.pure) {
+      if (Transition && Transition.running) {
+        node.tState = STALE;
+        node.tOwned && node.tOwned.forEach(cleanNode);
+        node.tOwned = void 0;
+      } else {
+        node.state = STALE;
+        node.owned && node.owned.forEach(cleanNode);
+        node.owned = null;
+      }
+    }
+    node.updatedAt = time2 + 1;
+    return handleError(err);
+  } finally {
+    Listener = listener;
+    Owner = owner;
+  }
+  if (!node.updatedAt || node.updatedAt <= time2) {
+    if (node.updatedAt != null && "observers" in node) {
+      writeSignal(node, nextValue, true);
+    } else if (Transition && Transition.running && node.pure) {
+      Transition.sources.add(node);
+      node.tValue = nextValue;
+    } else node.value = nextValue;
+    node.updatedAt = time2;
+  }
+}
+function createComputation(fn, init, pure, state = STALE, options) {
+  const c = {
+    fn,
+    state,
+    updatedAt: null,
+    owned: null,
+    sources: null,
+    sourceSlots: null,
+    cleanups: null,
+    value: init,
+    owner: Owner,
+    context: Owner ? Owner.context : null,
+    pure
+  };
+  if (Transition && Transition.running) {
+    c.state = 0;
+    c.tState = state;
+  }
+  if (Owner === null) ;
+  else if (Owner !== UNOWNED) {
+    if (Transition && Transition.running && Owner.pure) {
+      if (!Owner.tOwned) Owner.tOwned = [c];
+      else Owner.tOwned.push(c);
+    } else {
+      if (!Owner.owned) Owner.owned = [c];
+      else Owner.owned.push(c);
+    }
+  }
+  if (ExternalSourceConfig && c.fn) {
+    const [track2, trigger2] = createSignal(void 0, {
+      equals: false
+    });
+    const ordinary = ExternalSourceConfig.factory(c.fn, trigger2);
+    onCleanup(() => ordinary.dispose());
+    const triggerInTransition = () => startTransition(trigger2).then(() => inTransition.dispose());
+    const inTransition = ExternalSourceConfig.factory(c.fn, triggerInTransition);
+    c.fn = (x) => {
+      track2();
+      return Transition && Transition.running ? inTransition.track(x) : ordinary.track(x);
+    };
+  }
+  return c;
+}
+function runTop(node) {
+  const runningTransition = Transition && Transition.running;
+  if ((runningTransition ? node.tState : node.state) === 0) return;
+  if ((runningTransition ? node.tState : node.state) === PENDING) return lookUpstream(node);
+  if (node.suspense && untrack(node.suspense.inFallback)) return node.suspense.effects.push(node);
+  const ancestors = [node];
+  while ((node = node.owner) && (!node.updatedAt || node.updatedAt < ExecCount)) {
+    if (runningTransition && Transition.disposed.has(node)) return;
+    if (runningTransition ? node.tState : node.state) ancestors.push(node);
+  }
+  for (let i = ancestors.length - 1; i >= 0; i--) {
+    node = ancestors[i];
+    if (runningTransition) {
+      let top = node, prev = ancestors[i + 1];
+      while ((top = top.owner) && top !== prev) {
+        if (Transition.disposed.has(top)) return;
+      }
+    }
+    if ((runningTransition ? node.tState : node.state) === STALE) {
+      updateComputation(node);
+    } else if ((runningTransition ? node.tState : node.state) === PENDING) {
+      const updates = Updates;
+      Updates = null;
+      runUpdates(() => lookUpstream(node, ancestors[0]), false);
+      Updates = updates;
+    }
+  }
+}
+function runUpdates(fn, init) {
+  if (Updates) return fn();
+  let wait = false;
+  if (!init) Updates = [];
+  if (Effects) wait = true;
+  else Effects = [];
+  ExecCount++;
+  try {
+    const res = fn();
+    completeUpdates(wait);
+    return res;
+  } catch (err) {
+    if (!wait) Effects = null;
+    Updates = null;
+    handleError(err);
+  }
+}
+function completeUpdates(wait) {
+  if (Updates) {
+    if (Scheduler && Transition && Transition.running) scheduleQueue(Updates);
+    else runQueue(Updates);
+    Updates = null;
+  }
+  if (wait) return;
+  let res;
+  if (Transition) {
+    if (!Transition.promises.size && !Transition.queue.size) {
+      const sources = Transition.sources;
+      const disposed = Transition.disposed;
+      Effects.push.apply(Effects, Transition.effects);
+      res = Transition.resolve;
+      for (const e2 of Effects) {
+        "tState" in e2 && (e2.state = e2.tState);
+        delete e2.tState;
+      }
+      Transition = null;
+      runUpdates(() => {
+        for (const d of disposed) cleanNode(d);
+        for (const v of sources) {
+          v.value = v.tValue;
+          if (v.owned) {
+            for (let i = 0, len = v.owned.length; i < len; i++) cleanNode(v.owned[i]);
+          }
+          if (v.tOwned) v.owned = v.tOwned;
+          delete v.tValue;
+          delete v.tOwned;
+          v.tState = 0;
+        }
+        setTransPending(false);
+      }, false);
+    } else if (Transition.running) {
+      Transition.running = false;
+      Transition.effects.push.apply(Transition.effects, Effects);
+      Effects = null;
+      setTransPending(true);
+      return;
+    }
+  }
+  const e = Effects;
+  Effects = null;
+  if (e.length) runUpdates(() => runEffects(e), false);
+  if (res) res();
+}
+function runQueue(queue) {
+  for (let i = 0; i < queue.length; i++) runTop(queue[i]);
+}
+function scheduleQueue(queue) {
+  for (let i = 0; i < queue.length; i++) {
+    const item = queue[i];
+    const tasks = Transition.queue;
+    if (!tasks.has(item)) {
+      tasks.add(item);
+      Scheduler(() => {
+        tasks.delete(item);
+        runUpdates(() => {
+          Transition.running = true;
+          runTop(item);
+        }, false);
+        Transition && (Transition.running = false);
+      });
+    }
+  }
+}
+function lookUpstream(node, ignore) {
+  const runningTransition = Transition && Transition.running;
+  if (runningTransition) node.tState = 0;
+  else node.state = 0;
+  for (let i = 0; i < node.sources.length; i += 1) {
+    const source = node.sources[i];
+    if (source.sources) {
+      const state = runningTransition ? source.tState : source.state;
+      if (state === STALE) {
+        if (source !== ignore && (!source.updatedAt || source.updatedAt < ExecCount))
+          runTop(source);
+      } else if (state === PENDING) lookUpstream(source, ignore);
+    }
+  }
+}
+function markDownstream(node) {
+  const runningTransition = Transition && Transition.running;
+  for (let i = 0; i < node.observers.length; i += 1) {
+    const o = node.observers[i];
+    if (runningTransition ? !o.tState : !o.state) {
+      if (runningTransition) o.tState = PENDING;
+      else o.state = PENDING;
+      if (o.pure) Updates.push(o);
+      else Effects.push(o);
+      o.observers && markDownstream(o);
+    }
+  }
+}
+function cleanNode(node) {
+  let i;
+  if (node.sources) {
+    while (node.sources.length) {
+      const source = node.sources.pop(), index2 = node.sourceSlots.pop(), obs = source.observers;
+      if (obs && obs.length) {
+        const n = obs.pop(), s = source.observerSlots.pop();
+        if (index2 < obs.length) {
+          n.sourceSlots[s] = index2;
+          obs[index2] = n;
+          source.observerSlots[index2] = s;
+        }
+      }
+    }
+  }
+  if (Transition && Transition.running && node.pure) {
+    if (node.tOwned) {
+      for (i = node.tOwned.length - 1; i >= 0; i--) cleanNode(node.tOwned[i]);
+      delete node.tOwned;
+    }
+    reset(node, true);
+  } else if (node.owned) {
+    for (i = node.owned.length - 1; i >= 0; i--) cleanNode(node.owned[i]);
+    node.owned = null;
+  }
+  if (node.cleanups) {
+    for (i = node.cleanups.length - 1; i >= 0; i--) node.cleanups[i]();
+    node.cleanups = null;
+  }
+  if (Transition && Transition.running) node.tState = 0;
+  else node.state = 0;
+}
+function reset(node, top) {
+  if (!top) {
+    node.tState = 0;
+    Transition.disposed.add(node);
+  }
+  if (node.owned) {
+    for (let i = 0; i < node.owned.length; i++) reset(node.owned[i]);
+  }
+}
+function castError(err) {
+  if (err instanceof Error) return err;
+  return new Error(typeof err === "string" ? err : "Unknown error", {
+    cause: err
+  });
+}
+function runErrors(err, fns, owner) {
+  try {
+    for (const f of fns) f(err);
+  } catch (e) {
+    handleError(e, owner && owner.owner || null);
+  }
+}
+function handleError(err, owner = Owner) {
+  const fns = ERROR && owner && owner.context && owner.context[ERROR];
+  const error = castError(err);
+  if (!fns) throw error;
+  if (Effects)
+    Effects.push({
+      fn() {
+        runErrors(error, fns, owner);
+      },
+      state: STALE
+    });
+  else runErrors(error, fns, owner);
+}
+function resolveChildren(children2) {
+  if (typeof children2 === "function" && !children2.length) return resolveChildren(children2());
+  if (Array.isArray(children2)) {
+    const results = [];
+    for (let i = 0; i < children2.length; i++) {
+      const result = resolveChildren(children2[i]);
+      Array.isArray(result) ? results.push.apply(results, result) : results.push(result);
+    }
+    return results;
+  }
+  return children2;
+}
+function createProvider(id, options) {
+  return function provider(props) {
+    let res;
+    createRenderEffect(
+      () => res = untrack(() => {
+        Owner.context = {
+          ...Owner.context,
+          [id]: props.value
+        };
+        return children(() => props.children);
+      }),
+      void 0
+    );
+    return res;
+  };
+}
+var FALLBACK = Symbol("fallback");
+var SuspenseListContext = createContext();
+
+// ../../node_modules/.pnpm/solid-js@1.8.17/node_modules/solid-js/store/dist/store.js
+var $RAW = Symbol("store-raw");
+var $NODE = Symbol("store-node");
+var $HAS = Symbol("store-has");
+var $SELF = Symbol("store-self");
+function wrap$1(value) {
+  let p = value[$PROXY];
+  if (!p) {
+    Object.defineProperty(value, $PROXY, {
+      value: p = new Proxy(value, proxyTraps$1)
+    });
+    if (!Array.isArray(value)) {
+      const keys = Object.keys(value), desc = Object.getOwnPropertyDescriptors(value);
+      for (let i = 0, l = keys.length; i < l; i++) {
+        const prop = keys[i];
+        if (desc[prop].get) {
+          Object.defineProperty(value, prop, {
+            enumerable: desc[prop].enumerable,
+            get: desc[prop].get.bind(p)
+          });
+        }
+      }
+    }
+  }
+  return p;
+}
+function isWrappable(obj) {
+  let proto;
+  return obj != null && typeof obj === "object" && (obj[$PROXY] || !(proto = Object.getPrototypeOf(obj)) || proto === Object.prototype || Array.isArray(obj));
+}
+function unwrap(item, set = /* @__PURE__ */ new Set()) {
+  let result, unwrapped, v, prop;
+  if (result = item != null && item[$RAW]) return result;
+  if (!isWrappable(item) || set.has(item)) return item;
+  if (Array.isArray(item)) {
+    if (Object.isFrozen(item)) item = item.slice(0);
+    else set.add(item);
+    for (let i = 0, l = item.length; i < l; i++) {
+      v = item[i];
+      if ((unwrapped = unwrap(v, set)) !== v) item[i] = unwrapped;
+    }
+  } else {
+    if (Object.isFrozen(item)) item = Object.assign({}, item);
+    else set.add(item);
+    const keys = Object.keys(item), desc = Object.getOwnPropertyDescriptors(item);
+    for (let i = 0, l = keys.length; i < l; i++) {
+      prop = keys[i];
+      if (desc[prop].get) continue;
+      v = item[prop];
+      if ((unwrapped = unwrap(v, set)) !== v) item[prop] = unwrapped;
+    }
+  }
+  return item;
+}
+function getNodes(target, symbol) {
+  let nodes = target[symbol];
+  if (!nodes)
+    Object.defineProperty(target, symbol, {
+      value: nodes = /* @__PURE__ */ Object.create(null)
+    });
+  return nodes;
+}
+function getNode(nodes, property, value) {
+  if (nodes[property]) return nodes[property];
+  const [s, set] = createSignal(value, {
+    equals: false,
+    internal: true
+  });
+  s.$ = set;
+  return nodes[property] = s;
+}
+function proxyDescriptor$1(target, property) {
+  const desc = Reflect.getOwnPropertyDescriptor(target, property);
+  if (!desc || desc.get || !desc.configurable || property === $PROXY || property === $NODE)
+    return desc;
+  delete desc.value;
+  delete desc.writable;
+  desc.get = () => target[$PROXY][property];
+  return desc;
+}
+function trackSelf(target) {
+  getListener() && getNode(getNodes(target, $NODE), $SELF)();
+}
+function ownKeys(target) {
+  trackSelf(target);
+  return Reflect.ownKeys(target);
+}
+var proxyTraps$1 = {
+  get(target, property, receiver) {
+    if (property === $RAW) return target;
+    if (property === $PROXY) return receiver;
+    if (property === $TRACK) {
+      trackSelf(target);
+      return receiver;
+    }
+    const nodes = getNodes(target, $NODE);
+    const tracked = nodes[property];
+    let value = tracked ? tracked() : target[property];
+    if (property === $NODE || property === $HAS || property === "__proto__") return value;
+    if (!tracked) {
+      const desc = Object.getOwnPropertyDescriptor(target, property);
+      if (getListener() && (typeof value !== "function" || target.hasOwnProperty(property)) && !(desc && desc.get))
+        value = getNode(nodes, property, value)();
+    }
+    return isWrappable(value) ? wrap$1(value) : value;
+  },
+  has(target, property) {
+    if (property === $RAW || property === $PROXY || property === $TRACK || property === $NODE || property === $HAS || property === "__proto__")
+      return true;
+    getListener() && getNode(getNodes(target, $HAS), property)();
+    return property in target;
+  },
+  set() {
+    return true;
+  },
+  deleteProperty() {
+    return true;
+  },
+  ownKeys,
+  getOwnPropertyDescriptor: proxyDescriptor$1
+};
+function setProperty(state, property, value, deleting = false) {
+  if (!deleting && state[property] === value) return;
+  const prev = state[property], len = state.length;
+  if (value === void 0) {
+    delete state[property];
+    if (state[$HAS] && state[$HAS][property] && prev !== void 0) state[$HAS][property].$();
+  } else {
+    state[property] = value;
+    if (state[$HAS] && state[$HAS][property] && prev === void 0) state[$HAS][property].$();
+  }
+  let nodes = getNodes(state, $NODE), node;
+  if (node = getNode(nodes, property, prev)) node.$(() => value);
+  if (Array.isArray(state) && state.length !== len) {
+    for (let i = state.length; i < len; i++) (node = nodes[i]) && node.$();
+    (node = getNode(nodes, "length", len)) && node.$(state.length);
+  }
+  (node = nodes[$SELF]) && node.$();
+}
+function mergeStoreNode(state, value) {
+  const keys = Object.keys(value);
+  for (let i = 0; i < keys.length; i += 1) {
+    const key = keys[i];
+    setProperty(state, key, value[key]);
+  }
+}
+function updateArray(current, next) {
+  if (typeof next === "function") next = next(current);
+  next = unwrap(next);
+  if (Array.isArray(next)) {
+    if (current === next) return;
+    let i = 0, len = next.length;
+    for (; i < len; i++) {
+      const value = next[i];
+      if (current[i] !== value) setProperty(current, i, value);
+    }
+    setProperty(current, "length", len);
+  } else mergeStoreNode(current, next);
+}
+function updatePath(current, path, traversed = []) {
+  let part, prev = current;
+  if (path.length > 1) {
+    part = path.shift();
+    const partType = typeof part, isArray = Array.isArray(current);
+    if (Array.isArray(part)) {
+      for (let i = 0; i < part.length; i++) {
+        updatePath(current, [part[i]].concat(path), traversed);
+      }
+      return;
+    } else if (isArray && partType === "function") {
+      for (let i = 0; i < current.length; i++) {
+        if (part(current[i], i)) updatePath(current, [i].concat(path), traversed);
+      }
+      return;
+    } else if (isArray && partType === "object") {
+      const { from = 0, to = current.length - 1, by = 1 } = part;
+      for (let i = from; i <= to; i += by) {
+        updatePath(current, [i].concat(path), traversed);
+      }
+      return;
+    } else if (path.length > 1) {
+      updatePath(current[part], path, [part].concat(traversed));
+      return;
+    }
+    prev = current[part];
+    traversed = [part].concat(traversed);
+  }
+  let value = path[0];
+  if (typeof value === "function") {
+    value = value(prev, traversed);
+    if (value === prev) return;
+  }
+  if (part === void 0 && value == void 0) return;
+  value = unwrap(value);
+  if (part === void 0 || isWrappable(prev) && isWrappable(value) && !Array.isArray(value)) {
+    mergeStoreNode(prev, value);
+  } else setProperty(current, part, value);
+}
+function createStore(...[store, options]) {
+  const unwrappedStore = unwrap(store || {});
+  const isArray = Array.isArray(unwrappedStore);
+  const wrappedStore = wrap$1(unwrappedStore);
+  function setStore(...args) {
+    batch(() => {
+      isArray && args.length === 1 ? updateArray(unwrappedStore, args[0]) : updatePath(unwrappedStore, args);
+    });
+  }
+  return [wrappedStore, setStore];
+}
+var $ROOT = Symbol("store-root");
+
+// ../../node_modules/.pnpm/@solid-primitives+rootless@1.4.5_solid-js@1.8.17/node_modules/@solid-primitives/rootless/dist/index.js
+function createSingletonRoot(factory, detachedOwner = getOwner()) {
+  let listeners = 0, value, disposeRoot;
+  return () => {
+    listeners++;
+    onCleanup(() => {
+      listeners--;
+      queueMicrotask(() => {
+        if (!listeners && disposeRoot) {
+          disposeRoot();
+          disposeRoot = value = void 0;
+        }
+      });
+    });
+    if (!disposeRoot) {
+      createRoot((dispose) => value = factory(disposeRoot = dispose), detachedOwner);
+    }
+    return value;
+  };
+}
 
 // ../../web/src/files/contents/content-view.ts
 var ContentViewElement = class extends HTMLElement {
@@ -13963,56 +14747,13 @@ var ContentViewElement = class extends HTMLElement {
     return this._file;
   }
 };
-var ContentViewRegistry = class {
-  registry = /* @__PURE__ */ new Map();
-  register(type, element) {
-    const uniformTypes = Array.isArray(type) ? type : [type];
-    this.registry.set(
-      element,
-      uniformTypes.map((type2) => UniformType.getIdentifier(type2))
-    );
-  }
-  remove(view) {
-    this.registry.delete(view);
-  }
-  getstar = function* (registry, type) {
-    try {
-      const uniformType = UniformType.get(type);
-      for (const [view, types] of registry.entries()) {
-        if (types.includes(uniformType.identifier)) {
-          yield view;
-        }
-      }
-      for (const [view, types] of registry.entries()) {
-        for (const type2 of types) {
-          const supertype = UniformType.get(type2);
-          if (!supertype) {
-            return;
-          }
-          if (uniformType.conforms(supertype)) {
-            yield view;
-          }
-        }
-      }
-    } catch (error) {
-      console.warn(error);
-    }
-  };
-  get(type) {
-    return this.getstar(this.registry, type);
-  }
-  getFirst(type) {
-    return this.get(type).next().value;
-  }
-  request(identifier) {
-    document.dispatchEvent(
-      new CustomEvent("contentviewrequest", {
-        detail: identifier
-      })
-    );
-  }
-};
-var contentViewRegistry = new ContentViewRegistry();
+var contentViewStore = createSingletonRoot(
+  () => createStore({
+    views: {},
+    displayNames: {},
+    kinds: {}
+  })
+);
 
 // view.tsx
 import {
@@ -14021,7 +14762,7 @@ import {
   useRef as useRef54,
   useLayoutEffect as useLayoutEffect16
 } from "react";
-import { createRoot as createRoot2 } from "react-dom/client";
+import { createRoot as createRoot3 } from "react-dom/client";
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/index.mjs
 var import_at = __toESM(require_at2(), 1);
@@ -14065,14 +14806,14 @@ var ErrorBoundary = class extends React2.Component {
   }
 };
 function OptionalErrorBoundary({
-  children,
+  children: children2,
   fallback,
   ...props
 }) {
   if (fallback === null) {
-    return /* @__PURE__ */ jsx(Fragment, { children });
+    return /* @__PURE__ */ jsx(Fragment, { children: children2 });
   }
-  return /* @__PURE__ */ jsx(ErrorBoundary, { fallback, ...props, children });
+  return /* @__PURE__ */ jsx(ErrorBoundary, { fallback, ...props, children: children2 });
 }
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/components/default-components/DefaultErrorFallback.mjs
@@ -14095,7 +14836,7 @@ function useEditor() {
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/hooks/useEditorComponents.mjs
 import { jsx as jsx23 } from "react/jsx-runtime";
-import { createContext as createContext2, useContext as useContext2, useMemo as useMemo7 } from "react";
+import { createContext as createContext3, useContext as useContext2, useMemo as useMemo7 } from "react";
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/components/default-components/DefaultBackground.mjs
 import { jsx as jsx2 } from "react/jsx-runtime";
@@ -15241,13 +15982,13 @@ function useCoarsePointer() {
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/hooks/useContainer.mjs
 import { jsx as jsx4 } from "react/jsx-runtime";
-import { createContext, useContext } from "react";
-var ContainerContext = createContext(null);
+import { createContext as createContext2, useContext } from "react";
+var ContainerContext = createContext2(null);
 function ContainerProvider({
   container,
-  children
+  children: children2
 }) {
-  return /* @__PURE__ */ jsx4(ContainerContext.Provider, { value: container, children });
+  return /* @__PURE__ */ jsx4(ContainerContext.Provider, { value: container, children: children2 });
 }
 function useContainer() {
   return assertExists(useContext(ContainerContext), "useContainer used outside of <Tldraw />");
@@ -15516,7 +16257,7 @@ function _defineProperty(obj, key, value) {
   }
   return obj;
 }
-function ownKeys(e, r) {
+function ownKeys2(e, r) {
   var t2 = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var o = Object.getOwnPropertySymbols(e);
@@ -15529,9 +16270,9 @@ function ownKeys(e, r) {
 function _objectSpread2(e) {
   for (var r = 1; r < arguments.length; r++) {
     var t2 = null != arguments[r] ? arguments[r] : {};
-    r % 2 ? ownKeys(Object(t2), true).forEach(function(r2) {
+    r % 2 ? ownKeys2(Object(t2), true).forEach(function(r2) {
       _defineProperty(e, r2, t2[r2]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t2)) : ownKeys(Object(t2)).forEach(function(r2) {
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t2)) : ownKeys2(Object(t2)).forEach(function(r2) {
       Object.defineProperty(e, r2, Object.getOwnPropertyDescriptor(t2, r2));
     });
   }
@@ -16438,8 +17179,8 @@ var pinchConfigResolver = _objectSpread2(_objectSpread2({}, commonConfigResolver
       touch = false
     } = {}
   }) {
-    const sharedConfig = shared;
-    if (sharedConfig.target && !SUPPORT.touch && SUPPORT.gesture) return "gesture";
+    const sharedConfig2 = shared;
+    if (sharedConfig2.target && !SUPPORT.touch && SUPPORT.gesture) return "gesture";
     if (SUPPORT.touch && touch) return "touch";
     if (SUPPORT.touchscreen) {
       if (SUPPORT.pointer) return "pointer";
@@ -16741,14 +17482,14 @@ var Controller = class {
     return () => this._targetEventStore.clean();
   }
   bind(...args) {
-    const sharedConfig = this.config.shared;
+    const sharedConfig2 = this.config.shared;
     const props = {};
     let target;
-    if (sharedConfig.target) {
-      target = sharedConfig.target();
+    if (sharedConfig2.target) {
+      target = sharedConfig2.target();
       if (!target) return;
     }
-    if (sharedConfig.enabled) {
+    if (sharedConfig2.enabled) {
       for (const gestureKey of this.gestures) {
         const gestureConfig = this.config[gestureKey];
         const bindFunction = bindToProps(props, gestureConfig.eventOptions, !!target);
@@ -16757,7 +17498,7 @@ var Controller = class {
           new Engine2(this, args, gestureKey).bind(bindFunction);
         }
       }
-      const nativeBindFunction = bindToProps(props, sharedConfig.eventOptions, !!target);
+      const nativeBindFunction = bindToProps(props, sharedConfig2.eventOptions, !!target);
       for (const eventKey in this.nativeHandlers) {
         nativeBindFunction(eventKey, "", (event) => this.nativeHandlers[eventKey](_objectSpread2(_objectSpread2({}, this.state.shared), {}, {
           event,
@@ -18171,13 +18912,13 @@ var Group2d = class extends Geometry2d {
   nearestPoint(point) {
     let dist = Infinity;
     let nearest;
-    const { children } = this;
-    if (children.length === 0) {
+    const { children: children2 } = this;
+    if (children2.length === 0) {
       throw Error("no children");
     }
     let p;
     let d;
-    for (const child of children) {
+    for (const child of children2) {
       p = child.nearestPoint(point);
       d = Vec.Dist2(p, point);
       if (d < dist) {
@@ -19237,8 +19978,8 @@ function DefaultHandle({ handle, isCoarse, className, zoom }) {
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/components/default-components/DefaultHandles.mjs
 import { jsx as jsx13 } from "react/jsx-runtime";
-var DefaultHandles = ({ children }) => {
-  return /* @__PURE__ */ jsx13("svg", { className: "tl-user-handles tl-overlays__item", children });
+var DefaultHandles = ({ children: children2 }) => {
+  return /* @__PURE__ */ jsx13("svg", { className: "tl-user-handles tl-overlays__item", children: children2 });
 };
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/components/default-components/DefaultLoadingScreen.mjs
@@ -19594,10 +20335,10 @@ function useShallowObjectIdentity(arr) {
 }
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/hooks/useEditorComponents.mjs
-var EditorComponentsContext = createContext2(null);
+var EditorComponentsContext = createContext3(null);
 function EditorComponentsProvider({
   overrides = {},
-  children
+  children: children2
 }) {
   const _overrides = useShallowObjectIdentity(overrides);
   return /* @__PURE__ */ jsx23(
@@ -19635,7 +20376,7 @@ function EditorComponentsProvider({
         }),
         [_overrides]
       ),
-      children
+      children: children2
     }
   );
 }
@@ -19999,7 +20740,7 @@ function createTLUser(opts = {}) {
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/editor/Editor.mjs
 var import_eventemitter3 = __toESM(require_eventemitter3(), 1);
 import { flushSync } from "react-dom";
-import { createRoot } from "react-dom/client";
+import { createRoot as createRoot2 } from "react-dom/client";
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/config/TLSessionStateSnapshot.mjs
 var tabIdKey = "TLDRAW_TAB_ID_v2";
@@ -20250,8 +20991,8 @@ import { jsx as jsx27 } from "react/jsx-runtime";
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/components/SVGContainer.mjs
 var import_classnames10 = __toESM(require_classnames(), 1);
 import { jsx as jsx25 } from "react/jsx-runtime";
-function SVGContainer({ children, className = "", ...rest }) {
-  return /* @__PURE__ */ jsx25("svg", { ...rest, className: (0, import_classnames10.default)("tl-svg-container", className), children });
+function SVGContainer({ children: children2, className = "", ...rest }) {
+  return /* @__PURE__ */ jsx25("svg", { ...rest, className: (0, import_classnames10.default)("tl-svg-container", className), children: children2 });
 }
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/primitives/intersect.mjs
@@ -21094,12 +21835,12 @@ var GroupShapeUtil = class extends ShapeUtil {
     return {};
   }
   getGeometry(shape) {
-    const children = this.editor.getSortedChildIdsForParent(shape.id);
-    if (children.length === 0) {
+    const children2 = this.editor.getSortedChildIdsForParent(shape.id);
+    if (children2.length === 0) {
       return new Rectangle2d({ width: 1, height: 1, isFilled: false });
     }
     return new Group2d({
-      children: children.map((childId) => {
+      children: children2.map((childId) => {
         const shape2 = this.editor.getShape(childId);
         const geometry = this.editor.getShapeGeometry(childId);
         const points = this.editor.getShapeLocalTransform(shape2).applyToPoints(geometry.vertices);
@@ -21136,18 +21877,18 @@ var GroupShapeUtil = class extends ShapeUtil {
     return /* @__PURE__ */ jsx27(DashedOutlineBox, { className: "", bounds });
   }
   onChildrenChange = (group) => {
-    const children = this.editor.getSortedChildIdsForParent(group.id);
-    if (children.length === 0) {
+    const children2 = this.editor.getSortedChildIdsForParent(group.id);
+    if (children2.length === 0) {
       if (this.editor.getCurrentPageState().focusedGroupId === group.id) {
         this.editor.popFocusedGroupId();
       }
       this.editor.deleteShapes([group.id]);
       return;
-    } else if (children.length === 1) {
+    } else if (children2.length === 1) {
       if (this.editor.getCurrentPageState().focusedGroupId === group.id) {
         this.editor.popFocusedGroupId();
       }
-      this.editor.reparentShapes(children, group.parentId);
+      this.editor.reparentShapes(children2, group.parentId);
       this.editor.deleteShapes([group.id]);
       return;
     }
@@ -21347,32 +22088,32 @@ function getReorderingShapesChanges(editor, operation, ids) {
   const changes = [];
   switch (operation) {
     case "toBack": {
-      parents.forEach(({ moving, children }) => reorderToBack(moving, children, changes));
+      parents.forEach(({ moving, children: children2 }) => reorderToBack(moving, children2, changes));
       break;
     }
     case "toFront": {
-      parents.forEach(({ moving, children }) => reorderToFront(moving, children, changes));
+      parents.forEach(({ moving, children: children2 }) => reorderToFront(moving, children2, changes));
       break;
     }
     case "forward": {
-      parents.forEach(({ moving, children }) => reorderForward(moving, children, changes));
+      parents.forEach(({ moving, children: children2 }) => reorderForward(moving, children2, changes));
       break;
     }
     case "backward": {
-      parents.forEach(({ moving, children }) => reorderBackward(moving, children, changes));
+      parents.forEach(({ moving, children: children2 }) => reorderBackward(moving, children2, changes));
       break;
     }
   }
   return changes;
 }
-function reorderToBack(moving, children, changes) {
-  const len = children.length;
+function reorderToBack(moving, children2, changes) {
+  const len = children2.length;
   if (moving.size === len)
     return;
   let below;
   let above;
   for (let i = 0; i < len; i++) {
-    const shape = children[i];
+    const shape = children2[i];
     if (moving.has(shape)) {
       below = shape.index;
       moving.delete(shape);
@@ -21390,14 +22131,14 @@ function reorderToBack(moving, children, changes) {
     );
   }
 }
-function reorderToFront(moving, children, changes) {
-  const len = children.length;
+function reorderToFront(moving, children2, changes) {
+  const len = children2.length;
   if (moving.size === len)
     return;
   let below;
   let above;
   for (let i = len - 1; i > -1; i--) {
-    const shape = children[i];
+    const shape = children2[i];
     if (moving.has(shape)) {
       above = shape.index;
       moving.delete(shape);
@@ -21415,13 +22156,13 @@ function reorderToFront(moving, children, changes) {
     );
   }
 }
-function reorderForward(moving, children, changes) {
-  const len = children.length;
+function reorderForward(moving, children2, changes) {
+  const len = children2.length;
   if (moving.size === len)
     return;
   let state = { name: "skipping" };
   for (let i = 0; i < len; i++) {
-    const isMoving = moving.has(children[i]);
+    const isMoving = moving.has(children2[i]);
     switch (state.name) {
       case "skipping": {
         if (!isMoving)
@@ -21433,8 +22174,8 @@ function reorderForward(moving, children, changes) {
         if (isMoving)
           continue;
         const { selectIndex } = state;
-        getIndicesBetween(children[i].index, children[i + 1]?.index, i - selectIndex).forEach(
-          (index2, k) => changes.push({ ...children[selectIndex + k], index: index2 })
+        getIndicesBetween(children2[i].index, children2[i + 1]?.index, i - selectIndex).forEach(
+          (index2, k) => changes.push({ ...children2[selectIndex + k], index: index2 })
         );
         state = { name: "skipping" };
         break;
@@ -21442,13 +22183,13 @@ function reorderForward(moving, children, changes) {
     }
   }
 }
-function reorderBackward(moving, children, changes) {
-  const len = children.length;
+function reorderBackward(moving, children2, changes) {
+  const len = children2.length;
   if (moving.size === len)
     return;
   let state = { name: "skipping" };
   for (let i = len - 1; i > -1; i--) {
-    const isMoving = moving.has(children[i]);
+    const isMoving = moving.has(children2[i]);
     switch (state.name) {
       case "skipping": {
         if (!isMoving)
@@ -21459,9 +22200,9 @@ function reorderBackward(moving, children, changes) {
       case "selecting": {
         if (isMoving)
           continue;
-        getIndicesBetween(children[i - 1]?.index, children[i].index, state.selectIndex - i).forEach(
+        getIndicesBetween(children2[i - 1]?.index, children2[i].index, state.selectIndex - i).forEach(
           (index2, k) => {
-            changes.push({ ...children[i + k + 1], index: index2 });
+            changes.push({ ...children2[i + k + 1], index: index2 });
           }
         );
         state = { name: "skipping" };
@@ -21821,14 +22562,14 @@ import { Fragment as Fragment10 } from "react";
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/editor/types/SvgExportContext.mjs
 import { jsx as jsx28 } from "react/jsx-runtime";
-import { createContext as createContext3, useContext as useContext3 } from "react";
-var Context = createContext3(null);
+import { createContext as createContext4, useContext as useContext3 } from "react";
+var Context = createContext4(null);
 function SvgExportContextProvider({
   context,
   editor,
-  children
+  children: children2
 }) {
-  return /* @__PURE__ */ jsx28(EditorContext.Provider, { value: editor, children: /* @__PURE__ */ jsx28(Context.Provider, { value: context, children }) });
+  return /* @__PURE__ */ jsx28(EditorContext.Provider, { value: editor, children: /* @__PURE__ */ jsx28(Context.Provider, { value: context, children: children2 }) });
 }
 function useSvgExportContext() {
   const ctx = useContext3(Context);
@@ -24300,7 +25041,7 @@ var STATE_NODES_TO_MEASURE = [
 var StateNode = class {
   constructor(editor, parent) {
     this.editor = editor;
-    const { id, children, initial } = this.constructor;
+    const { id, children: children2, initial } = this.constructor;
     this.id = id;
     this._isActive = atom("toolIsActive" + this.id, false);
     this._current = atom("toolState" + this.id, void 0);
@@ -24310,11 +25051,11 @@ var StateNode = class {
     });
     this.parent = parent ?? {};
     if (this.parent) {
-      if (children && initial) {
+      if (children2 && initial) {
         this.type = "branch";
         this.initial = initial;
         this.children = Object.fromEntries(
-          children().map((Ctor) => [Ctor.id, new Ctor(this.editor, this)])
+          children2().map((Ctor) => [Ctor.id, new Ctor(this.editor, this)])
         );
         this._current.set(this.children[this.initial]);
       } else {
@@ -24322,10 +25063,10 @@ var StateNode = class {
       }
     } else {
       this.type = "root";
-      if (children && initial) {
+      if (children2 && initial) {
         this.initial = initial;
         this.children = Object.fromEntries(
-          children().map((Ctor) => [Ctor.id, new Ctor(this.editor, this)])
+          children2().map((Ctor) => [Ctor.id, new Ctor(this.editor, this)])
         );
         this._current.set(this.children[this.initial]);
       }
@@ -28185,11 +28926,11 @@ var Editor = class extends import_eventemitter3.default {
    */
   getHighestIndexForParent(parent) {
     const parentId = typeof parent === "string" ? parent : parent.id;
-    const children = this._parentIdsToChildIds.get()[parentId];
-    if (!children || children.length === 0) {
+    const children2 = this._parentIdsToChildIds.get()[parentId];
+    if (!children2 || children2.length === 0) {
       return "a1";
     }
-    const shape = this.getShape(children[children.length - 1]);
+    const shape = this.getShape(children2[children2.length - 1]);
     return getIndexAbove(shape.index);
   }
   /**
@@ -28226,8 +28967,8 @@ var Editor = class extends import_eventemitter3.default {
    */
   visitDescendants(parent, visitor) {
     const parentId = typeof parent === "string" ? parent : parent.id;
-    const children = this.getSortedChildIdsForParent(parentId);
-    for (const id of children) {
+    const children2 = this.getSortedChildIdsForParent(parentId);
+    for (const id of children2) {
       if (visitor(id) === false)
         continue;
       this.visitDescendants(id, visitor);
@@ -30521,7 +31262,7 @@ var Editor = class extends import_eventemitter3.default {
     if (!result)
       return void 0;
     const fragment = document.createDocumentFragment();
-    const root = createRoot(fragment);
+    const root = createRoot2(fragment);
     flushSync(() => {
       root.render(result.jsx);
     });
@@ -31772,19 +32513,19 @@ function replaceTraps(callback) {
 function wrapFunction(func) {
   if (func === IDBDatabase.prototype.transaction && !("objectStoreNames" in IDBTransaction.prototype)) {
     return function(storeNames, ...args) {
-      const tx = func.call(unwrap(this), storeNames, ...args);
+      const tx = func.call(unwrap2(this), storeNames, ...args);
       transactionStoreNamesMap.set(tx, storeNames.sort ? storeNames.sort() : [storeNames]);
       return wrap(tx);
     };
   }
   if (getCursorAdvanceMethods().includes(func)) {
     return function(...args) {
-      func.apply(unwrap(this), args);
+      func.apply(unwrap2(this), args);
       return wrap(cursorRequestMap.get(this));
     };
   }
   return function(...args) {
-    return wrap(func.apply(unwrap(this), args));
+    return wrap(func.apply(unwrap2(this), args));
   };
 }
 function transformCachableValue(value) {
@@ -31808,7 +32549,7 @@ function wrap(value) {
   }
   return newValue;
 }
-var unwrap = (value) => reverseTransformCache.get(value);
+var unwrap2 = (value) => reverseTransformCache.get(value);
 
 // ../../node_modules/.pnpm/idb@7.1.1/node_modules/idb/build/index.js
 function openDB(name, version2, { blocked, upgrade, blocking, terminated } = {}) {
@@ -32382,7 +33123,7 @@ function utilsToMap(utils) {
 }
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/hooks/useTLStore.mjs
-function createStore(opts) {
+function createStore2(opts) {
   const store = createTLStore(opts);
   if (opts.snapshot) {
     loadSnapshot(store, opts.snapshot);
@@ -32390,9 +33131,9 @@ function createStore(opts) {
   return { store, opts };
 }
 function useTLStore(opts) {
-  const [current, setCurrent] = useState7(() => createStore(opts));
+  const [current, setCurrent] = useState7(() => createStore2(opts));
   if (!areObjectsShallowEqual(current.opts, opts)) {
-    const next = createStore(opts);
+    const next = createStore2(opts);
     setCurrent(next);
     return next.store;
   }
@@ -32578,7 +33319,7 @@ var TldrawEditorWithLoadingStore = memo5(function TldrawEditorBeforeLoading({
 });
 function TldrawEditorWithReadyStore({
   onMount,
-  children,
+  children: children2,
   store,
   tools,
   shapeUtils,
@@ -32662,26 +33403,26 @@ function TldrawEditorWithReadyStore({
     /* @__PURE__ */ jsx30(OptionalErrorBoundary, {
       fallback: ErrorFallback,
       onError: (error) => editor.annotateError(error, { origin: "react.tldraw", willCrashApp: true }),
-      children: crashingError ? /* @__PURE__ */ jsx30(Crash, { crashingError }) : /* @__PURE__ */ jsx30(EditorContext.Provider, { value: editor, children: /* @__PURE__ */ jsx30(Layout, { onMount, children: children ?? (Canvas ? /* @__PURE__ */ jsx30(Canvas, {}) : null) }) })
+      children: crashingError ? /* @__PURE__ */ jsx30(Crash, { crashingError }) : /* @__PURE__ */ jsx30(EditorContext.Provider, { value: editor, children: /* @__PURE__ */ jsx30(Layout, { onMount, children: children2 ?? (Canvas ? /* @__PURE__ */ jsx30(Canvas, {}) : null) }) })
     })
   );
 }
-function Layout({ children, onMount }) {
+function Layout({ children: children2, onMount }) {
   useZoomCss();
   useCursor();
   useDarkMode();
   useForceUpdate();
   useOnMount(onMount);
-  return /* @__PURE__ */ jsx30(Fragment11, { children });
+  return /* @__PURE__ */ jsx30(Fragment11, { children: children2 });
 }
 function Crash({ crashingError }) {
   throw crashingError;
 }
-function LoadingScreen({ children }) {
-  return /* @__PURE__ */ jsx30("div", { className: "tl-loading", children });
+function LoadingScreen({ children: children2 }) {
+  return /* @__PURE__ */ jsx30("div", { className: "tl-loading", children: children2 });
 }
-function ErrorScreen({ children }) {
-  return /* @__PURE__ */ jsx30("div", { className: "tl-loading", children });
+function ErrorScreen({ children: children2 }) {
+  return /* @__PURE__ */ jsx30("div", { className: "tl-loading", children: children2 });
 }
 function useOnMount(onMount) {
   const editor = useEditor();
@@ -32703,8 +33444,8 @@ function useOnMount(onMount) {
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/components/HTMLContainer.mjs
 var import_classnames12 = __toESM(require_classnames(), 1);
 import { jsx as jsx31 } from "react/jsx-runtime";
-function HTMLContainer({ children, className = "", ...rest }) {
-  return /* @__PURE__ */ jsx31("div", { ...rest, className: (0, import_classnames12.default)("tl-html-container", className), children });
+function HTMLContainer({ children: children2, className = "", ...rest }) {
+  return /* @__PURE__ */ jsx31("div", { ...rest, className: (0, import_classnames12.default)("tl-html-container", className), children: children2 });
 }
 
 // ../../node_modules/.pnpm/@tldraw+editor@2.3.0_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/@tldraw/editor/dist-esm/lib/editor/bindings/BindingUtil.mjs
@@ -33582,7 +34323,7 @@ import { useLayoutEffect as useLayoutEffect14, useMemo as useMemo28 } from "reac
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/canvas/TldrawHandles.mjs
 import { jsx as jsx32 } from "react/jsx-runtime";
-function TldrawHandles({ children }) {
+function TldrawHandles({ children: children2 }) {
   const editor = useEditor();
   const shouldDisplayHandles = useValue(
     "shouldDisplayHandles",
@@ -33600,7 +34341,7 @@ function TldrawHandles({ children }) {
   );
   if (!shouldDisplayHandles)
     return null;
-  return /* @__PURE__ */ jsx32("svg", { className: "tl-user-handles tl-overlays__item", children });
+  return /* @__PURE__ */ jsx32("svg", { className: "tl-user-handles tl-overlays__item", children: children2 });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/canvas/TldrawScribble.mjs
@@ -35397,7 +36138,7 @@ function _iterableToArrayLimit(arr, i) {
     return _arr;
   }
 }
-function ownKeys2(object2, enumerableOnly) {
+function ownKeys3(object2, enumerableOnly) {
   var keys = Object.keys(object2);
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object2);
@@ -35410,9 +36151,9 @@ function ownKeys2(object2, enumerableOnly) {
 function _objectSpread22(target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = null != arguments[i] ? arguments[i] : {};
-    i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
+    i % 2 ? ownKeys3(Object(source), true).forEach(function(key) {
       _defineProperty2(target, key, source[key]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys3(Object(source)).forEach(function(key) {
       Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
     });
   }
@@ -38507,11 +39248,11 @@ function createTextJsxFromSpans(editor, spans, opts) {
   const offsetX = padding + (opts.offsetX ?? 0);
   const offsetY = (opts.offsetY ?? 0) + opts.fontSize / 2 + (opts.verticalTextAlign === "start" ? padding : opts.verticalTextAlign === "end" ? opts.height - padding - bounds.height : (Math.ceil(opts.height) - bounds.height) / 2);
   let currentLineTop = null;
-  const children = [];
+  const children2 = [];
   for (const { text, box } of spans) {
     const didBreakLine = currentLineTop !== null && box.y > currentLineTop;
     if (didBreakLine) {
-      children.push(
+      children2.push(
         /* @__PURE__ */ jsx39(
           "tspan",
           {
@@ -38520,11 +39261,11 @@ function createTextJsxFromSpans(editor, spans, opts) {
             y: box.y + offsetY,
             children: "\n"
           },
-          children.length
+          children2.length
         )
       );
     }
-    children.push(
+    children2.push(
       /* @__PURE__ */ jsx39(
         "tspan",
         {
@@ -38534,7 +39275,7 @@ function createTextJsxFromSpans(editor, spans, opts) {
           unicodeBidi: "plaintext",
           children: correctSpacesToNbsp(text)
         },
-        children.length
+        children2.length
       )
     );
     currentLineTop = box.y;
@@ -38551,7 +39292,7 @@ function createTextJsxFromSpans(editor, spans, opts) {
       stroke: opts.stroke,
       strokeWidth: opts.strokeWidth,
       fill: opts.fill,
-      children
+      children: children2
     }
   );
 }
@@ -43620,11 +44361,11 @@ import * as React15 from "react";
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/context/asset-urls.mjs
 import { jsx as jsx56 } from "react/jsx-runtime";
-import { createContext as createContext4, useContext as useContext4, useEffect as useEffect21 } from "react";
-var AssetUrlsContext = createContext4(null);
+import { createContext as createContext5, useContext as useContext4, useEffect as useEffect21 } from "react";
+var AssetUrlsContext = createContext5(null);
 function AssetUrlsProvider({
   assetUrls,
-  children
+  children: children2
 }) {
   useEffect21(() => {
     for (const src of Object.values(assetUrls.icons)) {
@@ -43638,7 +44379,7 @@ function AssetUrlsProvider({
       image.decode();
     }
   }, [assetUrls]);
-  return /* @__PURE__ */ jsx56(AssetUrlsContext.Provider, { value: assetUrls, children });
+  return /* @__PURE__ */ jsx56(AssetUrlsContext.Provider, { value: assetUrls, children: children2 });
 }
 function useAssetUrls() {
   const assetUrls = useContext4(AssetUrlsContext);
@@ -44091,7 +44832,7 @@ function useCurrentTranslation() {
 }
 var TranslationProvider = track(function TranslationProvider2({
   overrides,
-  children
+  children: children2
 }) {
   const editor = useEditor();
   const locale = editor.user.getLocale();
@@ -44132,7 +44873,7 @@ var TranslationProvider = track(function TranslationProvider2({
       isCancelled = true;
     };
   }, [getAssetUrl, locale, overrides]);
-  return /* @__PURE__ */ jsx57(TranslationsContext.Provider, { value: currentTranslation, children });
+  return /* @__PURE__ */ jsx57(TranslationsContext.Provider, { value: currentTranslation, children: children2 });
 });
 function useTranslation() {
   const translation = useCurrentTranslation();
@@ -47817,8 +48558,8 @@ var Resizing = class extends StateNode {
     }
     if (this.editor.inputs.ctrlKey) {
       this.didHoldCommand = true;
-      for (const { id, children } of frames) {
-        if (!children.length)
+      for (const { id, children: children2 } of frames) {
+        if (!children2.length)
           continue;
         const initial = shapeSnapshots.get(id).shape;
         const current = this.editor.getShape(id);
@@ -47828,7 +48569,7 @@ var Resizing = class extends StateNode {
         const dy = current.y - initial.y;
         const delta = new Vec(dx, dy).rot(-initial.rotation);
         if (delta.x !== 0 || delta.y !== 0) {
-          for (const child of children) {
+          for (const child of children2) {
             this.editor.updateShape({
               id: child.id,
               type: child.type,
@@ -47840,10 +48581,10 @@ var Resizing = class extends StateNode {
       }
     } else if (this.didHoldCommand) {
       this.didHoldCommand = false;
-      for (const { children } of frames) {
-        if (!children.length)
+      for (const { children: children2 } of frames) {
+        if (!children2.length)
           continue;
-        for (const child of children) {
+        for (const child of children2) {
           this.editor.updateShape({
             id: child.id,
             type: child.type,
@@ -48910,9 +49651,9 @@ import { jsx as jsx61 } from "react/jsx-runtime";
 function createContext22(rootComponentName, defaultContext) {
   const Context2 = React17.createContext(defaultContext);
   function Provider(props) {
-    const { children, ...context } = props;
+    const { children: children2, ...context } = props;
     const value = React17.useMemo(() => context, Object.values(context));
-    return /* @__PURE__ */ jsx61(Context2.Provider, { value, children });
+    return /* @__PURE__ */ jsx61(Context2.Provider, { value, children: children2 });
   }
   function useContext22(consumerName) {
     const context = React17.useContext(Context2);
@@ -48930,10 +49671,10 @@ function createContextScope(scopeName, createContextScopeDeps = []) {
     const index2 = defaultContexts.length;
     defaultContexts = [...defaultContexts, defaultContext];
     function Provider(props) {
-      const { scope, children, ...context } = props;
+      const { scope, children: children2, ...context } = props;
       const Context2 = scope?.[scopeName][index2] || BaseContext;
       const value = React17.useMemo(() => context, Object.values(context));
-      return /* @__PURE__ */ jsx61(Context2.Provider, { value, children });
+      return /* @__PURE__ */ jsx61(Context2.Provider, { value, children: children2 });
     }
     function useContext22(consumerName, scope) {
       const Context2 = scope?.[scopeName][index2] || BaseContext;
@@ -49066,8 +49807,8 @@ import * as ReactDOM from "react-dom";
 import * as React22 from "react";
 import { Fragment as Fragment25, jsx as jsx62 } from "react/jsx-runtime";
 var Slot = React22.forwardRef((props, forwardedRef) => {
-  const { children, ...slotProps } = props;
-  const childrenArray = React22.Children.toArray(children);
+  const { children: children2, ...slotProps } = props;
+  const childrenArray = React22.Children.toArray(children2);
   const slottable = childrenArray.find(isSlottable);
   if (slottable) {
     const newElement = slottable.props.children;
@@ -49081,24 +49822,24 @@ var Slot = React22.forwardRef((props, forwardedRef) => {
     });
     return /* @__PURE__ */ jsx62(SlotClone, { ...slotProps, ref: forwardedRef, children: React22.isValidElement(newElement) ? React22.cloneElement(newElement, void 0, newChildren) : null });
   }
-  return /* @__PURE__ */ jsx62(SlotClone, { ...slotProps, ref: forwardedRef, children });
+  return /* @__PURE__ */ jsx62(SlotClone, { ...slotProps, ref: forwardedRef, children: children2 });
 });
 Slot.displayName = "Slot";
 var SlotClone = React22.forwardRef((props, forwardedRef) => {
-  const { children, ...slotProps } = props;
-  if (React22.isValidElement(children)) {
-    const childrenRef = getElementRef(children);
-    return React22.cloneElement(children, {
-      ...mergeProps(slotProps, children.props),
+  const { children: children2, ...slotProps } = props;
+  if (React22.isValidElement(children2)) {
+    const childrenRef = getElementRef(children2);
+    return React22.cloneElement(children2, {
+      ...mergeProps(slotProps, children2.props),
       // @ts-ignore
       ref: forwardedRef ? composeRefs(forwardedRef, childrenRef) : childrenRef
     });
   }
-  return React22.Children.count(children) > 1 ? React22.Children.only(null) : null;
+  return React22.Children.count(children2) > 1 ? React22.Children.only(null) : null;
 });
 SlotClone.displayName = "SlotClone";
-var Slottable = ({ children }) => {
-  return /* @__PURE__ */ jsx62(Fragment25, { children });
+var Slottable = ({ children: children2 }) => {
+  return /* @__PURE__ */ jsx62(Fragment25, { children: children2 });
 };
 function isSlottable(child) {
   return React22.isValidElement(child) && child.type === Slottable;
@@ -49627,11 +50368,11 @@ function useStateMachine(initialState2, machine) {
   }, initialState2);
 }
 var Presence = (props) => {
-  const { present, children } = props;
+  const { present, children: children2 } = props;
   const presence = usePresence2(present);
-  const child = typeof children === "function" ? children({ present: presence.isPresent }) : React28.Children.only(children);
+  const child = typeof children2 === "function" ? children2({ present: presence.isPresent }) : React28.Children.only(children2);
   const ref = useComposedRefs(presence.ref, getElementRef2(child));
-  const forceMount = typeof children === "function";
+  const forceMount = typeof children2 === "function";
   return forceMount || presence.isPresent ? React28.cloneElement(child, { ref }) : null;
 };
 Presence.displayName = "Presence";
@@ -49989,7 +50730,7 @@ var RemoveScroll = React33.forwardRef(function(props, parentRef) {
     onWheelCapture: nothing,
     onTouchMoveCapture: nothing
   }), callbacks = _a[0], setCallbacks = _a[1];
-  var forwardProps = props.forwardProps, children = props.children, className = props.className, removeScrollBar = props.removeScrollBar, enabled = props.enabled, shards = props.shards, sideCar = props.sideCar, noIsolation = props.noIsolation, inert = props.inert, allowPinchZoom = props.allowPinchZoom, _b = props.as, Container = _b === void 0 ? "div" : _b, gapMode = props.gapMode, rest = __rest(props, ["forwardProps", "children", "className", "removeScrollBar", "enabled", "shards", "sideCar", "noIsolation", "inert", "allowPinchZoom", "as", "gapMode"]);
+  var forwardProps = props.forwardProps, children2 = props.children, className = props.className, removeScrollBar = props.removeScrollBar, enabled = props.enabled, shards = props.shards, sideCar = props.sideCar, noIsolation = props.noIsolation, inert = props.inert, allowPinchZoom = props.allowPinchZoom, _b = props.as, Container = _b === void 0 ? "div" : _b, gapMode = props.gapMode, rest = __rest(props, ["forwardProps", "children", "className", "removeScrollBar", "enabled", "shards", "sideCar", "noIsolation", "inert", "allowPinchZoom", "as", "gapMode"]);
   var SideCar2 = sideCar;
   var containerRef = useMergeRefs([ref, parentRef]);
   var containerProps = __assign(__assign({}, rest), callbacks);
@@ -49997,7 +50738,7 @@ var RemoveScroll = React33.forwardRef(function(props, parentRef) {
     React33.Fragment,
     null,
     enabled && React33.createElement(SideCar2, { sideCar: effectCar, removeScrollBar, shards, noIsolation, inert, setCallbacks, allowPinchZoom: !!allowPinchZoom, lockRef: ref, gapMode }),
-    forwardProps ? React33.cloneElement(React33.Children.only(children), __assign(__assign({}, containerProps), { ref: containerRef })) : React33.createElement(Container, __assign({}, containerProps, { className, ref: containerRef }), children)
+    forwardProps ? React33.cloneElement(React33.Children.only(children2), __assign(__assign({}, containerProps), { ref: containerRef })) : React33.createElement(Container, __assign({}, containerProps, { className, ref: containerRef }), children2)
   );
 });
 RemoveScroll.defaultProps = {
@@ -50596,7 +51337,7 @@ var [DialogProvider, useDialogContext] = createDialogContext(DIALOG_NAME);
 var Dialog = (props) => {
   const {
     __scopeDialog,
-    children,
+    children: children2,
     open: openProp,
     defaultOpen,
     onOpenChange,
@@ -50622,7 +51363,7 @@ var Dialog = (props) => {
       onOpenChange: setOpen,
       onOpenToggle: React38.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
       modal,
-      children
+      children: children2
     }
   );
 };
@@ -50654,9 +51395,9 @@ var [PortalProvider, usePortalContext] = createDialogContext(PORTAL_NAME2, {
   forceMount: void 0
 });
 var DialogPortal = (props) => {
-  const { __scopeDialog, forceMount, children, container } = props;
+  const { __scopeDialog, forceMount, children: children2, container } = props;
   const context = useDialogContext(PORTAL_NAME2, __scopeDialog);
-  return /* @__PURE__ */ jsx67(PortalProvider, { scope: __scopeDialog, forceMount, children: React38.Children.map(children, (child) => /* @__PURE__ */ jsx67(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ jsx67(Portal, { asChild: true, container, children: child }) })) });
+  return /* @__PURE__ */ jsx67(PortalProvider, { scope: __scopeDialog, forceMount, children: React38.Children.map(children2, (child) => /* @__PURE__ */ jsx67(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ jsx67(Portal, { asChild: true, container, children: child }) })) });
 };
 DialogPortal.displayName = PORTAL_NAME2;
 var OVERLAY_NAME = "DialogOverlay";
@@ -50892,15 +51633,15 @@ import React40, { useCallback as useCallback18 } from "react";
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/context/dialogs.mjs
 import { jsx as jsx69 } from "react/jsx-runtime";
-import { createContext as createContext9, useCallback as useCallback17, useContext as useContext9, useState as useState27 } from "react";
+import { createContext as createContext10, useCallback as useCallback17, useContext as useContext9, useState as useState27 } from "react";
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/context/events.mjs
 import { jsx as jsx68 } from "react/jsx-runtime";
 import * as React39 from "react";
 var defaultEventHandler = () => void 0;
 var EventsContext = React39.createContext(null);
-function UiEventsProvider({ onEvent, children }) {
-  return /* @__PURE__ */ jsx68(EventsContext.Provider, { value: onEvent ?? defaultEventHandler, children });
+function UiEventsProvider({ onEvent, children: children2 }) {
+  return /* @__PURE__ */ jsx68(EventsContext.Provider, { value: onEvent ?? defaultEventHandler, children: children2 });
 }
 function useUiEvents() {
   const eventHandler2 = React39.useContext(EventsContext);
@@ -50908,8 +51649,8 @@ function useUiEvents() {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/context/dialogs.mjs
-var DialogsContext = createContext9(null);
-function DialogsProvider({ children }) {
+var DialogsContext = createContext10(null);
+function DialogsProvider({ children: children2 }) {
   const editor = useEditor();
   const trackEvent = useUiEvents();
   const [dialogs, setDialogs] = useState27([]);
@@ -50975,7 +51716,7 @@ function DialogsProvider({ children }) {
     DialogsContext.Provider,
     {
       value: { dialogs, addDialog, removeDialog, clearDialogs, updateDialog },
-      children
+      children: children2
     }
   );
 }
@@ -51061,19 +51802,19 @@ function createCollection(name) {
     { collectionRef: { current: null }, itemMap: /* @__PURE__ */ new Map() }
   );
   const CollectionProvider = (props) => {
-    const { scope, children } = props;
+    const { scope, children: children2 } = props;
     const ref = React41.useRef(null);
     const itemMap = React41.useRef(/* @__PURE__ */ new Map()).current;
-    return /* @__PURE__ */ jsx72(CollectionProviderImpl, { scope, itemMap, collectionRef: ref, children });
+    return /* @__PURE__ */ jsx72(CollectionProviderImpl, { scope, itemMap, collectionRef: ref, children: children2 });
   };
   CollectionProvider.displayName = PROVIDER_NAME2;
   const COLLECTION_SLOT_NAME = name + "CollectionSlot";
   const CollectionSlot = React41.forwardRef(
     (props, forwardedRef) => {
-      const { scope, children } = props;
+      const { scope, children: children2 } = props;
       const context = useCollectionContext(COLLECTION_SLOT_NAME, scope);
       const composedRefs = useComposedRefs(forwardedRef, context.collectionRef);
-      return /* @__PURE__ */ jsx72(Slot, { ref: composedRefs, children });
+      return /* @__PURE__ */ jsx72(Slot, { ref: composedRefs, children: children2 });
     }
   );
   CollectionSlot.displayName = COLLECTION_SLOT_NAME;
@@ -51081,7 +51822,7 @@ function createCollection(name) {
   const ITEM_DATA_ATTR = "data-radix-collection-item";
   const CollectionItemSlot = React41.forwardRef(
     (props, forwardedRef) => {
-      const { scope, children, ...itemData } = props;
+      const { scope, children: children2, ...itemData } = props;
       const ref = React41.useRef(null);
       const composedRefs = useComposedRefs(forwardedRef, ref);
       const context = useCollectionContext(ITEM_SLOT_NAME, scope);
@@ -51089,7 +51830,7 @@ function createCollection(name) {
         context.itemMap.set(ref, { ref, ...itemData });
         return () => void context.itemMap.delete(ref);
       });
-      return /* @__PURE__ */ jsx72(Slot, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children });
+      return /* @__PURE__ */ jsx72(Slot, { ...{ [ITEM_DATA_ATTR]: "" }, ref: composedRefs, children: children2 });
     }
   );
   CollectionItemSlot.displayName = ITEM_SLOT_NAME;
@@ -51158,7 +51899,7 @@ var ToastProvider = (props) => {
     duration = 5e3,
     swipeDirection = "right",
     swipeThreshold = 50,
-    children
+    children: children2
   } = props;
   const [viewport, setViewport] = React43.useState(null);
   const [toastCount, setToastCount] = React43.useState(0);
@@ -51184,7 +51925,7 @@ var ToastProvider = (props) => {
       onToastRemove: React43.useCallback(() => setToastCount((prevCount) => prevCount - 1), []),
       isFocusedToastEscapeKeyDownRef,
       isClosePausedRef,
-      children
+      children: children2
     }
   ) });
 };
@@ -51603,7 +52344,7 @@ var ToastImpl = React43.forwardRef(
   }
 );
 var ToastAnnounce = (props) => {
-  const { __scopeToast, children, ...announceProps } = props;
+  const { __scopeToast, children: children2, ...announceProps } = props;
   const context = useToastProviderContext(TOAST_NAME, __scopeToast);
   const [renderAnnounceText, setRenderAnnounceText] = React43.useState(false);
   const [isAnnounced, setIsAnnounced] = React43.useState(false);
@@ -51615,7 +52356,7 @@ var ToastAnnounce = (props) => {
   return isAnnounced ? null : /* @__PURE__ */ jsx74(Portal, { asChild: true, children: /* @__PURE__ */ jsx74(VisuallyHidden, { ...announceProps, children: renderAnnounceText && /* @__PURE__ */ jsxs32(Fragment30, { children: [
     context.label,
     " ",
-    children
+    children2
   ] }) }) });
 };
 var TITLE_NAME2 = "ToastTitle";
@@ -51764,9 +52505,9 @@ import * as React45 from "react";
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/context/toasts.mjs
 import { jsx as jsx75 } from "react/jsx-runtime";
-import { createContext as createContext10, useCallback as useCallback20, useContext as useContext10, useState as useState29 } from "react";
-var ToastsContext = createContext10(null);
-function ToastsProvider({ children }) {
+import { createContext as createContext11, useCallback as useCallback20, useContext as useContext10, useState as useState29 } from "react";
+var ToastsContext = createContext11(null);
+function ToastsProvider({ children: children2 }) {
   const [toasts, setToasts] = useState29([]);
   const addToast = useCallback20((toast) => {
     const id = toast.id ?? uniqueId();
@@ -51780,7 +52521,7 @@ function ToastsProvider({ children }) {
   const clearToasts = useCallback20(() => {
     setToasts(() => []);
   }, []);
-  return /* @__PURE__ */ jsx75(ToastProvider, { children: /* @__PURE__ */ jsx75(ToastsContext.Provider, { value: { toasts, addToast, removeToast, clearToasts }, children }) });
+  return /* @__PURE__ */ jsx75(ToastProvider, { children: /* @__PURE__ */ jsx75(ToastsContext.Provider, { value: { toasts, addToast, removeToast, clearToasts }, children: children2 }) });
 }
 function useToasts() {
   const ctx = useContext10(ToastsContext);
@@ -51795,7 +52536,7 @@ var import_classnames18 = __toESM(require_classnames(), 1);
 import { jsx as jsx76 } from "react/jsx-runtime";
 import * as React44 from "react";
 var TldrawUiButton = React44.forwardRef(
-  function TldrawUiButton2({ children, disabled, type, ...props }, ref) {
+  function TldrawUiButton2({ children: children2, disabled, type, ...props }, ref) {
     return /* @__PURE__ */ jsx76(
       "button",
       {
@@ -51805,7 +52546,7 @@ var TldrawUiButton = React44.forwardRef(
         disabled,
         ...props,
         className: (0, import_classnames18.default)("tlui-button", `tlui-button__${type}`, props.className),
-        children
+        children: children2
       }
     );
   }
@@ -51813,8 +52554,8 @@ var TldrawUiButton = React44.forwardRef(
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/Button/TldrawUiButtonLabel.mjs
 import { jsx as jsx77 } from "react/jsx-runtime";
-function TldrawUiButtonLabel({ children }) {
-  return /* @__PURE__ */ jsx77("span", { className: "tlui-button__label", children });
+function TldrawUiButtonLabel({ children: children2 }) {
+  return /* @__PURE__ */ jsx77("span", { className: "tlui-button__label", children: children2 });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/TldrawUiIcon.mjs
@@ -52183,11 +52924,11 @@ import { useRef as useRef32, useState as useState32 } from "react";
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/TldrawUiDialog.mjs
 import { jsx as jsx81 } from "react/jsx-runtime";
 var import_classnames20 = __toESM(require_classnames(), 1);
-function TldrawUiDialogHeader({ className, children }) {
-  return /* @__PURE__ */ jsx81("div", { className: (0, import_classnames20.default)("tlui-dialog__header", className), children });
+function TldrawUiDialogHeader({ className, children: children2 }) {
+  return /* @__PURE__ */ jsx81("div", { className: (0, import_classnames20.default)("tlui-dialog__header", className), children: children2 });
 }
-function TldrawUiDialogTitle({ className, children }) {
-  return /* @__PURE__ */ jsx81(DialogTitle, { dir: "ltr", className: (0, import_classnames20.default)("tlui-dialog__header__title", className), children });
+function TldrawUiDialogTitle({ className, children: children2 }) {
+  return /* @__PURE__ */ jsx81(DialogTitle, { dir: "ltr", className: (0, import_classnames20.default)("tlui-dialog__header__title", className), children: children2 });
 }
 function TldrawUiDialogCloseButton() {
   return /* @__PURE__ */ jsx81("div", { className: "tlui-dialog__header__close", children: /* @__PURE__ */ jsx81(DialogClose, { "data-testid": "dialog.close", dir: "ltr", asChild: true, children: /* @__PURE__ */ jsx81(
@@ -52200,11 +52941,11 @@ function TldrawUiDialogCloseButton() {
     }
   ) }) });
 }
-function TldrawUiDialogBody({ className, children, style }) {
-  return /* @__PURE__ */ jsx81("div", { className: (0, import_classnames20.default)("tlui-dialog__body", className), style, children });
+function TldrawUiDialogBody({ className, children: children2, style }) {
+  return /* @__PURE__ */ jsx81("div", { className: (0, import_classnames20.default)("tlui-dialog__body", className), style, children: children2 });
 }
-function TldrawUiDialogFooter({ className, children }) {
-  return /* @__PURE__ */ jsx81("div", { className: (0, import_classnames20.default)("tlui-dialog__footer", className), children });
+function TldrawUiDialogFooter({ className, children: children2 }) {
+  return /* @__PURE__ */ jsx81("div", { className: (0, import_classnames20.default)("tlui-dialog__footer", className), children: children2 });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/TldrawUiInput.mjs
@@ -52227,7 +52968,7 @@ var TldrawUiInput = React46.forwardRef(
     onFocus,
     onBlur,
     shouldManuallyMaintainScrollPositionWhenFocused = false,
-    children,
+    children: children2,
     value
   }, ref) {
     const editor = useEditor();
@@ -52307,7 +53048,7 @@ var TldrawUiInput = React46.forwardRef(
       }
     }, [editor, isFocused, shouldManuallyMaintainScrollPositionWhenFocused]);
     return /* @__PURE__ */ jsxs34("div", { draggable: false, className: "tlui-input__wrapper", children: [
-      children,
+      children2,
       label && /* @__PURE__ */ jsx82("label", { children: msg2(label) }),
       iconLeft && /* @__PURE__ */ jsx82(TldrawUiIcon, { icon: iconLeft, className: "tlui-icon-left", small: true }),
       /* @__PURE__ */ jsx82(
@@ -52475,7 +53216,7 @@ function useInsertMedia() {
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/hooks/useTools.mjs
 var ToolsContext = React47.createContext(null);
-function ToolsProvider({ overrides, children }) {
+function ToolsProvider({ overrides, children: children2 }) {
   const editor = useEditor();
   const trackEvent = useUiEvents();
   const { addDialog } = useDialogs();
@@ -52639,7 +53380,7 @@ function ToolsProvider({ overrides, children }) {
     }
     return tools2;
   }, [overrides, editor, trackEvent, insertMedia, addDialog]);
-  return /* @__PURE__ */ jsx84(ToolsContext.Provider, { value: tools, children });
+  return /* @__PURE__ */ jsx84(ToolsContext.Provider, { value: tools, children: children2 });
 }
 function useTools() {
   const ctx = React47.useContext(ToolsContext);
@@ -52656,7 +53397,7 @@ import { useMemo as useMemo17 } from "react";
 import { jsx as jsx85 } from "react/jsx-runtime";
 import React48, { useContext as useContext12 } from "react";
 var BreakpointContext = React48.createContext(null);
-function BreakPointProvider({ forceMobile = false, children }) {
+function BreakPointProvider({ forceMobile = false, children: children2 }) {
   const editor = useEditor();
   const breakpoint = useValue(
     "breakpoint",
@@ -52672,7 +53413,7 @@ function BreakPointProvider({ forceMobile = false, children }) {
     },
     [editor]
   );
-  return /* @__PURE__ */ jsx85(BreakpointContext.Provider, { value: breakpoint, children });
+  return /* @__PURE__ */ jsx85(BreakpointContext.Provider, { value: breakpoint, children: children2 });
 }
 function useBreakpoint() {
   const breakpoint = useContext12(BreakpointContext);
@@ -52795,10 +53536,10 @@ function removeFrame(editor, ids) {
   const allChildren = [];
   editor.batch(() => {
     frames.map((frame2) => {
-      const children = editor.getSortedChildIdsForParent(frame2.id);
-      if (children.length) {
-        editor.reparentShapes(children, frame2.parentId, frame2.index);
-        allChildren.push(...children);
+      const children2 = editor.getSortedChildIdsForParent(frame2.id);
+      if (children2.length) {
+        editor.reparentShapes(children2, frame2.parentId, frame2.index);
+        allChildren.push(...children2);
       }
     });
     editor.setSelectedShapes(allChildren);
@@ -52811,11 +53552,11 @@ function fitFrameToContent(editor, id, opts = {}) {
   if (!frame2)
     return;
   const childIds = editor.getSortedChildIdsForParent(frame2.id);
-  const children = compact(childIds.map((id2) => editor.getShape(id2)));
-  if (!children.length)
+  const children2 = compact(childIds.map((id2) => editor.getShape(id2)));
+  if (!children2.length)
     return;
   const bounds = Box.FromPoints(
-    children.flatMap((shape) => {
+    children2.flatMap((shape) => {
       const geometry = editor.getShapeGeometry(shape.id);
       return editor.getShapeLocalTransform(shape).applyToPoints(geometry.vertices);
     })
@@ -54500,7 +55241,7 @@ function getExportName(editor, defaultName) {
   }
   return void 0;
 }
-function ActionsProvider({ overrides, children }) {
+function ActionsProvider({ overrides, children: children2 }) {
   const editor = useEditor();
   const { addDialog, clearDialogs } = useDialogs();
   const { clearToasts } = useToasts();
@@ -55850,7 +56591,7 @@ function ActionsProvider({ overrides, children }) {
     msg2,
     defaultDocumentName
   ]);
-  return /* @__PURE__ */ jsx87(ActionsContext.Provider, { value: asActions(actions), children });
+  return /* @__PURE__ */ jsx87(ActionsContext.Provider, { value: asActions(actions), children: children2 });
 }
 function useActions() {
   const ctx = React49.useContext(ActionsContext);
@@ -55868,7 +56609,7 @@ function unwrapLabel(label, menuType) {
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/context/components.mjs
 import { jsx as jsx149 } from "react/jsx-runtime";
-import { createContext as createContext16, useContext as useContext16, useMemo as useMemo26 } from "react";
+import { createContext as createContext17, useContext as useContext16, useMemo as useMemo26 } from "react";
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/ActionsMenu/DefaultActionsMenu.mjs
 import { jsx as jsx103, jsxs as jsxs42 } from "react/jsx-runtime";
@@ -56100,7 +56841,7 @@ var computePosition = async (reference, floating, config2) => {
       x: nextX,
       y: nextY,
       data,
-      reset
+      reset: reset2
     } = await fn({
       x,
       y,
@@ -56124,18 +56865,18 @@ var computePosition = async (reference, floating, config2) => {
         ...data
       }
     };
-    if (reset && resetCount <= 50) {
+    if (reset2 && resetCount <= 50) {
       resetCount++;
-      if (typeof reset === "object") {
-        if (reset.placement) {
-          statefulPlacement = reset.placement;
+      if (typeof reset2 === "object") {
+        if (reset2.placement) {
+          statefulPlacement = reset2.placement;
         }
-        if (reset.rects) {
-          rects = reset.rects === true ? await platform2.getElementRects({
+        if (reset2.rects) {
+          rects = reset2.rects === true ? await platform2.getElementRects({
             reference,
             floating,
             strategy
-          }) : reset.rects;
+          }) : reset2.rects;
         }
         ({
           x,
@@ -57688,7 +58429,7 @@ import * as React51 from "react";
 import { jsx as jsx88 } from "react/jsx-runtime";
 var NAME2 = "Arrow";
 var Arrow = React51.forwardRef((props, forwardedRef) => {
-  const { children, width = 10, height = 5, ...arrowProps } = props;
+  const { children: children2, width = 10, height = 5, ...arrowProps } = props;
   return /* @__PURE__ */ jsx88(
     Primitive.svg,
     {
@@ -57698,7 +58439,7 @@ var Arrow = React51.forwardRef((props, forwardedRef) => {
       height,
       viewBox: "0 0 30 10",
       preserveAspectRatio: "none",
-      children: props.asChild ? children : /* @__PURE__ */ jsx88("polygon", { points: "0,0 30,0 15,10" })
+      children: props.asChild ? children2 : /* @__PURE__ */ jsx88("polygon", { points: "0,0 30,0 15,10" })
     }
   );
 });
@@ -57748,9 +58489,9 @@ var POPPER_NAME = "Popper";
 var [createPopperContext, createPopperScope] = createContextScope(POPPER_NAME);
 var [PopperProvider, usePopperContext] = createPopperContext(POPPER_NAME);
 var Popper = (props) => {
-  const { __scopePopper, children } = props;
+  const { __scopePopper, children: children2 } = props;
   const [anchor, setAnchor] = React53.useState(null);
-  return /* @__PURE__ */ jsx89(PopperProvider, { scope: __scopePopper, anchor, onAnchorChange: setAnchor, children });
+  return /* @__PURE__ */ jsx89(PopperProvider, { scope: __scopePopper, anchor, onAnchorChange: setAnchor, children: children2 });
 };
 Popper.displayName = POPPER_NAME;
 var ANCHOR_NAME = "PopperAnchor";
@@ -58020,7 +58761,7 @@ var [PopoverProvider, usePopoverContext] = createPopoverContext(POPOVER_NAME);
 var Popover = (props) => {
   const {
     __scopePopover,
-    children,
+    children: children2,
     open: openProp,
     defaultOpen,
     onOpenChange,
@@ -58047,7 +58788,7 @@ var Popover = (props) => {
       onCustomAnchorAdd: React54.useCallback(() => setHasCustomAnchor(true), []),
       onCustomAnchorRemove: React54.useCallback(() => setHasCustomAnchor(false), []),
       modal,
-      children
+      children: children2
     }
   ) });
 };
@@ -58096,9 +58837,9 @@ var [PortalProvider2, usePortalContext2] = createPopoverContext(PORTAL_NAME3, {
   forceMount: void 0
 });
 var PopoverPortal = (props) => {
-  const { __scopePopover, forceMount, children, container } = props;
+  const { __scopePopover, forceMount, children: children2, container } = props;
   const context = usePopoverContext(PORTAL_NAME3, __scopePopover);
-  return /* @__PURE__ */ jsx90(PortalProvider2, { scope: __scopePopover, forceMount, children: /* @__PURE__ */ jsx90(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ jsx90(Portal, { asChild: true, container, children }) }) });
+  return /* @__PURE__ */ jsx90(PortalProvider2, { scope: __scopePopover, forceMount, children: /* @__PURE__ */ jsx90(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ jsx90(Portal, { asChild: true, container, children: children2 }) }) });
 };
 PopoverPortal.displayName = PORTAL_NAME3;
 var CONTENT_NAME3 = "PopoverContent";
@@ -58334,23 +59075,23 @@ function useMenuIsOpen(id, cb) {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/TldrawUiPopover.mjs
-function TldrawUiPopover({ id, children, onOpenChange, open }) {
+function TldrawUiPopover({ id, children: children2, onOpenChange, open }) {
   const [isOpen, handleOpenChange] = useMenuIsOpen(id, onOpenChange);
   return /* @__PURE__ */ jsx91(
     Root24,
     {
       onOpenChange: handleOpenChange,
       open: open || isOpen,
-      children: /* @__PURE__ */ jsx91("div", { className: "tlui-popover", children })
+      children: /* @__PURE__ */ jsx91("div", { className: "tlui-popover", children: children2 })
     }
   );
 }
-function TldrawUiPopoverTrigger({ children }) {
-  return /* @__PURE__ */ jsx91(Trigger, { asChild: true, dir: "ltr", children });
+function TldrawUiPopoverTrigger({ children: children2 }) {
+  return /* @__PURE__ */ jsx91(Trigger, { asChild: true, dir: "ltr", children: children2 });
 }
 function TldrawUiPopoverContent({
   side,
-  children,
+  children: children2,
   align = "center",
   sideOffset = 8,
   alignOffset = 0
@@ -58365,15 +59106,15 @@ function TldrawUiPopoverContent({
       align,
       alignOffset,
       dir: "ltr",
-      children
+      children: children2
     }
   ) });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/menus/TldrawUiMenuContext.mjs
 import { jsx as jsx92 } from "react/jsx-runtime";
-import { createContext as createContext13, useContext as useContext14 } from "react";
-var menuContext = createContext13(null);
+import { createContext as createContext14, useContext as useContext14 } from "react";
+var menuContext = createContext14(null);
 function useTldrawUiMenuContext() {
   const context = useContext14(menuContext);
   if (!context) {
@@ -58384,9 +59125,9 @@ function useTldrawUiMenuContext() {
 function TldrawUiMenuContextProvider({
   type,
   sourceId,
-  children
+  children: children2
 }) {
-  return /* @__PURE__ */ jsx92(menuContext.Provider, { value: { type, sourceId }, children });
+  return /* @__PURE__ */ jsx92(menuContext.Provider, { value: { type, sourceId }, children: children2 });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/ActionsMenu/DefaultActionsMenuContent.mjs
@@ -58796,7 +59537,7 @@ var useRovingFocusGroupScope = createRovingFocusGroupScope();
 var [MenuProvider, useMenuContext] = createMenuContext(MENU_NAME);
 var [MenuRootProvider, useMenuRootContext] = createMenuContext(MENU_NAME);
 var Menu = (props) => {
-  const { __scopeMenu, open = false, children, dir, onOpenChange, modal = true } = props;
+  const { __scopeMenu, open = false, children: children2, dir, onOpenChange, modal = true } = props;
   const popperScope = usePopperScope2(__scopeMenu);
   const [content, setContent] = React57.useState(null);
   const isUsingKeyboardRef = React57.useRef(false);
@@ -58832,7 +59573,7 @@ var Menu = (props) => {
           isUsingKeyboardRef,
           dir: direction,
           modal,
-          children
+          children: children2
         }
       )
     }
@@ -58853,9 +59594,9 @@ var [PortalProvider3, usePortalContext3] = createMenuContext(PORTAL_NAME4, {
   forceMount: void 0
 });
 var MenuPortal = (props) => {
-  const { __scopeMenu, forceMount, children, container } = props;
+  const { __scopeMenu, forceMount, children: children2, container } = props;
   const context = useMenuContext(PORTAL_NAME4, __scopeMenu);
-  return /* @__PURE__ */ jsx95(PortalProvider3, { scope: __scopeMenu, forceMount, children: /* @__PURE__ */ jsx95(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ jsx95(Portal, { asChild: true, container, children }) }) });
+  return /* @__PURE__ */ jsx95(PortalProvider3, { scope: __scopeMenu, forceMount, children: /* @__PURE__ */ jsx95(Presence, { present: forceMount || context.open, children: /* @__PURE__ */ jsx95(Portal, { asChild: true, container, children: children2 }) }) });
 };
 MenuPortal.displayName = PORTAL_NAME4;
 var CONTENT_NAME4 = "MenuContent";
@@ -59329,7 +60070,7 @@ MenuArrow.displayName = ARROW_NAME3;
 var SUB_NAME = "MenuSub";
 var [MenuSubProvider, useMenuSubContext] = createMenuContext(SUB_NAME);
 var MenuSub = (props) => {
-  const { __scopeMenu, children, open = false, onOpenChange } = props;
+  const { __scopeMenu, children: children2, open = false, onOpenChange } = props;
   const parentMenuContext = useMenuContext(SUB_NAME, __scopeMenu);
   const popperScope = usePopperScope2(__scopeMenu);
   const [trigger2, setTrigger] = React57.useState(null);
@@ -59355,7 +60096,7 @@ var MenuSub = (props) => {
           triggerId: useId2(),
           trigger: trigger2,
           onTriggerChange: setTrigger,
-          children
+          children: children2
         }
       )
     }
@@ -59590,7 +60331,7 @@ var [createContextMenuContext, createContextMenuScope] = createContextScope(CONT
 var useMenuScope = createMenuScope();
 var [ContextMenuProvider, useContextMenuContext] = createContextMenuContext(CONTEXT_MENU_NAME);
 var ContextMenu = (props) => {
-  const { __scopeContextMenu, children, onOpenChange, dir, modal = true } = props;
+  const { __scopeContextMenu, children: children2, onOpenChange, dir, modal = true } = props;
   const [open, setOpen] = React58.useState(false);
   const menuScope = useMenuScope(__scopeContextMenu);
   const handleOpenChangeProp = useCallbackRef(onOpenChange);
@@ -59616,7 +60357,7 @@ var ContextMenu = (props) => {
           open,
           onOpenChange: handleOpenChange,
           modal,
-          children
+          children: children2
         }
       )
     }
@@ -59798,14 +60539,14 @@ var ContextMenuArrow = React58.forwardRef(
 ContextMenuArrow.displayName = ARROW_NAME4;
 var SUB_NAME2 = "ContextMenuSub";
 var ContextMenuSub = (props) => {
-  const { __scopeContextMenu, children, onOpenChange, open: openProp, defaultOpen } = props;
+  const { __scopeContextMenu, children: children2, onOpenChange, open: openProp, defaultOpen } = props;
   const menuScope = useMenuScope(__scopeContextMenu);
   const [open, setOpen] = useControllableState({
     prop: openProp,
     defaultProp: defaultOpen,
     onChange: onOpenChange
   });
-  return /* @__PURE__ */ jsx96(Sub, { ...menuScope, open, onOpenChange: setOpen, children });
+  return /* @__PURE__ */ jsx96(Sub, { ...menuScope, open, onOpenChange: setOpen, children: children2 });
 };
 ContextMenuSub.displayName = SUB_NAME2;
 var SUB_TRIGGER_NAME2 = "ContextMenuSubTrigger";
@@ -59901,7 +60642,7 @@ var [DropdownMenuProvider, useDropdownMenuContext] = createDropdownMenuContext(D
 var DropdownMenu = (props) => {
   const {
     __scopeDropdownMenu,
-    children,
+    children: children2,
     dir,
     open: openProp,
     defaultOpen,
@@ -59926,7 +60667,7 @@ var DropdownMenu = (props) => {
       onOpenChange: setOpen,
       onOpenToggle: React59.useCallback(() => setOpen((prevOpen) => !prevOpen), [setOpen]),
       modal,
-      children: /* @__PURE__ */ jsx98(Root32, { ...menuScope, open, onOpenChange: setOpen, dir, modal, children })
+      children: /* @__PURE__ */ jsx98(Root32, { ...menuScope, open, onOpenChange: setOpen, dir, modal, children: children2 })
     }
   );
 };
@@ -60088,14 +60829,14 @@ var DropdownMenuArrow = React59.forwardRef(
 );
 DropdownMenuArrow.displayName = ARROW_NAME5;
 var DropdownMenuSub = (props) => {
-  const { __scopeDropdownMenu, children, open: openProp, onOpenChange, defaultOpen } = props;
+  const { __scopeDropdownMenu, children: children2, open: openProp, onOpenChange, defaultOpen } = props;
   const menuScope = useMenuScope2(__scopeDropdownMenu);
   const [open = false, setOpen] = useControllableState({
     prop: openProp,
     defaultProp: defaultOpen,
     onChange: onOpenChange
   });
-  return /* @__PURE__ */ jsx98(Sub, { ...menuScope, open, onOpenChange: setOpen, children });
+  return /* @__PURE__ */ jsx98(Sub, { ...menuScope, open, onOpenChange: setOpen, children: children2 });
 };
 var SUB_TRIGGER_NAME3 = "DropdownMenuSubTrigger";
 var DropdownMenuSubTrigger = React59.forwardRef((props, forwardedRef) => {
@@ -60143,7 +60884,7 @@ var SubContent2 = DropdownMenuSubContent;
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/TldrawUiDropdownMenu.mjs
 function TldrawUiDropdownMenuRoot({
   id,
-  children,
+  children: children2,
   modal = false,
   debugOpen = false
 }) {
@@ -60155,11 +60896,11 @@ function TldrawUiDropdownMenuRoot({
       dir: "ltr",
       modal,
       onOpenChange,
-      children
+      children: children2
     }
   );
 }
-function TldrawUiDropdownMenuTrigger({ children, ...rest }) {
+function TldrawUiDropdownMenuTrigger({ children: children2, ...rest }) {
   return /* @__PURE__ */ jsx99(
     Trigger3,
     {
@@ -60167,7 +60908,7 @@ function TldrawUiDropdownMenuTrigger({ children, ...rest }) {
       asChild: true,
       onTouchEnd: (e) => preventDefault(e),
       ...rest,
-      children
+      children: children2
     }
   );
 }
@@ -60176,7 +60917,7 @@ function TldrawUiDropdownMenuContent({
   align = "start",
   sideOffset = 8,
   alignOffset = 8,
-  children
+  children: children2
 }) {
   const container = useContainer();
   return /* @__PURE__ */ jsx99(Portal23, { container, children: /* @__PURE__ */ jsx99(
@@ -60188,13 +60929,13 @@ function TldrawUiDropdownMenuContent({
       align,
       alignOffset,
       collisionPadding: 4,
-      children
+      children: children2
     }
   ) });
 }
-function TldrawUiDropdownMenuSub({ id, children }) {
+function TldrawUiDropdownMenuSub({ id, children: children2 }) {
   const [open, onOpenChange] = useMenuIsOpen(id);
-  return /* @__PURE__ */ jsx99(Sub2, { open, onOpenChange, children });
+  return /* @__PURE__ */ jsx99(Sub2, { open, onOpenChange, children: children2 });
 }
 function TldrawUiDropdownMenuSubTrigger({
   id,
@@ -60222,7 +60963,7 @@ function TldrawUiDropdownMenuSubContent({
   alignOffset = -1,
   sideOffset = -4,
   size: size4 = "small",
-  children
+  children: children2
 }) {
   const container = useContainer();
   return /* @__PURE__ */ jsx99(Portal23, { container, children: /* @__PURE__ */ jsx99(
@@ -60234,24 +60975,24 @@ function TldrawUiDropdownMenuSubContent({
       sideOffset,
       collisionPadding: 4,
       "data-size": size4,
-      children
+      children: children2
     }
   ) });
 }
-function TldrawUiDropdownMenuGroup({ children }) {
-  return /* @__PURE__ */ jsx99(Group2, { dir: "ltr", className: "tlui-menu__group", children });
+function TldrawUiDropdownMenuGroup({ children: children2 }) {
+  return /* @__PURE__ */ jsx99(Group2, { dir: "ltr", className: "tlui-menu__group", children: children2 });
 }
-function TldrawUiDropdownMenuItem({ noClose, children }) {
-  return /* @__PURE__ */ jsx99(Item22, { dir: "ltr", asChild: true, onClick: noClose ? preventDefault : void 0, children });
+function TldrawUiDropdownMenuItem({ noClose, children: children2 }) {
+  return /* @__PURE__ */ jsx99(Item22, { dir: "ltr", asChild: true, onClick: noClose ? preventDefault : void 0, children: children2 });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/TldrawUiKbd.mjs
 import { jsx as jsx100 } from "react/jsx-runtime";
-function TldrawUiKbd({ children, visibleOnMobileLayout = false }) {
+function TldrawUiKbd({ children: children2, visibleOnMobileLayout = false }) {
   const breakpoint = useBreakpoint();
   if (!visibleOnMobileLayout && breakpoint < PORTRAIT_BREAKPOINT.MOBILE)
     return null;
-  return /* @__PURE__ */ jsx100("kbd", { className: "tlui-kbd", children: kbd(children).map((k, i) => /* @__PURE__ */ jsx100("span", { children: k }, i)) });
+  return /* @__PURE__ */ jsx100("kbd", { className: "tlui-kbd", children: kbd(children2).map((k, i) => /* @__PURE__ */ jsx100("span", { children: k }, i)) });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/menus/TldrawUiMenuItem.mjs
@@ -60534,7 +61275,7 @@ function UngroupMenuItem() {
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/ActionsMenu/DefaultActionsMenu.mjs
 var DefaultActionsMenu = memo8(function DefaultActionsMenu2({
-  children
+  children: children2
 }) {
   const msg2 = useTranslation();
   const breakpoint = useBreakpoint();
@@ -60545,7 +61286,7 @@ var DefaultActionsMenu = memo8(function DefaultActionsMenu2({
     () => editor.isInAny("hand", "zoom"),
     [editor]
   );
-  const content = children ?? /* @__PURE__ */ jsx103(DefaultActionsMenuContent, {});
+  const content = children2 ?? /* @__PURE__ */ jsx103(DefaultActionsMenuContent, {});
   if (isReadonlyMode && !isInAcceptableReadonlyState)
     return;
   return /* @__PURE__ */ jsxs42(TldrawUiPopover, { id: "actions-menu", children: [
@@ -60662,17 +61403,17 @@ function TldrawUiMenuCheckboxItem({
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/primitives/menus/TldrawUiMenuGroup.mjs
 import { jsx as jsx105, jsxs as jsxs44 } from "react/jsx-runtime";
-function TldrawUiMenuGroup({ id, label, children }) {
+function TldrawUiMenuGroup({ id, label, children: children2 }) {
   const { type: menuType, sourceId } = useTldrawUiMenuContext();
   const msg2 = useTranslation();
   const labelToUse = unwrapLabel(label, menuType);
   const labelStr = labelToUse ? msg2(labelToUse) : void 0;
   switch (menuType) {
     case "panel": {
-      return /* @__PURE__ */ jsx105("div", { className: "tlui-menu__group", "data-testid": `${sourceId}-group.${id}`, children });
+      return /* @__PURE__ */ jsx105("div", { className: "tlui-menu__group", "data-testid": `${sourceId}-group.${id}`, children: children2 });
     }
     case "menu": {
-      return /* @__PURE__ */ jsx105(TldrawUiDropdownMenuGroup, { "data-testid": `${sourceId}-group.${id}`, children });
+      return /* @__PURE__ */ jsx105(TldrawUiDropdownMenuGroup, { "data-testid": `${sourceId}-group.${id}`, children: children2 });
     }
     case "context-menu": {
       return /* @__PURE__ */ jsx105(
@@ -60681,18 +61422,18 @@ function TldrawUiMenuGroup({ id, label, children }) {
           dir: "ltr",
           className: "tlui-menu__group",
           "data-testid": `${sourceId}-group.${id}`,
-          children
+          children: children2
         }
       );
     }
     case "keyboard-shortcuts": {
       return /* @__PURE__ */ jsxs44("div", { className: "tlui-shortcuts-dialog__group", "data-testid": `${sourceId}-group.${id}`, children: [
         /* @__PURE__ */ jsx105("h2", { className: "tlui-shortcuts-dialog__group__title", children: labelStr }),
-        /* @__PURE__ */ jsx105("div", { className: "tlui-shortcuts-dialog__group__content", children })
+        /* @__PURE__ */ jsx105("div", { className: "tlui-shortcuts-dialog__group__content", children: children2 })
       ] });
     }
     default: {
-      return children;
+      return children2;
     }
   }
 }
@@ -60704,7 +61445,7 @@ function TldrawUiMenuSubmenu({
   disabled = false,
   label,
   size: size4 = "small",
-  children
+  children: children2
 }) {
   const { type: menuType, sourceId } = useTldrawUiMenuContext();
   const container = useContainer();
@@ -60728,7 +61469,7 @@ function TldrawUiMenuSubmenu({
           {
             id: `${sourceId}-sub.${labelStr ? labelStr.toLowerCase() + "-content" : ""}`,
             size: size4,
-            children
+            children: children2
           }
         )
       ] });
@@ -60758,19 +61499,19 @@ function TldrawUiMenuSubmenu({
             sideOffset: -4,
             collisionPadding: 4,
             "data-size": size4,
-            children
+            children: children2
           }
         ) })
       ] });
     }
     default: {
-      return children;
+      return children2;
     }
   }
 }
-function ContextMenuSubWithMenu({ id, children }) {
+function ContextMenuSubWithMenu({ id, children: children2 }) {
   const [open, onOpenChange] = useMenuIsOpen(id);
-  return /* @__PURE__ */ jsx106(ContextMenuSub, { open, onOpenChange, children });
+  return /* @__PURE__ */ jsx106(ContextMenuSub, { open, onOpenChange, children: children2 });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/menu-items.mjs
@@ -61267,7 +62008,7 @@ function DefaultContextMenuContent() {
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/ContextMenu/DefaultContextMenu.mjs
 var DefaultContextMenu = memo9(function DefaultContextMenu2({
-  children
+  children: children2
 }) {
   const editor = useEditor();
   const { Canvas } = useEditorComponents();
@@ -61302,7 +62043,7 @@ var DefaultContextMenu = memo9(function DefaultContextMenu2({
   );
   const container = useContainer();
   const [isOpen, handleOpenChange] = useMenuIsOpen("context menu", cb);
-  const content = children ?? /* @__PURE__ */ jsx109(DefaultContextMenuContent, {});
+  const content = children2 ?? /* @__PURE__ */ jsx109(DefaultContextMenuContent, {});
   return /* @__PURE__ */ jsxs48(Root25, { dir: "ltr", onOpenChange: handleOpenChange, modal: false, children: [
     /* @__PURE__ */ jsx109(Trigger2, { onContextMenu: void 0, dir: "ltr", children: Canvas ? /* @__PURE__ */ jsx109(Canvas, {}) : null }),
     isOpen && /* @__PURE__ */ jsx109(Portal22, { container, children: /* @__PURE__ */ jsx109(
@@ -61565,8 +62306,8 @@ function createNShapes(editor, n) {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/DebugMenu/DefaultDebugMenu.mjs
-function DefaultDebugMenu({ children }) {
-  const content = children ?? /* @__PURE__ */ jsx112(DefaultDebugMenuContent, {});
+function DefaultDebugMenu({ children: children2 }) {
+  const content = children2 ?? /* @__PURE__ */ jsx112(DefaultDebugMenuContent, {});
   return /* @__PURE__ */ jsxs50(TldrawUiDropdownMenuRoot, { id: "debug", children: [
     /* @__PURE__ */ jsx112(TldrawUiDropdownMenuTrigger, { children: /* @__PURE__ */ jsx112(TldrawUiButton, { type: "icon", title: "Debug menu", children: /* @__PURE__ */ jsx112(TldrawUiButtonIcon, { icon: "dots-horizontal" }) }) }),
     /* @__PURE__ */ jsx112(TldrawUiDropdownMenuContent, { side: "top", align: "end", alignOffset: 0, children: /* @__PURE__ */ jsx112(TldrawUiMenuContextProvider, { type: "menu", sourceId: "debug-panel", children: content }) })
@@ -61711,10 +62452,10 @@ function KeyboardShortcutsMenuItem() {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/HelpMenu/DefaultHelpMenu.mjs
-var DefaultHelpMenu = memo11(function DefaultHelpMenu2({ children }) {
+var DefaultHelpMenu = memo11(function DefaultHelpMenu2({ children: children2 }) {
   const msg2 = useTranslation();
   const breakpoint = useBreakpoint();
-  const content = children ?? /* @__PURE__ */ jsx116(DefaultHelpMenuContent, {});
+  const content = children2 ?? /* @__PURE__ */ jsx116(DefaultHelpMenuContent, {});
   if (breakpoint < PORTRAIT_BREAKPOINT.MOBILE)
     return null;
   return /* @__PURE__ */ jsx116("div", { className: "tlui-help-menu", children: /* @__PURE__ */ jsxs53(TldrawUiDropdownMenuRoot, { id: "help menu", children: [
@@ -61803,8 +62544,8 @@ function DefaultHelperButtonsContent() {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/HelperButtons/DefaultHelperButtons.mjs
-function DefaultHelperButtons({ children }) {
-  const content = children ?? /* @__PURE__ */ jsx121(DefaultHelperButtonsContent, {});
+function DefaultHelperButtons({ children: children2 }) {
+  const content = children2 ?? /* @__PURE__ */ jsx121(DefaultHelperButtonsContent, {});
   return /* @__PURE__ */ jsx121("div", { className: "tlui-helper-buttons", children: /* @__PURE__ */ jsx121(TldrawUiMenuContextProvider, { type: "helper-buttons", sourceId: "helper-buttons", children: content }) });
 }
 
@@ -61878,11 +62619,11 @@ function DefaultKeyboardShortcutsDialogContent() {
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/KeyboardShortcutsDialog/DefaultKeyboardShortcutsDialog.mjs
 var DefaultKeyboardShortcutsDialog = memo12(function DefaultKeyboardShortcutsDialog2({
-  children
+  children: children2
 }) {
   const msg2 = useTranslation();
   const breakpoint = useBreakpoint();
-  const content = children ?? /* @__PURE__ */ jsx123(DefaultKeyboardShortcutsDialogContent, {});
+  const content = children2 ?? /* @__PURE__ */ jsx123(DefaultKeyboardShortcutsDialogContent, {});
   return /* @__PURE__ */ jsxs56(Fragment42, { children: [
     /* @__PURE__ */ jsxs56(TldrawUiDialogHeader, { className: "tlui-shortcuts-dialog__header", children: [
       /* @__PURE__ */ jsx123(TldrawUiDialogTitle, { children: msg2("shortcuts-dialog.title") }),
@@ -62040,11 +62781,11 @@ function PreferencesGroup() {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/MainMenu/DefaultMainMenu.mjs
-var DefaultMainMenu = memo13(function DefaultMainMenu2({ children }) {
+var DefaultMainMenu = memo13(function DefaultMainMenu2({ children: children2 }) {
   const container = useContainer();
   const [isOpen, onOpenChange] = useMenuIsOpen("main menu");
   const msg2 = useTranslation();
-  const content = children ?? /* @__PURE__ */ jsx126(DefaultMainMenuContent, {});
+  const content = children2 ?? /* @__PURE__ */ jsx126(DefaultMainMenuContent, {});
   return /* @__PURE__ */ jsxs58(Root26, { dir: "ltr", open: isOpen, onOpenChange, modal: false, children: [
     /* @__PURE__ */ jsx126(Trigger3, { asChild: true, dir: "ltr", children: /* @__PURE__ */ jsx126(TldrawUiButton, { type: "icon", "data-testid": "main-menu.button", title: msg2("menu.title"), children: /* @__PURE__ */ jsx126(TldrawUiButtonIcon, { icon: "menu", small: true }) }) }),
     /* @__PURE__ */ jsx126(Portal23, { container, children: /* @__PURE__ */ jsx126(
@@ -63378,9 +64119,9 @@ function DefaultQuickActionsContent() {
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/QuickActions/DefaultQuickActions.mjs
 var DefaultQuickActions = memo18(function DefaultQuickActions2({
-  children
+  children: children2
 }) {
-  const content = children ?? /* @__PURE__ */ jsx134(DefaultQuickActionsContent, {});
+  const content = children2 ?? /* @__PURE__ */ jsx134(DefaultQuickActionsContent, {});
   return /* @__PURE__ */ jsx134(TldrawUiMenuContextProvider, { type: "small-icons", sourceId: "quick-actions", children: content });
 });
 
@@ -64652,7 +65393,7 @@ function OpacitySlider() {
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/StylePanel/DefaultStylePanel.mjs
 var DefaultStylePanel = memo23(function DefaultStylePanel2({
   isMobile,
-  children
+  children: children2
 }) {
   const editor = useEditor();
   const styles = useRelevantStyles();
@@ -64661,7 +65402,7 @@ var DefaultStylePanel = memo23(function DefaultStylePanel2({
       editor.updateInstanceState({ isChangingStyle: false });
     }
   }, [editor, isMobile]);
-  const content = children ?? /* @__PURE__ */ jsx141(DefaultStylePanelContent, { styles });
+  const content = children2 ?? /* @__PURE__ */ jsx141(DefaultStylePanelContent, { styles });
   return /* @__PURE__ */ jsx141(
     "div",
     {
@@ -65413,7 +66154,7 @@ if (typeof window !== "undefined") {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/Toolbar/OverflowingToolbar.mjs
-import { createContext as createContext15, useEffect as useEffect54, useLayoutEffect as useLayoutEffect13, useMemo as useMemo25, useRef as useRef52, useState as useState46 } from "react";
+import { createContext as createContext16, useEffect as useEffect54, useLayoutEffect as useLayoutEffect13, useMemo as useMemo25, useRef as useRef52, useState as useState46 } from "react";
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/hooks/useKeyboardShortcuts.mjs
 import { useEffect as useEffect53 } from "react";
@@ -65571,8 +66312,8 @@ function areShortcutsDisabled(editor) {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/Toolbar/OverflowingToolbar.mjs
-var IsInOverflowContext = createContext15(false);
-function OverflowingToolbar({ children }) {
+var IsInOverflowContext = createContext16(false);
+function OverflowingToolbar({ children: children2 }) {
   const editor = useEditor();
   const id = useSafeId();
   const breakpoint = useBreakpoint();
@@ -65595,9 +66336,9 @@ function OverflowingToolbar({ children }) {
   const onDomUpdate = useEvent(() => {
     if (!mainToolsRef.current)
       return;
-    const children2 = Array.from(mainToolsRef.current.children);
-    setTotalItems(children2.length);
-    const lastActiveElementIdx = children2.findIndex(
+    const children22 = Array.from(mainToolsRef.current.children);
+    setTotalItems(children22.length);
+    const lastActiveElementIdx = children22.findIndex(
       (el) => el.getAttribute("data-value") === lastActiveOverflowItem
     );
     if (lastActiveElementIdx <= overflowIndex) {
@@ -65609,7 +66350,7 @@ function OverflowingToolbar({ children }) {
     if (activeElementIdx === -1)
       return;
     if (activeElementIdx >= overflowIndex) {
-      setLastActiveOverflowItem(children2[activeElementIdx].getAttribute("data-value"));
+      setLastActiveOverflowItem(children22[activeElementIdx].getAttribute("data-value"));
     }
   });
   useLayoutEffect13(() => {
@@ -65674,7 +66415,7 @@ function OverflowingToolbar({ children }) {
         }),
         role: "radiogroup",
         children: [
-          /* @__PURE__ */ jsx144("div", { id: `${id}_main`, ref: mainToolsRef, className: "tlui-toolbar__tools__list", children: /* @__PURE__ */ jsx144(TldrawUiMenuContextProvider, { type: "toolbar", sourceId: "toolbar", children }) }),
+          /* @__PURE__ */ jsx144("div", { id: `${id}_main`, ref: mainToolsRef, className: "tlui-toolbar__tools__list", children: /* @__PURE__ */ jsx144(TldrawUiMenuContextProvider, { type: "toolbar", sourceId: "toolbar", children: children2 }) }),
           totalItems > overflowIndex + 1 && /* @__PURE__ */ jsx144(IsInOverflowContext.Provider, { value: true, children: /* @__PURE__ */ jsxs71(TldrawUiDropdownMenuRoot, { id: "toolbar overflow", modal: false, children: [
             /* @__PURE__ */ jsx144(TldrawUiDropdownMenuTrigger, { children: /* @__PURE__ */ jsx144(
               TldrawUiButton,
@@ -65692,7 +66433,7 @@ function OverflowingToolbar({ children }) {
                 className: "tlui-buttons__grid",
                 "data-testid": "tools.more-content",
                 id: `${id}_more`,
-                children: /* @__PURE__ */ jsx144(TldrawUiMenuContextProvider, { type: "toolbar-overflow", sourceId: "toolbar", children })
+                children: /* @__PURE__ */ jsx144(TldrawUiMenuContextProvider, { type: "toolbar-overflow", sourceId: "toolbar", children: children2 })
               }
             ) })
           ] }) })
@@ -65740,7 +66481,7 @@ function ToggleToolLockedButton({ activeToolId }) {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/Toolbar/DefaultToolbar.mjs
-var DefaultToolbar = memo24(function DefaultToolbar2({ children }) {
+var DefaultToolbar = memo24(function DefaultToolbar2({ children: children2 }) {
   const editor = useEditor();
   const breakpoint = useBreakpoint();
   const isReadonlyMode = useReadonly();
@@ -65755,7 +66496,7 @@ var DefaultToolbar = memo24(function DefaultToolbar2({ children }) {
         ] }),
         /* @__PURE__ */ jsx146(ToggleToolLockedButton, { activeToolId })
       ] }),
-      /* @__PURE__ */ jsx146(OverflowingToolbar, { children: children ?? /* @__PURE__ */ jsx146(DefaultToolbarContent, {}) })
+      /* @__PURE__ */ jsx146(OverflowingToolbar, { children: children2 ?? /* @__PURE__ */ jsx146(DefaultToolbarContent, {}) })
     ] }),
     breakpoint < PORTRAIT_BREAKPOINT.TABLET_SM && !isReadonlyMode && /* @__PURE__ */ jsx146("div", { className: "tlui-toolbar__tools", children: /* @__PURE__ */ jsx146(MobileStylePanel, {}) })
   ] }) });
@@ -65779,10 +66520,10 @@ function DefaultZoomMenuContent() {
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/components/ZoomMenu/DefaultZoomMenu.mjs
-var DefaultZoomMenu = memo25(function DefaultZoomMenu2({ children }) {
+var DefaultZoomMenu = memo25(function DefaultZoomMenu2({ children: children2 }) {
   const container = useContainer();
   const [isOpen, onOpenChange] = useMenuIsOpen("zoom menu");
-  const content = children ?? /* @__PURE__ */ jsx148(DefaultZoomMenuContent, {});
+  const content = children2 ?? /* @__PURE__ */ jsx148(DefaultZoomMenuContent, {});
   return /* @__PURE__ */ jsxs74(Root26, { dir: "ltr", open: isOpen, onOpenChange, modal: false, children: [
     /* @__PURE__ */ jsx148(Trigger3, { asChild: true, dir: "ltr", children: /* @__PURE__ */ jsx148(ZoomTriggerButton, {}) }),
     /* @__PURE__ */ jsx148(Portal23, { container, children: /* @__PURE__ */ jsx148(
@@ -65831,10 +66572,10 @@ var ZoomTriggerButton = forwardRef24(
 );
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/context/components.mjs
-var TldrawUiComponentsContext = createContext16(null);
+var TldrawUiComponentsContext = createContext17(null);
 function TldrawUiComponentsProvider({
   overrides = {},
-  children
+  children: children2
 }) {
   const _overrides = useShallowObjectIdentity(overrides);
   return /* @__PURE__ */ jsx149(
@@ -65862,7 +66603,7 @@ function TldrawUiComponentsProvider({
         }),
         [_overrides]
       ),
-      children
+      children: children2
     }
   );
 }
@@ -65881,16 +66622,16 @@ function TldrawUiContextProvider({
   assetUrls,
   onUiEvent,
   forceMobile,
-  children
+  children: children2
 }) {
-  return /* @__PURE__ */ jsx150(AssetUrlsProvider, { assetUrls: useDefaultUiAssetUrlsWithOverrides(assetUrls), children: /* @__PURE__ */ jsx150(TranslationProvider, { overrides: useMergedTranslationOverrides(overrides), children: /* @__PURE__ */ jsx150(UiEventsProvider, { onEvent: onUiEvent, children: /* @__PURE__ */ jsx150(ToastsProvider, { children: /* @__PURE__ */ jsx150(DialogsProvider, { children: /* @__PURE__ */ jsx150(BreakPointProvider, { forceMobile, children: /* @__PURE__ */ jsx150(TldrawUiComponentsProvider, { overrides: components, children: /* @__PURE__ */ jsx150(InternalProviders, { overrides, children }) }) }) }) }) }) }) });
+  return /* @__PURE__ */ jsx150(AssetUrlsProvider, { assetUrls: useDefaultUiAssetUrlsWithOverrides(assetUrls), children: /* @__PURE__ */ jsx150(TranslationProvider, { overrides: useMergedTranslationOverrides(overrides), children: /* @__PURE__ */ jsx150(UiEventsProvider, { onEvent: onUiEvent, children: /* @__PURE__ */ jsx150(ToastsProvider, { children: /* @__PURE__ */ jsx150(DialogsProvider, { children: /* @__PURE__ */ jsx150(BreakPointProvider, { forceMobile, children: /* @__PURE__ */ jsx150(TldrawUiComponentsProvider, { overrides: components, children: /* @__PURE__ */ jsx150(InternalProviders, { overrides, children: children2 }) }) }) }) }) }) }) });
 }
 function InternalProviders({
   overrides,
-  children
+  children: children2
 }) {
   const mergedOverrides = useMergedOverrides(overrides);
-  return /* @__PURE__ */ jsx150(ActionsProvider, { overrides: mergedOverrides.actions, children: /* @__PURE__ */ jsx150(ToolsProvider, { overrides: mergedOverrides.tools, children }) });
+  return /* @__PURE__ */ jsx150(ActionsProvider, { overrides: mergedOverrides.actions, children: /* @__PURE__ */ jsx150(ToolsProvider, { overrides: mergedOverrides.tools, children: children2 }) });
 }
 
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/hooks/useEditorEvents.mjs
@@ -65916,20 +66657,20 @@ function useEditorEvents() {
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/ui/TldrawUi.mjs
 var TldrawUi = React68.memo(function TldrawUi2({
   renderDebugMenuItems,
-  children,
+  children: children2,
   hideUi,
   components,
   ...rest
 }) {
-  return /* @__PURE__ */ jsx151(TldrawUiContextProvider, { ...rest, components, children: /* @__PURE__ */ jsx151(TldrawUiInner, { hideUi, renderDebugMenuItems, children }) });
+  return /* @__PURE__ */ jsx151(TldrawUiContextProvider, { ...rest, components, children: /* @__PURE__ */ jsx151(TldrawUiInner, { hideUi, renderDebugMenuItems, children: children2 }) });
 });
 var TldrawUiInner = React68.memo(function TldrawUiInner2({
-  children,
+  children: children2,
   hideUi,
   ...rest
 }) {
   return /* @__PURE__ */ jsxs75(Fragment51, { children: [
-    children,
+    children2,
     hideUi ? null : /* @__PURE__ */ jsx151(TldrawUiContent, { ...rest }),
     /* @__PURE__ */ jsx151(InFrontOfTheCanvasWrapper, {})
   ] });
@@ -66129,7 +66870,7 @@ function usePreloadAssets(assetUrls) {
 // ../../node_modules/.pnpm/tldraw@2.3.0_@types+react-dom@18.3.0_@types+react@18.3.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/tldraw/dist-esm/lib/Tldraw.mjs
 function Tldraw(props) {
   const {
-    children,
+    children: children2,
     maxImageDimension,
     maxAssetSize,
     acceptedImageMimeTypes,
@@ -66203,7 +66944,7 @@ function Tldraw(props) {
             onMount
           }
         ),
-        children
+        children2
       ] })
     }
   );
@@ -66841,7 +67582,7 @@ var TldrawEditorElement = class extends ContentViewElement {
     mode: "open",
     delegatesFocus: true
   });
-  root = createRoot2(this.shadowRoot);
+  root = createRoot3(this.shadowRoot);
   constructor() {
     super();
     const style = document.createElement("style");
@@ -66869,10 +67610,11 @@ var package_default = {
   type: "module",
   main: "output/index.js",
   littlebook: {
-    contentViews: [
+    editors: [
       {
-        identifier: "littlebook-tldraw",
-        contentTypes: ["com.tldraw.file"]
+        element: "littlebook-tldraw",
+        contentTypes: ["com.tldraw.file"],
+        displayName: "tldraw editor"
       }
     ],
     contentTypes: [
@@ -66928,7 +67670,7 @@ var activate = (lb) => {
   const coder = create(lb);
   const type = lb.UniformType.get(tldrawType.identifier);
   const disposers = [lb.registerContentCoder(type, coder)];
-  const tag = config.contentViews[0].identifier;
+  const tag = config.editors[0].element;
   if (!customElements.get(tag)) {
     customElements.define(tag, TldrawEditorElement);
   }

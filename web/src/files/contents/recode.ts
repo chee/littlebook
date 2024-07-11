@@ -8,11 +8,11 @@ export default async function recodeContent(
 	targetType: UniformTypeIdentifier,
 	source: lb.Content<lb.AnyContentValue>,
 ) {
-	const sourceCoder = coderRegistry.getFirst(sourceType)
-	const targetCoder = coderRegistry.getFirst(targetType)
+	let sourceCoder = coderRegistry.getFirst(sourceType)
+	let targetCoder = coderRegistry.getFirst(targetType)
 
 	if (sourceCoder && targetCoder) {
-		const bytes = await sourceCoder.encode(source.value)
+		let bytes = await sourceCoder.encode(source.value)
 		if (bytes instanceof Error) {
 			return bytes
 		}

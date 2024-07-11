@@ -26,10 +26,13 @@ type PopoutProps = {
 }
 
 export default function Popout(props: PopoutProps) {
-	const [popover, setPopover] = createSignal<HTMLDivElement>()
+	let [popover, setPopover] = createSignal<HTMLDivElement>()
 
-	createPreventScroll({
-		enabled: props.when,
+	createEffect(() => {
+		createPreventScroll({
+			element: popover(),
+			enabled: props.when,
+		})
 	})
 
 	onMount(() => {
@@ -48,17 +51,17 @@ export default function Popout(props: PopoutProps) {
 
 	createShortcut(["Escape"], props.close)
 
-	const mouseStyle: () => JSX.CSSProperties | undefined = () => {
+	let mouseStyle: () => JSX.CSSProperties | undefined = () => {
 		if (!props.mouse) return
 
-		const {x, y} = untrack(mousePosition)
+		let {x, y} = untrack(mousePosition)
 		return {
 			left: x - 1 + "px",
 			top: y - 16 + "px",
 		}
 	}
 
-	const boxStyle: () => JSX.CSSProperties | undefined = () => {
+	let boxStyle: () => JSX.CSSProperties | undefined = () => {
 		if (!props.box) return
 		return {
 			left: props.box.left + "px",

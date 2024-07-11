@@ -2,10 +2,11 @@ import type {lb} from "../../types.ts"
 import type {DocHandle} from "@automerge/automerge-repo"
 import UniformType, {
 	type ResolvableUniformType,
-	type ResolvableUniformTypes,
 	type UniformTypeIdentifier,
 } from "./uniform-type.ts"
 import type {ParentComponent, Component} from "solid-js"
+import {createStore} from "solid-js/store"
+import {createSingletonRoot} from "@solid-primitives/rootless"
 
 export interface ContentViewProps<ContentType extends lb.AnyContentValue> {
 	content: lb.Content<ContentType>
@@ -63,70 +64,88 @@ export abstract class ContentViewElement<ContentType extends lb.AnyContentValue>
 export type ContentViewWebComponent<T extends lb.AnyContentValue> =
 	(new () => ContentViewElement<T>) & typeof ContentViewElement<T>
 
-// todo displayName
-export class ContentViewRegistry {
-	private registry = new Map<
-		string | SolidContentView<any>,
-		UniformTypeIdentifier[]
-	>()
-	register(
-		type: ResolvableUniformTypes,
-		element: string | SolidContentView<any>,
-	) {
-		const uniformTypes = Array.isArray(type) ? type : [type]
-		this.registry.set(
-			element,
-			uniformTypes.map(type => UniformType.getIdentifier(type)),
-		)
-	}
+export type ContentViewName = string & {"__content-view-name": true}
 
-	remove(view: string | SolidContentView<any>) {
-		this.registry.delete(view)
-	}
+let contentViewStore = createSingletonRoot(() =>
+	createStore({
+		views: {} as Record<UniformTypeIdentifier, ContentViewName[]>,
+		displayNames: {} as Record<ContentViewName, string>,
+		kinds: {} as Record<ContentViewName, "editor" | "preview">,
+	}),
+)
 
-	getstar = function* (
-		registry: ContentViewRegistry["registry"],
-		type: ResolvableUniformType,
-	) {
-		try {
-			const uniformType = UniformType.get(type)
-
-			for (const [view, types] of registry.entries()) {
-				if (types.includes(uniformType.identifier)) {
-					yield view
-				}
+export const contentViewRegistry = {
+	add(view: lb.plugins.ContentViewDescriptor & {kind: "editor" | "preview"}) {
+		let uniformTypes = (
+			Array.isArray(view.contentTypes) ? view.contentTypes : [view.contentTypes]
+		) as UniformTypeIdentifier[]
+		let [cv, update] = contentViewStore()
+		let elementName = view.element as ContentViewName
+		for (let type of uniformTypes) {
+			if (type in cv.views) {
+				update("views", type, cv.views[type]?.length || 0, elementName)
+			} else {
+				update("views", type, [elementName])
 			}
-			for (const [view, types] of registry.entries()) {
-				for (const type of types) {
-					const supertype = UniformType.get(type)
-					if (!supertype) {
-						return
-					}
-					if (uniformType.conforms(supertype)) {
-						yield view
-					}
+		}
+		update("displayNames", elementName, view.displayName)
+		update("kinds", elementName, view.kind)
+	},
+	addEditor(view: lb.plugins.ContentViewDescriptor) {
+		contentViewRegistry.add({...view, kind: "editor"})
+	},
+	addPreview(view: lb.plugins.ContentViewDescriptor) {
+		contentViewRegistry.add({...view, kind: "preview"})
+	},
+	get: function* (type: ResolvableUniformType) {
+		try {
+			let [cv] = contentViewStore()
+			let uniformType = UniformType.get(type)
+			if (uniformType.identifier in cv.views) {
+				yield* cv.views[uniformType.identifier]
+			}
+
+			for (const supertype of uniformType.supertypes) {
+				if (supertype.identifier in cv.views) {
+					yield* cv.views[supertype.identifier]
 				}
 			}
 		} catch (error) {
 			console.warn(error)
 		}
-	}
-
-	get(type: ResolvableUniformType) {
-		return this.getstar(this.registry, type)
-	}
-
+	},
+	getTypes: function* (element: ContentViewName) {
+		let [cv] = contentViewStore()
+		for (const [type, views] of Object.entries(cv.views)) {
+			if (views.includes(element)) {
+				yield type as UniformTypeIdentifier
+			}
+		}
+	},
+	getDisplayName(element: ContentViewName) {
+		let [cv] = contentViewStore()
+		return cv.displayNames[element]
+	},
+	getKind(element: ContentViewName) {
+		let [cv] = contentViewStore()
+		return cv.kinds[element]
+	},
 	getFirst(type: ResolvableUniformType) {
-		return this.get(type).next().value
-	}
-
+		return contentViewRegistry.get(type).next().value
+	},
+	getEditors: function* () {
+		let [cv] = contentViewStore()
+		for (let [name, kind] of Object.entries(cv.kinds)) {
+			if (kind == "editor") {
+				yield name as ContentViewName
+			}
+		}
+	},
 	request(identifier: UniformTypeIdentifier) {
 		document.dispatchEvent(
 			new CustomEvent<string>("contentviewrequest", {
 				detail: identifier,
 			}),
 		)
-	}
+	},
 }
-
-export const contentViewRegistry = new ContentViewRegistry()

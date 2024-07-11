@@ -10,10 +10,11 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"littlebook": {
-		"contentViews": [
+		"editors": [
 			{
-				"identifier": "littlebook-excalidraw",
-				"contentTypes": ["com.excalidraw.json"]
+				"element": "littlebook-excalidraw",
+				"contentTypes": ["com.excalidraw.json"],
+				"displayName": "Excalidraw"
 			}
 		],
 		"contentTypes": [

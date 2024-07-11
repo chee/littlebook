@@ -45,21 +45,21 @@ export default class UniformType {
 		mimeTypes,
 		icon,
 	}: UniformTypeDescriptor) {
-		const type = new UniformType(
+		let type = new UniformType(
 			identifier as UniformTypeIdentifier,
 			description,
 			icon,
 		)
 
 		if (conformingTo) {
-			for (const supertype of conformingTo) {
-				const u = UniformType.get(supertype)
+			for (let supertype of conformingTo) {
+				let u = UniformType.get(supertype)
 				if (!u) {
 					console.warn(`couldn't add supertype ${u}. doesn't exist`)
 					continue
 				}
 				type.supertypes.add(u)
-				for (const superdupertype of u.supertypes) {
+				for (let superdupertype of u.supertypes) {
 					type.supertypes.add(superdupertype)
 				}
 			}
@@ -93,7 +93,7 @@ export default class UniformType {
 	}
 
 	associateWithFilenameExtensions(filenameExtensions: FilenameExtension[]) {
-		for (const ext of filenameExtensions) {
+		for (let ext of filenameExtensions) {
 			let associations = UniformType.extensions.get(ext)
 			if (!associations) {
 				associations = new Set()
@@ -104,7 +104,7 @@ export default class UniformType {
 	}
 
 	associateWithMIMETypes(mimeTypes: MIMEType[]) {
-		for (const mime of mimeTypes) {
+		for (let mime of mimeTypes) {
 			let associations = UniformType.mimes.get(mime)
 			if (!associations) {
 				associations = new Set()
@@ -126,12 +126,12 @@ export default class UniformType {
 	}
 
 	static mimeTypes = function* (type: UniformType): Generator<MIMEType> {
-		for (const [mime, uts] of UniformType.mimes) {
+		for (let [mime, uts] of UniformType.mimes) {
 			if (uts.has(type)) {
 				yield mime
 			}
 		}
-		for (const supertype of type.supertypes) {
+		for (let supertype of type.supertypes) {
 			yield* UniformType.mimeTypes(supertype)
 		}
 	}
@@ -143,12 +143,12 @@ export default class UniformType {
 	static filenameExtensions = function* (
 		type: UniformType,
 	): Generator<FilenameExtension> {
-		for (const [mime, uts] of UniformType.extensions) {
+		for (let [mime, uts] of UniformType.extensions) {
 			if (uts.has(type)) {
 				yield mime
 			}
 		}
-		for (const supertype of type.supertypes) {
+		for (let supertype of type.supertypes) {
 			yield* UniformType.filenameExtensions(supertype)
 		}
 	}
@@ -157,7 +157,7 @@ export default class UniformType {
 		return UniformType.filenameExtensions(this)
 	}
 
-	get preferredFilenameExtension() {
+	get preferredFilenameExtension(): FilenameExtension | undefined {
 		return this.filenameExtensions.next().value
 	}
 
@@ -174,7 +174,7 @@ export default class UniformType {
 	}
 
 	static get(type: UniformTypeIdentifier | UniformType | string) {
-		const full =
+		let full =
 			typeof type == "string"
 				? UniformType.types.get(type as UniformTypeIdentifier)
 				: type
@@ -184,12 +184,16 @@ export default class UniformType {
 		return full
 	}
 
+	static all() {
+		return UniformType.types.values()
+	}
+
 	static getIdentifier(type: UniformTypeIdentifier | UniformType) {
 		return UniformType.get(type)?.identifier
 	}
 
 	static forFilename(filename: string) {
-		const extmatch = filename.match(/(\.[\.a-zA-Z_0-9]+)$/)
+		let extmatch = filename.match(/(\.[\.a-zA-Z_0-9]+)$/)
 
 		if (extmatch) {
 			for (
@@ -197,7 +201,7 @@ export default class UniformType {
 				extension.length > 0;
 				extension = extension.replace(/^\.+[a-zA-Z_0-9]+/, "")
 			) {
-				const utis = UniformType.extensions.get(
+				let utis = UniformType.extensions.get(
 					extension.replace(/^\.+/, "") as FilenameExtension,
 				)
 
@@ -332,7 +336,7 @@ export default class UniformType {
 
 	static plainText = UniformType.create(
 		"public.plain-text",
-		"plain text",
+		"Plain text",
 		[UniformType.content, UniformType.data],
 		["txt", "text"],
 		["text/plain"],
@@ -340,18 +344,18 @@ export default class UniformType {
 
 	static utf8PlainText = UniformType.create(
 		"public.utf8-plain-text",
-		"utf-8 text",
+		"UTF-8 text",
 		[UniformType.plainText],
 	)
 	static utf16PlainText = UniformType.create(
 		"public.utf16-plain-text",
-		"utf-16 text (native endian)",
+		"UTF-16 text (native endian)",
 		[UniformType.plainText],
 	)
 
 	static utf16ExternalPlainText = UniformType.create(
 		"public.utf16-external-plain-text",
-		"utf-16 text (big endian)",
+		"UTF-16 text (big endian)",
 		[UniformType.plainText],
 	)
 
@@ -710,9 +714,9 @@ export default class UniformType {
 	])
 
 	toJSON(): UniformTypeJSON {
-		const supertypes: UniformTypeJSON[] = []
+		let supertypes: UniformTypeJSON[] = []
 
-		for (const type of this.supertypes) {
+		for (let type of this.supertypes) {
 			supertypes.push(type.toJSON())
 		}
 		return {

@@ -2,7 +2,7 @@ import type {ParentComponent} from "solid-js"
 import "./sidebar.scss"
 import clsx from "clsx"
 
-const Sidebar: ParentComponent<{
+let Sidebar: ParentComponent<{
 	open: () => boolean
 	class?: string
 	which: "primary" | "secondary"

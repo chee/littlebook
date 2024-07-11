@@ -26,6 +26,10 @@ import Menu from "../../elements/menu/menu.tsx"
 import NewFilePicker from "../../files/new-file-picker/new-file-picker.tsx"
 import {useAutomerge} from "../../automerge/use-automerge.ts"
 import useHandle from "../../documents/use-document-handle.ts"
+import createDocumentHandle from "../../documents/create-document-handle.ts"
+import random from "random"
+import type {AutomergeList} from "../../types.ts"
+import {getElementBounds, type NullableBounds} from "@solid-primitives/bounds"
 
 export function FolderTree(props: {
 	id(): lb.FolderId | undefined
@@ -34,12 +38,12 @@ export function FolderTree(props: {
 	// selected: boolean
 	// multi: false
 }) {
-	const [folder, change] = useDocument<lb.Folder>(props.id)
-	const [expanded, setExpanded] = createSignal(false)
-	const [dock] = getDock()
-	const elementID = () => `folder-tree-${props.id()}`
-	const isCurrent = () => getActiveItemId(dock) == props.id()
-	const parents = useParents()
+	let [folder, change] = useDocument<lb.Folder>(props.id)
+	let [expanded, setExpanded] = createSignal(false)
+	let [dock] = getDock()
+	let elementID = () => `folder-tree-${props.id()}`
+	let isCurrent = () => getActiveItemId(dock) == props.id()
+	let parents = useParents()
 	createEffect(() => {
 		parents().set(props.id()!, props.parentId()!)
 	})
@@ -78,11 +82,11 @@ function FolderTreeItem(props: {
 	setParentExpanded(val: boolean): void
 	depth: number
 }) {
-	const [item] = useDocument<lb.Item>(props.id)
-	const [grid] = getDock()
-	const isActive = () => getActiveItemId(grid) == props.id()
+	let [item] = useDocument<lb.Item>(props.id)
+	let [grid] = getDock()
+	let isActive = () => getActiveItemId(grid) == props.id()
 
-	const parents = useParents()
+	let parents = useParents()
 	createEffect(() => {
 		parents().set(props.id()!, props.parentId()!)
 	})
@@ -125,9 +129,9 @@ export function FolderTreeFolder(props: {
 	depth: number
 	current(): boolean
 }) {
-	const [folder, change] = useDocument<lb.Folder>(props.id)
-	const elementID = () => `folder-tree-folder-${folder.latest?.id}`
-	const [expanded, setExpanded] = createSignal(false)
+	let [folder, change] = useDocument<lb.Folder>(props.id)
+	let elementID = () => `folder-tree-folder-${folder.latest?.id}`
+	let [expanded, setExpanded] = createSignal(false)
 
 	return (
 		<Suspense>
@@ -165,31 +169,37 @@ export function FolderTreeFolderInner(props: {
 	depth: number
 	current(): boolean
 }) {
-	const elementID = () => `folder-tree-folder-${props.folder()?.id}`
-	const [grid, updateGrid] = getDock()
-	const [renaming, setRenaming] = createSignal(false)
-	const [menuShowing, setMenuShowing] = createSignal(false)
-	const [newFilePickerShowing, setNewFilePickerShowing] = createSignal(false)
-	const owner = getOwner()
+	let elementID = () => `folder-tree-folder-${props.folder()?.id}`
+	let [renaming, setRenaming] = createSignal(false)
+	let [menuShowing, setMenuShowing] = createSignal(false)
+	let [newFilePickerShowing, setNewFilePickerShowing] = createSignal(false)
+	let owner = getOwner()
+	let {repo} = useAutomerge()
+	let [menuRef, setMenuRef] = createSignal<Element>()
+	let [bounds, setBounds] = createSignal<NullableBounds>()
 
 	return (
 		<Suspense>
 			<Popout when={menuShowing} mouse close={() => setMenuShowing(false)}>
 				<Menu
+					ref={setMenuRef}
 					options={{
-						new: "new",
-						rename: "rename",
-						delete: "delete",
+						new: "New file...",
+						folder: "New folder",
+						rename: "Rename",
+						delete: "Delete",
 					}}
 					select={option => {
+						setBounds(getElementBounds(menuRef()))
 						setMenuShowing(false)
 						if (option == "rename") {
 							return setRenaming(true)
 						}
 						if (option == "delete") {
 							runWithOwner(owner, () => {
-								const [_parent, changeParent] =
-									useDocument<lb.AnyParentDocument>(() => props.parentId())
+								let [_parent, changeParent] = useDocument<lb.AnyParentDocument>(
+									() => props.parentId(),
+								)
 								changeParent(parent => {
 									// todo recursively delete item
 									console.log("hello", parent.id, props.folder()?.id, [
@@ -200,12 +210,37 @@ export function FolderTreeFolderInner(props: {
 						}
 						if (option == "new") {
 							setNewFilePickerShowing(true)
+							return
+						}
+						if (option == "folder") {
+							let newFolderHandle = createDocumentHandle<lb.Folder>(repo, {
+								type: "folder",
+								items: [] as lb.ItemId[] as AutomergeList<lb.ItemId>,
+								icon: random.choice([
+									"🦔",
+									"🍒",
+									"🧀",
+									"✨",
+									"👽",
+									"⭐",
+									"💜",
+									"🐰",
+									"🐷",
+								])!,
+								name: "new folder",
+								note: "",
+							})
+							props.change(folder => {
+								folder.items.push(newFolderHandle.documentId as lb.FolderId)
+							})
+							selectItem(newFolderHandle.documentId as lb.ItemId)
 						}
 					}}
 				/>
 			</Popout>
 
 			<Popout
+				style={{top: bounds()?.top + "px", left: bounds()?.left + "px"}}
 				when={newFilePickerShowing}
 				close={() => setNewFilePickerShowing(false)}>
 				<Show when={newFilePickerShowing()}>
@@ -222,7 +257,11 @@ export function FolderTreeFolderInner(props: {
 			</Popout>
 
 			<header
-				class={clsx("folder-tree-row", props.current() && "current")}
+				class={clsx(
+					"folder-tree-row",
+					props.current() && "current",
+					(newFilePickerShowing() || menuShowing()) && "menuing",
+				)}
 				onclick={() =>
 					runWithOwner(
 						owner,
@@ -298,12 +337,12 @@ function FolderTreeFile(props: {
 	depth: number
 	current(): boolean
 }) {
-	const [file, change, fileHandle] = useDocument<lb.File>(props.id)
-	const [grid, updateGrid] = getDock()
-	const [renaming, setRenaming] = createSignal(false)
-	const [menuShowing, setMenuShowing] = createSignal(false)
-	const owner = getOwner()
-	const automerge = useAutomerge()
+	let [file, change, fileHandle] = useDocument<lb.File>(props.id)
+
+	let [renaming, setRenaming] = createSignal(false)
+	let [menuShowing, setMenuShowing] = createSignal(false)
+	let owner = getOwner()
+	let automerge = useAutomerge()
 
 	return (
 		<Suspense>
@@ -325,11 +364,9 @@ function FolderTreeFile(props: {
 						}
 						if (option == "delete") {
 							runWithOwner(owner, () => {
-								const parentHandle = useHandle<lb.Folder>(() =>
-									props.parentId(),
-								)
+								let parentHandle = useHandle<lb.Folder>(() => props.parentId())
 								// todo make a deleteFile
-								const contentHandle = automerge.repo.find(file()!.content)
+								let contentHandle = automerge.repo.find(file()!.content)
 								contentHandle.delete()
 								parentHandle()
 									?.doc()
@@ -337,7 +374,7 @@ function FolderTreeFile(props: {
 										if (!parent) {
 											return
 										}
-										const index = parent.items.indexOf(props.id()!)
+										let index = parent.items.indexOf(props.id()!)
 										parent.items.splice(index, 1)
 										fileHandle()?.delete()
 									})
@@ -359,6 +396,7 @@ function FolderTreeFile(props: {
 				class={clsx(
 					"folder-tree-item folder-tree-file folder-tree-row",
 					props.current() && "current",
+					menuShowing() && "menuing",
 				)}
 				data-file-id={file.latest?.id}
 				data-content-id={file.latest?.content}

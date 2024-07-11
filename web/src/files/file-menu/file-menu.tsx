@@ -1,9 +1,9 @@
 import Menu from "../../elements/menu/menu.tsx"
 
-export const fileMenuOptions = {
+export let fileMenuOptions = {
 	rename: "rename",
 	delete: "delete",
-} as const
+} as let
 
 export default function FileMenu(props: {
 	select(option: keyof typeof fileMenuOptions): void

@@ -15,7 +15,7 @@ interface CardHeaderAction {
 	action(...any: any[]): any
 }
 
-export const SidebarCard: ParentComponent<{
+export let SidebarCard: ParentComponent<{
 	title?: string
 	hidden?: boolean
 	headerAction?: CardHeaderAction
@@ -54,7 +54,7 @@ interface CardItemProps {
 	[key: string]: any
 }
 
-export const SidebarCardItem: ParentComponent<CardItemProps> = props => {
+export let SidebarCardItem: ParentComponent<CardItemProps> = props => {
 	return (
 		<Dynamic
 			component={props.as || "button"}

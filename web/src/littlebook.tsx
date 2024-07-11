@@ -1,35 +1,33 @@
 import "solid-devtools"
 import "./littlebook.scss"
 
-import {MetaProvider, Title} from "@solidjs/meta"
-import {Show, Suspense, lazy} from "solid-js"
+import {Show, Suspense, getOwner, lazy, runWithOwner} from "solid-js"
 
 import {AutomergeContext, getAutomergeState} from "./automerge/use-automerge.ts"
 
-const SpacePage = lazy(() => import("./space/space.tsx"))
-const getStartPlugins = () => import("./plugins/start-plugins.ts")
+let SpacePage = lazy(() => import("./space/space.tsx"))
+let getStartPlugins = () => import("./plugins/start-plugins.ts")
 
-const PleaseReload = lazy(() => import("./service-worker/please-reload.tsx"))
+let PleaseReload = lazy(() => import("./service-worker/please-reload.tsx"))
 
 import {render} from "solid-js/web"
 
 export default function Littlebook() {
-	const [automerge, _controlAutomerge] = getAutomergeState()
-	getStartPlugins().then(start => start.default())
+	let [automerge, _controlAutomerge] = getAutomergeState()
+	let owner = getOwner()
+	getStartPlugins().then(start => runWithOwner(owner, () => start.default()))
+
 	return (
-		<MetaProvider>
-			<Title>littlebook</Title>
-			<Show when={automerge.latest}>
-				<AutomergeContext.Provider value={automerge.latest}>
-					<Suspense>
-						<SpacePage />
-					</Suspense>
-					<Suspense>
-						<PleaseReload />
-					</Suspense>
-				</AutomergeContext.Provider>
-			</Show>
-		</MetaProvider>
+		<Show when={automerge.latest}>
+			<AutomergeContext.Provider value={automerge.latest}>
+				<Suspense>
+					<SpacePage />
+				</Suspense>
+				<Suspense>
+					<PleaseReload />
+				</Suspense>
+			</AutomergeContext.Provider>
+		</Show>
 	)
 }
 

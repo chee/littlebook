@@ -6,11 +6,11 @@ export async function removeDirectory(dir?: FileSystemDirectoryHandle) {
 
 	console.info(`looking at ${dir.name}`)
 
-	const entries = (await dir.entries()) as AsyncIterable<
+	let entries = (await dir.entries()) as AsyncIterable<
 		[string, FileSystemDirectoryHandle]
 	>
 
-	for await (const [name, entry] of entries) {
+	for await (let [name, entry] of entries) {
 		if (entry.kind === "directory") {
 			console.info(`iterating over ${name}`)
 			await removeDirectory(entry)

@@ -1,4 +1,4 @@
-declare const __brand: unique symbol
+declare let __brand: unique symbol
 type Brand<B> = {[__brand]: B}
 type Branded<T, B> = T & Brand<B>
 import type {
@@ -10,6 +10,7 @@ import type {AutomergeValue, ScalarValue} from "@automerge/automerge/next"
 
 import type {ParentComponent} from "solid-js"
 import type {AnyContentValue} from "./global"
+import type {SolidContentView} from "./files/contents/content-view.ts"
 
 export declare type ParentComponentProps<T = Record<any, any>> = Parameters<
 	ParentComponent<T>
@@ -121,6 +122,20 @@ export declare namespace lb {
 	namespace plugins {
 		type API = typeof import("./plugins/plugin-api.ts")
 		type activate = (lb: API) => () => void
+		type ContentViewDescriptor = {
+			element: string
+			contentTypes: string[]
+			displayName: string
+		}
+
+		type ContentTypeDescriptor = {
+			identifier: string
+			description?: string
+			conformingTo?: string[]
+			filenameExtensions?: string[]
+			mimeTypes?: string[]
+			icon?: string
+		}
 
 		interface Manifest {
 			/**
@@ -128,22 +143,13 @@ export declare namespace lb {
 			 * registerContentView with an element in the activate
 			 * hook
 			 */
-			contentViews?: {
-				identifier: string
-				contentTypes: string[]
-			}[]
+			editors?: ContentViewDescriptor[]
+			previews?: ContentViewDescriptor[]
 			/**
 			 * if you declare this in the manifest, you need to
 			 * registerContentCoder with a coder in the activate hook
 			 */
-			contentTypes?: {
-				identifier: string
-				description?: string
-				conformingTo?: string[]
-				filenameExtensions?: string[]
-				mimeTypes?: string[]
-				icon?: string
-			}[]
+			contentTypes?: ContentTypeDescriptor[]
 		}
 	}
 }

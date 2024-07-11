@@ -1,35 +1,35 @@
-import useDocument from "../../documents/use-document.ts"
+import useDocument from "../../../documents/use-document.ts"
 import {createEffect, For, Show} from "solid-js"
-import useContent from "../contents/use-content.ts"
-import UniformType from "../contents/uniform-type.ts"
-import recodeContent from "../contents/recode.ts"
-import {useAutomerge} from "../../automerge/use-automerge.ts"
-import {coderRegistry} from "../contents/content-coders.ts"
+import useContent from "../../../files/contents/use-content.ts"
+import UniformType from "../../../files/contents/uniform-type.ts"
+import recodeContent from "../../../files/contents/recode.ts"
+import {useAutomerge} from "../../../automerge/use-automerge.ts"
+import {coderRegistry} from "../../../files/contents/content-coders.ts"
 import "./info-panel.scss"
 
 export default function InfoPanel(props: {
 	fileId?: lb.FileId
 	// folderId: lb.FolderId
 }) {
-	const {repo} = useAutomerge()
-	const [file, changeFile] = useDocument<lb.File>(() => props.fileId)
+	let {repo} = useAutomerge()
+	let [file, changeFile] = useDocument<lb.File>(() => props.fileId)
 
-	const [, , contentHandle] = useContent(() => file.latest?.content)
+	let [, , contentHandle] = useContent(() => file.latest?.content)
 	createEffect(() => {
 		contentHandle()
 	})
 
-	const switchContent = async (to: UniformType) => {
+	let switchContent = async (to: UniformType) => {
 		coderRegistry.request(to.identifier)
-		const from = file.latest?.contentType
+		let from = file.latest?.contentType
 
 		if (!from) {
 			return
 		}
 
-		const content = await contentHandle()?.doc()
+		let content = await contentHandle()?.doc()
 
-		const convertedContentHandle = await recodeContent(
+		let convertedContentHandle = await recodeContent(
 			repo,
 			from,
 			to.identifier,
@@ -52,7 +52,7 @@ export default function InfoPanel(props: {
 		}
 	}
 
-	const possibleTypes = () =>
+	let possibleTypes = () =>
 		file.latest && UniformType.forFilename(file.latest.name)
 
 	return (

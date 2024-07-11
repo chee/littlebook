@@ -6,7 +6,7 @@ export type LocalAutomergeState = {
 	home?: lb.SpaceId
 }
 
-const [state, set] = createRoot(() =>
+let [state, set] = createRoot(() =>
 	makePersisted(createStore<LocalAutomergeState>({}), {
 		name: "littlebook",
 	}),
@@ -14,6 +14,6 @@ const [state, set] = createRoot(() =>
 
 export {state, set}
 
-export const useLocalAuthState = () => {
+export let useLocalAuthState = () => {
 	return state
 }

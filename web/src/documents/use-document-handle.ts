@@ -4,8 +4,8 @@ import {useAutomerge} from "../automerge/use-automerge.ts"
 export default function useDocumentHandle<T extends lb.AnyDocument>(
 	id: () => T["id"] | undefined,
 ): () => DocHandle<T> | undefined {
-	const automerge = useAutomerge()
-	const handle = () => id() && automerge.repo.find<T>(id()!)
+	let automerge = useAutomerge()
+	let handle = () => id() && automerge.repo.find<T>(id()!)
 
 	return handle
 }
@@ -13,8 +13,8 @@ export default function useDocumentHandle<T extends lb.AnyDocument>(
 export function useHandle<T>(
 	id: () => AnyDocumentId,
 ): () => DocHandle<T> | undefined {
-	const automerge = useAutomerge()
-	const handle = () => id() && automerge.repo.find<T>(id()!)
+	let automerge = useAutomerge()
+	let handle = () => id() && automerge.repo.find<T>(id()!)
 
 	return handle
 }

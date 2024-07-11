@@ -7,11 +7,10 @@ import {Dynamic} from "solid-js/web"
 import SomethingWentWrong from "./went-bad.tsx"
 import {
 	contentViewRegistry,
-	type ContentViewComponent,
-	type ContentViewProps,
 	type SolidContentView,
 } from "../contents/content-view.ts"
 import "./content-viewer.scss"
+import type {UniformTypeIdentifier} from "../contents/uniform-type.ts"
 
 if (!customElements.get("unknown-content")) {
 	customElements.define("unknown-content", UnknownContent)
@@ -21,21 +20,20 @@ export default function ContentViewer(props: {
 	fileId: lb.FileId
 	view: string | SolidContentView<any> | undefined
 }) {
-	const [file] = useDocument<lb.File>(() => props.fileId)
+	let [file] = useDocument<lb.File>(() => props.fileId)
 
-	const [content, _change, handle] = useContent<any>(() => file()?.content)
+	let [content, _change, handle] = useContent<any>(() => file()?.content)
 
-	const contentViews = () =>
+	let contentViews = () =>
 		file.latest && contentViewRegistry.get(file.latest!.contentType)
+
 	// todo this needs to be selectable in the UI
-	const view = () =>
+	let view = () =>
 		props.view || contentViews()?.next().value || "unknown-content"
 	createEffect(() => {
-		const detail = view()
+		let detail = view()
 		if (typeof detail == "string") {
-			document.dispatchEvent(
-				new CustomEvent<string>("contentviewrequest", {detail}),
-			)
+			contentViewRegistry.request(detail as UniformTypeIdentifier)
 		}
 	})
 
@@ -54,7 +52,7 @@ export default function ContentViewer(props: {
 					fallback={
 						<div class="box content-editor content-editor--loading content-editor--file-loading" />
 					}>
-					<Show when={content.latest && handle()}>
+					<Show when={content.latest && file.latest}>
 						<Dynamic
 							component={view()}
 							prop:content={content.latest}

@@ -18,11 +18,11 @@ type UseContent<T extends lb.AnyContentValue> = [
 export default function useContent<T extends lb.AnyContentValue>(
 	id: () => lb.ContentId | undefined,
 ): UseContent<T> {
-	const automerge = useAutomerge()
+	let automerge = useAutomerge()
 
-	const handle = () => id() && automerge.repo.find<lb.Content<T>>(id()!)
+	let handle = () => id() && automerge.repo.find<lb.Content<T>>(id()!)
 
-	const [doc, control] = createResource(() =>
+	let [doc, control] = createResource(() =>
 		handle()
 			?.whenReady()
 			.then(() => handle()?.doc()),

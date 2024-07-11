@@ -4,7 +4,7 @@ import {Portal} from "solid-js/web"
 import "./please-reload.scss"
 
 export default function Reload() {
-	const {
+	let {
 		offlineReady: [offlineReady, setOfflineReady],
 		needRefresh: [needRefresh, setNeedRefresh],
 		updateServiceWorker,

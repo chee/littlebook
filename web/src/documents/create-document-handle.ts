@@ -14,7 +14,7 @@ export default function createDocumentHandle<DocType extends lb.AnyDocument>(
 	repo: Repo,
 	doc: WithoutId<DocType>,
 ) {
-	const handle = repo.create<DocType>({
+	let handle = repo.create<DocType>({
 		...doc,
 		id: "" as DocType["id"],
 	} as DocType)

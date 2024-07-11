@@ -3,18 +3,30 @@ import {BroadcastChannelNetworkAdapter} from "@automerge/automerge-repo-network-
 import {IndexedDBStorageAdapter} from "@automerge/automerge-repo-storage-indexeddb"
 import {OPFSStorageAdapter} from "@chee/automerge-repo-storage-opfs"
 
+async function likesOPFS() {
+	return (
+		typeof FileSystemWritableFileStream == "function" &&
+		(await navigator.storage
+			.getDirectory()
+			.then(() => true)
+			.catch(() => false))
+	)
+}
+
 export default async function start() {
-	const AutomergeRepo = await import("@automerge/automerge-repo")
+	let AutomergeRepo = await import("@automerge/automerge-repo")
 
-	const idb = new IndexedDBStorageAdapter("lb-docs")
-	const opfs = new OPFSStorageAdapter("lb-docs")
+	let idb = new IndexedDBStorageAdapter("lb-docs")
+	let opfs = new OPFSStorageAdapter("lb-docs")
 
-	const socky = new BrowserWebSocketClientAdapter(
+	let socky = new BrowserWebSocketClientAdapter(
 		`wss://${import.meta.env.LB_SRV_PRODUCTION_HOST}`,
 	)
-	const tabby = new BroadcastChannelNetworkAdapter()
 
-	const network = [socky, tabby]
+	let tabby = new BroadcastChannelNetworkAdapter()
+
+	let network = [socky, tabby]
+
 	if (import.meta.env.DEV) {
 		network.push(
 			new BrowserWebSocketClientAdapter(
@@ -22,9 +34,10 @@ export default async function start() {
 			),
 		)
 	}
-	const storage = typeof FileSystemWritableFileStream == "function" ? opfs : idb
 
-	const repo = new AutomergeRepo.Repo({
+	let storage = (await likesOPFS()) ? opfs : idb
+
+	let repo = new AutomergeRepo.Repo({
 		network,
 		storage,
 	})

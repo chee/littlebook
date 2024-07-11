@@ -112,7 +112,7 @@ class CodemirrorTextEditorView extends ContentViewElement<string> {
 }
 
 export default function activate() {
-	const tag = config.contentViews[0].identifier
+	const tag = config.editors[0].element
 	if (!customElements.get(tag)) {
 		customElements.define(tag, CodemirrorTextEditorView)
 	}

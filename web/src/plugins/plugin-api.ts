@@ -17,5 +17,5 @@ export function registerContentCoder(
 	return () => coderRegistry.remove(types, coder)
 }
 
-export const coders = {text, json, binary}
+export let coders = {text, json, binary}
 export {UniformType}

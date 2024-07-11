@@ -1,11 +1,9 @@
 import {createBreakpoints} from "@solid-primitives/media"
 
-export const getStyle = (
-	property: string,
-	element = document.documentElement,
-) => getComputedStyle(element).getPropertyValue("--" + property)
+export let getStyle = (property: string, element = document.documentElement) =>
+	getComputedStyle(element).getPropertyValue("--" + property)
 
-export const getBreakpoint = (bp: string, el = document.documentElement) => {
+export let getBreakpoint = (bp: string, el = document.documentElement) => {
 	return getStyle("breakpoint-" + bp, el)
 }
 

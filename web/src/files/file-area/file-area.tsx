@@ -30,37 +30,33 @@ type FileAreaProps = {
 	}
 }
 export default function FileArea(props: FileAreaProps) {
-	const [file, _change] = useDocument<lb.File>(() => props.fileId)
-	const [showingMenu, setShowingMenu] = createSignal(false)
-	const [showingViewSelector, setShowingViewSelector] = createSignal(false)
-	const [view, setView] = createSignal<
+	let [file, _change] = useDocument<lb.File>(() => props.fileId)
+	let [showingMenu, setShowingMenu] = createSignal(false)
+	let [showingViewSelector, setShowingViewSelector] = createSignal(false)
+	let [view, setView] = createSignal<
 		string | SolidContentView<any> | undefined
 	>()
 
-	const [dock, updateDock] = getDock()
-	const [dotdotdot, setDotdotdot] = createSignal<HTMLButtonElement>()
+	let [dock, updateDock] = getDock()
+	let [dotdotdot, setDotdotdot] = createSignal<HTMLButtonElement>()
 
-	const views = () =>
+	let views = () =>
 		file() &&
 		Array.from(contentViewRegistry.get(file()!.contentType)).reduce(
 			(obj, item) => {
 				if (typeof item == "string") {
 					// todo displayName
-					obj[item] = item
-				} else {
-					// todo displayName
-					obj[item.name] = item.name
+					obj[item] = contentViewRegistry.getDisplayName(item)
 				}
-
 				return obj
 			},
 			{} as Record<string, string>,
 		)
 
-	const [layout] = getLayout()
+	let [layout] = getLayout()
 
-	const translate = () => (layout.secondary.open ? "-50%" : "-100%")
-	const owner = getOwner()
+	let translate = () => (layout.secondary.open ? "-50%" : "-100%")
+	let owner = getOwner()
 
 	return (
 		<Suspense>
@@ -84,8 +80,6 @@ export default function FileArea(props: FileAreaProps) {
 							runWithOwner(owner, () => {
 								rm(props.paneId!)
 							})
-
-							// updateDock("active", undefined)
 						}
 					}}
 				/>

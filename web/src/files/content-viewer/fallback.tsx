@@ -4,7 +4,7 @@ export class UnknownContent extends ContentViewElement<any> {
 	#file?: lb.File
 	constructor() {
 		super()
-		const style = document.createElement("style")
+		let style = document.createElement("style")
 		style.textContent = /*css*/ `
 			background: var(--content-color-fill);
 			color: var(--content-color-line);

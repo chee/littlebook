@@ -5,10 +5,11 @@
 	"type": "module",
 	"main": "output/index.js",
 	"littlebook": {
-		"contentViews": [
+		"editors": [
 			{
-				"identifier": "littlebook-tldraw",
-				"contentTypes": ["com.tldraw.file"]
+				"element": "littlebook-tldraw",
+				"contentTypes": ["com.tldraw.file"],
+				"displayName": "tldraw editor"
 			}
 		],
 		"contentTypes": [

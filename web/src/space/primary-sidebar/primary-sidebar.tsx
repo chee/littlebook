@@ -21,11 +21,11 @@ import random from "random"
 import createDocumentHandle from "../../documents/create-document-handle.ts"
 
 export default function PrimarySidebar() {
-	const automerge = useAutomerge()
-	const [space, changeSpace] = useDocument<lb.Space>(() => automerge.home)
-	const [grid, updateGrid] = getGrid()
-	const [layout, updateLayout] = getLayout()
-	const [showingSettings, setShowingSettings] = createSignal(false)
+	let automerge = useAutomerge()
+	let [space, changeSpace] = useDocument<lb.Space>(() => automerge.home)
+
+	let [layout, updateLayout] = getLayout()
+	let [showingSettings, setShowingSettings] = createSignal(false)
 
 	return (
 		<Suspense>
@@ -36,7 +36,7 @@ export default function PrimarySidebar() {
 					}}
 					select={async option => {
 						if (option == "dir") {
-							const dir = await showDirectoryPicker()
+							let dir = await showDirectoryPicker()
 							if (dir) {
 								console.log(dir)
 							}
@@ -59,10 +59,10 @@ export default function PrimarySidebar() {
 					</button> */}
 				</div>
 			</header>
-			<SidebarCard>
+			<SidebarCard hidden>
 				<SidebarShortcut icon="📥" title="inbox" />
 			</SidebarCard>
-			<SidebarCard>
+			<SidebarCard hidden>
 				<SidebarShortcut icon="⭐" title="today" />
 				<SidebarShortcut icon="📆" title="upcoming" />
 				<SidebarShortcut icon="🗃️" title="someday" />
@@ -73,7 +73,7 @@ export default function PrimarySidebar() {
 					label: "create folder",
 					icon: <strong>+</strong>,
 					action() {
-						const newFolderHandle = createDocumentHandle<lb.Folder>(
+						let newFolderHandle = createDocumentHandle<lb.Folder>(
 							automerge.repo,
 							{
 								type: "folder",

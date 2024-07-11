@@ -9,7 +9,8 @@ const activate: lb.plugins.activate = (lb: lb.plugins.API) => {
 	const coder = createCoder(lb)
 	const type = lb.UniformType.get(tldrawType.identifier)
 	const disposers = [lb.registerContentCoder(type, coder)]
-	const tag = config.contentViews[0].identifier
+
+	const tag = config.editors[0].element
 	if (!customElements.get(tag)) {
 		customElements.define(tag, view)
 	}

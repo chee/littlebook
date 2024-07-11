@@ -3,7 +3,7 @@ import {createMemo} from "solid-js"
 
 export type ParentsMap = Map<lb.ItemId, lb.AnyParentDocument["id"]>
 
-const useParents = createSingletonRoot(() => {
+let useParents = createSingletonRoot(() => {
 	return createMemo(() => new Map() as ParentsMap)
 })
 

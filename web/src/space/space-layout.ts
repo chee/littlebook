@@ -15,7 +15,7 @@ type SpaceLayout = {
 		open: boolean
 	}
 }
-const store = createSingletonRoot(() =>
+let store = createSingletonRoot(() =>
 	makePersisted(
 		createStore({
 			primary: {
@@ -44,7 +44,7 @@ export function updateSidebarsFromSplitSizes(
 	layout: SpaceLayout,
 	update: UpdateSpaceLayout,
 ) {
-	const [left, main, right] = sizes
+	let [left, main, right] = sizes
 	update(
 		produce(layout => {
 			layout.main.size = main
@@ -73,9 +73,9 @@ export function stabilizeSidebars(
 	layout: SpaceLayout,
 	update: UpdateSpaceLayout,
 ) {
-	const left = layout.primary.open ? layout.primary.size : 0
-	const right = layout.secondary.open ? layout.secondary.size : 0
-	const total = left + layout.main.size + right
+	let left = layout.primary.open ? layout.primary.size : 0
+	let right = layout.secondary.open ? layout.secondary.size : 0
+	let total = left + layout.main.size + right
 	if (total != 1) {
 		update("main", "size", 1 - left - right)
 	}

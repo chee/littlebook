@@ -12,7 +12,7 @@ interface ShortcutProps {
 	class?: string
 }
 
-export const SidebarShortcut: ParentComponent<ShortcutProps> = props => {
+export let SidebarShortcut: ParentComponent<ShortcutProps> = props => {
 	return (
 		<SidebarCardItem
 			{...props}
