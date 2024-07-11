@@ -1,4 +1,13 @@
-import {ErrorBoundary, Show, Suspense, createEffect, on} from "solid-js"
+import {
+	ErrorBoundary,
+	Show,
+	Suspense,
+	createEffect,
+	createMemo,
+	createSignal,
+	on,
+	untrack,
+} from "solid-js"
 import {UnknownContent} from "./fallback.tsx"
 
 import useDocument from "../../documents/use-document.ts"
@@ -7,10 +16,10 @@ import {Dynamic} from "solid-js/web"
 import SomethingWentWrong from "./went-bad.tsx"
 import {
 	contentViewRegistry,
+	type ContentViewName,
 	type SolidContentView,
 } from "../contents/content-view.ts"
 import "./content-viewer.scss"
-import type {UniformTypeIdentifier} from "../contents/uniform-type.ts"
 
 if (!customElements.get("unknown-content")) {
 	customElements.define("unknown-content", UnknownContent)
@@ -28,13 +37,18 @@ export default function ContentViewer(props: {
 		file.latest?.contentType &&
 		contentViewRegistry.get(file.latest!.contentType)
 
-	// todo this needs to be selectable in the UI
-	let view = () =>
-		props.view || contentViews()?.next().value || "unknown-content"
+	let defaultView = createMemo(() => contentViews()?.next().value)
+
+	let view = () => props.view || defaultView() || "unknown-content"
+
 	createEffect(() => {
-		let detail = view()
-		if (typeof detail == "string") {
-			contentViewRegistry.request(detail as UniformTypeIdentifier)
+		let detail = props.view || defaultView()
+
+		if (
+			typeof detail == "string" &&
+			!contentViewRegistry.ready(detail as ContentViewName)
+		) {
+			contentViewRegistry.request(detail as ContentViewName)
 		}
 	})
 
@@ -53,7 +67,16 @@ export default function ContentViewer(props: {
 					fallback={
 						<div class="box content-editor content-editor--loading content-editor--file-loading" />
 					}>
-					<Show when={content.latest && file.latest}>
+					<Show
+						when={
+							view() &&
+							(typeof view() == "string" &&
+							contentViewRegistry.ready(view() as ContentViewName) != null
+								? contentViewRegistry.ready(view() as ContentViewName)
+								: true) &&
+							content.latest &&
+							file.latest
+						}>
 						<Dynamic
 							component={view()}
 							prop:content={content.latest}

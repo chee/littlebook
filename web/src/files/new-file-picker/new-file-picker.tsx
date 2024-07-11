@@ -1,4 +1,4 @@
-import {For} from "solid-js"
+import {For, getOwner, runWithOwner} from "solid-js"
 import useDocument from "../../documents/use-document.ts"
 import {binary, coderRegistry} from "../contents/content-coders.ts"
 import UniformType, {type MIMEType} from "../contents/uniform-type.ts"
@@ -6,6 +6,7 @@ import UniformType, {type MIMEType} from "../contents/uniform-type.ts"
 import {useAutomerge} from "../../automerge/use-automerge.ts"
 import createDocumentHandle from "../../documents/create-document-handle.ts"
 import {contentViewRegistry} from "../contents/content-view.ts"
+import {importPlugin} from "../../plugins/plugins.ts"
 
 export default function NewFilePicker(props: {
 	parentFolderId(): lb.FolderId
@@ -14,9 +15,11 @@ export default function NewFilePicker(props: {
 	let {repo} = useAutomerge()
 	let [, changeFolder] = useDocument<lb.Folder>(props.parentFolderId)
 
-	const fileTypes = [...contentViewRegistry.getEditors()]
+	let fileTypes = [...contentViewRegistry.getEditors()]
 		.flatMap(name => [...contentViewRegistry.getTypes(name)])
 		.map(type => UniformType.get(type))
+
+	let owner = getOwner()
 
 	return (
 		<div class="menu">
@@ -71,6 +74,10 @@ export default function NewFilePicker(props: {
 							})
 
 							let computerFile = await computerFileHandle.getFile()
+
+							if (computerFile.name.endsWith(".lbplugin")) {
+								return runWithOwner(owner, () => importPlugin(computerFile))
+							}
 							let bytes = new Uint8Array(await computerFile.arrayBuffer())
 
 							let types =

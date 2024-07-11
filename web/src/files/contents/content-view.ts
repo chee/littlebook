@@ -7,6 +7,7 @@ import UniformType, {
 import type {ParentComponent, Component} from "solid-js"
 import {createStore} from "solid-js/store"
 import {createSingletonRoot} from "@solid-primitives/rootless"
+import {pluginStore} from "../../plugins/plugins.ts"
 
 export interface ContentViewProps<ContentType extends lb.AnyContentValue> {
 	content: lb.Content<ContentType>
@@ -71,6 +72,7 @@ let contentViewStore = createSingletonRoot(() =>
 		views: {} as Record<UniformTypeIdentifier, ContentViewName[]>,
 		displayNames: {} as Record<ContentViewName, string>,
 		kinds: {} as Record<ContentViewName, "editor" | "preview">,
+		ready: {} as Record<ContentViewName, boolean>,
 	}),
 )
 
@@ -90,6 +92,7 @@ export const contentViewRegistry = {
 		}
 		update("displayNames", elementName, view.displayName)
 		update("kinds", elementName, view.kind)
+		update("ready", elementName, false)
 	},
 	addEditor(view: lb.plugins.ContentViewDescriptor) {
 		contentViewRegistry.add({...view, kind: "editor"})
@@ -141,11 +144,20 @@ export const contentViewRegistry = {
 			}
 		}
 	},
-	request(identifier: UniformTypeIdentifier) {
-		document.dispatchEvent(
-			new CustomEvent<string>("contentviewrequest", {
-				detail: identifier,
-			}),
-		)
+	ready(element: ContentViewName) {
+		let [cv] = contentViewStore()
+		return cv.ready[element]
+	},
+	async request(identifier: ContentViewName) {
+		let [_cv, update] = contentViewStore()
+		let [plugins] = pluginStore
+		let activator = plugins.views[identifier]
+		if (activator) {
+			await activator.activate()
+			activator.active = true
+			update("ready", identifier, true)
+		} else {
+			console.warn(`can't activate ${identifier}. never heard of her`)
+		}
 	},
 }

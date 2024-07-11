@@ -13,7 +13,7 @@ import {
 import {AutomergeContext, getAutomergeState} from "./automerge/use-automerge.ts"
 
 let SpacePage = lazy(() => import("./space/space.tsx"))
-let getStartPlugins = () => import("./plugins/start-plugins.ts")
+let getStartPlugins = () => import("./plugins/plugins.ts")
 
 let PleaseReload = lazy(() => import("./service-worker/please-reload.tsx"))
 

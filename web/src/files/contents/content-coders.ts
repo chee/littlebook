@@ -1,4 +1,4 @@
-import {contentCoderActivators} from "../../plugins/start-plugins.ts"
+import {contentCoderActivators, pluginStore} from "../../plugins/plugins.ts"
 import UniformType, {
 	type ResolvableUniformType,
 	type ResolvableUniformTypes,
@@ -144,10 +144,12 @@ export class ContentCoderRegistry {
 	}
 
 	async request(identifier: UniformTypeIdentifier) {
-		const activator = contentCoderActivators[identifier]
-		if (activator && !activator.active) {
-			return Promise.race(activator.activate.map(n => n()))
+		let [plugins] = pluginStore
+		let activator = plugins.coders[identifier]
+		if (activator) {
+			return activator.activate()
 		}
+		console.warn(`can't activate coder:${identifier}. she never `)
 	}
 }
 
