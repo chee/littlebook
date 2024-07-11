@@ -1,0 +1,17 @@
+{
+	"name": "@littlebook/package",
+	"description": "packages a littlebook plugin file from a compiled directory",
+	"version": "1.0.0",
+	"main": "bundle-plugin.js",
+	"bin": {
+		"package": "./package.js"
+	},
+	"type": "module",
+	"keywords": [],
+	"author": "",
+	"license": "AGPL-3.0-only",
+	"dependencies": {
+		"@types/node": "^20.14.10",
+		"tar": "^7.4.0"
+	}
+}
