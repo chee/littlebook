@@ -4,6 +4,7 @@ import {NodeWSServerAdapter} from "@automerge/automerge-repo-network-websocket"
 import {NodeFSStorageAdapter} from "@automerge/automerge-repo-storage-nodefs"
 import express from "express"
 import ws from "express-ws"
+import cors from "cors"
 const directory =
 	process.env.AUTOMERGE_DIRECTORY || "../automerge-sync-server-data"
 if (!fs.existsSync(directory)) {
@@ -14,6 +15,7 @@ const srv = exws.app
 const websocket = exws.getWss()
 srv.ws("/", () => {})
 srv.use(express.static("public"))
+srv.use(cors())
 srv.get("/installed-plugins", (request, response) => {
 	fs.readdir("public/plugins", (error, paths) => {
 		response.json(paths)
