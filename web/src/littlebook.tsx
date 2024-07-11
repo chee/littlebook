@@ -28,16 +28,19 @@ export default function Littlebook() {
 		.then(() => setPluginsReady(true))
 
 	return (
-		<Show when={automerge.latest && pluginsReady()}>
-			<AutomergeContext.Provider value={automerge.latest}>
-				<Suspense>
-					<SpacePage />
-				</Suspense>
-				<Suspense>
-					<PleaseReload />
-				</Suspense>
-			</AutomergeContext.Provider>
-		</Show>
+		<>
+			<Suspense>
+				<PleaseReload />
+			</Suspense>
+
+			<Show when={automerge.latest && pluginsReady()}>
+				<AutomergeContext.Provider value={automerge.latest}>
+					<Suspense>
+						<SpacePage />
+					</Suspense>
+				</AutomergeContext.Provider>
+			</Show>
+		</>
 	)
 }
 
