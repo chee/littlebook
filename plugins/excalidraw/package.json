@@ -13,7 +13,9 @@
 		"editors": [
 			{
 				"element": "littlebook-excalidraw",
-				"contentTypes": ["com.excalidraw.json"],
+				"contentTypes": [
+					"com.excalidraw.json"
+				],
 				"displayName": "Excalidraw"
 			}
 		],
@@ -22,8 +24,13 @@
 				"identifier": "com.excalidraw.json",
 				"description": "Excalidrawing",
 				"conformingTo": [],
-				"filenameExtensions": ["excalidraw"],
-				"mimeTypes": ["application/x-excalidraw", "application/json"]
+				"filenameExtensions": [
+					"excalidraw"
+				],
+				"mimeTypes": [
+					"application/x-excalidraw",
+					"application/json"
+				]
 			}
 		]
 	},

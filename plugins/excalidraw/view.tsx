@@ -263,7 +263,6 @@ export default class ExcalidrawEditorElement extends ContentViewElement<Excalidr
 	connectedCallback() {
 		this.root.render(<ExcalidrawView {...this.props()} />)
 		this.handle.on("change", this.render)
-		this.handle.on("change", console.info)
 	}
 
 	render = (payload: {doc: lb.Content<ExcalidrawJSON>}) => {
