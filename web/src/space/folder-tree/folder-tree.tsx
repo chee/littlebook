@@ -31,6 +31,9 @@ import random from "random"
 import type {AutomergeList} from "../../types.ts"
 import {getElementBounds, type NullableBounds} from "@solid-primitives/bounds"
 
+// todo this should probably be dumber
+// and not actually know how to get the stuff
+// only know how to show it
 export function FolderTree(props: {
 	id(): lb.FolderId | undefined
 	parentId(): lb.AnyParentDocument["id"] | undefined
@@ -41,7 +44,6 @@ export function FolderTree(props: {
 	let [folder, change] = useDocument<lb.Folder>(props.id)
 	let [expanded, setExpanded] = createSignal(false)
 	let [dock] = getDock()
-	let elementID = () => `folder-tree-${props.id()}`
 	let isCurrent = () => getActiveItemId(dock) == props.id()
 	let parents = useParents()
 	createEffect(() => {
@@ -50,18 +52,10 @@ export function FolderTree(props: {
 
 	return (
 		<Suspense>
-			<div
-				class="folder-tree"
-				role="tree"
-				id={elementID()}
-				data-folder-id={props.id()}
-				aria-selected={isCurrent()}
-				aria-current={isCurrent()}
-				aria-multiselectable="false"
-				aria-label={props.label}
-				aria-expanded={expanded()}>
+			<div class="folder-tree" data-folder-id={props.id()}>
 				<FolderTreeFolderInner
-					{...props}
+					role="tree"
+					label={props.label}
 					current={isCurrent}
 					parentId={props.parentId}
 					folder={folder}
@@ -84,7 +78,7 @@ function FolderTreeItem(props: {
 }) {
 	let [item] = useDocument<lb.Item>(props.id)
 	let [grid] = getDock()
-	let isActive = () => getActiveItemId(grid) == props.id()
+	let current = () => getActiveItemId(grid) == props.id()
 
 	let parents = useParents()
 	createEffect(() => {
@@ -92,32 +86,34 @@ function FolderTreeItem(props: {
 	})
 
 	createEffect(() => {
-		if (isActive()) {
+		if (current()) {
 			props.setParentExpanded(true)
 		}
 	})
 
 	return (
 		<Suspense>
-			<Switch>
-				<Match when={item.latest?.type == "folder"}>
-					<FolderTreeFolder
-						id={props.id as () => lb.FolderId}
-						parentId={props.parentId}
-						setParentExpanded={props.setParentExpanded}
-						depth={props.depth}
-						current={isActive}
-					/>
-				</Match>
-				<Match when={item.latest?.type == "file"}>
-					<FolderTreeFile
-						id={props.id as () => lb.FileId}
-						parentId={props.parentId as () => lb.FolderId}
-						depth={props.depth}
-						current={isActive}
-					/>{" "}
-				</Match>
-			</Switch>
+			<li role="treeitem" data-depth={props.depth}>
+				<Switch>
+					<Match when={item.latest?.type == "folder"}>
+						<FolderTreeFolder
+							id={props.id as () => lb.FolderId}
+							parentId={props.parentId}
+							setParentExpanded={props.setParentExpanded}
+							depth={props.depth}
+							current={current}
+						/>
+					</Match>
+					<Match when={item.latest?.type == "file"}>
+						<FolderTreeFile
+							id={props.id as () => lb.FileId}
+							parentId={props.parentId as () => lb.FolderId}
+							depth={props.depth}
+							current={current}
+						/>{" "}
+					</Match>
+				</Switch>
+			</li>
 		</Suspense>
 	)
 }
@@ -137,13 +133,8 @@ export function FolderTreeFolder(props: {
 		<Suspense>
 			<div
 				class="folder-tree-item folder-tree-folder"
-				role="group"
 				id={elementID()}
 				data-folder-id={props.id()}
-				aria-multiselectable="false"
-				aria-selected={props.current()}
-				aria-current={props.current()}
-				aria-expanded={expanded()}
 				data-depth={props.depth}>
 				<FolderTreeFolderInner
 					{...props}
@@ -160,6 +151,7 @@ export function FolderTreeFolder(props: {
 }
 
 export function FolderTreeFolderInner(props: {
+	role?: "tree" | "group"
 	folder(): lb.Folder | undefined
 	change(fn: ChangeFn<lb.Folder>): void
 	parentId(): lb.AnyParentDocument["id"] | undefined
@@ -168,8 +160,10 @@ export function FolderTreeFolderInner(props: {
 	setParentExpanded(val: boolean): void
 	depth: number
 	current(): boolean
+	label?: string
 }) {
-	let elementID = () => `folder-tree-folder-${props.folder()?.id}`
+	let elementID = () =>
+		`folder-tree-${props.role || "group"}-${props.folder()?.id}`
 	let [renaming, setRenaming] = createSignal(false)
 	let [menuShowing, setMenuShowing] = createSignal(false)
 	let [newFilePickerShowing, setNewFilePickerShowing] = createSignal(false)
@@ -275,18 +269,28 @@ export function FolderTreeFolderInner(props: {
 				}}>
 				<div
 					class="folder-tree-indent"
-					style={{width: `calc(var(--folder-tree-indent) * ${props.depth})`}}
+					style={{
+						width: `calc(var(--folder-tree-indent-size) * ${props.depth})`,
+					}}
 				/>
 				<button
 					type="button"
 					class="folder-tree-expander"
+					aria-label={`toggle ${props.folder()?.name} folder`}
 					aria-controls={elementID()}
+					aria-pressed={props.expanded()}
 					onclick={event => {
 						event.stopPropagation()
 						props.setExpanded(val => !val)
 					}}
+					ondblclick={event => {
+						event.preventDefault()
+						setMenuShowing(true)
+						event.stopImmediatePropagation()
+					}}
 				/>
 				<button
+					aria-pressed={props.current()}
 					type="button"
 					class="folder-tree-item-name folder-tree-folder-name">
 					<span class="folder-tree-item-name__icon">
@@ -310,20 +314,24 @@ export function FolderTreeFolderInner(props: {
 				</button>
 			</header>
 
-			<ul hidden={!props.expanded()}>
+			<ul
+				hidden={!props.expanded()}
+				id={elementID()}
+				role={props.role || "group"}
+				aria-multiselectable="false"
+				aria-label={props.label}
+				aria-expanded={props.expanded()}>
 				<For each={props.folder()?.items}>
 					{id => (
-						<li>
-							<FolderTreeItem
-								id={() => id}
-								parentId={() => props.folder()?.id}
-								setParentExpanded={val => {
-									props.setExpanded(val)
-									props.setParentExpanded(val)
-								}}
-								depth={props.depth + 1}
-							/>
-						</li>
+						<FolderTreeItem
+							id={() => id}
+							parentId={() => props.folder()?.id}
+							setParentExpanded={val => {
+								props.setExpanded(val)
+								props.setParentExpanded(val)
+							}}
+							depth={props.depth + 1}
+						/>
 					)}
 				</For>
 			</ul>
@@ -392,6 +400,7 @@ function FolderTreeFile(props: {
 					}}
 				/>
 			</Popout>
+
 			<div
 				class={clsx(
 					"folder-tree-item folder-tree-file folder-tree-row",
@@ -400,10 +409,6 @@ function FolderTreeFile(props: {
 				)}
 				data-file-id={file.latest?.id}
 				data-content-id={file.latest?.content}
-				role="treeitem"
-				data-depth={props.depth}
-				aria-selected={props.current()}
-				aria-current={props.current()}
 				onclick={() => {
 					runWithOwner(owner, () => {
 						file.latest && selectItem(file.latest!.id)
@@ -416,11 +421,19 @@ function FolderTreeFile(props: {
 				}}>
 				<div
 					class="folder-tree-indent"
-					style={{width: `calc(var(--folder-tree-indent) * ${props.depth})`}}
+					style={{
+						width: `calc(var(--folder-tree-indent-size) * ${props.depth})`,
+					}}
 				/>
 				<button
 					type="button"
-					class="folder-tree-item-name folder-tree-file-name">
+					class="folder-tree-item-name folder-tree-file-name"
+					aria-pressed={props.current()}
+					ondblclick={event => {
+						event.preventDefault()
+						setMenuShowing(true)
+						event.stopImmediatePropagation()
+					}}>
 					<span class="folder-tree-item-name__icon">
 						{file.latest?.icon || "📄"}
 					</span>

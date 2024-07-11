@@ -1,5 +1,6 @@
 :root {
-	--folder-tree-indent: 1em;
+	--folder-tree-indent-size: 1rem;
+	--folder-tree-expander-size: 24px;
 }
 
 .folder-tree {
@@ -73,41 +74,41 @@
 	position: relative;
 }
 
-.folder-tree-indent::before {
-	height: var(--folder-tree-indent);
-	width: var(--folder-tree-indent);
+.folder-tree-item-name {
+	display: flex;
+	align-items: center;
+}
+.folder-tree-item-name__icon {
+	display: block;
+	width: var(--folder-tree-indent-size);
+	height: var(--folder-tree-indent-size);
+	font-size: var(--folder-tree-indent-size);
+}
 
-	// &::before {
-	// 	content: "";
-	// 	display: block;
-	// 	position: absolute;
-	// 	left: 50%;
-	// 	width: 1px;
-	// 	height: 1em;
-	// 	background: black;
-	// }
+.folder-tree-folder
+	> .folder-tree-row
+	.folder-tree-item-name
+	.folder-tree-item-name__icon {
+	margin-left: 2px;
+}
+
+.folder-tree-item-name__name {
+	margin-left: 4px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .folder-tree-expander {
-	.folder-tree-item & {
-		margin-left: calc(var(--folder-tree-indent) / 2);
+	height: var(--folder-tree-expander-size);
+	width: calc(var(--folder-tree-expander-size) + 4px);
+	&::before {
+		display: block;
+		font-size: var(--folder-tree-expander-size);
 	}
-	width: var(--folder-tree-indent);
-	height: var(--folder-tree-indent);
-}
-
-.folder-tree-item-name__icon {
-	width: var(--folder-tree-indent);
-	height: var(--folder-tree-indent);
-	margin-right: calc(var(--folder-tree-indent) / 4);
-	margin-left: calc(var(--folder-tree-indent) / 4);
-}
-
-[aria-expanded] > header > .folder-tree-expander::before {
-	display: block;
-	content: "▶︎";
-}
-
-[aria-expanded="true"] > header > .folder-tree-expander::before {
-	content: "▼";
+	&[aria-pressed="true"]::before {
+		content: "▼";
+	}
+	&[aria-pressed="false"]::before {
+		content: "▶︎";
+	}
 }
