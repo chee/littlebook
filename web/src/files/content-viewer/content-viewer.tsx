@@ -25,7 +25,8 @@ export default function ContentViewer(props: {
 	let [content, _change, handle] = useContent<any>(() => file()?.content)
 
 	let contentViews = () =>
-		file.latest && contentViewRegistry.get(file.latest!.contentType)
+		file.latest?.contentType &&
+		contentViewRegistry.get(file.latest!.contentType)
 
 	// todo this needs to be selectable in the UI
 	let view = () =>
