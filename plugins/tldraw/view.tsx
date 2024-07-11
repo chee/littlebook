@@ -10,8 +10,6 @@ import {
 import {
 	useCallback,
 	useEffect,
-	Suspense,
-	lazy,
 	type FunctionComponent,
 	useRef,
 	useLayoutEffect,
