@@ -1,20 +1,18 @@
-import {
-	defineConfig,
-	type UserConfig,
-	loadEnv,
-	type UserConfigExport,
-} from "vite"
+import {defineConfig, type UserConfig} from "vite"
 import {VitePWA as pwa} from "vite-plugin-pwa"
 import wasm from "vite-plugin-wasm"
 import solid from "vite-plugin-solid"
 import devtools from "solid-devtools/vite"
-import {visualizer} from "rollup-plugin-visualizer"
 import {analyzer} from "vite-bundle-analyzer"
+import {readdir} from "node:fs/promises"
+
+let plugins = await readdir("./public/plugins")
 
 export const config: UserConfig = {
 	envPrefix: "LB",
 	define: {
 		"process.env.IS_PREACT": JSON.stringify("true"),
+		"import.meta.env.SERVER_PLUGINS": plugins,
 	},
 	worker: {
 		format: "es",
