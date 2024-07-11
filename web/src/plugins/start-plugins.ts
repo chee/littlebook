@@ -248,37 +248,42 @@ let db = new Promise<IDBDatabase>(yay => {
 async function loadPluginsFromIDB() {
 	let owner = getOwner()
 	let pluginDatabase = await db
-	let installed = JSON.parse(
-		localStorage.getItem("installed-plugins")!,
-	) as string[]
+	let loads: Promise<void>[] = []
 	let tr = pluginDatabase.transaction(["manifests", "bundles"], "readonly")
-	let loads = []
-	for (let pluginName of installed) {
-		let manifest = tr.objectStore("manifests").get(pluginName)
-		let prom = new Promise<void>(yay => {
-			manifest.onsuccess = () => {
-				let result = runWithOwner(owner, () =>
-					registerFromManifest(manifest.result),
-				)
+	await new Promise<void>(yaycursor => {
+		let cursorResult = tr.objectStore("manifests").openCursor()
+		cursorResult.onsuccess = () => {
+			let cursor = cursorResult.result
+
+			if (cursor) {
+				let manifest = cursor.value as lb.plugins.Manifest
+				let result = runWithOwner(owner, () => registerFromManifest(manifest))
 				if (result) {
 					let {types, viewNames} = result
-					let bytes = tr.objectStore("bundles").get(pluginName)
-					bytes.onsuccess = () => {
-						let b = bytes.result
-						let blob = new Blob([b], {type: "application/javascript"})
-						let url = URL.createObjectURL(blob)
-						let imp = async () => {
-							import(/* @vite-ignore */ url).then(mod => mod.default(pluginAPI))
+					let bytes = tr.objectStore("bundles").get(cursor.key)
+					let load = new Promise<void>(yay => {
+						bytes.onsuccess = () => {
+							let b = bytes.result
+							let blob = new Blob([b], {type: "application/javascript"})
+							let url = URL.createObjectURL(blob)
+							let imp = async () => {
+								import(/* @vite-ignore */ url).then(mod =>
+									mod.default(pluginAPI),
+								)
+							}
+							push(types, contentCoderActivators, imp)
+							push(viewNames, contentViewActivators, imp)
+							yay()
+							cursor.continue()
 						}
-						push(types, contentCoderActivators, imp)
-						push(viewNames, contentViewActivators, imp)
-						yay()
-					}
+					})
+					loads.push(load)
 				}
+			} else {
+				yaycursor()
 			}
-		})
-		loads.push(prom)
-	}
+		}
+	})
 	await Promise.allSettled(loads)
 }
 
@@ -287,18 +292,8 @@ export default async function startPlugins() {
 	// loadPluginsFromPluginServer(import.meta.env.LB_SRV_URL_BASE)
 	let owner = getOwner()
 	await downloadPluginsFromPluginServer("/")
-		.then(names => {
-			let currentPlugins = JSON.parse(
-				localStorage.getItem("installed-plugins") || "[]",
-			)
-			let joined = new Set(...currentPlugins, ...names)
-			localStorage.setItem(
-				"installed-plugins",
-				JSON.stringify(Array.from(joined)),
-			)
-			return runWithOwner(owner, () => loadPluginsFromIDB())
-		})
-		.catch(() => loadPluginsFromIDB())
+		.then(() => runWithOwner(owner, () => loadPluginsFromIDB()))
+		.catch(() => runWithOwner(owner, () => loadPluginsFromIDB()))
 
 	// loadPluginsFromDependencies()
 }
