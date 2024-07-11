@@ -1,7 +1,14 @@
 import "solid-devtools"
 import "./littlebook.scss"
 
-import {Show, Suspense, getOwner, lazy, runWithOwner} from "solid-js"
+import {
+	Show,
+	Suspense,
+	createSignal,
+	getOwner,
+	lazy,
+	runWithOwner,
+} from "solid-js"
 
 import {AutomergeContext, getAutomergeState} from "./automerge/use-automerge.ts"
 
@@ -15,10 +22,13 @@ import {render} from "solid-js/web"
 export default function Littlebook() {
 	let [automerge, _controlAutomerge] = getAutomergeState()
 	let owner = getOwner()
-	getStartPlugins().then(start => runWithOwner(owner, () => start.default()))
+	let [pluginsReady, setPluginsReady] = createSignal(false)
+	getStartPlugins()
+		.then(start => runWithOwner(owner, () => start.default()))
+		.then(() => setPluginsReady(true))
 
 	return (
-		<Show when={automerge.latest}>
+		<Show when={automerge.latest && pluginsReady()}>
 			<AutomergeContext.Provider value={automerge.latest}>
 				<Suspense>
 					<SpacePage />
