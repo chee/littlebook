@@ -1,3 +1,4 @@
+import {contentCoderActivators} from "../../plugins/start-plugins.ts"
 import UniformType, {
 	type ResolvableUniformType,
 	type ResolvableUniformTypes,
@@ -142,12 +143,11 @@ export class ContentCoderRegistry {
 		return this.registry.keys()
 	}
 
-	request(identifier: UniformTypeIdentifier) {
-		document.dispatchEvent(
-			new CustomEvent<string>("contentcoderrequest", {
-				detail: identifier,
-			}),
-		)
+	async request(identifier: UniformTypeIdentifier) {
+		const activator = contentCoderActivators[identifier]
+		if (activator && !activator.active) {
+			return Promise.race(activator.activate.map(n => n()))
+		}
 	}
 }
 
