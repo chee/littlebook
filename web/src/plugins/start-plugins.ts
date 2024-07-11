@@ -288,7 +288,14 @@ export default async function startPlugins() {
 	let owner = getOwner()
 	await downloadPluginsFromPluginServer("/")
 		.then(names => {
-			localStorage.setItem("installed-plugins", JSON.stringify(names))
+			let currentPlugins = JSON.parse(
+				localStorage.getItem("installed-plugins") || "[]",
+			)
+			let joined = new Set(...currentPlugins, ...names)
+			localStorage.setItem(
+				"installed-plugins",
+				JSON.stringify(Array.from(joined)),
+			)
 			return runWithOwner(owner, () => loadPluginsFromIDB())
 		})
 		.catch(() => loadPluginsFromIDB())
