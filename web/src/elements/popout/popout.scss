@@ -15,6 +15,7 @@
 	border: 1px solid var(--popout-border-color);
 	border-top: 0;
 	@include shadow;
+	max-height: 10em;
 }
 
 ::backdrop {

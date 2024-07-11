@@ -20,7 +20,7 @@ export default function NewFilePicker(props: {
 
 	return (
 		<div class="menu">
-			<ul class="new menu-items" style={{"max-height": "6em"}}>
+			<ul class="new menu-items">
 				<For each={fileTypes}>
 					{type => (
 						<li>
