@@ -1,4 +1,4 @@
-import {createSignal, For, Suspense} from "solid-js"
+import {createSignal, For, getOwner, runWithOwner, Suspense} from "solid-js"
 import {useAutomerge} from "../../automerge/use-automerge.ts"
 import useDocument from "../../documents/use-document.ts"
 import {
@@ -7,7 +7,7 @@ import {
 } from "../sidebar/sidebar-card/sidebar-card.tsx"
 import "./primary-sidebar.scss"
 import getLayout, {closeSidebar, toggleSidebar} from "../space-layout.ts"
-import getGrid, {selectItem, type Dock, type UpdateGrid} from "../area/dock.ts"
+import {selectItem} from "../area/dock.ts"
 import breakpoints from "../../styles/breakpoints.ts"
 import {SidebarShortcut} from "./shortcuts.tsx"
 import {FolderTree} from "../folder-tree/folder-tree.tsx"
@@ -19,6 +19,8 @@ import Popout from "../../elements/popout/popout.tsx"
 import type {AutomergeList} from "../../types.ts"
 import random from "random"
 import createDocumentHandle from "../../documents/create-document-handle.ts"
+import {importPlugin} from "../../plugins/plugins.ts"
+import {getElementBounds} from "@solid-primitives/bounds"
 
 export default function PrimarySidebar() {
 	let automerge = useAutomerge()
@@ -26,21 +28,52 @@ export default function PrimarySidebar() {
 
 	let [layout, updateLayout] = getLayout()
 	let [showingSettings, setShowingSettings] = createSignal(false)
+	let owner = getOwner()
+
+	let dotdotdot: HTMLButtonElement | undefined
 
 	return (
 		<Suspense>
-			<Popout when={showingSettings} close={() => setShowingSettings(false)}>
+			<Popout
+				box={getElementBounds(dotdotdot)}
+				when={showingSettings}
+				close={() => setShowingSettings(false)}>
 				<Menu
 					options={{
-						dir: "choose littlebook directory",
+						// dir: "choose littlebook directory",
+						plugin: "install plugin",
 					}}
 					select={async option => {
-						if (option == "dir") {
-							let dir = await showDirectoryPicker()
-							if (dir) {
-								console.log(dir)
-							}
+						// if (option == "dir") {
+						// 	let dir = await showDirectoryPicker()
+						// 	if (dir) {
+						// 		console.log(dir)
+						// 	}
+						// }
+
+						if (option == "plugin") {
+							let fsa = await import("file-system-access")
+							let [computerFileHandle] = await fsa.showOpenFilePicker({
+								_preferPolyfill: false,
+								multiple: false,
+								types: [
+									{
+										description: "littlebook plugins",
+										accept: {"application/tar": ["*.lbplugin"]},
+									},
+								],
+								accepts: [
+									{
+										extensions: ["lbplugin"],
+									},
+								],
+							})
+
+							let computerFile = await computerFileHandle.getFile()
+
+							runWithOwner(owner, () => importPlugin(computerFile))
 						}
+						setShowingSettings(false)
 					}}
 				/>
 			</Popout>
@@ -54,9 +87,12 @@ export default function PrimarySidebar() {
 				</div>
 				<div class="headstrip-middle" />
 				<div class="headstrip-right">
-					{/* <button type="button" onclick={() => setShowingSettings(true)}>
+					<button
+						type="button"
+						onclick={() => setShowingSettings(true)}
+						ref={dotdotdot}>
 						...
-					</button> */}
+					</button>
 				</div>
 			</header>
 			<SidebarCard hidden>
