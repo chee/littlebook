@@ -14,7 +14,13 @@
 	"packageManager": "pnpm@9.4.0",
 	"pnpm": {
 		"peerDependencyRules": {
-			"ignoreMissing": ["@opentelemetry/*", "@netlify/*"]
+			"ignoreMissing": [
+				"@opentelemetry/*",
+				"@netlify/*"
+			]
 		}
+	},
+	"dependencies": {
+		"@littlebook/package": "link:tools/package"
 	}
 }
