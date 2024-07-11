@@ -49,15 +49,6 @@ export const config: UserConfig = {
 				clientsClaim: true,
 				maximumFileSizeToCacheInBytes: 999999999999999,
 				additionalManifestEntries: [],
-				runtimeCaching: [
-					{
-						urlPattern: /.*plugins\/.*?/,
-						handler: "StaleWhileRevalidate",
-						options: {
-							cacheName: "plugins",
-						},
-					},
-				],
 			},
 			devOptions: {
 				enabled: true,
