@@ -13,5 +13,12 @@ export default {
 		"process.env.IS_PREACT": JSON.stringify("true"),
 	},
 	target: ["safari17", "firefox127"],
-	loader: {".svg": "dataurl", ".css": "text"},
+	loader: {
+		".svg": "dataurl",
+		".css": "text",
+		".png": "dataurl",
+		".json": "dataurl",
+		".woff": "dataurl",
+		".woff2": "dataurl",
+	},
 }

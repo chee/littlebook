@@ -7,7 +7,7 @@ import {
 } from "../../web/src/files/contents/content-view.ts"
 
 import {Counter} from "@automerge/automerge/slim/next"
-import type {DocHandleChangePayload} from "@automerge/automerge-repo"
+import type {DocHandle, DocHandleChangePayload} from "@automerge/automerge-repo"
 import {useMediaQuery} from "usehooks-ts"
 
 // internal to the plugin
@@ -151,20 +151,15 @@ const ExcalidrawView: ContentViewComponent<
 							)
 							const automergeElement = doc.value.elements[automergeIndex]
 							if (automergeElement) {
-								console.log(
-									excaliIndex,
-									excaliElement.id,
-									automergeIndex,
-									automergeElement.id,
-									doc.value.elements[excaliIndex],
-								)
 								merge(automergeElement, excaliElement)
 								if (excaliIndex !== automergeIndex) {
 									doc.value.elements.deleteAt(automergeIndex)
-
-									doc.value.elements.insertAt(excaliIndex, {
-										...automergeElement,
-									})
+									const t = {}
+									merge(t, excaliElement)
+									doc.value.elements.insertAt(
+										excaliIndex,
+										t as WriteableExcalidrawElement,
+									)
 								}
 							} else {
 								const target = {}
@@ -268,9 +263,10 @@ export default class ExcalidrawEditorElement extends ContentViewElement<Excalidr
 	connectedCallback() {
 		this.root.render(<ExcalidrawView {...this.props()} />)
 		this.handle.on("change", this.render)
+		this.handle.on("change", console.info)
 	}
 
-	render = (payload: DocHandleChangePayload<lb.Content<ExcalidrawJSON>>) => {
+	render = (payload: {doc: lb.Content<ExcalidrawJSON>}) => {
 		this.root.render(<ExcalidrawView {...this.props()} content={payload.doc} />)
 	}
 

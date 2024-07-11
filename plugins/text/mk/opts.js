@@ -13,7 +13,14 @@ export default {
 		"process.env.IS_PREACT": JSON.stringify("true"),
 	},
 	target: ["safari17", "firefox127"],
-	loader: {".svg": "dataurl"},
+	loader: {
+		".svg": "dataurl",
+		".png": "dataurl",
+		".css": "dataurl",
+		".json": "dataurl",
+		".woff": "dataurl",
+		".woff2": "dataurl",
+	},
 	alias: {
 		"@automerge/automerge": "@automerge/automerge/slim",
 	},
