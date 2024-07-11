@@ -97,6 +97,83 @@ async function loadPluginsFromPluginServer(urlbase: string) {
 	await Promise.allSettled(fetches)
 }
 
+// async function downloadPluginsFromPluginServer(urlbase: string) {
+// 	let fetches = []
+
+// 	for (let pluginName of plugins) {
+// 		let plugbase = `${urlbase}plugins/${pluginName}`
+// 		fetches.push(
+// 			fetch(`${plugbase}/package.json`)
+
+// 				.then(resp => resp.json())
+// 				.then(async pkg => {
+// 					if ("littlebook" in pkg) {
+// 						let manifest = pkg.littlebook as lb.plugins.Manifest
+// 						if (!manifest) return
+// 						localStorage.setItem(
+// 							`plugin-${pluginName}-manifest`,
+// 							JSON.stringify(manifest),
+// 						)
+// 						let url = `${plugbase}/${pkg.browser || pkg.main || "index.js"}`
+// 						// todo blob or uint8array in indexeddb or file in opfs
+// 						let bundle = await (await fetch(url)).text()
+// 						localStorage.setItem(`plugin-${pluginName}-bundle`, bundle)
+// 					}
+// 				})
+// 				.then(() => {
+// 					return pluginName
+// 				}),
+// 		)
+// 	}
+
+// 	return Promise.allSettled(fetches)
+// }
+
+async function downloadPluginsFromPluginServer(urlbase: string) {
+	let downloaded: string[] = []
+	let pluginDatabase = await db
+
+	for (let pluginName of plugins) {
+		let plugbase = `${urlbase}plugins/${pluginName}`
+		let name = await fetch(`${plugbase}/package.json`)
+			.then(resp => resp.json())
+			.then(async pkg => {
+				if ("littlebook" in pkg) {
+					let manifest = pkg.littlebook as lb.plugins.Manifest
+					if (!manifest) return
+					let url = `${plugbase}/${pkg.browser || pkg.main || "index.js"}`
+					let bundle = new Uint8Array(await (await fetch(url)).arrayBuffer())
+
+					let tr = pluginDatabase.transaction(
+						["manifests", "bundles"],
+						"readwrite",
+						{durability: "strict"},
+					)
+
+					tr.objectStore("manifests").put(manifest, pluginName)
+					tr.objectStore("bundles").put(bundle, pluginName)
+
+					await new Promise((yay, boo) => {
+						tr.oncomplete = yay
+						tr.onerror = boo
+						tr.onabort = boo
+					})
+				}
+			})
+			.then(() => {
+				return pluginName
+			})
+			.catch(error => {
+				console.error(error)
+				return undefined
+			})
+		if (name) {
+			downloaded.push(name)
+		}
+	}
+	return downloaded
+}
+
 declare global {
 	interface DocumentEventMap {
 		contentcoderrequest: CustomEvent<UniformTypeIdentifier>
@@ -122,8 +199,99 @@ function registerFromManifest(manifest: lb.plugins.Manifest) {
 	return {types, viewNames}
 }
 
+// async function loadPluginsFromLocalStorage() {
+// 	let installed = JSON.parse(
+// 		localStorage.getItem("installed-plugins")!,
+// 	) as string[]
+
+// 	for (let pluginName of installed) {
+// 		let manifest = JSON.parse(
+// 			localStorage.getItem(`plugin-${pluginName}-manifest`)!,
+// 		) as lb.plugins.Manifest
+// 		let {types, viewNames} = registerFromManifest(manifest)
+// 		let imp = async () => {
+// 			let bytes = new TextEncoder().encode(
+// 				localStorage.getItem(`plugin-${pluginName}-bundle`)!,
+// 			)
+// 			let blob = new Blob([bytes], {type: "application/javascript"})
+// 			let url = URL.createObjectURL(blob)
+// 			return import(/* @vite-ignore */ url).then(mod => mod.default(pluginAPI))
+// 		}
+
+// 		push(types, contentCoderActivators, imp)
+// 		push(viewNames, contentViewActivators, imp)
+// 	}
+// }
+
+let idb = indexedDB.open("littleplugins", 6)
+idb.addEventListener("upgradeneeded", event => {
+	let db = idb.result
+	if (db.objectStoreNames.contains("manifests")) {
+		db.deleteObjectStore("manifests")
+		db.deleteObjectStore("bundles")
+	}
+	db.createObjectStore("manifests")
+	db.createObjectStore("bundles")
+})
+let db = new Promise<IDBDatabase>(yay => {
+	idb.addEventListener("success", event => {
+		yay(idb.result)
+	})
+})
+// let store = db.then(db => {
+// 	return new Promise<IDBObjectStore>(yay => {
+// 		let tr = db.transaction(["littleplugins"], "readwrite")
+// 		tr.objectStore("littleplugins")
+// 	})
+// })
+
+async function loadPluginsFromIDB() {
+	let owner = getOwner()
+	let pluginDatabase = await db
+	let installed = JSON.parse(
+		localStorage.getItem("installed-plugins")!,
+	) as string[]
+	let tr = pluginDatabase.transaction(["manifests", "bundles"], "readonly")
+	let loads = []
+	for (let pluginName of installed) {
+		let manifest = tr.objectStore("manifests").get(pluginName)
+		let prom = new Promise<void>(yay => {
+			manifest.onsuccess = () => {
+				let result = runWithOwner(owner, () =>
+					registerFromManifest(manifest.result),
+				)
+				if (result) {
+					let {types, viewNames} = result
+					let bytes = tr.objectStore("bundles").get(pluginName)
+					bytes.onsuccess = () => {
+						let b = bytes.result
+						let blob = new Blob([b], {type: "application/javascript"})
+						let url = URL.createObjectURL(blob)
+						let imp = async () => {
+							import(/* @vite-ignore */ url).then(mod => mod.default(pluginAPI))
+						}
+						push(types, contentCoderActivators, imp)
+						push(viewNames, contentViewActivators, imp)
+						yay()
+					}
+				}
+			}
+		})
+		loads.push(prom)
+	}
+	await Promise.allSettled(loads)
+}
+
 export default async function startPlugins() {
 	registerDefaultViews()
-	loadPluginsFromPluginServer(import.meta.env.LB_SRV_URL_BASE)
+	// loadPluginsFromPluginServer(import.meta.env.LB_SRV_URL_BASE)
+	let owner = getOwner()
+	await downloadPluginsFromPluginServer("/")
+		.then(names => {
+			localStorage.setItem("installed-plugins", JSON.stringify(names))
+			return runWithOwner(owner, () => loadPluginsFromIDB())
+		})
+		.catch(() => loadPluginsFromIDB())
+
 	// loadPluginsFromDependencies()
 }
