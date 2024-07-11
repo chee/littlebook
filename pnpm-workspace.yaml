@@ -6,3 +6,4 @@ packages:
   - "pkg/*"
   - "!**/t/**"
   - "plugins/*"
+  - "tools/*"
