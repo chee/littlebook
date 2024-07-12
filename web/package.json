@@ -8,6 +8,7 @@
 		"dev": "vite dev --port 1234",
 		"mk": "vite build",
 		"tmk": "tsc && vite build",
+		"postmk": "mkdir -p public/plugins; cd public/plugins; for pkg in ../../../plugins/*/package.json; do package $(dirname $pkg) .; done",
 		"start": "vite preview"
 	},
 	"dependencies": {
