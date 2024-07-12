@@ -8,6 +8,12 @@ import os from "node:os"
 import path from "node:path"
 import {chdir} from "node:process"
 
+let tmp = os.tmpdir()
+let src = path.resolve(process.argv[2] || process.cwd())
+let dest = path.resolve(process.argv[3] || process.cwd())
+
+process.chdir(src)
+
 let pkgJson = await fs.readFile("./package.json", "utf-8").catch(error => {
 	console.error(error)
 	process.stdout.write("\n\n\n")
@@ -44,10 +50,7 @@ if (!manifest) {
 	process.exit(4)
 }
 
-let root = os.tmpdir()
-let cwd = process.cwd()
-
-chdir(root)
+chdir(tmp)
 
 let lbj = JSON.stringify(
 	{
@@ -65,7 +68,7 @@ let promise = fs.writeFile(manifestPath, lbj, "utf-8")
 let file = `./${pkg.name
 	?.replace("@littlebook/", "")
 	.replace(/[/]/g, ".")}.lbplugin`
-createReadStream(path.join(cwd, pkg.browser || pkg.main || "./index.js"))
+createReadStream(path.join(src, pkg.browser || pkg.main || "./index.js"))
 	.pipe(createWriteStream(bundlePath))
 	.addListener("finish", async () => {
 		await promise
@@ -76,7 +79,7 @@ createReadStream(path.join(cwd, pkg.browser || pkg.main || "./index.js"))
 			},
 			[manifestPath, bundlePath]
 		).then(() => {
-			fs.rename(file, path.join(cwd, file))
+			fs.rename(file, path.resolve(dest, file))
 			console.info(`done: ${file}`)
 			process.exit(0)
 		})
