@@ -15,6 +15,7 @@ type DockGrid = (PaneId | PaneId[])[]
 
 export type Dock = {
 	active?: PaneId
+	focused?: PaneId | "primary" | "secondary"
 	panes: {
 		[id: PaneId]: ItemPane
 	}
@@ -25,6 +26,7 @@ let store = createSingletonRoot(() =>
 	makePersisted(
 		createStore({
 			active: undefined,
+			focused: undefined,
 			panes: {},
 			grid: [],
 		} satisfies Dock as Dock),
