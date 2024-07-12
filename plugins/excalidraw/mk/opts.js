@@ -5,8 +5,8 @@ export default {
 	entryPoints: ["index.ts"],
 	logLevel: "info",
 	bundle: true,
-	sourcemap: true,
-	minify: false,
+	sourcemap: false,
+	minify: true,
 	format: "esm",
 	outfile: "index.js",
 	define: {

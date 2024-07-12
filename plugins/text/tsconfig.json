@@ -2,9 +2,9 @@
 	"compilerOptions": {
 		"outDir": ".",
 		"allowImportingTsExtensions": true,
-		"target": "ES2022",
-		"module": "Preserve",
-		"moduleResolution": "Bundler",
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "NodeNext",
 		"noEmit": true,
 		"checkJs": true,
 		"strict": true,

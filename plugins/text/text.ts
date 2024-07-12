@@ -1,9 +1,9 @@
 import {ContentViewElement} from "../../web/src/files/contents/content-view.ts"
-import "./text.css"
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
 import {EditorView, lineNumbers} from "@codemirror/view"
 import {Compartment} from "@codemirror/state"
 import {minimalSetup} from "codemirror"
+import type {DocHandle} from "@automerge/automerge-repo/slim"
 import {
 	LanguageDescription,
 	indentUnit,
@@ -32,9 +32,15 @@ class CodemirrorTextEditorView extends ContentViewElement<string> {
 				height: 100%;
 				background: var(--content-color-fill);
 				color: var(--content-color-line);
+				border: 0;
+				font-family: var(--family-mono);
+				padding: var(--space-1);
 			}
 			.cm-editor {
 				height: 100%;
+			}
+			.cm-editor.cm-focused.cm-focused {
+				outline: 0;
 			}
 		`
 		this.shadowRoot?.append(style)

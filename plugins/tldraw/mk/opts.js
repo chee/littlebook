@@ -5,7 +5,7 @@ export default {
 	entryPoints: ["index.ts"],
 	logLevel: "info",
 	bundle: true,
-	sourcemap: true,
+	sourcemap: false,
 	minify: globalThis.process.env.NODE_ENV != "development",
 	format: "esm",
 	outdir: "output",
