@@ -1,0 +1,17 @@
+#!/bin/zsh -e
+PATH=$(dirname $(realpath $0)):$PATH
+rm -r "$2"
+mkdir "$2"
+cd "$2"
+extract-lb-json "$1/package.json" >lb.json
+main="$(jq -r .browser $1/package.json)"
+
+if [ -z "$main" ]; then
+	main="$(jq -r .main $1/package.json)"
+fi
+
+if [ -z "$main" ]; then
+	main="index.js"
+fi
+
+cp "$1/$main" "bundle.js"

@@ -1,0 +1,2 @@
+#!/bin/zsh
+jq '(.littlebook+={name:.name,description:.description}) .littlebook' $*
