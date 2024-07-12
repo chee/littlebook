@@ -23,7 +23,7 @@ export const config: UserConfig = {
 		// 	emitFile: true,
 		// 	filename: "stats.html",
 		// }) as PluginOption,
-		analyzer(),
+		// analyzer(),
 		wasm(),
 		pwa({
 			registerType: "prompt",
@@ -79,6 +79,9 @@ export const config: UserConfig = {
 		sourcemap: "hidden",
 		minify: false,
 		target: ["firefox127", "safari17"],
+		rollupOptions: {
+			treeshake: "smallest",
+		},
 	},
 	css: {
 		preprocessorOptions: {
