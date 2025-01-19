@@ -1,0 +1,114 @@
+:root {
+	--page-fill: var(--fill);
+	--page-line: var(--line);
+	--workspace-fill: var(--page-fill);
+	--workspace-line: var(--page-line);
+
+	--workspace-separator-line: black;
+
+	--sidebar-widget-fill: var(--page-fill);
+	--sidebar-widget-line: var(--page-line);
+	--sidebar-widget-radius: 8px;
+	--sidebar-widget-padding: 0.5rem;
+}
+
+.app {
+	width: 100%;
+	height: 100%;
+	background: var(--page-fill);
+	color: var(--page-line);
+}
+
+.workspace {
+	width: 100%;
+	height: 100%;
+	background: var(--workspace-fill);
+	color: var(--workspace-line);
+}
+
+[data-corvu-resizable-root] {
+	width: 100%;
+	height: 100%;
+}
+
+[data-corvu-resizable-handle] {
+	flex-basis: 0.1rem;
+	background: var(--workspace-separator-line);
+}
+
+[data-corvu-resizable-handle][data-orientation="horizontal"] {
+	padding-inline: var(--resizable-handle-padding);
+}
+
+[data-corvu-resizable-handle][data-orientation="vertical"] {
+	padding-block: var(--resizable-handle-padding);
+}
+
+.sidebar {
+	background: var(--sidebar-fill);
+	color: var(--sidebar-line);
+	height: 100%;
+	display: flow-root;
+	[data-corvu-resizable-panel][data-collapsed] & {
+		display: none;
+	}
+}
+
+.sidebar-widget {
+	background: var(--sidebar-widget-fill);
+	color: var(--sidebar-widget-line);
+	margin-inline: 1rem;
+	margin-block: 1rem;
+	border-radius: var(--sidebar-widget-radius);
+	display: flex;
+	flex-direction: column;
+	border: 1px solid;
+	box-shadow: -1px -1px black, 2px 2px black, 3px 3px black;
+}
+
+.sidebar-widget__header {
+	font-weight: 500;
+	font-size: 1.4em;
+	padding: var(--sidebar-widget-padding);
+	padding-block: 0.5rem;
+	/* border-bottom: 1px solid */
+	/* color-mix(in srgb, var(--sidebar-widget-fill), var(--sidebar-fill) 50%); */
+	display: flex;
+	place-content: space-between;
+	place-items: center;
+}
+
+:has(> iconify-icon) {
+	display: flex;
+}
+
+.side-widget__header-actions {
+	> * {
+		display: flex;
+	}
+}
+
+.sidebar-widget__content {
+	display: flex;
+	flex-direction: column;
+}
+
+.document-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.document-list__button {
+	width: 100%;
+	text-align: left;
+	padding-inline: var(--sidebar-widget-padding);
+	padding-block: 0.25rem;
+
+	&[aria-pressed="true"] {
+		background: var(--carribean-current);
+		color: white;
+	}
+	&[aria-pressed="mixed"] {
+		/* color: var(--carribean-current); */
+	}
+}

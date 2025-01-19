@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "✨ @pointplace/monorepo",
+			"path": "."
+		},
+		{
+			"name": "🚀 app",
+			"path": "app"
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Gruvbox Dark Hard"
+	}
+}

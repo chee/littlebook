@@ -1,0 +1,22 @@
+:root {
+	--family-sans: "Jost", "Jost*", system-ui, -apple-system, sans-serif;
+	--family-mono: Iosevka Rabbits, Iosevka, Jetbrains Mono, monospace;
+	--font-size: 16px;
+}
+
+html {
+	font-family: var(--family-sans);
+}
+
+html,
+body,
+#root {
+	height: 100%;
+}
+
+code,
+kbd,
+samp,
+output {
+	font-family: var(--family-mono);
+}

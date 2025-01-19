@@ -1,0 +1,28 @@
+:root {
+	--page-header-fill: black;
+	--page-header-line: white;
+}
+
+.page-header {
+	background: var(--page-header-fill);
+	color: var(--page-header-line);
+	padding: 1rem;
+	display: flex;
+	place-items: center;
+	gap: 0.5rem;
+	line-height: 1;
+	cursor: default;
+	user-select: none;
+}
+
+.page-header-logo {
+	font-weight: 500;
+	display: flex;
+	gap: 0.25rem;
+	place-items: center;
+}
+
+.page-header-logo__icon {
+	font-size: 1.4em;
+	color: var(--mynt);
+}

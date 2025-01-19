@@ -1,0 +1,11 @@
+{
+	"private": true,
+	"name": "@pointplace/monorepo",
+	"version": "0.0.0",
+	"description": "the pointplace monorepo",
+	"author": "chee <chee@rabbits.computer>",
+	"license": "GPL-3.0-or-later",
+	"dependencies": {
+		"@biomejs/biome": "1.9.4"
+	}
+}
