@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"outDir": "./output",
+		"allowImportingTsExtensions": true,
+		"target": "ES2022",
+		"module": "Preserve",
+		"moduleResolution": "Bundler",
+		"noEmit": true,
+		"checkJs": true,
+		"strict": true,
+		"allowJs": true,
+		/* Preact Config */
+		"jsx": "react-jsx",
+		// "jsxImportSource": "preact",
+		"skipLibCheck": true,
+		// "paths": {
+			// "react": ["./node_modules/preact/compat/"],
+			// "react-dom": ["./node_modules/preact/compat/"]
+		// }
+	},
+	"include": ["*.ts", "*.tsx"]
+}
