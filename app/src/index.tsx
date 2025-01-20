@@ -23,3 +23,37 @@ sources: files, rss, calendars
 	   -> editor ->
 sinks: files, api calls, out->in
 */
+
+async function registerServiceWorker() {
+	if ("serviceWorker" in navigator) {
+		try {
+			const registration = await navigator.serviceWorker.register(
+				"/service-worker.js",
+				{
+					scope: "/",
+				}
+			)
+			if (registration.installing) {
+				console.info("Service worker installing")
+			} else if (registration.waiting) {
+				console.info("Service worker installed")
+				location.reload()
+			} else if (registration.active) {
+				console.info("Service worker active")
+			}
+		} catch (error) {
+			console.error(`Registration failed with ${error}`)
+		}
+		let ref = false
+		navigator.serviceWorker.addEventListener("controllerchange", () => {
+			if (ref) return
+			ref = true
+			window.location.reload()
+		})
+	}
+}
+
+if (location.hostname === "localhost") {
+} else {
+	registerServiceWorker()
+}
