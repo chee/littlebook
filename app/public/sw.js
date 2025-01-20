@@ -1,5 +1,5 @@
-/// <reference types="@serviceworker-types/serviceworker" />
 // update this when changing the service worker
+// todo automate
 const SERVICE_WORKER_VERSION = "lb.v2"
 
 /*const addResourcesToCache = async resources => {

@@ -6,7 +6,9 @@
 		"module": "ESNext",
 		"lib": ["ES2020"],
 		"skipLibCheck": true,
-		"typeRoots": ["node_modules/@serviceworker-types"]
+		"typeRoots": ["node_modules/@serviceworker-types"],
+		"allowJs": true,
+		"noEmit": true
 	},
 	"include": ["public/sw.js"]
 }
