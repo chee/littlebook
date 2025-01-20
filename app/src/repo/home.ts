@@ -2,50 +2,39 @@ import {makePersisted} from "@solid-primitives/storage"
 import repo from "./create.ts"
 import {createSignal, untrack} from "solid-js"
 import type {AutomergeUrl} from "@automerge/automerge-repo"
-import {Schema} from "effect"
-import type {AutomergeValue} from "@automerge/automerge/next"
 
-type pptypes =
-	| "folder"
-	| "text"
-	| "sound"
-	| "canvas"
-	| "bookmark"
-	| "folder"
-	| "richtext"
+export interface DocumentBase {
+	name: string
+	icon?: string
+	type: string
+	importer?: AutomergeUrl
+	editors?: AutomergeUrl[]
+}
 
-// todo make an AutomergeURL schema type
-// const FolderType = Schema.Struct({
-// 	name: Schema.Literal("folder"),
-// 	shape: Schema.Struct({
-// 		children: Schema.List(Schema.String),
-// 	}),
-// })
-
-// type FolderType = Schema.Schema.Type<typeof FolderType>
-
-const Folder = Schema.Struct({
-	// todo consider symbol
-	type: Schema.Literal("folder"),
-	children: Schema.Array(Schema.String),
-})
-
-type Folder = Schema.Schema.Type<typeof Folder>
-
-const Text = Schema.Struct({
-	type: Schema.Literal("text"),
-	text: Schema.String,
-})
-
-type Text = Schema.Schema.Type<typeof Text>
-
-export interface FolderDocument {
-	type: "folder"
+export interface ParentDocument extends DocumentBase {
 	children: AutomergeUrl[]
 }
 
-export interface TextDocument {
+export interface FolderDocument extends ParentDocument {
+	type: "folder"
+}
+
+export interface HomeDocument extends ParentDocument {
+	type: "home"
+	importers: AutomergeUrl[]
+	exporters: AutomergeUrl[]
+	editors: AutomergeUrl[]
+	treeviewers: AutomergeUrl[]
+	viewers: AutomergeUrl[]
+}
+
+export interface TextDocument extends DocumentBase {
 	type: "text"
+	text: string
+}
+
+export interface RichtextDocument extends DocumentBase {
+	type: "richtext"
 	text: string
 }
 
@@ -53,10 +42,17 @@ const [homeURL, setHomeURL] = makePersisted(
 	// eslint-disable-next-line solid/reactivity
 	createSignal(
 		(localStorage.getItem("home") as AutomergeUrl) ??
-			repo.create<FolderDocument>({
-				type: "folder",
+			repo.create<HomeDocument>({
+				name: "home",
+				type: "home",
+				importers: [],
+				exporters: [],
+				editors: [],
+				treeviewers: [],
+				viewers: [],
 				children: [
 					repo.create<TextDocument>({
+						name: "my manifesto.txt",
 						type: "text",
 						text: "",
 					}).url,
