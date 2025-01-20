@@ -21,7 +21,7 @@ export default function PageHeader(props: {
 			</button>
 			<div class="page-header-logo">
 				<span class="page-header-logo__icon">◉</span>
-				pointplace
+				littlebook.app
 			</div>
 		</header>
 	)
