@@ -34,7 +34,7 @@
 	},
 	"devDependencies": {
 		"@automerge/automerge": "^2.2.4",
-		"@automerge/automerge-codemirror": "^0.0.11",
+		"@automerge/automerge-codemirror": "^0.0.12",
 		"@automerge/automerge-repo": "2.0.0-alpha.14",
 		"@codemirror/lang-html": "^6.4.9",
 		"@codemirror/lang-javascript": "^6.2.2",
