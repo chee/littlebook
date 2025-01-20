@@ -5,8 +5,8 @@
 	--dv-paneview-active-outline-color: var(--primary);
 	--dv-tabs-and-actions-container-font-size: 1rem;
 	--dv-tabs-and-actions-container-height: 2rem;
-	--dv-drag-over-background-color: var(--bloo);
-	--dv-drag-over-border-color: var(--bloo);
+	--dv-drag-over-background-color: var(--blue-crayola);
+	--dv-drag-over-border-color: var(--blue-crayola);
 	--dv-tabs-container-scrollbar-color: #888;
 	--dv-icon-hover-background-color: rgba(255, 255, 255, 0.5);
 	--dv-floating-box-shadow: 1px 1px pink, 2px 2px pink, 3px 3px pink,
@@ -40,11 +40,13 @@
 	);
 	--dv-inactivegroup-hiddenpanel-tab-color: black;
 
-	--dv-separator-border: color-mix(
+	/* --dv-separator-border: color-mix(
 		in srgb,
 		var(--dock-line),
 		var(--dock-fill) 80%
-	);
+	); */
+
+	--dv-separator-border: var(--workspace-separator-line);
 
 	/* --dv-tab-divider-color: var(--dock-line); */
 	--dv-paneview-header-border-color: var(--dock-line);
@@ -56,24 +58,16 @@
 }
 
 .dv-view {
-	width: 100% !important;
+	/* width: 100% !important; */
 }
 
 .dv-groupview {
-	width: 100%;
-}
-
-.dv-tabs-container {
-	width: 100%;
-	border-bottom: 1px solid black;
-}
-
-.dv-single-tab {
-	width: 100%;
-}
-
-.dv-tab {
 	/* width: 100%; */
+}
+
+.dv-tabs-and-actions-container {
+	/* width: 100%; */
+	border-bottom: 1px solid var(--workspace-separator-line);
 }
 
 /** custom **/
@@ -100,4 +94,20 @@
 
 .dock-tab__close:hover {
 	color: var(--pynk);
+}
+
+.dock-header-actions {
+	display: flex;
+	gap: 0.5rem;
+	height: 100%;
+}
+
+.dock-header-actions__button {
+	display: flex;
+	height: 100%;
+	place-content: center;
+	place-items: center;
+	&:hover {
+		background: color-mix(in srgb, var(--dock-fill), var(--dock-line) 10%);
+	}
 }

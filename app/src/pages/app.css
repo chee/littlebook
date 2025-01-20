@@ -14,14 +14,17 @@
 
 .app {
 	width: 100%;
-	height: 100%;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 	background: var(--page-fill);
 	color: var(--page-line);
 }
 
 .workspace {
 	width: 100%;
-	height: 100%;
+	display: flex;
+	flex: 1;
 	background: var(--workspace-fill);
 	color: var(--workspace-line);
 }
@@ -44,71 +47,115 @@
 	padding-block: var(--resizable-handle-padding);
 }
 
-.sidebar {
-	background: var(--sidebar-fill);
-	color: var(--sidebar-line);
-	height: 100%;
-	display: flow-root;
-	[data-corvu-resizable-panel][data-collapsed] & {
-		display: none;
+/*
+ctx */
+
+.dock-tab__context-menu-trigger {
+	display: contents !important;
+}
+
+.context-menu__content,
+.context-menu__sub-content {
+	min-width: 220px;
+	padding: 8px;
+	background-color: white;
+	border-radius: 6px;
+	border: 1px solid hsl(240 6% 90%);
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	outline: none;
+	transform-origin: var(--kb-menu-content-transform-origin);
+	animation: contentHide 250ms ease-in forwards;
+}
+.context-menu__content[data-expanded],
+.context-menu__sub-content[data-expanded] {
+	animation: contentShow 250ms ease-out;
+}
+.context-menu__item,
+.context-menu__checkbox-item,
+.context-menu__radio-item,
+.context-menu__sub-trigger {
+	font-size: 16px;
+	line-height: 1;
+	color: hsl(240 4% 16%);
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	height: 32px;
+	padding: 0 8px 0 24px;
+	position: relative;
+	user-select: none;
+	outline: none;
+}
+.context-menu__sub-trigger[data-expanded] {
+	background-color: hsl(204 94% 94%);
+	color: hsl(201 96% 32%);
+}
+.context-menu__item[data-disabled],
+.context-menu__checkbox-item[data-disabled],
+.context-menu__radio-item[data-disabled],
+.context-menu__sub-trigger[data-disabled] {
+	color: hsl(240 5% 65%);
+	opacity: 0.5;
+	pointer-events: none;
+}
+.context-menu__item[data-highlighted],
+.context-menu__checkbox-item[data-highlighted],
+.context-menu__radio-item[data-highlighted],
+.context-menu__sub-trigger[data-highlighted] {
+	outline: none;
+	background-color: hsl(200 98% 39%);
+	color: white;
+}
+.context-menu__group-label {
+	padding: 0 24px;
+	font-size: 14px;
+	line-height: 32px;
+	color: hsl(240 4% 46%);
+}
+.context-menu__separator {
+	height: 1px;
+	border-top: 1px solid hsl(240 6% 90%);
+	margin: 6px;
+}
+.context-menu__item-indicator {
+	position: absolute;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+.context-menu__item-right-slot {
+	margin-left: auto;
+	padding-left: 20px;
+	font-size: 14px;
+	color: hsl(240 4% 46%);
+}
+[data-highlighted] > .context-menu__item-right-slot {
+	color: white;
+}
+[data-disabled] .context-menu__item-right-slot {
+	color: hsl(240 5% 65%);
+	opacity: 0.5;
+}
+@keyframes contentShow {
+	from {
+		opacity: 0;
+		transform: scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
 	}
 }
-
-.sidebar-widget {
-	background: var(--sidebar-widget-fill);
-	color: var(--sidebar-widget-line);
-	margin-inline: 1rem;
-	margin-block: 1rem;
-	border-radius: var(--sidebar-widget-radius);
-	display: flex;
-	flex-direction: column;
-	border: 1px solid;
-	box-shadow: -1px -1px black, 2px 2px black, 3px 3px black;
-}
-
-.sidebar-widget__header {
-	font-weight: 500;
-	font-size: 1.4em;
-	padding: var(--sidebar-widget-padding);
-	padding-block: 0.5rem;
-	/* border-bottom: 1px solid */
-	/* color-mix(in srgb, var(--sidebar-widget-fill), var(--sidebar-fill) 50%); */
-	display: flex;
-	place-content: space-between;
-	place-items: center;
-}
-
-:has(> iconify-icon) {
-	display: flex;
-}
-
-.side-widget__header-actions {
-	> * {
-		display: flex;
+@keyframes contentHide {
+	from {
+		opacity: 1;
+		transform: scale(1);
 	}
-}
-
-.sidebar-widget__content {
-	display: flex;
-	flex-direction: column;
-}
-
-.document-list {
-	display: flex;
-	flex-direction: column;
-}
-
-.document-list__button {
-	width: 100%;
-	text-align: left;
-	padding-inline: var(--sidebar-widget-padding);
-	padding-block: 0.25rem;
-
-	&[aria-pressed="true"] {
-		background: var(--carribean-current);
-		color: white;
-	}
-	&[aria-pressed="mixed"] {
-		/* color: var(--carribean-current); */
+	to {
+		opacity: 0;
+		transform: scale(0.96);
 	}
 }

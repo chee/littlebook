@@ -1,0 +1,19 @@
+.document-list {
+	display: flex;
+	flex-direction: column;
+}
+
+.document-list__button {
+	width: 100%;
+	text-align: left;
+	padding-inline: var(--sidebar-widget-padding);
+	padding-block: 0.25rem;
+
+	&[aria-pressed="true"] {
+		background: var(--carribean-current);
+		color: white;
+	}
+	/* &[aria-pressed="mixed"] { */
+	/* color: var(--carribean-current); */
+	/* } */
+}
