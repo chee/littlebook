@@ -24,7 +24,7 @@
 		// "noUncheckedSideEffectImports": true,
 
 		/* effect */
-		"exactOptionalPropertyTypes": true,
+		// "exactOptionalPropertyTypes": true,
 		"typeRoots": ["./node_modules/@types", "./src/types"],
 
 		/* temporary */
