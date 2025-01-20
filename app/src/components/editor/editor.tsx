@@ -57,9 +57,9 @@ export default function Editor(props: {url: AutomergeUrl}) {
 		await handle.whenReady()
 		const doc = handle.docSync()
 		const editorURL = registry[doc.type] as AutomergeUrl
-		const editorHandle = repo.find(editorURL)
+		const editorHandle = repo.find<{bytes: Uint8Array}>(editorURL)
 		await editorHandle.whenReady()
-		const code = editorHandle.docSync().bytes as Uint8Array
+		const code = editorHandle.docSync().bytes
 		const blob = new Blob([code], {type: "application/javascript"})
 		const url = URL.createObjectURL(blob)
 		const editor = await import(url)
