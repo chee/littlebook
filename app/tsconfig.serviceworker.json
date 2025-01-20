@@ -8,5 +8,5 @@
 		"skipLibCheck": true,
 		"typeRoots": ["node_modules/@serviceworker-types"]
 	},
-	"include": ["public/service-worker.js"]
+	"include": ["public/sw.js"]
 }

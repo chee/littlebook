@@ -27,12 +27,9 @@ sinks: files, api calls, out->in
 async function registerServiceWorker() {
 	if ("serviceWorker" in navigator) {
 		try {
-			const registration = await navigator.serviceWorker.register(
-				"/service-worker.js",
-				{
-					scope: "/",
-				}
-			)
+			const registration = await navigator.serviceWorker.register("/sw.js", {
+				scope: "/",
+			})
 			if (registration.installing) {
 				console.info("Service worker installing")
 			} else if (registration.waiting) {
@@ -53,7 +50,6 @@ async function registerServiceWorker() {
 	}
 }
 
-if (location.hostname === "localhost") {
-} else {
+if (import.meta.env.PROD) {
 	registerServiceWorker()
 }
