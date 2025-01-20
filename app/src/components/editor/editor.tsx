@@ -62,7 +62,7 @@ export default function Editor(props: {url: AutomergeUrl}) {
 		const code = editorHandle.docSync().bytes
 		const blob = new Blob([code], {type: "application/javascript"})
 		const url = URL.createObjectURL(blob)
-		const editor = await import(url)
+		const editor = await import(/* @vite-ignore */ url)
 		return {handle, editor: editor.default}
 	})
 
