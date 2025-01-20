@@ -16,6 +16,7 @@
 		"@iconify-icon/solid": "^2.3.0",
 		"@iconify-icons/solar": "^1.2.3",
 		"@kobalte/core": "^0.13.7",
+		"@littlebook/text": "workspace:^",
 		"@solid-devtools/overlay": "^0.33.0",
 		"@solid-primitives/storage": "^4.2.1",
 		"automerge-repo-solid-primitives": "^1.1.3",
