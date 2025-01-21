@@ -1,0 +1,46 @@
+@import "./dockview.css";
+
+:root {
+	--dock-fill: var(--fill);
+	--dock-line: var(--line);
+}
+
+.dock {
+	overflow: hidden;
+	height: 100%;
+	width: 100%;
+}
+
+.dock-tab {
+	display: flex;
+	place-items: center;
+	/* place-content: center; */
+	font-weight: 500;
+	height: 100%;
+	gap: 1ex;
+	padding-inline: 1ex;
+	> * {
+		display: flex;
+	}
+	cursor: default;
+}
+
+.dock-tab__close:hover {
+	color: var(--pynk);
+}
+
+.dock-header-actions {
+	display: flex;
+	gap: 0.5rem;
+	height: 100%;
+}
+
+.dock-header-actions__button {
+	display: flex;
+	height: 100%;
+	place-content: center;
+	place-items: center;
+	&:hover {
+		background: color-mix(in srgb, var(--dock-fill), var(--dock-line) 10%);
+	}
+}

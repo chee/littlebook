@@ -1,6 +1,6 @@
 import {Show} from "solid-js"
 import "./page-header.css"
-import {Icon} from "@iconify-icon/solid"
+import Icon from "../icon/icon.tsx"
 
 export default function PageHeader(props: {
 	leftSidebarCollapsed: boolean
@@ -15,8 +15,10 @@ export default function PageHeader(props: {
 				onclick={() => props.toggleLeftSidebar()}>
 				<Show
 					when={props.leftSidebarCollapsed}
-					fallback={<Icon icon="solar:sidebar-minimalistic-outline" />}>
-					<Icon icon="solar:sidebar-minimalistic-bold" />
+					fallback={
+						<Icon icon="solar:sidebar-minimalistic-outline" inline />
+					}>
+					<Icon icon="solar:sidebar-minimalistic-bold" inline />
 				</Show>
 			</button>
 			<div class="page-header-logo">

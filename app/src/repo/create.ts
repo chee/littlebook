@@ -12,6 +12,9 @@ export async function createAutomergeRepo() {
 }
 
 const repo = await createAutomergeRepo()
+repo.on("document", payload => {
+	console.info(payload.handle.docSync())
+})
 window.repo = repo
 
 declare global {

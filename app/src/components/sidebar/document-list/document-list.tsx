@@ -1,20 +1,27 @@
 import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
 import type {DockviewApi} from "dockview-core"
-import {createSignal, For, getOwner, onCleanup, runWithOwner} from "solid-js"
+import {
+	createEffect,
+	createSignal,
+	For,
+	getOwner,
+	on,
+	onCleanup,
+	runWithOwner,
+	Suspense,
+	untrack,
+	Show,
+} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import repo from "../../../repo/create.ts"
 import type {
 	DocumentBase,
-	FolderDocument,
 	ParentDocument,
 	TextDocument,
 } from "../../../repo/home.ts"
-import {
-	createDocumentProjection,
-	createDocumentStore,
-} from "../../../pages/app.tsx"
 import {Button} from "@kobalte/core/button"
 import "./document-list.css"
+import {useHandle, createDocumentStore} from "automerge-repo-solid-primitives"
 
 export default function DocumentList(props: {
 	root: AutomergeUrl
@@ -23,18 +30,18 @@ export default function DocumentList(props: {
 	// todo or provide it with a context.
 	// todo any of these seems fine
 	// todo wrapper api prop seems most testable though
-	dv: DockviewApi
+	dockviewAPI: DockviewApi
 }) {
 	// todo some sort of wrapper that checks a doc is of the right type/matches schema?
-	const rootHandle = repo.find<ParentDocument>(props.root)
-	const [rootFolder, changeRootFolder] = createDocumentStore(() => rootHandle)
+	const rootHandle = useHandle<ParentDocument>(() => props.root, {repo})
+	const rootFolder = createDocumentStore(rootHandle)
 	const owner = getOwner()
 	function add(url: AutomergeUrl) {
-		const existing = props.dv.getPanel(url)
+		const existing = props.dockviewAPI?.getPanel(url)
 		if (existing) {
 			existing.api.setActive()
 		} else {
-			props.dv.addPanel({
+			props.dockviewAPI?.addPanel({
 				id: url,
 				component: "document",
 				tabComponent: "document",
@@ -42,26 +49,30 @@ export default function DocumentList(props: {
 		}
 	}
 
-	const [active, setActive] = createSignal<AutomergeUrl | undefined>(
-		props.dv.activePanel?.id as AutomergeUrl
+	const [active, setActive] = createSignal<AutomergeUrl | undefined>()
+	const [panels, setPanels] = createSignal<AutomergeUrl[]>([])
+
+	createEffect(
+		on([() => props.dockviewAPI], ([dockviewAPI]) => {
+			if (!dockviewAPI) return
+			setActive(() => dockviewAPI.activePanel?.id as AutomergeUrl)
+			setPanels(
+				(dockviewAPI.panels.map(panel => panel.id) as AutomergeUrl[]) ?? []
+			)
+			const onactive = dockviewAPI.onDidActivePanelChange(panel => {
+				setActive(panel?.id as AutomergeUrl)
+			})
+			const onlayout = dockviewAPI.onDidLayoutChange(() => {
+				setPanels(
+					dockviewAPI?.panels.map(panel => panel.id) as AutomergeUrl[]
+				)
+			})
+			onCleanup(() => {
+				onactive.dispose()
+				onlayout.dispose()
+			})
+		})
 	)
-
-	const onactive = props.dv.onDidActivePanelChange(panel => {
-		setActive(panel?.id as AutomergeUrl)
-	})
-
-	const [panels, setPanels] = createSignal<AutomergeUrl[]>(
-		(props.dv.panels.map(panel => panel.id) as AutomergeUrl[]) ?? []
-	)
-
-	const onlayout = props.dv.onDidLayoutChange(() => {
-		setPanels(props.dv.panels.map(panel => panel.id) as AutomergeUrl[])
-	})
-
-	onCleanup(() => {
-		onactive.dispose()
-		onlayout.dispose()
-	})
 
 	return (
 		<div class="sidebar-widget">
@@ -88,18 +99,23 @@ export default function DocumentList(props: {
 								handle = repo.create({
 									name: "new text document",
 									type: "text",
+
 									text: "i am a new text document",
 								})
 							} else if (id == "folder") {
 								handle = repo.create({
-									name: "new folder",
-									type: "folder",
+									"@meta": {
+										name: "new folder",
+										type: "folder",
+									},
 									children: [],
 								})
 							}
 							if (handle) {
 								runWithOwner(owner, () => add(handle.url))
-								changeRootFolder(doc => doc.children.push(handle.url))
+								rootHandle()?.change(doc =>
+									doc.children.push(handle.url)
+								)
 							}
 						}}
 						importers={[
@@ -114,24 +130,28 @@ export default function DocumentList(props: {
 			</header>
 			<div class="sidebar-widget__content">
 				<ul class="document-list">
-					<For each={rootFolder.children}>
+					<For each={rootFolder()?.children}>
 						{url => {
-							const handle = repo.find<TextDocument>(url)
-							const store = createDocumentProjection(() => handle)
+							const handle = useHandle<TextDocument>(() => url, {repo})
+							const store = createDocumentStore(handle)
 							const pressed = () =>
 								active() == url
 									? "true"
 									: panels().includes(url)
-									? "mixed"
-									: "false"
+										? "mixed"
+										: "false"
 
 							return (
 								<li>
 									<Button
 										class="document-list__button"
-										onclick={() => runWithOwner(owner, () => add(url))}
+										onclick={() =>
+											runWithOwner(owner, () => add(url))
+										}
 										aria-pressed={pressed()}>
-										{store.name ?? url}
+										<Show when={store()} fallback="...">
+											{store.latest?.name ?? url}
+										</Show>
 									</Button>
 								</li>
 							)

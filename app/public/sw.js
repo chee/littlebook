@@ -1,11 +1,6 @@
 // update this when changing the service worker
 // todo automate
-const SERVICE_WORKER_VERSION = "lb.v2"
-
-/*const addResourcesToCache = async resources => {
-	const cache = await caches.open(SERVICE_WORKER_VERSION)
-	await cache.addAll(resources)
-} */
+const SERVICE_WORKER_VERSION = "lb.v3"
 
 self.addEventListener("install", () => {
 	self.skipWaiting()

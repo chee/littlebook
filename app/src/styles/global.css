@@ -24,6 +24,10 @@ body {
 	flex-direction: column;
 }
 
+* {
+	overscroll-behavior: none;
+}
+
 code,
 kbd,
 samp,

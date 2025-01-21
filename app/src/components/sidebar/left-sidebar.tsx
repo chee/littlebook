@@ -3,10 +3,10 @@ import homeURL from "../../repo/home.ts"
 import DocumentList from "./document-list/document-list.tsx"
 import "./sidebar.css"
 
-export default function LeftSidebar(props: {dv: DockviewApi}) {
+export default function LeftSidebar(props: {dockviewAPI: DockviewApi}) {
 	return (
 		<aside class="sidebar sidebar--left">
-			<DocumentList root={homeURL()} dv={props.dv} />
+			<DocumentList root={homeURL()} dockviewAPI={props.dockviewAPI} />
 		</aside>
 	)
 }

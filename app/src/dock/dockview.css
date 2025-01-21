@@ -1,0 +1,61 @@
+@import "dockview-core/dist/styles/dockview.css";
+:root {
+	--dv-paneview-active-outline-color: var(--primary);
+	--dv-tabs-and-actions-container-font-size: 1rem;
+	--dv-tabs-and-actions-container-height: 2rem;
+	--dv-drag-over-background-color: color-mix(
+		in srgb,
+		var(--blue-crayola),
+		transparent
+	);
+	--dv-drag-over-border-color: var(--blue-crayola);
+	--dv-tabs-container-scrollbar-color: #888;
+	--dv-icon-hover-background-color: rgba(255, 255, 255, 0.5);
+	--dv-floating-box-shadow: 1px 1px pink, 2px 2px pink, 3px 3px pink,
+		4px 4px pink;
+	--dv-overlay-z-index: 999;
+
+	--dv-group-view-background-color: var(--dock-fill);
+	--dv-tabs-and-actions-container-background-color: var(--dock-fill);
+
+	--dv-activegroup-visiblepanel-tab-background-color: var(--carribean-current);
+	--dv-activegroup-visiblepanel-tab-color: white;
+
+	--dv-activegroup-hiddenpanel-tab-background-color: color-mix(
+		in srgb,
+		var(--dock-fill),
+		var(--dock-line) 5%
+	);
+	--dv-activegroup-hiddenpanel-tab-color: var(--dock-line);
+
+	--dv-inactivegroup-visiblepanel-tab-background-color: color-mix(
+		in srgb,
+		var(--dv-activegroup-hiddenpanel-tab-background-color),
+		var(--dv-activegroup-visiblepanel-tab-background-color) 20%
+	);
+	--dv-inactivegroup-visiblepanel-tab-color: black;
+
+	--dv-inactivegroup-hiddenpanel-tab-background-color: color-mix(
+		in srgb,
+		var(--dock-fill),
+		var(--dv-activegroup-hiddenpanel-tab-background-color) 20%
+	);
+	--dv-inactivegroup-hiddenpanel-tab-color: black;
+
+	--dv-separator-border: var(--workspace-separator-line);
+
+	--dv-paneview-header-border-color: var(--dock-line);
+}
+
+.dv-dockview {
+	width: 100% !important;
+	height: 100% !important;
+}
+
+.dv-tabs-and-actions-container {
+	/* width: 100%; */
+	border-bottom: 1px solid var(--workspace-separator-line);
+	.dv-tabs-container {
+		scrollbar-width: none;
+	}
+}

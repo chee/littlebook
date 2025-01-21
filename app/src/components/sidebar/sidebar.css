@@ -2,6 +2,7 @@
 	background: var(--sidebar-fill);
 	color: var(--sidebar-line);
 	height: 100%;
+	overflow-y: scroll;
 	display: flow-root;
 	[data-corvu-resizable-panel][data-collapsed] & {
 		display: none;
@@ -17,7 +18,10 @@
 	display: flex;
 	flex-direction: column;
 	border: 1px solid;
-	box-shadow: -1px -1px black, 2px 2px black, 3px 3px black;
+	box-shadow:
+		-1px -1px black,
+		2px 2px black,
+		3px 3px black;
 }
 
 .sidebar-widget__header {

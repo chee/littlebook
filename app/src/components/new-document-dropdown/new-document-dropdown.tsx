@@ -1,7 +1,7 @@
 import {For} from "solid-js"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import "./new-document-dropdown.css"
-import {Icon} from "@iconify-icon/solid"
+import Icon from "../icon/icon.tsx"
 
 export default function NewDocumentMenu(props: {
 	creators: {label: string; id: string}[]
@@ -11,7 +11,9 @@ export default function NewDocumentMenu(props: {
 }) {
 	return (
 		<DropdownMenu>
-			<DropdownMenu.Trigger class="pop-menu__trigger" aria-label="add document">
+			<DropdownMenu.Trigger
+				class="pop-menu__trigger"
+				aria-label="add document">
 				<Icon icon="solar:add-circle-linear" />
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>

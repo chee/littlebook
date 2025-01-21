@@ -1,28 +1,99 @@
-## Usage
+## data structure options
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+1. external content
+   ```ts
+   interface File {
+   	name: string
+   	icon?: string
+   	contentType: ContentTypeId
+   	conformsTo: ContentTypeId[]
+   	content: Link<ContentId>
+   }
+   ```
+2. special metadata field
+   ```ts
+   interface File {
+   	"@meta": {
+   		name: string
+   		icon?: string
+   		contentType: ContentTypeId
+   		conformsTo: ContentTypeId[]
+   	}
+   	/* example */
+   	shapes: (Square | Circle)[]
+   	text: string
+   	/* /example */
+   }
+   ```
+3. special content field
+   ```ts
+   interface File {
+   	name: string
+   	icon?: string
+   	contentType: ContentTypeId
+   	conformsTo: ContentTypeId[]
+   	content: {
+   		/* example */
+   		shapes: (Square | Circle)[]
+   		text: string
+   		/* /example */
+   	}
+   }
+   ```
+4. metadata in external (no)
+   ```ts
+   interface File {
+   	"@meta": Link<MetadataId>
+   	/* example */
+   	shapes: (Square | Circle)[]
+   	text: string
+   	/* /example */
+   }
+   ```
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+### external content
 
-## Available Scripts
+#### benefits of external content
 
-In the project directory, you can run:
+- theoretically can prevent files from being able to edit their metadata
+- what if files do need access to their metadata?
+   - well i guess i can give them the data but not the handle
+- what i decided on last time
+- this is similar to how a filesystem works
 
-### `npm run dev`
+#### downsides of external content
 
-Runs the app in the development mode.<br>
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+- extra fetch for content
+   - can make this better with a useResolvedDocument() hook that returns file +
+     content
+- what if, say, a markdown file wants to set its own title?
+   - pass them a `setTitle` function?
+   - they also do have access to `repo` so can probably do whatever they want
 
-### `npm run build`
+### special metadata field
 
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
+#### benefits of special metadata field
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+- everything in one place, no extra fetch
+- it's what patchwork does
 
-## Deployment
+#### downsides of special metadata field
 
-Learn more about deploying your application with the [documentations](https://vite.dev/guide/static-deploy.html)
+- free for all
+- a clash is theoretically possible
+
+### special content field
+
+#### benefits of special content field
+
+- everything in one place
+- no extra fetch
+
+#### downsides of special content field
+
+- can't give someone file access without them having the ability to change
+  littlebook-level details
+
+## questions:
+
+- ARE FOLDERS SPECIAL???????????????????

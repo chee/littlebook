@@ -1,10 +1,8 @@
 import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
 import repo from "../../repo/create.ts"
-import {createDocumentStore} from "../../pages/app.tsx"
 import type {DocumentBase, TextDocument} from "../../repo/home.ts"
 import "./editor.css"
-import {Dynamic} from "solid-js/web"
-import {useHandle} from "automerge-repo-solid-primitives"
+import {createDocumentStore, useHandle} from "automerge-repo-solid-primitives"
 
 /*
     so i think that the editor registry should include a function that
@@ -45,33 +43,46 @@ a way to add these:
 
 const registry = {
 	// codemirror thing as .bytes
+	// todo bootstrap this in if it isn't there
 	text: "automerge:2LQzHKZW8axkP48Ycmhi77zCwM36" as AutomergeUrl,
 	tldraw: "" as AutomergeUrl,
 } as const
 
-import {createResource, onCleanup, Show, Suspense} from "solid-js"
+import {
+	createEffect,
+	createResource,
+	on,
+	onCleanup,
+	Show,
+	Suspense,
+} from "solid-js"
 
 export default function Editor(props: {url: AutomergeUrl}) {
-	const [thing] = createResource(async () => {
-		const handle = repo.find<DocumentBase>(props.url)
-		await handle.whenReady()
-		const doc = handle.docSync()
-		const editorURL = registry[doc.type] as AutomergeUrl
-		const editorHandle = repo.find<{bytes: Uint8Array}>(editorURL)
-		await editorHandle.whenReady()
-		const code = editorHandle.docSync().bytes
-		const blob = new Blob([code], {type: "application/javascript"})
-		const url = URL.createObjectURL(blob)
-		const editor = await import(/* @vite-ignore */ url)
-		return {handle, editor: editor.default}
-	})
+	const documentHandle = useHandle<DocumentBase>(() => props.url, {repo})
+	const document = createDocumentStore(documentHandle)
+	const editorURL = () => registry[document()?.type]
+	const editorHandle = useHandle<{bytes: Uint8Array}>(editorURL, {repo})
+	const editor = createDocumentStore(editorHandle)
+	const code = () => editor()?.bytes
+	const blob = () => new Blob([code()], {type: "application/javascript"})
+	const url = () => URL.createObjectURL(blob())
+	const [Editor, control] = createResource(
+		async () =>
+			await import(/* @vite-ignore */ url()).then(mod => mod?.default)
+	)
+
+	createEffect(
+		on([url], () => {
+			control.refetch()
+		})
+	)
 
 	return (
 		<div class="editor">
 			<Suspense>
-				<Show when={thing()?.handle}>
-					{thing()?.editor.render({
-						handle: thing().handle,
+				<Show when={Editor() && documentHandle()}>
+					{Editor()?.render({
+						handle: documentHandle(),
 						cleanup(fn) {
 							onCleanup(fn)
 						},
