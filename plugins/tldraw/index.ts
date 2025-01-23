@@ -1,25 +1,21 @@
-import createCoder from "./coder.ts"
+import type {TldrawFile, TLRecord, StoreSnapshot} from "tldraw"
 import view from "./view.tsx"
-import pkg from "./package.json" with {type: "json"}
+export default view
 
-const config = pkg.littlebook
-
-const activate: lb.plugins.activate = (lb: lb.plugins.API) => {
-	const [tldrawType] = config.contentTypes
-	const coder = createCoder(lb)
-	const type = lb.UniformType.get(tldrawType.identifier)
-	const disposers = [lb.registerContentCoder(type, coder)]
-
-	const tag = config.editors[0].element
-	if (!customElements.get(tag)) {
-		customElements.define(tag, view)
+export function tldrFileToSnapshot(file: TldrawFile): StoreSnapshot<TLRecord> {
+	if (file.tldrawFileFormatVersion !== 1) {
+		console.warn(
+			`i only know about version 1 files. this file is ${file.tldrawFileFormatVersion}. i might make mistakes :(`
+		)
 	}
-
-	return () => {
-		for (const fn of disposers) {
-			fn()
-		}
+	return {
+		store: file.records.reduce(
+			(store, record) => {
+				store[record.id] = record
+				return store
+			},
+			{} as StoreSnapshot<TLRecord>["store"]
+		),
+		schema: file.schema,
 	}
 }
-
-export default activate

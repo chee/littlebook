@@ -1,11 +1,10 @@
 // things i'll need to make available in @littlebook/plugin
-import "../../web/src/types.ts"
-import type {ContentHandleChangePayload} from "../../web/src/types.ts"
-
-import {
-	ContentViewElement,
-	type ContentViewComponent,
-} from "../../web/src/files/contents/view-registry.ts"
+// import "../../web/src/types.ts"
+// import type {ContentHandleChangePayload} from "../../web/src/types.ts"
+// import {
+// ContentViewElement,
+// type ContentViewComponent,
+// } from "../../web/src/files/contents/view-registry.ts"
 
 import {
 	useCallback,
@@ -13,20 +12,23 @@ import {
 	type FunctionComponent,
 	useRef,
 	useLayoutEffect,
+	useState,
 } from "react"
 
 import type {TldrawFile} from "./shared.ts"
 import {createRoot} from "react-dom/client"
 
-import {Box, useEditor} from "@tldraw/editor"
+import {Box, createTLStore, useEditor} from "@tldraw/editor"
 import {parseTldrawJsonFile, Tldraw} from "tldraw"
 import type {
+	ChangeFn,
+	ChangeOptions,
+	Doc,
 	InsertPatch,
 	PutPatch,
 	SpliceTextPatch,
 } from "@automerge/automerge/next"
 
-import {getAssetUrls} from "@tldraw/assets/selfHosted"
 import type {HistoryEntry, TLRecord, RecordId, Editor} from "tldraw"
 
 function insert(patch: InsertPatch, object: TLRecord) {
@@ -72,9 +74,14 @@ function merge(target: any, source: any) {
 	}
 }
 
-function TldrawInner(props: lb.ContentViewProps<TldrawFile>) {
+function TldrawInner(props: {handle: DocHandle<TldrawFile>}) {
+	const [file, change] = useDocument(props.handle)
 	let editor = useEditor()
+	editor
+
 	let applyingLocal = useRef(false)
+
+	// editor.store.loadStoreSnapshot(editor.store.getStoreSnapshot())
 
 	let onlocalchange = useCallback((history: HistoryEntry<TLRecord>) => {
 		let source = history.source
@@ -82,10 +89,10 @@ function TldrawInner(props: lb.ContentViewProps<TldrawFile>) {
 		if (source == "user") {
 			let {added, removed, updated} = history.changes
 
-			props.change(doc => {
+			change(doc => {
 				for (let add of Object.values(added)) {
-					if (!doc.value.records.find(r => r.id == add.id)) {
-						doc.value.records.push(add)
+					if (!doc.records.find(r => r.id == add.id)) {
+						doc.records.push(add)
 					}
 				}
 				for (let [id, [_prev, next]] of Object.entries(updated)) {
@@ -93,12 +100,12 @@ function TldrawInner(props: lb.ContentViewProps<TldrawFile>) {
 					if (id == "pointer:pointer") continue
 					if (id == "instance:instance") continue
 					if (id.startsWith("instance_page_state")) continue
-					let index = doc.value.records.findIndex(rec => rec.id == id)
-					merge(doc.value.records[index], next)
+					let index = doc.records.findIndex(rec => rec.id == id)
+					merge(doc.records[index], next)
 				}
 				for (let [id, _rm] of Object.entries(removed)) {
-					for (let [index, rec] of doc.value.records.entries()) {
-						if (rec.id == id) doc.value.records.deleteAt(index)
+					for (let [index, rec] of doc.records.entries()) {
+						if (rec.id == id) doc.records.deleteAt(index)
 					}
 				}
 			})
@@ -106,8 +113,8 @@ function TldrawInner(props: lb.ContentViewProps<TldrawFile>) {
 	}, [])
 
 	let object = useCallback(
-		(content: typeof props.content, path: (string | number)[]) => {
-			return content.value.records[+path[2]]
+		(content: typeof file, path: (string | number)[]) => {
+			return file?.records[+path[1]]
 		},
 		[]
 	)
@@ -137,12 +144,12 @@ function TldrawInner(props: lb.ContentViewProps<TldrawFile>) {
 
 		editor.store.mergeRemoteChanges(() => {
 			editor.store.remove(removals)
-			editor.store.put(puts)
+			editor.store.put(puts.filter(x => x))
 		})
 	}
 
 	useEffect(() => {
-		let json = JSON.stringify(props.content.value)
+		let json = JSON.stringify(file)
 
 		let serializedStore = parseTldrawJsonFile({
 			json,
@@ -200,52 +207,85 @@ function ActionsMenu() {
 	return null
 }
 
-let TldrawEditorView: ContentViewComponent<
-	TldrawFile,
-	FunctionComponent<lb.ContentViewProps<TldrawFile>>
-> = props => {
-	if (!props.content.value) {
-		return <div>waiting for value</div>
-	}
-
+function TldrawEditorView(props: {handle: DocHandle<TldrawFile>}) {
 	return (
 		<Tldraw
 			inferDarkMode
 			components={{ActionsMenu}}
 			options={{maxPages: 1}}
-			autoFocus={true}
-			assetUrls={getAssetUrls({baseUrl: "/tldraw-assets"})}>
+			autoFocus={true}>
 			<TldrawInner {...props} />
 		</Tldraw>
 	)
 }
 
 import css from "@tldraw/tldraw/tldraw.css"
+import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo/slim"
 
-export default class TldrawEditorElement extends ContentViewElement<TldrawFile> {
-	shadowRoot = this.attachShadow({
-		mode: "open",
-		delegatesFocus: true,
-	})
-	root = createRoot(this.shadowRoot!)
+type Props<T> = {
+	handle: DocHandle<T>
+	cleanup(fn: () => void): void
+	setName(name: string): void
+	shadow: ShadowRoot
+}
 
-	constructor() {
-		super()
-		let style = document.createElement("style")
-		style.textContent = css
-		this.shadowRoot.append(style)
+export default {
+	render(props: Props<TldrawFile>) {
+		const root = createRoot(props.shadow)
+		const style = new CSSStyleSheet()
+		style.replaceSync(css)
+		props.shadow.adoptedStyleSheets = [style]
+		root.render(<TldrawEditorView handle={props.handle} />)
+		props.cleanup(() => {
+			root.unmount()
+		})
+	},
+}
+
+export function useDocument<T>(
+	handle: DocHandle<T>
+): [
+	Doc<T> | undefined,
+	(changeFn: ChangeFn<T>, options?: ChangeOptions<T> | undefined) => void,
+] {
+	const handleRef = useRef<DocHandle<T> | null>(handle)
+	if (handle !== handleRef.current) {
+		handleRef.current = handle
 	}
 
-	props = () => ({
-		handle: this.handle,
-		content: this.content,
-		file: this.file,
-		change: this.change,
-	})
-	connectedCallback() {
-		this.root.render(<TldrawEditorView {...this.props()} />)
-	}
-	disconnectedCallback() {
-		this.root.unmount()
-	}
+	// a state value we use to trigger a re-render
+	const [, setGeneration] = useState(0)
+	const rerender = () => setGeneration(v => v + 1)
+
+	useEffect(() => {
+		if (!handle) {
+			return
+		}
+
+		handleRef.current = handle
+		handle
+			.doc()
+			.then(() => {
+				rerender()
+			})
+			.catch(e => console.error(e))
+
+		handle.on("change", rerender)
+		handle.on("delete", rerender)
+		const cleanup = () => {
+			handle.removeListener("change", rerender)
+			handle.removeListener("delete", rerender)
+		}
+
+		return cleanup
+	}, [handle])
+
+	const changeDoc = useCallback(
+		(changeFn: ChangeFn<T>, options?: ChangeOptions<T> | undefined) => {
+			if (!handle) return
+			handle.change(changeFn, options)
+		},
+		[handle]
+	)
+	return [handle?.docSync(), changeDoc] as const
 }

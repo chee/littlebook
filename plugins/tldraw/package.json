@@ -67,12 +67,15 @@
 		"esbuild": "^0.21.5",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"tldraw": "^2.3.0",
+		"tldraw": "^3.7.2",
 		"typescript": "^5.4.5"
 	},
 	"dependencies": {
+		"@automerge/automerge-repo": "2.0.0-alpha.14",
+		"@automerge/automerge-repo-react-hooks": "^1.2.1",
+		"@tanstack/solid-table": "^8.20.5",
 		"@tldraw/assets": "^2.3.0",
-		"@tldraw/editor": "^2.3.0",
+		"@tldraw/editor": "^3.7.2",
 		"@tldraw/tldraw": "^2.3.0",
 		"@tldraw/tlschema": "^2.3.0",
 		"@types/react": "^18.3.3",
