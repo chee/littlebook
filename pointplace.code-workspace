@@ -2,22 +2,22 @@
 	"folders": [
 		{
 			"name": "✨ @pointplace/monorepo",
-			"path": "."
+			"path": ".",
 		},
 		{
 			"name": "🚀 @pointplace/app",
-			"path": "app"
+			"path": "app",
 		},
 		{
 			"name": "@littlebook/text",
-			"path": "plugins/codemirror"
+			"path": "plugins/codemirror",
 		},
 		{
 			"name": "@littlebook/tldraw",
-			"path": "plugins/tldraw"
-		}
+			"path": "plugins/tldraw",
+		},
 	],
 	"settings": {
-		"workbench.colorTheme": "Monokai Pirokai - Beach Sunset"
-	}
+		"workbench.colorTheme": "Ruby Sea",
+	},
 }

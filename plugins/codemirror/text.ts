@@ -11,6 +11,13 @@ import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
 import type {DocHandle} from "@automerge/automerge-repo"
 
+export const id = "codemirror"
+export const name = "Codemirror Text Editor"
+
+export const contentTypes = ["text"]
+
+// todo should something like this be part of the API, and caled by the
+// editor.tsx before passing the doc to the plugin?
 function shape(doc: any): doc is {
 	text: string
 	language?: "python" | "markdown" | "javascript" | "html"
@@ -37,7 +44,9 @@ export function render(props: {
 			.cm-content {
 				// todo document all the css vars that are part of the public API
 				font-family: var(--family-mono);
-	
+				font-size: var(--font-size);
+				background: var(--fill)	;
+				color: var(--line);
 			}
 		}
 	`)

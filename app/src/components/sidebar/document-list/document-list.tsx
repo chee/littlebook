@@ -1,83 +1,45 @@
 import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
-import type {DockviewApi} from "dockview-core"
-import {
-	createEffect,
-	createSignal,
-	For,
-	getOwner,
-	on,
-	onCleanup,
-	runWithOwner,
-	Suspense,
-	untrack,
-	Show,
-} from "solid-js"
+import {For, getOwner, runWithOwner, Show} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import repo from "../../../repo/create.ts"
-import type {
-	DocumentBase,
-	ParentDocument,
-	TextDocument,
-} from "../../../repo/home.ts"
 import {Button} from "@kobalte/core/button"
 import "./document-list.css"
 import {useHandle, createDocumentStore} from "automerge-repo-solid-primitives"
+import type {Home} from "../../../repo/home.ts"
+import homeURL from "../../../repo/home.ts"
+import type {Entry} from "../../../documents/entry.ts"
+import {type DockAPI} from "../../../dock/dock.tsx"
 
-export default function DocumentList(props: {
-	root: AutomergeUrl
+export default function HomeWidget(props: {
 	// todo remove direct access to dv, instead create wrapper api for common ops
-	// todo or... i could create dockview api somewhere and export it?
 	// todo or provide it with a context.
 	// todo any of these seems fine
 	// todo wrapper api prop seems most testable though
-	dockviewAPI: DockviewApi
+	dockAPI?: DockAPI
 }) {
 	// todo some sort of wrapper that checks a doc is of the right type/matches schema?
-	const rootHandle = useHandle<ParentDocument>(() => props.root, {repo})
-	const rootFolder = createDocumentStore(rootHandle)
+	const homeHandle = useHandle<Home>(homeURL, {repo})
+	const home = createDocumentStore(homeHandle)
 	const owner = getOwner()
+
 	function add(url: AutomergeUrl) {
-		const existing = props.dockviewAPI?.getPanel(url)
-		if (existing) {
-			existing.api.setActive()
-		} else {
-			props.dockviewAPI?.addPanel({
-				id: url,
-				component: "document",
-				tabComponent: "document",
-			})
-		}
+		props.dockAPI.openDocument(url)
 	}
 
-	const [active, setActive] = createSignal<AutomergeUrl | undefined>()
-	const [panels, setPanels] = createSignal<AutomergeUrl[]>([])
-
-	createEffect(
-		on([() => props.dockviewAPI], ([dockviewAPI]) => {
-			if (!dockviewAPI) return
-			setActive(() => dockviewAPI.activePanel?.id as AutomergeUrl)
-			setPanels(
-				(dockviewAPI.panels.map(panel => panel.id) as AutomergeUrl[]) ?? []
-			)
-			const onactive = dockviewAPI.onDidActivePanelChange(panel => {
-				setActive(panel?.id as AutomergeUrl)
-			})
-			const onlayout = dockviewAPI.onDidLayoutChange(() => {
-				setPanels(
-					dockviewAPI?.panels.map(panel => panel.id) as AutomergeUrl[]
-				)
-			})
-			onCleanup(() => {
-				onactive.dispose()
-				onlayout.dispose()
-			})
-		})
-	)
-
 	return (
-		<div class="sidebar-widget">
+		<div
+			class="sidebar-widget"
+			ondragover={event => {
+				event.preventDefault()
+			}}
+			ondrop={event => {
+				event.preventDefault()
+				event.dataTransfer.dropEffect = "link"
+				console.log(event.dataTransfer.getData("text/plain"))
+				console.log(event.dataTransfer, event)
+			}}>
 			<header class="sidebar-widget__header">
-				<span>documents</span>
+				<span>{home()?.name}</span>
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
 						creators={[
@@ -94,28 +56,28 @@ export default function DocumentList(props: {
 							{label: "canvas", id: "canvas"},
 						]}
 						create={id => {
-							let handle: DocHandle<DocumentBase>
+							let handle: DocHandle<Entry>
 							if (id == "text") {
 								handle = repo.create({
+									type: "file",
 									name: "new text document",
-									type: "text",
-
-									text: "i am a new text document",
+									contentType: "text",
+									url: repo.create({text: "i am a new text document"})
+										.url as AutomergeUrl,
 								})
 							} else if (id == "folder") {
 								handle = repo.create({
-									"@meta": {
-										name: "new folder",
-										type: "folder",
-									},
-									children: [],
+									type: "file",
+									name: "new folder",
+									contentType: "folder",
+									url: repo.create({
+										files: [],
+									}).url as AutomergeUrl,
 								})
 							}
 							if (handle) {
-								runWithOwner(owner, () => add(handle.url))
-								rootHandle()?.change(doc =>
-									doc.children.push(handle.url)
-								)
+								const url = handle.url as AutomergeUrl
+								runWithOwner(owner, () => add(url))
 							}
 						}}
 						importers={[
@@ -130,17 +92,38 @@ export default function DocumentList(props: {
 			</header>
 			<div class="sidebar-widget__content">
 				<ul class="document-list">
-					<For each={rootFolder()?.children}>
+					<For each={home()?.files}>
 						{url => {
-							const handle = useHandle<TextDocument>(() => url, {repo})
+							const handle = useHandle<Entry>(() => url, {
+								repo,
+							})
 							const store = createDocumentStore(handle)
 							const pressed = () =>
-								active() == url
+								props.dockAPI.activePanelID == url
 									? "true"
-									: panels().includes(url)
+									: props.dockAPI.activePanelID.includes(url)
 										? "mixed"
 										: "false"
 
+							{
+								/* todo
+								 * we want a context menu here
+								 * you should be able to:
+								 *	 - create a new file (or folder)
+								 *	 - import a file
+								 *	 - open
+								 *	 - open to the side
+								 *	 - open with
+								 *	 - rename
+								 *	 - transform (convert to a new file)
+								 *	 - save to disk
+								 *	 	- as Raw JSON
+								 *	 	- as Automerge Document
+								 *	 - publish (using Publisher)
+								 *	 - export (using Exporter)
+								 *   - add to home?
+								 */
+							}
 							return (
 								<li>
 									<Button
@@ -149,7 +132,7 @@ export default function DocumentList(props: {
 											runWithOwner(owner, () => add(url))
 										}
 										aria-pressed={pressed()}>
-										<Show when={store()} fallback="...">
+										<Show when={store()} fallback="">
 											{store.latest?.name ?? url}
 										</Show>
 									</Button>

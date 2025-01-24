@@ -1,6 +1,7 @@
 import {BrowserWebSocketClientAdapter} from "@automerge/automerge-repo-network-websocket"
 import {IndexedDBStorageAdapter} from "@automerge/automerge-repo-storage-indexeddb"
-import {Repo} from "@automerge/automerge-repo"
+import {Repo, type AutomergeUrl} from "@automerge/automerge-repo"
+import homeURL from "./home.ts"
 
 export async function createAutomergeRepo() {
 	const repo = new Repo({
@@ -13,13 +14,24 @@ export async function createAutomergeRepo() {
 
 const repo = await createAutomergeRepo()
 repo.on("document", payload => {
-	console.info(payload.handle.docSync())
+	// console.info(payload.handle.docSync())
 })
 window.repo = repo
+
+const api = {
+	get home() {
+		return repo.find(homeURL())
+	},
+	get current() {
+		return repo.find(location.hash.slice(1) as AutomergeUrl)
+	},
+}
+window.api = api
 
 declare global {
 	interface Window {
 		repo: typeof repo
+		api: typeof api
 	}
 }
 

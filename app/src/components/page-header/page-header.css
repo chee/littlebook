@@ -15,6 +15,14 @@
 	height: var(--page-header-height);
 	overflow: hidden;
 	padding: 0.6rem 1rem;
+	display: flex;
+	place-content: space-between;
+}
+
+.page-header__section {
+	display: inherit;
+	place-items: inherit;
+	gap: inherit;
 }
 
 .page-header-logo {
@@ -27,4 +35,8 @@
 .page-header-logo__icon {
 	font-size: 1.4em;
 	color: var(--mynt);
+}
+
+.page-header {
+	--pop-menu-highlight: white;
 }

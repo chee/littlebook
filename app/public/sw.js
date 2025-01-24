@@ -1,5 +1,4 @@
 // update this when changing the service worker
-// todo automate
 const SERVICE_WORKER_VERSION = "lb.v3"
 
 self.addEventListener("install", () => {

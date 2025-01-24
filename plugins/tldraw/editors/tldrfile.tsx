@@ -6,6 +6,10 @@
 // type ContentViewComponent,
 // } from "../../web/src/files/contents/view-registry.ts"
 
+export const id = "tldraw/.tldr"
+export const name = "Tldraw Canvas Editor"
+export const contentTypes = [".tldr"]
+
 import {
 	useCallback,
 	useEffect,
@@ -15,7 +19,7 @@ import {
 	useState,
 } from "react"
 
-import type {TldrawFile} from "./shared.ts"
+import type {TldrawFile} from "../shared.ts"
 import {createRoot} from "react-dom/client"
 
 import {Box, createTLStore, useEditor} from "@tldraw/editor"
@@ -229,17 +233,15 @@ type Props<T> = {
 	shadow: ShadowRoot
 }
 
-export default {
-	render(props: Props<TldrawFile>) {
-		const root = createRoot(props.shadow)
-		const style = new CSSStyleSheet()
-		style.replaceSync(css)
-		props.shadow.adoptedStyleSheets = [style]
-		root.render(<TldrawEditorView handle={props.handle} />)
-		props.cleanup(() => {
-			root.unmount()
-		})
-	},
+export default function render(props: Props<TldrawFile>) {
+	const root = createRoot(props.shadow)
+	const style = new CSSStyleSheet()
+	style.replaceSync(css)
+	props.shadow.adoptedStyleSheets = [style]
+	root.render(<TldrawEditorView handle={props.handle} />)
+	props.cleanup(() => {
+		root.unmount()
+	})
 }
 
 export function useDocument<T>(

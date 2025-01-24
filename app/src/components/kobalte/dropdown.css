@@ -4,6 +4,10 @@
 	--pop-menu-line: black;
 }
 
+[data-popper-positioner] {
+	z-index: 1000000 !important;
+}
+
 .pop-menu__trigger:hover {
 	color: var(--pop-menu-highlight);
 }
@@ -19,13 +23,17 @@
 
 .pop-menu__content,
 .pop-menu__sub-content {
+	z-index: 99999999;
 	min-width: 100px;
 	padding: 0px;
 	background-color: var(--pop-menu-fill);
 	border-radius: 8px;
 	border: 1px solid var(--pop-menu-line);
-	box-shadow: -1px -1px var(--pop-menu-line), 1px 1px var(--pop-menu-line),
-		2px 2px var(--pop-menu-line), 3px 3px var(--pop-menu-line);
+	box-shadow:
+		-1px -1px var(--pop-menu-line),
+		1px 1px var(--pop-menu-line),
+		2px 2px var(--pop-menu-line),
+		3px 3px var(--pop-menu-line);
 	outline: none;
 	transform-origin: var(--kb-menu-content-transform-origin);
 	animation: contentHide 250ms ease-in forwards;

@@ -1,31 +1,25 @@
 import Icon from "../components/icon/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import repo from "../repo/create.ts"
-import {DockviewApi, DockviewPanelApi} from "dockview-core"
+import {DockviewPanelApi} from "dockview-core"
 import type {AutomergeUrl} from "@automerge/automerge-repo"
 import {createDocumentStore, useHandle} from "automerge-repo-solid-primitives"
-import type {DocumentBase} from "../repo/home.ts"
 import {Button} from "@kobalte/core/button"
-import {createEffect, onCleanup, Suspense} from "solid-js"
+import {createEffect, Suspense} from "solid-js"
+import homeURL, {Home} from "../repo/home.ts"
+import {useDockAPI} from "./dock.tsx"
 
 export default function DockTab(props: {
-	dockviewAPI: DockviewApi
 	panelAPI: DockviewPanelApi
 	id: AutomergeUrl
 }) {
+	const dockAPI = useDockAPI()
 	const handle = useHandle<DocumentBase>(() => props.id, {repo})
 	const doc = createDocumentStore(handle)
-	let element
+	let element: HTMLDivElement
 	createEffect(() => {
-		if (!props.dockviewAPI) return
-		const disposer = props.dockviewAPI?.onDidActivePanelChange(
-			activePanel => {
-				if (activePanel.id == props.id) {
-					element.scrollIntoView()
-				}
-			}
-		)
-		onCleanup(() => disposer.dispose())
+		if (!dockAPI) return
+		if (dockAPI.activePanelID == props.id) element.scrollIntoView()
 	})
 
 	return (
@@ -50,8 +44,8 @@ export default function DockTab(props: {
 								event.stopPropagation()
 								event.preventDefault()
 							}}
-							onclick={event => {
-								props.dockviewAPI.getPanel(props.id).api.close()
+							onclick={() => {
+								dockAPI.closePanel(props.id)
 							}}>
 							<Icon icon="solar:close-square-linear" inline />
 						</Button>
@@ -61,16 +55,14 @@ export default function DockTab(props: {
 					<ContextMenu.Content class="pop-menu__content">
 						<ContextMenu.Item
 							class="pop-menu__item"
-							onSelect={() =>
-								props.dockviewAPI.getPanel(props.id)?.api.close()
-							}>
+							onSelect={() => dockAPI.closePanel(props.id)}>
 							close tab
 						</ContextMenu.Item>
 						<ContextMenu.Item
 							class="pop-menu__item"
 							onSelect={() => {
-								for (const panel of props.dockviewAPI.panels) {
-									if (panel.id != props.id) panel.api.close()
+								for (const id of dockAPI.panelIDs) {
+									if (id != props.id) dockAPI.closePanel(id)
 								}
 							}}>
 							close other tabs
@@ -80,6 +72,18 @@ export default function DockTab(props: {
 							class="pop-menu__item"
 							onSelect={() => navigator.clipboard.writeText(props.id)}>
 							copy url
+						</ContextMenu.Item>
+						<ContextMenu.Separator />
+						<ContextMenu.Item
+							class="pop-menu__item"
+							onSelect={() => {
+								repo.find<Home>(homeURL()).change(home => {
+									if (!home.files.includes(props.id)) {
+										home.files.push(props.id)
+									}
+								})
+							}}>
+							add to sidebar
 						</ContextMenu.Item>
 					</ContextMenu.Content>
 				</ContextMenu.Portal>

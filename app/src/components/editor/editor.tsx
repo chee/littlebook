@@ -1,8 +1,9 @@
-import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
+import type {AutomergeUrl} from "@automerge/automerge-repo"
 import repo from "../../repo/create.ts"
-import type {DocumentBase, TextDocument} from "../../repo/home.ts"
 import "./editor.css"
-import {createDocumentStore, useHandle} from "automerge-repo-solid-primitives"
+import {useHandle} from "automerge-repo-solid-primitives"
+// import text from "@littlebook/text"
+import tldraw from "@littlebook/tldraw"
 
 /*
     so i think that the editor registry should include a function that
@@ -29,66 +30,82 @@ import {createDocumentStore, useHandle} from "automerge-repo-solid-primitives"
 
 */
 
-interface DocumentEditor<T extends DocumentBase> {
-	// a function that returns a dom element
-	render(props: {handle: DocHandle<T>; cleanup(): void}): HTMLElement
-}
-
-/*
-a way to add these:
-1. cli: build the bundle
-2. cli: cat bundle.js|base64 -w0|pbcopy
-3. browser: repo.find(url).change(doc => doc.bytes = `⌘+v`)<RET>
-*/
-
-const registry = {
-	// codemirror thing as .bytes
-	// todo bootstrap this in if it isn't there
-	text: "automerge:2LQzHKZW8axkP48Ycmhi77zCwM36" as AutomergeUrl,
-	tldraw: "" as AutomergeUrl,
-} as const
-
 import {
 	createEffect,
 	createResource,
-	on,
 	onCleanup,
 	Show,
 	Suspense,
+	useContext,
 } from "solid-js"
+import type {DockviewApi} from "dockview-core"
+import ShadowBox from "../shadow-box/shadow-box.tsx"
+import {useEntry} from "../../documents/entry.ts"
+import {
+	EditorRegistryContext,
+	type Editor,
+} from "../../registries/editor-registry.ts"
+import {useHome} from "../../repo/home.ts"
+import EditorFallback from "./fallback.tsx"
+import {err, ok, type Ok, type Result} from "../../lib/result.ts"
 
-export default function Editor(props: {url: AutomergeUrl}) {
-	const documentHandle = useHandle<DocumentBase>(() => props.url, {repo})
-	const document = createDocumentStore(documentHandle)
-	const editorURL = () => registry[document()?.type]
-	const editorHandle = useHandle<{bytes: Uint8Array}>(editorURL, {repo})
-	const editor = createDocumentStore(editorHandle)
-	const code = () => editor()?.bytes
-	const blob = () => new Blob([code()], {type: "application/javascript"})
-	const url = () => URL.createObjectURL(blob())
-	const [Editor, control] = createResource(
-		async () =>
-			await import(/* @vite-ignore */ url()).then(mod => mod?.default)
-	)
+/*
+ * a way to add these:
+ * 1. cli: build the bundle
+ * 2. cli: cat bundle.js|base64 -w0|pbcopy
+ * 3. browser: repo.find(url).change(doc => doc.bytes = Uint8Array.fromBas64(`⌘+v`))<RET>
+ */
+export default function FileViewer(props: {
+	url: AutomergeUrl
+	dockviewAPI: DockviewApi
+}) {
+	const [home] = useHome()
+	const [entry, entryHandle] = useEntry(() => props.url, {repo})
+	const editors = () => entry() && registry.editors(entry())
 
-	createEffect(
-		on([url], () => {
-			control.refetch()
-		})
-	)
+	const registry = useContext(EditorRegistryContext)
+	const editor = (): Result<Editor> => {
+		const url = props.url
+		const associations = home()?.associations
+		const firstEditor = editors()?.next().value
+		if (associations?.[url]) {
+			const editor = registry.get(associations[url])
+			return editor
+		} else if (firstEditor) {
+			return ok(firstEditor)
+		} else {
+			return err(new Error("no editor found"))
+		}
+	}
+
+	const fileHandle = useHandle<unknown>(() => entry()?.url, {repo})
 
 	return (
-		<div class="editor">
-			<Suspense>
-				<Show when={Editor() && documentHandle()}>
-					{Editor()?.render({
-						handle: documentHandle(),
-						cleanup(fn) {
-							onCleanup(fn)
-						},
-					})}
-				</Show>
-			</Suspense>
-		</div>
+		<Suspense>
+			<Show
+				when={editor() && editor().ok && fileHandle()}
+				fallback={
+					<EditorFallback
+						entry={entry()}
+						editor={editor()}
+						fileHandle={fileHandle()}
+					/>
+				}>
+				<ShadowBox>
+					{shadow => {
+						;(editor() as Ok<Editor>).val.render({
+							handle: fileHandle(),
+							setName(name: string) {
+								entryHandle()?.change(entry => (entry.name = name))
+							},
+							cleanup(fn) {
+								onCleanup(fn)
+							},
+							shadow,
+						})
+					}}
+				</ShadowBox>
+			</Show>
+		</Suspense>
 	)
 }

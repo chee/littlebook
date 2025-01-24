@@ -1,67 +1,76 @@
 import {makePersisted} from "@solid-primitives/storage"
 import repo from "./create.ts"
-import {createSignal, untrack} from "solid-js"
+import {createEffect, createResource, createSignal, untrack} from "solid-js"
 import type {AutomergeUrl} from "@automerge/automerge-repo"
+import type {Entry} from "../documents/entry.ts"
+import {createDocumentStore} from "automerge-repo-solid-primitives"
 
-export interface DocumentBase {
-	name: string
-	icon?: string
-	type: string
-	importer?: AutomergeUrl
-	editors?: AutomergeUrl[]
-}
-
-export interface ParentDocument extends DocumentBase {
-	children: AutomergeUrl[]
-}
-
-export interface FolderDocument extends ParentDocument {
-	type: "folder"
-}
-
-export interface HomeDocument extends ParentDocument {
+export interface Home {
 	type: "home"
+	name: string
 	importers: AutomergeUrl[]
-	exporters: AutomergeUrl[]
+	publishers: AutomergeUrl[]
 	editors: AutomergeUrl[]
 	treeviewers: AutomergeUrl[]
+	tabviewers: AutomergeUrl[]
 	viewers: AutomergeUrl[]
+	files: AutomergeUrl[]
+	// automerge url to manifest.id
+	associations: Record<AutomergeUrl, string>
 }
 
-export interface TextDocument extends DocumentBase {
-	type: "text"
-	text: string
-}
-
-export interface RichtextDocument extends DocumentBase {
-	type: "richtext"
-	text: string
-}
+const forceString = (string: string) =>
+	(string?.[0] == `"` ? JSON.parse(string) : string) as AutomergeUrl
 
 const [homeURL, setHomeURL] = makePersisted(
 	// eslint-disable-next-line solid/reactivity
 	createSignal(
-		(localStorage.getItem("home") as AutomergeUrl) ??
-			repo.create<HomeDocument>({
-				name: "home",
+		forceString(localStorage.getItem("home")) ??
+			repo.create<Home>({
 				type: "home",
+				name: "home",
 				importers: [],
-				exporters: [],
+				publishers: [],
+				// todo automatically populate with repo.on("document")
 				editors: [],
 				treeviewers: [],
+				tabviewers: [],
 				viewers: [],
-				children: [
-					repo.create<TextDocument>({
+				associations: {},
+				files: [
+					// todo add a `createEntry` function
+					repo.create<Entry>({
+						type: "file",
 						name: "my manifesto.txt",
-						type: "text",
-						text: "",
+						contentType: "text",
+						url: repo.create<pointplace.file.Text>({
+							text: "i'm a nice little text document",
+						}).url,
 					}).url,
 				],
 			}).url
 	),
-	{storage: localStorage, name: "home"}
+	{
+		storage: localStorage,
+		name: "home",
+		serialize(string) {
+			return string
+		},
+		deserialize(string) {
+			return forceString(string as AutomergeUrl)
+		},
+	}
 )
 
 setHomeURL(untrack(homeURL))
+
+export function useHome() {
+	const [handle] = createResource(async function () {
+		const handle = repo.find<Home>(homeURL())
+		await handle.whenReady()
+		return handle
+	})
+	return [createDocumentStore(handle), handle] as const
+}
 
 export default homeURL
