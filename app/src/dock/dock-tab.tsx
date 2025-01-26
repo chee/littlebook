@@ -1,7 +1,6 @@
 import Icon from "../components/icon/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import repo from "../repo/create.ts"
-import {DockviewPanelApi} from "dockview-core"
 import type {AutomergeUrl} from "@automerge/automerge-repo"
 import {createDocumentStore, useHandle} from "automerge-repo-solid-primitives"
 import {Button} from "@kobalte/core/button"
@@ -9,10 +8,7 @@ import {createEffect, Suspense} from "solid-js"
 import homeURL, {Home} from "../repo/home.ts"
 import {useDockAPI} from "./dock.tsx"
 
-export default function DockTab(props: {
-	panelAPI: DockviewPanelApi
-	id: AutomergeUrl
-}) {
+export default function DockTab(props: {id: AutomergeUrl}) {
 	const dockAPI = useDockAPI()
 	const handle = useHandle<DocumentBase>(() => props.id, {repo})
 	const doc = createDocumentStore(handle)
