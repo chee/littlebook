@@ -12,7 +12,7 @@ import {githubLight as github} from "@uiw/codemirror-theme-github"
 import type {DocHandle} from "@automerge/automerge-repo"
 
 export const id = "codemirror"
-export const name = "Codemirror Text Editor"
+export const displayName = "Codemirror Text Editor"
 
 export const contentTypes = ["text"]
 
@@ -45,9 +45,9 @@ export function render(props: {
 				// todo document all the css vars that are part of the public API
 				font-family: var(--family-mono);
 				font-size: var(--font-size);
-				background: var(--fill)	;
-				color: var(--line);
 			}
+			background: var(--fill);
+			color: var(--line);
 		}
 	`)
 	try {
