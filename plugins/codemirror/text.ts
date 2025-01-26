@@ -41,11 +41,8 @@ export function render(props: {
 	style.replaceSync(/*css*/ `
 		.cm-editor {
 			height: 100%;			
-			.cm-content {
-				// todo document all the css vars that are part of the public API
-				font-family: var(--family-mono);
-				font-size: var(--font-size);
-			}
+			font-size: var(--font-size);
+			font-family: var(--family-mono);
 			background: var(--fill);
 			color: var(--line);
 		}
