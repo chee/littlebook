@@ -19,5 +19,6 @@
 	],
 	"settings": {
 		"workbench.colorTheme": "Ruby Sea",
+		"editor.formatOnType": true,
 	},
 }
