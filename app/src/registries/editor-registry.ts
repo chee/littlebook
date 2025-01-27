@@ -1,107 +1,37 @@
-import {
-	DocHandle,
-	type DocumentPayload,
-	type Repo,
-} from "@automerge/automerge-repo"
-import {
-	createContext,
-	getOwner,
-	onCleanup,
-	useContext,
-	type Owner,
-} from "solid-js"
+import {DocHandle, type Repo} from "@automerge/automerge-repo"
+import {createContext, useContext} from "solid-js"
 import z from "zod"
-import {createStore, type SetStoreFunction} from "solid-js/store"
 import {err, ok, type Result} from "../lib/result.ts"
 import type {Entry} from "../documents/entry.ts"
-import {Task, fromPromise} from "true-myth/task"
+import {Registry} from "./registry.ts"
 
-export async function importEditorFromAutomerge(
-	manifest: StoredEditor
-): Promise<Result<Editor, Error>> {
-	return new Task((ok, err) => {
-		const blob = new Blob([manifest.bytes], {
-			type: "application/javascript",
-		})
-		const blobURL = URL.createObjectURL(blob)
-		return fromPromise(import(/* @vite-ignore */ blobURL)).map(mod => {
-			const root = Editor.safeParse(mod)
-			if (root.success) return ok(root.data)
-			const def = Editor.safeParse(mod.default)
-			if (def.success) return ok(def.data)
-			return err(new Error("document doesn't look like an editor"))
-		})
-	})
-}
-
-export class EditorRegistry {
-	#repo: Repo
-	#owner: Owner
+export class EditorRegistry extends Registry<StoredEditor, Editor> {
 	constructor({repo}: {repo: Repo}) {
-		this.#repo = repo
-		repo.on("document", this.#listener)
-		this.#owner = getOwner()
-		onCleanup(() => {
-			this.deconstructor()
-		})
-
-		if (!this.#owner) {
-			throw new Error("registry must be created in a reactive context")
-		}
-
-		const [editors, updateEditors] = createStore<Record<string, Editor>>({})
-		this.#editors = editors
-		this.#updateEditors = updateEditors
-	}
-
-	#editors: Record<string, Editor>
-
-	#updateEditors: SetStoreFunction<Record<string, Editor>>
-
-	#listener = (payload: DocumentPayload) => {
-		const {handle} = payload
-		const manifestWithBytes = StoredEditor.safeParse(handle.docSync())!
-		if (manifestWithBytes.success) {
-			const withBytes = manifestWithBytes.data
-			importEditorFromAutomerge(withBytes).then(editor => {
-				editor.map(editor => this.#updateEditors(withBytes.id, editor))
-			})
-		}
-	}
-
-	register(unknownEditor: Editor) {
-		const editor = Editor.safeParse(unknownEditor)
-		if (editor.success) {
-			this.#updateEditors(editor.data.id, editor.data)
-			return ok()
-		} else {
-			console.error("failed to register editor from bundle", editor.error)
-			return err(editor.error)
-		}
+		super({repo, storedSchema: StoredEditor, schema: Editor})
 	}
 
 	// this yields in three steps to allow for more specific matches to be yielded first
 	*editors(entry: Entry) {
-		for (const editor of Object.values(this.#editors)) {
+		for (const editor of Object.values(this.records)) {
 			if (typeof editor.contentTypes == "string") continue
 			if (editor.contentTypes.includes(entry.contentType)) {
 				yield editor
 			}
 		}
 
-		if (entry.conformsTo) {
-			for (const editor of Object.values(this.#editors)) {
-				if (typeof editor.contentTypes == "string") continue
-				if (
-					editor.contentTypes.some(type =>
-						entry.conformsTo?.includes(type)
-					)
-				) {
-					yield editor
-				}
-			}
-		}
-		for (const editor of Object.values(this.#editors)) {
+		// if (entry.conformsTo) {
+		// 	for (const editor of Object.values(this.records)) {
+		// 		if (typeof editor.contentTypes == "string") continue
+		// 		if (
+		// 			editor.contentTypes.some(type =>
+		// 				entry.conformsTo?.includes(type)
+		// 			)
+		// 		) {
+		// 			yield editor
+		// 		}
+		// 	}
+		// }
+		for (const editor of Object.values(this.records)) {
 			if (editor.contentTypes == "*") {
 				yield editor
 			}
@@ -109,12 +39,8 @@ export class EditorRegistry {
 	}
 
 	get(id: string): Result<Editor, Error> {
-		const editor = this.#editors[id]
+		const editor = this.records[id]
 		return editor ? ok(editor) : err(new Error(`editor not found: ${id}`))
-	}
-
-	deconstructor() {
-		this.#repo.off("document", this.#listener)
 	}
 }
 

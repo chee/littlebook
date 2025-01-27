@@ -3,4 +3,7 @@
 	max-height: 100%;
 	overflow: scroll;
 	animation: fade 1s;
+	padding: 1rem;
+	background: #fff8f8;
+	font-size: 1.4rem;
 }

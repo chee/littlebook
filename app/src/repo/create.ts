@@ -13,10 +13,6 @@ export async function createAutomergeRepo() {
 }
 
 const repo = await createAutomergeRepo()
-repo.on("document", payload => {
-	// console.info(payload.handle.docSync())
-})
-window.repo = repo
 
 const api = {
 	get home() {
@@ -26,6 +22,8 @@ const api = {
 		return repo.find(location.hash.slice(1) as AutomergeUrl)
 	},
 }
+
+window.repo = repo
 window.api = api
 
 declare global {

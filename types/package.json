@@ -1,0 +1,11 @@
+{
+	"name": "@pointplace/types",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"author": "chee",
+	"license": "MIT",
+	"devDependencies": {
+		"@pointplace/app": "workspace:^"
+	}
+}

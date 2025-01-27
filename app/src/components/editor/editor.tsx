@@ -30,15 +30,7 @@ import tldraw from "@littlebook/tldraw"
 
 */
 
-import {
-	createEffect,
-	createResource,
-	onCleanup,
-	Show,
-	Suspense,
-	useContext,
-} from "solid-js"
-import type {DockviewApi} from "dockview-core"
+import {onCleanup, Show, Suspense, useContext} from "solid-js"
 import ShadowBox from "../shadow-box/shadow-box.tsx"
 import {useEntry} from "../../documents/entry.ts"
 import {
@@ -55,19 +47,18 @@ import {err, ok, type Ok, type Result} from "../../lib/result.ts"
  * 2. cli: cat bundle.js|base64 -w0|pbcopy
  * 3. browser: repo.find(url).change(doc => doc.bytes = Uint8Array.fromBas64(`⌘+v`))<RET>
  */
-export default function FileViewer(props: {
-	url: AutomergeUrl
-	dockviewAPI: DockviewApi
-}) {
+export default function FileViewer(props: {url: AutomergeUrl}) {
 	const [home] = useHome()
 	const [entry, entryHandle] = useEntry(() => props.url, {repo})
 	const editors = () => entry() && registry.editors(entry())
 
 	const registry = useContext(EditorRegistryContext)
-	const editor = (): Result<Editor> => {
+
+	const editor = (): Result<Editor, Error> => {
 		const url = props.url
 		const associations = home()?.associations
 		const firstEditor = editors()?.next().value
+
 		if (associations?.[url]) {
 			const editor = registry.get(associations[url])
 			return editor
@@ -83,7 +74,7 @@ export default function FileViewer(props: {
 	return (
 		<Suspense>
 			<Show
-				when={editor() && editor().ok && fileHandle()}
+				when={editor() && editor().isOk && fileHandle()}
 				fallback={
 					<EditorFallback
 						entry={entry()}
@@ -93,16 +84,18 @@ export default function FileViewer(props: {
 				}>
 				<ShadowBox>
 					{shadow => {
-						;(editor() as Ok<Editor>).val.render({
-							handle: fileHandle(),
-							setName(name: string) {
-								entryHandle()?.change(entry => (entry.name = name))
-							},
-							cleanup(fn) {
-								onCleanup(fn)
-							},
-							shadow,
-						})
+						editor()
+							.unwrapOr({render() {}})
+							.render({
+								handle: fileHandle(),
+								setName(name: string) {
+									entryHandle()?.change(entry => (entry.name = name))
+								},
+								cleanup(fn) {
+									onCleanup(fn)
+								},
+								shadow,
+							})
 					}}
 				</ShadowBox>
 			</Show>

@@ -25,7 +25,6 @@
 .pop-menu__sub-content {
 	z-index: 99999999;
 	min-width: 100px;
-	padding: 0px;
 	background-color: var(--pop-menu-fill);
 	border-radius: 8px;
 	border: 1px solid var(--pop-menu-line);
@@ -53,7 +52,7 @@
 	display: flex;
 	align-items: center;
 	height: 32px;
-	padding: 0 8px 0 8px;
+	padding: 0 8px 0 24px;
 	position: relative;
 	user-select: none;
 	outline: none;
@@ -100,6 +99,7 @@
 	font-size: 1em;
 	color: hsl(240 4% 46%);
 }
+
 [data-highlighted] > .pop-menu__item-right-slot {
 	color: var(--pop-menu-fill);
 }

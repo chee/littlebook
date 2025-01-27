@@ -53,6 +53,9 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		closePanel(id: AutomergeUrl) {
 			dockviewAPI.getPanel(id)?.api.close()
 		},
+		closeGroup(id: string) {
+			dockviewAPI.getGroup(id)?.api.close()
+		},
 		serializeLayout() {
 			return dockviewAPI.toJSON()
 		},

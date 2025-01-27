@@ -1,6 +1,8 @@
 .document-list {
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .document-list__button {

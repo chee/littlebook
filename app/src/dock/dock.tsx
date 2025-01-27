@@ -17,10 +17,12 @@ import {Dynamic} from "solid-js/web"
 export interface DockComponentProps {
 	// the id of the file to open
 	id: AutomergeUrl
+	dockAPI: DockAPI
 }
 
 export interface DockHeaderActionProps {
 	groupID: string
+	dockAPI: DockAPI
 }
 
 function createDockContext(dockOptions: {
@@ -43,6 +45,7 @@ function createDockContext(dockOptions: {
 						<Dynamic
 							component={component()}
 							id={options.id as AutomergeUrl}
+							dockAPI={dockAPI}
 						/>
 					</Show>
 				</div>
@@ -64,6 +67,7 @@ function createDockContext(dockOptions: {
 						<Dynamic
 							component={component()}
 							id={options.id as AutomergeUrl}
+							dockAPI={dockAPI}
 						/>
 					</Show>
 				</div>
@@ -79,7 +83,11 @@ function createDockContext(dockOptions: {
 			const element = (
 				<div style={{display: "contents"}}>
 					<Show when={component()}>
-						<Dynamic component={component()} groupID={options.id} />
+						<Dynamic
+							component={component()}
+							groupID={options.id}
+							dockAPI={dockAPI}
+						/>
 					</Show>
 				</div>
 			) as HTMLElement
@@ -125,8 +133,6 @@ export const DockProvider: ParentComponent<
 		dockContext.dockviewAPI.dispose()
 	})
 
-	console.log(dockContext)
-
 	return (
 		<DockContext.Provider value={dockContext}>
 			<DockAPIContext.Provider value={dockContext.dockAPI}>
@@ -159,7 +165,6 @@ export const DockAPIContext = createContext<DockAPI>()
 
 export function useDockAPI() {
 	const context = useContext(DockAPIContext)
-	console.log("i am being called upon")
 
 	if (context === undefined) {
 		throw new Error(

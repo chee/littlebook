@@ -1,5 +1,9 @@
-import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
-import {For, getOwner, runWithOwner, Show} from "solid-js"
+import {
+	deleteAt,
+	type AutomergeUrl,
+	type DocHandle,
+} from "@automerge/automerge-repo"
+import {createMemo, For, getOwner, runWithOwner, Show} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import repo from "../../../repo/create.ts"
 import {Button} from "@kobalte/core/button"
@@ -8,23 +12,20 @@ import {useHandle, createDocumentStore} from "automerge-repo-solid-primitives"
 import type {Home} from "../../../repo/home.ts"
 import homeURL from "../../../repo/home.ts"
 import type {Entry} from "../../../documents/entry.ts"
-import {type DockAPI} from "../../../dock/dock.tsx"
+import {useDockAPI} from "../../../dock/dock.tsx"
+import {ContextMenu} from "@kobalte/core/context-menu"
 
-export default function HomeWidget(props: {
-	// todo remove direct access to dv, instead create wrapper api for common ops
-	// todo or provide it with a context.
-	// todo any of these seems fine
-	// todo wrapper api prop seems most testable though
-	dockAPI?: DockAPI
-}) {
-	// todo some sort of wrapper that checks a doc is of the right type/matches schema?
+export default function HomeWidget() {
 	const homeHandle = useHandle<Home>(homeURL, {repo})
 	const home = createDocumentStore(homeHandle)
 	const owner = getOwner()
+	const dockAPI = useDockAPI()
 
-	function add(url: AutomergeUrl) {
-		props.dockAPI.openDocument(url)
-	}
+	// todo why do i have to do this?
+	const uniqueFiles = createMemo(() => {
+		const files = home()?.files || []
+		return Array.from(new Set(files))
+	})
 
 	return (
 		<div
@@ -54,6 +55,7 @@ export default function HomeWidget(props: {
 							},
 							{label: "voice note", id: "sound"},
 							{label: "canvas", id: "canvas"},
+							{label: "monkey", id: "monkey"},
 						]}
 						create={id => {
 							let handle: DocHandle<Entry>
@@ -62,8 +64,10 @@ export default function HomeWidget(props: {
 									type: "file",
 									name: "new text document",
 									contentType: "text",
-									url: repo.create({text: "i am a new text document"})
-										.url as AutomergeUrl,
+									url: repo.create({
+										text: "i am a new text document",
+										language: "",
+									}).url,
 								})
 							} else if (id == "folder") {
 								handle = repo.create({
@@ -72,12 +76,22 @@ export default function HomeWidget(props: {
 									contentType: "folder",
 									url: repo.create({
 										files: [],
-									}).url as AutomergeUrl,
+									}).url,
+								})
+							} else if (id == "monkey") {
+								handle = repo.create({
+									type: "file",
+									name: "new monkey",
+									contentType: "monkey",
+									url: repo.create({
+										monkey: "🐒",
+										heho: "heho",
+									}).url,
 								})
 							}
 							if (handle) {
 								const url = handle.url as AutomergeUrl
-								runWithOwner(owner, () => add(url))
+								runWithOwner(owner, () => dockAPI.openDocument(url))
 							}
 						}}
 						importers={[
@@ -92,16 +106,16 @@ export default function HomeWidget(props: {
 			</header>
 			<div class="sidebar-widget__content">
 				<ul class="document-list">
-					<For each={home()?.files}>
+					<For each={uniqueFiles()}>
 						{url => {
 							const handle = useHandle<Entry>(() => url, {
 								repo,
 							})
 							const store = createDocumentStore(handle)
 							const pressed = () =>
-								props.dockAPI.activePanelID == url
+								dockAPI?.activePanelID == url
 									? "true"
-									: props.dockAPI.activePanelID.includes(url)
+									: dockAPI?.panelIDs?.includes(url)
 										? "mixed"
 										: "false"
 
@@ -124,18 +138,56 @@ export default function HomeWidget(props: {
 								 *   - add to home?
 								 */
 							}
+
 							return (
-								<li>
-									<Button
-										class="document-list__button"
-										onclick={() =>
-											runWithOwner(owner, () => add(url))
-										}
-										aria-pressed={pressed()}>
-										<Show when={store()} fallback="">
-											{store.latest?.name ?? url}
-										</Show>
-									</Button>
+								<li style={{width: "100%"}}>
+									<ContextMenu>
+										<ContextMenu.Trigger
+											class="pop-menu__trigger document-list__button"
+											onclick={() =>
+												runWithOwner(owner, () =>
+													dockAPI.openDocument(url)
+												)
+											}
+											aria-pressed={pressed()}>
+											<Show when={store()} fallback="">
+												{store.latest?.name ?? url}
+											</Show>
+										</ContextMenu.Trigger>
+										<ContextMenu.Portal>
+											<ContextMenu.Content class="pop-menu__content">
+												<ContextMenu.Item
+													class="pop-menu__item"
+													onSelect={() => {
+														const name = window.prompt(
+															"rename to:",
+															store.latest?.name
+														)
+														if (name) {
+															handle().change(doc => {
+																doc.name = name
+															})
+														}
+													}}>
+													rename
+												</ContextMenu.Item>
+												<ContextMenu.Item
+													class="pop-menu__item"
+													onSelect={() => {
+														homeHandle().change(home => {
+															const index = Array.from(
+																home.files
+															).indexOf(url)
+															if (index != -1) {
+																deleteAt(home.files, index)
+															}
+														})
+													}}>
+													remove
+												</ContextMenu.Item>
+											</ContextMenu.Content>
+										</ContextMenu.Portal>
+									</ContextMenu>
 								</li>
 							)
 						}}

@@ -69,6 +69,9 @@ importers:
       '@tomjs/vite-plugin-iconify':
         specifier: ^1.2.1
         version: 1.2.1(@iconify/json@2.2.298)(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2))
+      '@types/micromatch':
+        specifier: ^4.0.9
+        version: 4.0.9
       ajv:
         specifier: ^8.17.1
         version: 8.17.1
@@ -87,6 +90,9 @@ importers:
       effect:
         specifier: ^3.12.5
         version: 3.12.5
+      esbuild-wasm:
+        specifier: ^0.24.2
+        version: 0.24.2
       eslint-plugin-neverthrow:
         specifier: ^1.1.4
         version: 1.1.4(@typescript-eslint/parser@8.20.0(eslint@9.18.0(jiti@2.4.2))(typescript@5.6.3))(eslint@9.18.0(jiti@2.4.2))(typescript@5.6.3)
@@ -197,6 +203,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.28.2
         version: 6.36.2
+      '@pointplace/app':
+        specifier: workspace:^
+        version: link:../../app
       '@types/node':
         specifier: ^20.14.10
         version: 20.17.14
@@ -261,6 +270,12 @@ importers:
       typescript:
         specifier: ^5.4.5
         version: 5.6.3
+
+  types:
+    devDependencies:
+      '@pointplace/app':
+        specifier: workspace:^
+        version: link:../app
 
 packages:
 
@@ -3084,6 +3099,11 @@ packages:
 
   es-module-lexer@1.6.0:
     resolution: {integrity: sha512-qqnD1yMU6tk/jnaMosogGySTZP8YtUgAffA9nMN+E/rjxcfRQ6IEk7IiozUjgxKoFHBGjTLnrHB/YC45r/59EQ==}
+
+  esbuild-wasm@0.24.2:
+    resolution: {integrity: sha512-03/7Z1gD+ohDnScFztvI4XddTAbKVmMEzCvvkBpQdWKEXJ+73dTyeNrmdxP1Q0zpDMFjzUJwtK4rLjqwiHbzkw==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   esbuild@0.20.2:
     resolution: {integrity: sha512-WdOOppmUNU+IbZ0PaDiTst80zjnrOkyJNHoKupIcVyU8Lvla3Ugx94VzkQ32Ijqd7UhHJy75gNWDMUekcrSJ6g==}
@@ -7638,6 +7658,8 @@ snapshots:
   entities@4.5.0: {}
 
   es-module-lexer@1.6.0: {}
+
+  esbuild-wasm@0.24.2: {}
 
   esbuild@0.20.2:
     optionalDependencies:

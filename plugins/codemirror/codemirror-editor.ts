@@ -52,6 +52,7 @@ export function render(props: {
 	} catch {}
 
 	const file = props.handle.docSync()
+
 	if (!shape(file)) {
 		console.error("doc is wrong shape")
 		return
@@ -119,20 +120,44 @@ export function render(props: {
 				}),
 	}
 
-	const lang = file?.language && languages[file.language]
-
-	if (lang) {
-		lang()?.then(ext => {
+	function onlang() {
+		if (!shape(file)) {
+			console.error("doc is wrong shape")
+			return
+		}
+		const lang = file?.language && languages[file.language]
+		if (lang) {
+			lang().then(ext => {
+				view.dispatch({
+					effects: [
+						languageCompartment.reconfigure(ext),
+						lineNumbersCompartment.reconfigure(lineNumbers()),
+					],
+				})
+			})
+		} else {
 			view.dispatch({
 				effects: [
-					languageCompartment.reconfigure(ext),
-					lineNumbersCompartment.reconfigure(lineNumbers()),
+					languageCompartment.reconfigure([]),
+					lineNumbersCompartment.reconfigure([]),
 				],
 			})
-		})
+		}
 	}
 
-	props.cleanup(() => view.destroy())
+	onlang()
+
+	props.handle.on("change", change => {
+		if (change.patches.some(patch => patch.path.join(".") == "language")) {
+			onlang()
+		}
+	})
+
+	props.cleanup(() => {
+		console.log("cleaning up")
+		props.handle.off("change", onlang)
+		view.destroy()
+	})
 }
 
 export default {render}

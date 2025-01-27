@@ -23,12 +23,21 @@ class ShadowBoxElement extends HTMLElement {
 		this.style.display = "contents"
 	}
 	connectedCallback() {
-		this.setShadow(
-			this.attachShadow({
-				mode: "closed",
-				delegatesFocus: true,
-			})
-		)
+		if (!this.shadowRoot) {
+			try {
+				this.setShadow(
+					this.attachShadow({
+						mode: "closed",
+						delegatesFocus: true,
+					})
+				)
+			} catch (error) {
+				console.warn("failed to attach shadow root", error)
+			}
+		}
+		if (this.shadowRoot) {
+			this.setShadow(this.shadowRoot)
+		}
 	}
 }
 if (!customElements.get("shadow-box")) {

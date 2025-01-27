@@ -1,21 +1,74 @@
 import Resizable, {type ContextValue} from "corvu/resizable"
 import LeftSidebar from "../sidebar/left-sidebar.tsx"
-import type {ParentComponent, Setter} from "solid-js"
-import type {DockviewApi} from "dockview-core"
+import {
+	createEffect,
+	onCleanup,
+	type ParentComponent,
+	type Setter,
+} from "solid-js"
+import {isValidAutomergeUrl} from "@automerge/automerge-repo"
+import type {SerializedDockview} from "dockview-core"
+import {useHome} from "../../repo/home.ts"
+import repo from "../../repo/create.ts"
+import {useDockAPI} from "../../dock/dock.tsx"
 
 const Workspace: ParentComponent<{
 	sizes: number[]
 	setSizes: Setter<number[]>
 	setResizableContext: Setter<ContextValue>
 	setLastLeftSidebarExpandedSize: Setter<number>
-	dockviewAPI: DockviewApi
 }> = props => {
+	const dockAPI = useDockAPI()
+
+	const [home] = useHome()
+
+	createEffect(() => {
+		for (const editor of home()?.editors ?? []) {
+			// kick off the editorRegistry knowing about these
+			repo.find(editor).docSync()
+		}
+	})
+
+	createEffect(() => {
+		if (!dockAPI) {
+			return true
+		}
+
+		function onhash() {
+			const hash = location.hash.slice(1)
+			if (isValidAutomergeUrl(hash)) {
+				dockAPI.openDocument(hash)
+			}
+		}
+
+		window.addEventListener("hashchange", onhash)
+
+		onCleanup(() => {
+			window.removeEventListener("hashchange", onhash)
+		})
+
+		dockAPI.onLayoutChange(() => {
+			const layout: SerializedDockview = dockAPI.serializeLayout()
+			localStorage.setItem("layout", JSON.stringify(layout))
+			location.hash = dockAPI?.activePanelID
+		})
+
+		const mySerializedLayout = localStorage.getItem("layout")
+
+		if (mySerializedLayout) {
+			try {
+				const layout = JSON.parse(mySerializedLayout)
+				dockAPI.loadLayout(layout)
+			} catch {
+				console.error("failed to load layout")
+			}
+		}
+	})
 	return (
 		<section class="workspace">
 			<Resizable sizes={props.sizes} onSizesChange={props.setSizes}>
 				{() => {
 					props.setResizableContext(Resizable.useContext())
-
 					return (
 						<>
 							<Resizable.Panel
@@ -29,7 +82,7 @@ const Workspace: ParentComponent<{
 								collapseThreshold={0.2}
 								maxSize={0.5}
 								collapsedSize={0}>
-								<LeftSidebar dockviewAPI={props.dockviewAPI} />
+								<LeftSidebar />
 							</Resizable.Panel>
 							<Resizable.Handle />
 							<Resizable.Panel>{props.children}</Resizable.Panel>

@@ -17,18 +17,17 @@
 		"jsxImportSource": "solid-js",
 
 		/* Linting */
-		// "strict": true,
-		// "noUnusedLocals": true,
-		// "noUnusedParameters": true,
-		// "noFallthroughCasesInSwitch": true,
-		// "noUncheckedSideEffectImports": true,
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedSideEffectImports": true,
 
 		/* effect */
 		// "exactOptionalPropertyTypes": true,
-		"typeRoots": ["./node_modules/@types", "./src/types"],
+		"typeRoots": ["./node_modules/@types", "./src/types"]
 
-		/* temporary */
-		"strict": false
+		/* */
 	},
 	"include": ["src"]
 }
