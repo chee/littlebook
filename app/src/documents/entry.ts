@@ -3,7 +3,7 @@ import {h} from "../schema-helpers.ts"
 import type {AutomergeUrl, Repo} from "@automerge/automerge-repo"
 import {createResource, type Accessor} from "solid-js"
 import {createDocumentStore} from "automerge-repo-solid-primitives"
-import {ContentType} from "../registries/content-type-registry.ts"
+import {ContentType} from "../registries/content-type/content-type-schema.ts"
 import repo from "../repo/create.ts"
 
 export const Entry = z.object({

@@ -35,11 +35,12 @@ import ShadowBox from "../shadow-box/shadow-box.tsx"
 import {useEntry} from "../../documents/entry.ts"
 import {
 	EditorRegistryContext,
-	type Editor,
-} from "../../registries/editor-registry.ts"
+	useEditorRegistry,
+} from "../../registries/editor/editor-registry.ts"
+import type {Editor} from "../../registries/editor/editor-schema.ts"
 import {useHome} from "../../repo/home.ts"
 import EditorFallback from "./fallback.tsx"
-import {err, ok, type Ok, type Result} from "../../lib/result.ts"
+import {err, ok, type Result} from "true-myth/result"
 
 /*
  * a way to add these:
@@ -50,9 +51,9 @@ import {err, ok, type Ok, type Result} from "../../lib/result.ts"
 export default function FileViewer(props: {url: AutomergeUrl}) {
 	const [home] = useHome()
 	const [entry, entryHandle] = useEntry(() => props.url, {repo})
-	const editors = () => entry() && registry.editors(entry())
+	const registry = useEditorRegistry()
 
-	const registry = useContext(EditorRegistryContext)
+	const editors = () => entry() && registry.editors(entry()!)
 
 	const editor = (): Result<Editor, Error> => {
 		const url = props.url
@@ -74,10 +75,10 @@ export default function FileViewer(props: {url: AutomergeUrl}) {
 	return (
 		<Suspense>
 			<Show
-				when={editor() && editor().isOk && fileHandle()}
+				when={entry() && editor() && editor().isOk && fileHandle()}
 				fallback={
 					<EditorFallback
-						entry={entry()}
+						entry={entry()!}
 						editor={editor()}
 						fileHandle={fileHandle()}
 					/>
@@ -85,7 +86,12 @@ export default function FileViewer(props: {url: AutomergeUrl}) {
 				<ShadowBox>
 					{shadow => {
 						editor()
-							.unwrapOr({render() {}})
+							.unwrapOr({
+								render() {},
+								id: "",
+								contentTypes: [],
+								displayName: "",
+							})
 							.render({
 								handle: fileHandle(),
 								setName(name: string) {

@@ -13,13 +13,13 @@ import Workspace from "../components/workspace/workspace.tsx"
 // import tldraw from "@littlebook/tldraw"
 import * as codemirror from "@littlebook/text"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
-import {EditorRegistryContext} from "../registries/editor-registry.ts"
+import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
 
 export default function App() {
 	const [resizableContext, setResizableContext] =
 		createSignal<ContextValue | null>(null)
 
-	const editorRegistry = useContext(EditorRegistryContext)
+	const editorRegistry = useEditorRegistry()
 
 	/* 	editorRegistry.register(
 		{

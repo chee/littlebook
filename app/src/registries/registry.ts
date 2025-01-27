@@ -1,10 +1,18 @@
 import {type DocumentPayload, type Repo} from "@automerge/automerge-repo"
-import {getOwner, onCleanup, type Owner} from "solid-js"
+import {
+	createComputed,
+	getOwner,
+	on,
+	onCleanup,
+	runWithOwner,
+	type Owner,
+} from "solid-js"
 import z from "zod"
 import {createStore, type SetStoreFunction} from "solid-js/store"
 import {err, ok, type Result} from "../lib/result.ts"
 import type Unit from "true-myth/unit"
-import {safelyTry, Task} from "true-myth/task"
+import {Task} from "true-myth/task"
+import {createDocumentStore} from "automerge-repo-solid-primitives"
 
 export function importFromAutomerge<T extends z.ZodTypeAny>(
 	doc: {bytes: Uint8Array},
@@ -64,22 +72,27 @@ export abstract class Registry<
 
 	#listener = (payload: DocumentPayload) => {
 		const {handle} = payload
-		handle.doc().then(document => {
-			const parsed = this.#storedSchema.safeParse(document)!
-
-			if (parsed.success) {
-				importFromAutomerge(parsed.data, this.#schema).map(bundle => {
-					if (this.records[bundle.id]) {
-						console.warn(
-							`already registered: ${bundle.id}, not overwriting`
-						)
-						return
+		runWithOwner(this.#owner, () => {
+			const doc = createDocumentStore<unknown>(() => handle)
+			createComputed(
+				on([() => doc()?.bytes], () => {
+					console.log("heet", doc())
+					const parsed = this.#storedSchema.safeParse(doc())!
+					if (parsed.success) {
+						importFromAutomerge(parsed.data, this.#schema).map(bundle => {
+							// if (this.records[bundle.id]) {
+							// 	console.warn(
+							// 		`already registered: ${bundle.id}, not overwriting`
+							// 	)
+							// 	return
+							// }
+							this.#updateRecords(parsed.data.id, bundle)
+						})
+					} else if (handle.docSync()?.bytes) {
+						console.warn("failed to parse document", parsed.error)
 					}
-					this.#updateRecords(parsed.data.id, bundle)
 				})
-			} else if (handle.docSync()?.bytes) {
-				console.warn("failed to parse document", parsed.error)
-			}
+			)
 		})
 	}
 
@@ -98,12 +111,3 @@ export abstract class Registry<
 		this.#repo.off("document", this.#listener)
 	}
 }
-
-export const CoderMetadata = z.object({
-	id: z.string(),
-	displayName: z.string(),
-	contentType: z.string(),
-	plugin: z.string().optional(),
-	mimeTypes: z.array(z.string()).optional(),
-	filePatterns: z.array(z.string()).optional(),
-})

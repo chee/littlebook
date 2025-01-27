@@ -129,4 +129,4 @@ export function tldrFileToSnapshot(file: TldrawFile): StoreSnapshot<TLRecord> {
 	}
 }
 
-export function ocifToTldrStore(ocif: OpenCanvas)
+export function ocifToTldrStore(ocif: OpenCanvas) {}

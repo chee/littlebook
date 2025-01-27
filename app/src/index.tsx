@@ -22,7 +22,7 @@ const root = document.getElementById("root")!
 import {
 	EditorRegistry,
 	EditorRegistryContext,
-} from "./registries/editor-registry.ts"
+} from "./registries/editor/editor-registry.ts"
 import repo from "./repo/create.ts"
 
 render(

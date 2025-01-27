@@ -149,23 +149,37 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 							<ContextMenu.Item
 								class="pop-menu__item"
 								onSelect={() => {
-									compile(file()?.text).then(code => {
+									const text = fileHandle()?.docSync().text
+									compile(text).then(code => {
 										const bytes = new TextEncoder().encode(code)
 										const blob = new Blob([bytes], {
 											type: "application/javascript",
 										})
 										const blobURL = URL.createObjectURL(blob)
-										import(blobURL).then(mod => {
+										import(blobURL).then(async mod => {
 											const {render, ...editor} = {...mod}
 											delete editor.render
 											editor.bytes = bytes
 											editor.type = "editor"
-											console.log(editor)
-											const url = repo.create(editor).url
-											homeHandle().change(home => {
-												if (!home.editors.includes(url))
-													home.editors.push(url)
-											})
+											if (file()?.compiledURL) {
+												const existing = repo.find(
+													file()?.compiledURL
+												)
+												await existing.whenReady()
+
+												existing.change(doc => {
+													doc.bytes = bytes
+												})
+											} else {
+												const url = repo.create(editor).url
+												fileHandle()?.change(file => {
+													file.compiledURL = url
+												})
+												homeHandle()?.change(home => {
+													if (!home.editors.includes(url))
+														home.editors.push(url)
+												})
+											}
 										})
 									})
 								}}>
@@ -180,7 +194,6 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 }
 
 import esbuild from "esbuild-wasm"
-import type {importEditorFromAutomerge} from "../registries/editor-registry.ts"
 const wasm = await import("esbuild-wasm/esbuild.wasm?url")
 
 await esbuild.initialize({

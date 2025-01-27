@@ -9,7 +9,7 @@ const ShadowBox: Component<{
 
 	createEffect(() => {
 		if (props.children && shadow()) {
-			props.children(shadow())
+			props.children(shadow()!)
 		}
 	})
 

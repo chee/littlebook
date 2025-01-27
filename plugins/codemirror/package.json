@@ -21,6 +21,7 @@
 	},
 	"scripts": {
 		"mk": "NODE_ENV=production node mk",
+		"build": "NODE_ENV=production node mk",
 		"w": "node mk/w",
 		"dev": "NODE_ENV=development node mk/w",
 		"test": "echo \"Error: no test specified\" && exit 1"
