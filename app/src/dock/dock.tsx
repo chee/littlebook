@@ -8,6 +8,7 @@ import {
 	type ParentComponent,
 	Show,
 	splitProps,
+	createRoot,
 } from "solid-js"
 import "./dock.css"
 import {createDockAPI} from "./api.ts"
@@ -100,13 +101,13 @@ function createDockContext(dockOptions: {
 		createWatermarkComponent() {
 			const component = () => dockOptions.watermarkComponent ?? "div"
 
-			const element = (
+			const element = createRoot(() => (
 				<div style={{display: "contents"}}>
 					<Show when={component()}>
 						<Dynamic component={component()} />
 					</Show>
 				</div>
-			) as HTMLElement
+			)) as HTMLElement
 			return {
 				element,
 				init() {},

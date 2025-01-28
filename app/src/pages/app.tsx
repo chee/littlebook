@@ -1,7 +1,5 @@
-import {createSignal, useContext} from "solid-js"
+import {createSignal} from "solid-js"
 import "./app.css"
-
-import {type AutomergeUrl} from "@automerge/automerge-repo"
 import {type ContextValue} from "corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
 import PageHeader from "../components/page-header/page-header.tsx"
@@ -10,8 +8,7 @@ import FileViewer from "../components/editor/editor.tsx"
 import {Dock, DockProvider} from "../dock/dock.tsx"
 import DockTab from "../dock/dock-tab.tsx"
 import Workspace from "../components/workspace/workspace.tsx"
-// import tldraw from "@littlebook/tldraw"
-import * as codemirror from "@littlebook/text"
+import * as codemirror from "@littlebook/text/codemirror-editor.ts"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
 
@@ -71,12 +68,14 @@ export default function App() {
 		<div class="app">
 			<DockProvider
 				components={{
-					document: props => <FileViewer url={props.id as AutomergeUrl} />,
+					document: props => {
+						return <FileViewer url={props.id} />
+					},
 				}}
 				tabComponents={{
 					document: DockTab,
 				}}
-				watermarkComponent={() => <div class="dock-watermark">hehe</div>}
+				watermarkComponent={() => <div class="dock-watermark" />}
 				rightHeaderActionComponent={props => (
 					<div class="dock-header-actions">
 						<DropdownMenu>

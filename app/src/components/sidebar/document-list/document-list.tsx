@@ -6,25 +6,22 @@ import {
 import {createMemo, For, getOwner, runWithOwner, Show} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import repo from "../../../repo/create.ts"
-import {Button} from "@kobalte/core/button"
 import "./document-list.css"
-import {useHandle, createDocumentStore} from "automerge-repo-solid-primitives"
-import type {Home} from "../../../repo/home.ts"
-import homeURL from "../../../repo/home.ts"
+import {createDocumentProjection} from "automerge-repo-solid-primitives"
+import {useHome} from "../../../repo/home.ts"
 import type {Entry} from "../../../documents/entry.ts"
 import {useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 
 export default function HomeWidget() {
-	const homeHandle = useHandle<Home>(homeURL, {repo})
-	const home = createDocumentStore(homeHandle)
+	const [home, changeHome, homeHandle] = useHome()
 	const owner = getOwner()
 	const dockAPI = useDockAPI()
 
 	// todo why do i have to do this?
 	const uniqueFiles = createMemo(() => {
-		const files = home()?.files || []
-		return Array.from(new Set(files))
+		const files = home?.files || []
+		return Array.from(new Set(files)) as AutomergeUrl[]
 	})
 
 	return (
@@ -40,7 +37,7 @@ export default function HomeWidget() {
 				console.log(event.dataTransfer, event)
 			}}>
 			<header class="sidebar-widget__header">
-				<span>{home()?.name}</span>
+				<span>{home?.name}</span>
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
 						creators={[
@@ -58,7 +55,7 @@ export default function HomeWidget() {
 							{label: "monkey", id: "monkey"},
 						]}
 						create={id => {
-							let handle: DocHandle<Entry>
+							let handle: DocHandle<any>
 							if (id == "text") {
 								handle = repo.create({
 									type: "file",
@@ -89,7 +86,7 @@ export default function HomeWidget() {
 									}).url,
 								})
 							}
-							if (handle) {
+							if (handle!) {
 								const url = handle.url as AutomergeUrl
 								runWithOwner(owner, () => dockAPI.openDocument(url))
 							}
@@ -108,10 +105,9 @@ export default function HomeWidget() {
 				<ul class="document-list">
 					<For each={uniqueFiles()}>
 						{url => {
-							const handle = useHandle<Entry>(() => url, {
-								repo,
-							})
-							const store = createDocumentStore(handle)
+							const store = createDocumentProjection<Entry>(
+								repo.find(url)
+							)
 							const pressed = () =>
 								dockAPI?.activePanelID == url
 									? "true"
@@ -150,8 +146,8 @@ export default function HomeWidget() {
 												)
 											}
 											aria-pressed={pressed()}>
-											<Show when={store()} fallback="">
-												{store.latest?.name ?? url}
+											<Show when={store} fallback="">
+												{store.name ?? url}
 											</Show>
 										</ContextMenu.Trigger>
 										<ContextMenu.Portal>
@@ -161,12 +157,14 @@ export default function HomeWidget() {
 													onSelect={() => {
 														const name = window.prompt(
 															"rename to:",
-															store.latest?.name
+															store.name
 														)
 														if (name) {
-															handle().change(doc => {
-																doc.name = name
-															})
+															repo
+																.find<Entry>(url)
+																.change(doc => {
+																	doc.name = name
+																})
 														}
 													}}>
 													rename
@@ -174,7 +172,7 @@ export default function HomeWidget() {
 												<ContextMenu.Item
 													class="pop-menu__item"
 													onSelect={() => {
-														homeHandle().change(home => {
+														homeHandle()?.change(home => {
 															const index = Array.from(
 																home.files
 															).indexOf(url)

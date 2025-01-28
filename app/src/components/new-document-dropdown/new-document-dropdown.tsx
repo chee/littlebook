@@ -18,7 +18,7 @@ export default function NewDocumentMenu(props: {
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content class="pop-menu__content">
-					<DropdownMenu.Sub overlap gutter={4} shift={-8}>
+					<DropdownMenu.Sub overlap gutter={-10}>
 						<DropdownMenu.SubTrigger class="pop-menu__sub-trigger">
 							create
 							<div class="pop-menu__item-right-slot">

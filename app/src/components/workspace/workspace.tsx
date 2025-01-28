@@ -23,7 +23,7 @@ const Workspace: ParentComponent<{
 	const [home] = useHome()
 
 	createEffect(() => {
-		for (const editor of home()?.editors ?? []) {
+		for (const editor of home?.editors ?? []) {
 			// kick off the editorRegistry knowing about these
 			repo.find(editor).docSync()
 		}

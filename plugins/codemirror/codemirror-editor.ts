@@ -27,9 +27,10 @@ function shape(doc: any): doc is {
 
 export function render(props: {
 	handle: DocHandle<unknown>
-	shadow: ShadowRoot
 	cleanup(fn: () => void): void
 }) {
+	const parent = document.createElement("div")
+	parent.style.display = "contents"
 	const languageCompartment = new Compartment()
 	const lineNumbersCompartment = new Compartment()
 	const theme = new Compartment()
@@ -48,7 +49,11 @@ export function render(props: {
 		}
 	`)
 	try {
-		props.shadow.adoptedStyleSheets = [style]
+		if (document.adoptedStyleSheets) {
+			document.adoptedStyleSheets.push(style)
+		} else {
+			document.adoptedStyleSheets = [style]
+		}
 	} catch {}
 
 	const file = props.handle.docSync()
@@ -60,7 +65,7 @@ export function render(props: {
 
 	const view = new EditorView({
 		doc: file?.text ?? "",
-		parent: props.shadow,
+		parent,
 		extensions: [
 			minimalSetup,
 			indentUnit.of("\t"),
@@ -81,6 +86,7 @@ export function render(props: {
 	}
 
 	darkmatch.addEventListener("change", onschemechange)
+
 	props.cleanup(() => {
 		darkmatch.removeEventListener("change", onschemechange)
 	})
@@ -88,6 +94,7 @@ export function render(props: {
 	const languages: {
 		[key: string]: () => Promise<LanguageSupport>
 	} = {
+		json: () => import("@codemirror/lang-json").then(mod => mod.json()),
 		python: () => import("@codemirror/lang-python").then(mod => mod.python()),
 		javascript: () =>
 			import("@codemirror/lang-javascript").then(mod => mod.javascript()),
@@ -103,6 +110,11 @@ export function render(props: {
 								alias: ["js", "jsx", "ts", "tsx", "typescript"],
 								filename: /\.[jt]sx?$/,
 								load: languages.javascript,
+							}),
+							LanguageDescription.of({
+								name: "json",
+								filename: /\.json$/,
+								load: languages.json,
 							}),
 							LanguageDescription.of({
 								name: "html",
@@ -154,10 +166,11 @@ export function render(props: {
 	})
 
 	props.cleanup(() => {
-		console.log("cleaning up")
 		props.handle.off("change", onlang)
 		view.destroy()
 	})
+
+	return parent
 }
 
 export default {render}

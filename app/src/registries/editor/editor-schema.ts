@@ -15,7 +15,6 @@ export const Editor = z
 			.function()
 			.args(
 				z.object({
-					shadow: z.instanceof(ShadowRoot),
 					handle: z.instanceof(DocHandle),
 					setName: z.function().args(z.string()).returns(z.void()),
 					cleanup: z
@@ -24,7 +23,7 @@ export const Editor = z
 						.returns(z.void()),
 				})
 			)
-			.returns(z.void()),
+			.returns(z.instanceof(HTMLElement)),
 	})
 	.extend(EditorMetadata.shape)
 

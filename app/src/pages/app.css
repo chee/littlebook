@@ -163,3 +163,23 @@ ctx */
 		transform: scale(0.96);
 	}
 }
+
+.dock-watermark {
+	height: 100%;
+	width: 100%;
+	background: linear-gradient(
+		to bottom right,
+		orange,
+		yellow,
+		green,
+		red,
+		pink,
+		blue,
+		cyan,
+		purple,
+		var(--blue-crayola),
+		var(--blue-crayola),
+		var(--carribean-current),
+		var(--chili)
+	);
+}

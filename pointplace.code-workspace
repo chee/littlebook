@@ -18,7 +18,10 @@
 		},
 	],
 	"settings": {
-		"workbench.colorTheme": "Ruby Sea",
+		"workbench.colorTheme": "Spacedust",
 		"editor.formatOnType": true,
+		"[commonlisp]": {
+			"editor.wordSeparators": "`|;:'\",()",
+		},
 	},
 }

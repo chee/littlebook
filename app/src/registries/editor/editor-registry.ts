@@ -10,6 +10,13 @@ export class EditorRegistry extends Registry<StoredEditor, Editor> {
 		super({repo, storedSchema: StoredEditor, schema: Editor})
 	}
 
+	/*
+	 * a way to add these:
+	 * 1. cli: build the bundle
+	 * 2. cli: cat bundle.js|base64 -w0|pbcopy
+	 * 3. browser: repo.find(url).change(doc => doc.bytes = Uint8Array.fromBas64(`⌘+v`))<RET>
+	 */
+
 	// this yields in three steps to allow for more specific matches to be yielded first
 	*editors(entry: Entry) {
 		for (const editor of Object.values(this.records)) {

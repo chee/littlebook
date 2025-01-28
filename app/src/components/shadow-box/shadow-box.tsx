@@ -32,11 +32,21 @@ class ShadowBoxElement extends HTMLElement {
 					})
 				)
 			} catch (error) {
-				console.warn("failed to attach shadow root", error)
+				console.warn("failed to attach shadow root", error, {
+					isConnected: this.isConnected,
+				})
 			}
 		}
 		if (this.shadowRoot) {
 			this.setShadow(this.shadowRoot)
+		}
+	}
+
+	disconnectedCallback() {
+		this.shadowRoot && (this.shadowRoot.textContent = "")
+
+		while (this.shadowRoot?.firstChild) {
+			this.shadowRoot.removeChild(this.shadowRoot.firstChild)
 		}
 	}
 }

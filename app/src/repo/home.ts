@@ -1,9 +1,9 @@
 import {makePersisted} from "@solid-primitives/storage"
 import repo from "./create.ts"
-import {createEffect, createResource, createSignal, untrack} from "solid-js"
+import {createSignal, untrack} from "solid-js"
 import type {AutomergeUrl} from "@automerge/automerge-repo"
 import type {Entry} from "../documents/entry.ts"
-import {createDocumentStore} from "automerge-repo-solid-primitives"
+import {useDocumentStore} from "automerge-repo-solid-primitives"
 
 export interface Home {
 	type: "home"
@@ -65,12 +65,7 @@ const [homeURL, setHomeURL] = makePersisted(
 setHomeURL(untrack(homeURL))
 
 export function useHome() {
-	const [handle] = createResource(async function () {
-		const handle = repo.find<Home>(homeURL())
-		await handle.whenReady()
-		return handle
-	})
-	return [createDocumentStore(handle), handle] as const
+	return useDocumentStore<Home>(() => homeURL(), {repo})
 }
 
 export default homeURL
