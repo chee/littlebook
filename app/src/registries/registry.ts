@@ -7,26 +7,30 @@ import {
 	runWithOwner,
 	type Owner,
 } from "solid-js"
-import z from "zod"
 import {createStore, type SetStoreFunction} from "solid-js/store"
-import {err, ok, type Result} from "../lib/result.ts"
+import {err, ok, type Result} from "true-myth/result"
 import type Unit from "true-myth/unit"
 import {Task} from "true-myth/task"
 import {createDocumentProjection} from "automerge-repo-solid-primitives"
+import type {StandardSchemaV1} from "@standard-schema/spec"
 
-export function importFromAutomerge<T extends z.ZodTypeAny>(
+export function importFromAutomerge<T extends StandardSchemaV1>(
 	doc: {bytes: Uint8Array},
 	schema: T
-): Task<z.infer<T>, Error> {
+): Task<StandardSchemaV1.InferInput<T>, Error> {
 	return new Task(async (yay, boo) => {
 		const blob = new Blob([doc.bytes], {type: "application/javascript"})
 		const blobURL = URL.createObjectURL(blob)
 		const module = await import(/* @vite-ignore */ blobURL)
-		const star = schema.safeParse(module)
-		if (star.success) return yay(star.data)
-		const defaul = schema.safeParse(module.default)
-		if (defaul.success) return yay(defaul.data)
-		return boo(new Error(`document doesn't look like a ${schema}`))
+		const starFromExport = await schema["~standard"].validate(module)
+		if (!starFromExport.issues) return yay(starFromExport.value)
+		const defaultExport = await schema["~standard"].validate(module.default)
+		if (!defaultExport.issues) return yay(defaultExport.value)
+		return boo(
+			new Error(
+				`document doesn't look like a ${schema}.\n${starFromExport.issues}\n${defaultExport.issues}`
+			)
+		)
 	})
 }
 
@@ -36,25 +40,42 @@ export abstract class Registry<
 > {
 	#repo: Repo
 	#owner: Owner
-	#storedSchema: z.ZodType<Stored>
-	#schema: z.ZodType<Shape>
+	#storedSchema: StandardSchemaV1<Stored>
+	#schema: StandardSchemaV1<Shape>
 	records: Record<string, Shape>
 
 	#updateRecords: SetStoreFunction<Record<string, Shape>>
 
+	#name = ""
+
+	get nameWithSpace() {
+		if (this.#name) return this.#name + " "
+		else return ""
+	}
+
+	get nameWithPrefixSpace() {
+		if (this.#name) return " " + this.#name
+		else return ""
+	}
+
 	constructor({
 		repo,
 		storedSchema,
-		schema: schema,
+		schema,
+		name = "",
 	}: {
 		repo: Repo
-		storedSchema: z.ZodType<Stored>
-		schema: z.ZodType<Shape>
+		storedSchema: StandardSchemaV1<Stored>
+		schema: StandardSchemaV1<Shape>
+		name?: string
 	}) {
+		this.#name = name
 		this.#repo = repo
 		this.#owner = getOwner()!
 		if (!this.#owner) {
-			throw new Error("registry must be created in a reactive context")
+			throw new Error(
+				`${this.nameWithSpace}registry must be created in a reactive context`
+			)
 		}
 		this.#storedSchema = storedSchema
 		this.#schema = schema
@@ -75,38 +96,67 @@ export abstract class Registry<
 		runWithOwner(this.#owner, () => {
 			const doc = createDocumentProjection<{bytes: Uint8Array}>(handle)
 			createComputed(
-				on([() => doc?.bytes], () => {
-					const parsed = this.#storedSchema.safeParse(doc)!
-					if (parsed.success) {
-						importFromAutomerge(parsed.data, this.#schema)
+				on([() => doc?.bytes], async () => {
+					const parsed =
+						await this.#storedSchema["~standard"].validate(doc)!
+					if (parsed.issues) {
+						if (
+							"type" in doc &&
+							doc.type == this.#name &&
+							handle.docSync()?.bytes
+						) {
+							console.warn(
+								`failed to parse ${this.nameWithSpace}document`,
+								parsed.issues
+							)
+						}
+					} else {
+						importFromAutomerge(parsed.value, this.#schema)
 							.map(bundle => {
-								// if (this.records[bundle.id]) {
-								// 	console.warn(
-								// 		`already registered: ${bundle.id}, not overwriting`
-								// 	)
-								// 	return
-								// }
-								this.#updateRecords(parsed.data.id, bundle)
+								if (this.records[bundle.id]) {
+									console.warn(
+										`overwriting${this.nameWithPrefixSpace}: [${bundle.id}]`
+									)
+								}
+								this.#updateRecords(parsed.value.id, bundle)
 							})
 							.mapRejected(err => {
-								console.error("failed to import document", err)
+								console.error(
+									`failed to import ${this.nameWithSpace}document`,
+									err
+								)
 							})
-					} else if (handle.docSync()?.bytes) {
-						console.warn("failed to parse document", parsed.error)
 					}
 				})
 			)
 		})
 	}
 
+	// todo should i just make this async?
 	register(unknown: Shape): Result<Unit, Error> {
-		const parsed = this.#schema.safeParse(unknown)
-		if (parsed.success) {
-			this.#updateRecords(parsed.data.id, parsed.data)
+		const record = this.#schema["~standard"].validate(unknown)
+		if (record instanceof Promise) {
+			record.then(record => {
+				if (record.issues) {
+					console.error(
+						`failed to register${this.nameWithPrefixSpace}`,
+						record.issues
+					)
+				} else {
+					this.#updateRecords(record.value.id, record.value)
+				}
+			})
 			return ok()
+		}
+		if (record.issues) {
+			console.error(
+				`failed to register${this.nameWithPrefixSpace}`,
+				record.issues
+			)
+			return err(new Error(record.issues.join("\n")))
 		} else {
-			console.error("failed to register coder", parsed.error)
-			return err(parsed.error)
+			this.#updateRecords(record.value.id, record.value)
+			return ok()
 		}
 	}
 

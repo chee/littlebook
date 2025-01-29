@@ -1,4 +1,5 @@
 import z from "zod"
+import {h} from "../../schema-helpers.ts"
 
 export const CoderMetadata = z.object({
 	id: z.string(),
@@ -7,6 +8,7 @@ export const CoderMetadata = z.object({
 	plugin: z.string().optional(),
 	mimeTypes: z.array(z.string()).optional(),
 	filePatterns: z.array(z.string()).optional(),
+	recommendedFileExtension: z.string().optional(),
 })
 
 export type CoderMetadata = z.infer<typeof CoderMetadata>
@@ -14,8 +16,18 @@ export type CoderMetadata = z.infer<typeof CoderMetadata>
 export function inferCoder<T extends z.ZodTypeAny>(schema: T) {
 	return z
 		.object({
-			decode: z.function().args(z.instanceof(Uint8Array)).returns(schema),
-			encode: z.function().args(schema).returns(z.instanceof(Uint8Array)),
+			fromBytes: z
+				.function()
+				.args(z.instanceof(Uint8Array))
+				.returns(h.result(schema)),
+			toBytes: z
+				.function()
+				.args(schema)
+				.returns(h.result(z.instanceof(Uint8Array))),
+			fromFile: z
+				.function()
+				.args(z.instanceof(File))
+				.returns(z.promise(h.result(schema))),
 			new: z.function().args().returns(schema),
 		})
 		.extend(CoderMetadata.shape)
@@ -27,7 +39,6 @@ export type Coder<T extends z.ZodTypeAny = z.ZodTypeAny> = z.infer<
 	ReturnType<typeof inferCoder<T>>
 >
 // how a compiled coder plugin is stored in automerge
-
 export const StoredCoder = z
 	.object({
 		type: z.literal("coder"),

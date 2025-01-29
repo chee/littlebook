@@ -16,7 +16,8 @@ export const Entry = z.object({
 	// a solar icon name or a URL
 	icon: z.string().optional(),
 	// the file's contentType
-	contentType: h.automergeURL(),
+	contentType: z.string(),
+	contentTypeURL: h.automergeURL().optional(),
 
 	// a ref to the file
 	url: h.automergeURL(),

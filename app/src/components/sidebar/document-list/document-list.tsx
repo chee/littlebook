@@ -12,6 +12,7 @@ import {useHome} from "../../../repo/home.ts"
 import type {Entry} from "../../../documents/entry.ts"
 import {useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
+import {useContentTypeRegistry} from "../../../registries/content-type/content-type-registry.ts"
 
 export default function HomeWidget() {
 	const [home, changeHome, homeHandle] = useHome()
@@ -23,6 +24,8 @@ export default function HomeWidget() {
 		const files = home?.files || []
 		return Array.from(new Set(files)) as AutomergeUrl[]
 	})
+
+	const contentTypes = useContentTypeRegistry()
 
 	return (
 		<div
@@ -40,63 +43,24 @@ export default function HomeWidget() {
 				<span>{home?.name}</span>
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
-						creators={[
-							{label: "folder", id: "folder"},
-							{
-								label: "plain text",
-								id: "text",
-							},
-							{
-								label: "rich text",
-								id: "richtext",
-							},
-							{label: "voice note", id: "sound"},
-							{label: "canvas", id: "canvas"},
-							{label: "monkey", id: "monkey"},
-						]}
-						create={id => {
-							let handle: DocHandle<any>
-							if (id == "text") {
-								handle = repo.create({
-									type: "file",
-									name: "new text document",
-									contentType: "text",
-									url: repo.create({
-										text: "i am a new text document",
-										language: "",
-									}).url,
+						create={({name, content, contentType}) => {
+							const handle: DocHandle<unknown> = repo.create({
+								type: "file",
+								name,
+								contentType: contentType,
+								icon:
+									contentTypes.get(contentType).unwrapOr({icon: ""})
+										?.icon ?? "",
+								url: repo.create(content).url,
+							} satisfies Entry)
+
+							const url = handle.url as AutomergeUrl
+							runWithOwner(owner, () => {
+								dockAPI.openDocument(url)
+								changeHome(home => {
+									home.files.push(url)
 								})
-							} else if (id == "folder") {
-								handle = repo.create({
-									type: "file",
-									name: "new folder",
-									contentType: "folder",
-									url: repo.create({
-										files: [],
-									}).url,
-								})
-							} else if (id == "monkey") {
-								handle = repo.create({
-									type: "file",
-									name: "new monkey",
-									contentType: "monkey",
-									url: repo.create({
-										monkey: "🐒",
-										heho: "heho",
-									}).url,
-								})
-							}
-							if (handle!) {
-								const url = handle.url as AutomergeUrl
-								runWithOwner(owner, () => dockAPI.openDocument(url))
-							}
-						}}
-						importers={[
-							{label: "from file", id: "file"},
-							{label: "from URL", id: "url"},
-						]}
-						import={id => {
-							console.info(`she wants to import from ${id}`)
+							})
 						}}
 					/>
 				</div>

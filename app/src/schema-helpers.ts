@@ -1,5 +1,5 @@
 import {isValidAutomergeUrl} from "@automerge/automerge-repo"
-import {z} from "zod"
+import {z, type ZodTypeAny} from "zod"
 
 export function automergeURL() {
 	return z.string().refine(isValidAutomergeUrl, {
@@ -7,6 +7,25 @@ export function automergeURL() {
 	})
 }
 
+export const ok = <T extends ZodTypeAny>(shape: T) => {
+	return z.object({
+		ok: z.literal(true),
+		val: shape,
+	})
+}
+export const err = <T extends ZodTypeAny>(_: T) => {
+	return z.object({
+		ok: z.literal(false),
+		err: z.instanceof(Error),
+	})
+}
+export const result = <T extends ZodTypeAny>(shape: T) => {
+	return z.discriminatedUnion("ok", [ok<T>(shape), err<T>(shape)])
+}
+
 export const h = {
 	automergeURL,
+	ok,
+	err,
+	result,
 }

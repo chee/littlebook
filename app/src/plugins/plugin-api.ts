@@ -1,6 +1,7 @@
 import type {CoderRegistry} from "../registries/coder/coder-registry.ts"
 import type {Coder} from "../registries/coder/coder-schema.ts"
 import type {EditorRegistry} from "../registries/editor/editor-registry.ts"
+import type {Editor} from "../registries/editor/editor-schema.ts"
 
 export default class PluginAPI {
 	#editorRegistry: EditorRegistry

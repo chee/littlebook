@@ -14,7 +14,7 @@ import type {DocHandle} from "@automerge/automerge-repo"
 export const id = "codemirror"
 export const displayName = "Codemirror Text Editor"
 
-export const contentTypes = ["text"]
+export const contentTypes = ["public.text", "public.code"]
 
 // todo should something like this be part of the API, and caled by the
 // editor.tsx before passing the doc to the plugin?

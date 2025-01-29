@@ -2,13 +2,19 @@ import {For} from "solid-js"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import "./new-document-dropdown.css"
 import Icon from "../icon/icon.tsx"
+import {useCoderRegistry} from "../../registries/coder/coder-registry.ts"
+import type {Coder} from "../../registries/coder/coder-schema.ts"
 
 export default function NewDocumentMenu(props: {
-	creators: {label: string; id: string}[]
-	create(id: string): void
-	importers: {label: string; id: string}[]
-	import(id: string): void
+	create(opts: {
+		name: string
+		contentType: string
+		content: unknown
+		creator: string
+	}): void
 }) {
+	const coders = useCoderRegistry()
+
 	return (
 		<DropdownMenu>
 			<DropdownMenu.Trigger
@@ -27,13 +33,20 @@ export default function NewDocumentMenu(props: {
 						</DropdownMenu.SubTrigger>
 						<DropdownMenu.Portal>
 							<DropdownMenu.SubContent class="pop-menu__sub-content">
-								<For each={props.creators}>
-									{({id, label}) => {
+								<For each={Object.entries(coders.records)}>
+									{([id, coder]) => {
 										return (
 											<DropdownMenu.Item
 												class="pop-menu__item"
-												onSelect={() => props.create(id)}>
-												{label}
+												onSelect={() =>
+													props.create({
+														name: `new ${coder.displayName} file`,
+														content: coder.new(),
+														contentType: coder.contentType,
+														creator: id,
+													})
+												}>
+												{coder.displayName}
 											</DropdownMenu.Item>
 										)
 									}}
@@ -42,29 +55,88 @@ export default function NewDocumentMenu(props: {
 						</DropdownMenu.Portal>
 					</DropdownMenu.Sub>
 
-					<DropdownMenu.Sub overlap gutter={4} shift={-8}>
-						<DropdownMenu.SubTrigger class="pop-menu__sub-trigger">
-							import
-							<div class="pop-menu__item-right-slot">
-								<Icon icon="solar:alt-arrow-right-linear" />
-							</div>
-						</DropdownMenu.SubTrigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.SubContent class="pop-menu__sub-content">
-								<For each={props.importers}>
-									{({id, label}) => {
-										return (
-											<DropdownMenu.Item
-												class="pop-menu__item"
-												onSelect={() => props.import(id)}>
-												{label}
-											</DropdownMenu.Item>
+					<DropdownMenu.Item
+						class="pop-menu__item"
+						// eslint-disable-next-line solid/reactivity
+						onSelect={async () => {
+							// todo move this somewhere sensible
+							const fsa = await import("file-system-access")
+							const [computerFileHandle] = await fsa.showOpenFilePicker({
+								_preferPolyfill: false,
+								multiple: false,
+							})
+							const computerFile = await computerFileHandle.getFile()
+
+							const relevantCoders = Array.from(
+								coders.forMIMEType(computerFile.type) ||
+									coders.forFilename(computerFile.name)
+							)
+
+							let coder: Coder | undefined
+
+							if (relevantCoders.length == 0) {
+								// const importAsText = prompt(
+								// 	"unrecognized file type, import as text?"
+								// )
+								// if (
+								// 	importAsText != null &&
+								// 	importAsText.toLowerCase().trim().slice(0, 2) !==
+								// 		"no"
+								// ) {
+								console.log(coders)
+								coder = coders.records["code"]!
+								// }
+							} else if (relevantCoders.length == 1) {
+								coder = relevantCoders[0]
+							} else if (relevantCoders.length > 1) {
+								coder = await new Promise(resolve => {
+									const options = relevantCoders.map(coder => ({
+										label: coder.displayName,
+										value: coder,
+									}))
+									const select = document.createElement("select")
+									select.style.position = "fixed"
+									select.style.top = "0"
+									select.style.left = "0"
+									select.style.zIndex = "1000"
+									select.innerHTML = options
+										.map(
+											option =>
+												`<option value="${option.value}">${option.label}</option>`
 										)
-									}}
-								</For>
-							</DropdownMenu.SubContent>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Sub>
+										.join("")
+									select.addEventListener("change", () => {
+										resolve(options[select.selectedIndex].value)
+									})
+									select.addEventListener("keydown", e => {
+										if (e.key === "Enter") {
+											resolve(options[select.selectedIndex].value)
+										}
+									})
+									document.body.appendChild(select)
+								})
+							}
+
+							if (coder) {
+								const content = await coder.fromFile(computerFile)
+								if (content.ok) {
+									console.log(content)
+									props.create({
+										name:
+											computerFileHandle.name ??
+											`${coder.displayName} file`,
+										content: content.val,
+										contentType: coder.contentType,
+										creator: coder.id,
+									})
+								} else {
+									console.error(content.err)
+									alert("failed to import file")
+								}
+							}
+						}}>
+						import
+					</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>
 		</DropdownMenu>

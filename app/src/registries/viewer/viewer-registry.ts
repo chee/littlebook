@@ -1,12 +1,12 @@
 import {type Repo} from "@automerge/automerge-repo"
-import {err, ok, type Result} from "../../lib/result.ts"
+import {err, ok, type Result} from "true-myth/result"
 import type {Entry} from "../../documents/entry.ts"
 import {Registry} from "../registry.ts"
-import {StoredViewer, type Viewer} from "./viewer-schema.ts"
+import {StoredViewer, Viewer} from "./viewer-schema.ts"
 
 export class ViewerRegistry extends Registry<StoredViewer, Viewer> {
 	constructor({repo}: {repo: Repo}) {
-		super({repo, storedSchema: StoredViewer, schema: Viewer})
+		super({repo, storedSchema: StoredViewer, schema: Viewer, name: "viewer"})
 	}
 
 	*viewers(entry: Entry) {
@@ -17,18 +17,18 @@ export class ViewerRegistry extends Registry<StoredViewer, Viewer> {
 			}
 		}
 
-		if (entry.conformsTo) {
-			for (const viewer of Object.values(this.records)) {
-				if (typeof viewer.contentTypes == "string") continue
-				if (
-					viewer.contentTypes.some(type =>
-						entry.conformsTo?.includes(type)
-					)
-				) {
-					yield viewer
-				}
-			}
-		}
+		// if (entry.conformsTo) {
+		// 	for (const viewer of Object.values(this.records)) {
+		// 		if (typeof viewer.contentTypes == "string") continue
+		// 		if (
+		// 			viewer.contentTypes.some(type =>
+		// 				entry.conformsTo?.includes(type)
+		// 			)
+		// 		) {
+		// 			yield viewer
+		// 		}
+		// 	}
+		// }
 
 		for (const viewer of Object.values(this.records)) {
 			if (viewer.contentTypes == "*") {

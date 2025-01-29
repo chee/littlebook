@@ -1,13 +1,13 @@
 import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
-import {err, ok, type Result} from "../../lib/result.ts"
+import {err, ok, type Result} from "true-myth/result"
 import type {Entry} from "../../documents/entry.ts"
 import {Registry} from "../registry.ts"
 import {StoredEditor, Editor} from "./editor-schema.ts"
 
 export class EditorRegistry extends Registry<StoredEditor, Editor> {
 	constructor({repo}: {repo: Repo}) {
-		super({repo, storedSchema: StoredEditor, schema: Editor})
+		super({repo, storedSchema: StoredEditor, schema: Editor, name: "editor"})
 	}
 
 	/*

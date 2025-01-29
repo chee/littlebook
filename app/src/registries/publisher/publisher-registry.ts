@@ -2,7 +2,7 @@ import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "../registry"
 import type {Entry} from "../../documents/entry"
-import {err, ok, type Result} from "../../lib/result"
+import {err, ok, type Result} from "true-myth/result"
 import {StoredPublisher, type Publisher} from "./publisher-schema.ts"
 
 export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {

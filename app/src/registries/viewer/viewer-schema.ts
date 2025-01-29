@@ -1,5 +1,5 @@
 import {createContext, useContext} from "solid-js"
-import type z from "zod"
+import z from "zod"
 import type {ViewerRegistry} from "./viewer-registry.ts"
 
 export const ViewerMetadata = z.object({

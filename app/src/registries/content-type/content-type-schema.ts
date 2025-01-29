@@ -1,4 +1,6 @@
 import {z, type ZodTypeAny} from "zod"
+import * as standard from "../../standard-schema/zod-standard-schema.ts"
+import {h} from "../../schema-helpers.ts"
 
 export const ContentTypeMetadata = z.object({
 	id: z.string(),
@@ -7,47 +9,24 @@ export const ContentTypeMetadata = z.object({
 	icon: z.string().optional(),
 })
 
-export const inferOk = <T extends ZodTypeAny>(shape: T) => {
-	return z.object({
-		ok: z.literal(true),
-		val: shape,
-	})
-}
-export const inferErr = <T extends ZodTypeAny>(_: T) => {
-	return z.object({
-		ok: z.literal(false),
-		err: z.instanceof(Error),
-	})
-}
-export const inferResult = <T extends ZodTypeAny>(shape: T) => {
-	return z.discriminatedUnion("ok", [inferOk(shape), inferErr(shape)])
-}
-
 export function inferContentType<T extends ZodTypeAny>(shape: T) {
 	return z
 		.object({
-			parse: z.function().args(z.unknown()).returns(inferResult(shape)),
+			schema: standard.schema(shape),
 		})
-
 		.extend(ContentTypeMetadata.shape)
 }
 
 export const TextShape = z.object({text: z.string()})
 
-export const TextContentType = inferContentType(TextShape).parse({
-	id: "public.text",
-	displayName: "plain text",
-	parse(content: unknown) {
-		const result = TextShape.safeParse(content)
-		if (result.success) {
-			return {ok: true, val: result.data}
-		} else {
-			return {ok: false, err: result.error}
-		}
-	},
-})
+export const TextContentType = inferContentType(TextShape)
 
-export const KnownContentTypes = []
+export const CodeShape = z.object({
+	text: z.string(),
+	language: z.string().optional(),
+	editorURL: h.automergeURL().optional(),
+})
+export const CodeContentType = inferContentType(CodeShape)
 
 export const ContentType: z.ZodType<ContentType> = inferContentType(z.unknown())
 
@@ -63,3 +42,5 @@ export const StoredContentType = z
 		bytes: z.instanceof(Uint8Array),
 	})
 	.extend(ContentTypeMetadata.shape)
+
+export type StoredContentType = z.infer<typeof StoredContentType>

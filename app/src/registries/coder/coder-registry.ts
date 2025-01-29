@@ -1,9 +1,9 @@
 import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
-import z from "zod"
-import micromatch from "micromatch"
 import {Registry} from "../registry.ts"
 import {StoredCoder, Coder, inferCoder} from "./coder-schema.ts"
+import {CodeShape, TextShape} from "../content-type/content-type-schema.ts"
+import {err, ok} from "true-myth/result"
 
 export class CoderRegistry extends Registry<StoredCoder, Coder> {
 	constructor({repo}: {repo: Repo}) {
@@ -11,6 +11,7 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 			repo,
 			schema: Coder,
 			storedSchema: StoredCoder,
+			name: "coder",
 		})
 		for (const coder of defaultCoders) {
 			this.register(coder)
@@ -18,7 +19,7 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 	}
 
 	// this yields in three steps to allow for more specific matches to be yielded first
-	*codersForContentType(contentType: string) {
+	*forContentType(contentType: string) {
 		for (const coder of Object.values(this.records)) {
 			if (coder.contentType === contentType) {
 				yield coder
@@ -26,7 +27,7 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 		}
 	}
 
-	*codersForMimeType(mimeType: string) {
+	*forMIMEType(mimeType: string) {
 		for (const coder of Object.values(this.records)) {
 			if (coder.mimeTypes && coder.mimeTypes.includes(mimeType)) {
 				yield coder
@@ -34,14 +35,15 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 		}
 	}
 
-	*codersForFilename(filename: string) {
+	*forFilename(filename: string) {
 		for (const coder of Object.values(this.records)) {
 			if (
-				coder.filePatterns &&
-				coder.filePatterns.some(
-					coderFilePattern =>
-						micromatch([filename], coderFilePattern).length
-				)
+				false
+				// coder.filePatterns &&
+				// coder.filePatterns.some(
+				// coderFilePattern =>
+				// micromatch([filename], coderFilePattern).length
+				// )
 			) {
 				yield coder
 			}
@@ -49,39 +51,67 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 	}
 }
 
-const textCoder = inferCoder(z.object({text: z.string()})).parse({
+// todo i forgot about async coders again
+const text = inferCoder(TextShape).parse({
 	id: "text",
-	displayName: "Plain Text",
-	contentType: "text",
-	decode(bytes: Uint8Array) {
-		return {text: new TextDecoder().decode(bytes)}
+	displayName: "plain text",
+	contentType: "public.text",
+	mimeTypes: ["text/plain"],
+	fromBytes(bytes: Uint8Array) {
+		try {
+			return {ok: true, val: {text: new TextDecoder().decode(bytes)}}
+		} catch (error) {
+			return {ok: false, err: error as Error}
+		}
 	},
-	encode(value: {text: string}) {
-		return new TextEncoder().encode(value.text)
+	toBytes(content: {text: string}) {
+		try {
+			return {ok: true, val: new TextEncoder().encode(content.text)}
+		} catch (error) {
+			return {ok: false, err: error as Error}
+		}
+	},
+	async fromFile(file) {
+		const bytes = await file.bytes()
+		return this.fromBytes(bytes)
 	},
 	new() {
 		return {text: ""}
 	},
-})
+} satisfies Coder<typeof TextShape>)
 
-const codeCoder = inferCoder(
-	z.object({text: z.string(), language: z.string()})
-).parse({
-	id: "text",
-	displayName: "Plain Text",
-	contentType: "text",
-	decode(bytes: Uint8Array) {
-		return {text: new TextDecoder().decode(bytes)}
+const code = inferCoder(CodeShape).parse({
+	id: "code",
+	displayName: "computer code",
+	contentType: "public.code",
+	fromBytes(bytes: Uint8Array) {
+		return text.fromBytes(bytes)
 	},
-	encode(value: {text: string}) {
-		return new TextEncoder().encode(value.text)
+	toBytes(value: {text: string}) {
+		return text.toBytes(value)
+	},
+	async fromFile(file) {
+		const bytes = await file.bytes()
+		const content = this.fromBytes(bytes)
+
+		if (!content.ok) {
+			return content
+		}
+
+		return {
+			ok: true,
+			val: {
+				text: content.val.text,
+				language: file.type.slice(file.type.indexOf("/") + 1),
+			},
+		}
 	},
 	new() {
 		return {text: ""}
 	},
-})
+} satisfies Coder<typeof CodeShape>)
 
-const defaultCoders = [textCoder]
+const defaultCoders = [text, code]
 
 export const CoderRegistryContext = createContext<CoderRegistry>()
 

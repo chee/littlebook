@@ -23,5 +23,6 @@
 		"[commonlisp]": {
 			"editor.wordSeparators": "`|;:'\",()",
 		},
+		"netlify.site_id": "pointplace",
 	},
 }

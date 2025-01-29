@@ -23,21 +23,29 @@ import {
 	EditorRegistry,
 	EditorRegistryContext,
 } from "./registries/editor/editor-registry.ts"
+
+import {
+	ContentTypeRegistry,
+	ContentTypeRegistryContext,
+} from "./registries/content-type/content-type-registry.ts"
+
+import {
+	CoderRegistry,
+	CoderRegistryContext,
+} from "./registries/coder/coder-registry.ts"
+
 import repo from "./repo/create.ts"
 
 render(
 	() => (
-		<EditorRegistryContext.Provider value={new EditorRegistry({repo})}>
-			<App />
-		</EditorRegistryContext.Provider>
+		<ContentTypeRegistryContext.Provider
+			value={new ContentTypeRegistry({repo})}>
+			<CoderRegistryContext.Provider value={new CoderRegistry({repo})}>
+				<EditorRegistryContext.Provider value={new EditorRegistry({repo})}>
+					<App />
+				</EditorRegistryContext.Provider>
+			</CoderRegistryContext.Provider>
+		</ContentTypeRegistryContext.Provider>
 	),
 	root
 )
-
-/*
-sources: files, rss, calendars
-       -> importer ->
-	   -> handle ->
-	   -> editor ->
-sinks: files, api calls, out->in
-*/

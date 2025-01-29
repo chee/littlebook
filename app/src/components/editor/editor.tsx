@@ -1,23 +1,8 @@
-import {
-	type AutomergeUrl,
-	type Doc,
-	type DocHandle,
-	type DocHandleChangePayload,
-	type HandleState,
-} from "@automerge/automerge-repo"
+import {type AutomergeUrl, type DocHandle} from "@automerge/automerge-repo"
 import repo from "../../repo/create.ts"
 import "./editor.css"
 
-import {
-	createComputed,
-	createEffect,
-	createResource,
-	ErrorBoundary,
-	onCleanup,
-	Show,
-	Suspense,
-	type Accessor,
-} from "solid-js"
+import {createEffect, ErrorBoundary, onCleanup, Show, Suspense} from "solid-js"
 import {type Entry} from "../../documents/entry.ts"
 import {useEditorRegistry} from "../../registries/editor/editor-registry.ts"
 import type {Editor} from "../../registries/editor/editor-schema.ts"
