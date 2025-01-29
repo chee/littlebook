@@ -34,7 +34,7 @@
 		"@types/commonmark": "^0.27.9",
 		"@types/micromatch": "^4.0.9",
 		"ajv": "^8.17.1",
-		"automerge-repo-solid-primitives": "2.0.0-beta.5",
+		"automerge-repo-solid-primitives": "2.0.0-beta.7",
 		"cabbages": "^0.1.0",
 		"commonmark": "^0.31.2",
 		"corvu": "^0.7.1",

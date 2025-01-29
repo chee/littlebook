@@ -94,8 +94,8 @@ importers:
         specifier: ^8.17.1
         version: 8.17.1
       automerge-repo-solid-primitives:
-        specifier: 2.0.0-beta.5
-        version: link:../../automerge-repo-solid-primitives
+        specifier: 2.0.0-beta.7
+        version: 2.0.0-beta.7(solid-js@1.9.4)
       cabbages:
         specifier: ^0.1.0
         version: 0.1.0
@@ -2771,6 +2771,11 @@ packages:
 
   async@3.2.6:
     resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
+
+  automerge-repo-solid-primitives@2.0.0-beta.7:
+    resolution: {integrity: sha512-XT/S5pDpTO29c/Yqs9+f0A95agjQwwjlfY8+hafbpknDXrTtpzxCbRzTbDbFcoZEr0C72RUo8v5q3s2rMKAt1w==}
+    peerDependencies:
+      solid-js: ^1.8.19
 
   b4a@1.6.7:
     resolution: {integrity: sha512-OnAYlL5b7LEkALw87fUVafQw5rVR9RjwGd4KUwNQ6DrrNmaVaUCgLipfVlzrPQ4tWOR9P0IXGNOx50jYCCdSJg==}
@@ -7425,6 +7430,12 @@ snapshots:
   async-sema@3.1.1: {}
 
   async@3.2.6: {}
+
+  automerge-repo-solid-primitives@2.0.0-beta.7(solid-js@1.9.4):
+    dependencies:
+      '@solid-primitives/utils': 6.3.0(solid-js@1.9.4)
+      cabbages: 0.1.0
+      solid-js: 1.9.4
 
   b4a@1.6.7: {}
 

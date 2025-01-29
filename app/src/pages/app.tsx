@@ -16,6 +16,9 @@ import css from "github-markdown-css/github-markdown.css?raw"
 const reader = new commonmark.Parser({smart: true})
 const writer = new commonmark.HtmlRenderer({sourcepos: true})
 
+// todo maybe editors should be passed a `setMeta` function and a `meta` object
+// that they own. stored in the entry itself or in the user's home, perhaps
+
 export default function App() {
 	const [resizableContext, setResizableContext] =
 		createSignal<ContextValue | null>(null)
