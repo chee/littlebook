@@ -1,4 +1,4 @@
-import type {AutomergeUrl} from "@automerge/automerge-repo"
+import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/automerge-repo"
 import type {
 	DockviewApi,
 	DockviewIDisposable,
@@ -8,6 +8,7 @@ import {createContext, onCleanup, useContext} from "solid-js"
 import {createStore} from "solid-js/store"
 import Result, {err, ok} from "true-myth/result"
 import type Unit from "true-myth/unit"
+import {useHome} from "../repo/home.ts"
 
 export function createDockAPI(dockviewAPI: DockviewApi) {
 	function loadLayout(layout: SerializedDockview): Result<Unit, Error> {
@@ -31,6 +32,10 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 					tabComponent: component,
 					renderer: "always",
 				})
+				const [, change] = useHome()
+				if (isValidAutomergeUrl(id)) {
+					change(doc => doc.files.push(id))
+				}
 			}
 		},
 		loadLayout,
