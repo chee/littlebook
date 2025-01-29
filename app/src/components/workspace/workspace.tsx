@@ -37,7 +37,7 @@ const Workspace: ParentComponent<{
 			}
 		}
 	}
-
+	onhash()
 	window.addEventListener("hashchange", onhash)
 	onCleanup(() => {
 		window.removeEventListener("hashchange", onhash)
