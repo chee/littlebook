@@ -29,41 +29,35 @@ const Workspace: ParentComponent<{
 		}
 	})
 
-	createEffect(() => {
-		if (!dockAPI) {
-			return true
-		}
-
-		function onhash() {
-			const hash = location.hash.slice(1)
-			if (isValidAutomergeUrl(hash)) {
+	function onhash() {
+		const hash = location.hash.slice(1)
+		if (isValidAutomergeUrl(hash)) {
+			if (dockAPI.activePanelID !== hash) {
 				dockAPI.openDocument(hash)
 			}
 		}
+	}
 
-		window.addEventListener("hashchange", onhash)
-
-		onCleanup(() => {
-			window.removeEventListener("hashchange", onhash)
-		})
-
-		dockAPI.onLayoutChange(() => {
-			const layout: SerializedDockview = dockAPI.serializeLayout()
-			localStorage.setItem("layout", JSON.stringify(layout))
-			location.hash = dockAPI?.activePanelID
-		})
-
-		const mySerializedLayout = localStorage.getItem("layout")
-
-		if (mySerializedLayout) {
-			try {
-				const layout = JSON.parse(mySerializedLayout)
-				dockAPI.loadLayout(layout)
-			} catch {
-				console.error("failed to load layout")
-			}
-		}
+	window.addEventListener("hashchange", onhash)
+	onCleanup(() => {
+		window.removeEventListener("hashchange", onhash)
 	})
+	dockAPI.onLayoutChange(() => {
+		const layout: SerializedDockview = dockAPI.serializeLayout()
+		localStorage.setItem("layout", JSON.stringify(layout))
+		location.hash = dockAPI?.activePanelID
+	})
+
+	const mySerializedLayout = localStorage.getItem("layout")
+
+	if (mySerializedLayout) {
+		try {
+			const layout = JSON.parse(mySerializedLayout)
+			dockAPI.loadLayout(layout)
+		} catch {
+			console.error("failed to load layout")
+		}
+	}
 	return (
 		<section class="workspace">
 			<Resizable sizes={props.sizes} onSizesChange={props.setSizes}>
