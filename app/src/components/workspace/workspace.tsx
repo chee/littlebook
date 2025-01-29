@@ -2,7 +2,9 @@ import Resizable, {type ContextValue} from "corvu/resizable"
 import LeftSidebar from "../sidebar/left-sidebar.tsx"
 import {
 	createEffect,
+	getOwner,
 	onCleanup,
+	runWithOwner,
 	type ParentComponent,
 	type Setter,
 } from "solid-js"
@@ -28,16 +30,17 @@ const Workspace: ParentComponent<{
 			repo.find(editor).docSync()
 		}
 	})
+	const owner = getOwner()
 
 	function onhash() {
 		const hash = location.hash.slice(1)
 		if (isValidAutomergeUrl(hash)) {
 			if (dockAPI.activePanelID !== hash) {
-				dockAPI.openDocument(hash)
+				runWithOwner(owner, () => dockAPI.openDocument(hash))
 			}
 		}
 	}
-	onhash()
+	const loadhash = location.hash.slice(1)
 	window.addEventListener("hashchange", onhash)
 	onCleanup(() => {
 		window.removeEventListener("hashchange", onhash)
@@ -56,6 +59,12 @@ const Workspace: ParentComponent<{
 			dockAPI.loadLayout(layout)
 		} catch {
 			console.error("failed to load layout")
+		}
+	}
+
+	if (isValidAutomergeUrl(loadhash)) {
+		if (dockAPI.activePanelID !== loadhash) {
+			dockAPI.openDocument(loadhash)
 		}
 	}
 	return (

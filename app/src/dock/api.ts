@@ -21,6 +21,7 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 	const [dockAPI, updateAPI] = createStore({
 		openDocument(id: AutomergeUrl, component = "document") {
 			const existing = dockviewAPI.getPanel(id)
+
 			if (existing) {
 				existing.api.setActive()
 			} else {
