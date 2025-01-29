@@ -19,7 +19,10 @@ import {
 	useHandle,
 } from "automerge-repo-solid-primitives"
 
-export default function FileViewer(props: {url: AutomergeUrl}) {
+export default function FileViewer(props: {
+	url: AutomergeUrl
+	editorID: string | null
+}) {
 	const [home] = useHome()
 
 	const [entry, changeEntry] = useDocumentStore<Entry>(() => props.url, {repo})
@@ -33,6 +36,14 @@ export default function FileViewer(props: {url: AutomergeUrl}) {
 		const associations = home?.associations
 		const firstEditor = editors()?.next().value
 
+		console.log(props.editorID)
+		if (props.editorID) {
+			const editor = registry.get(props.editorID)
+			return editor
+				? editor
+				: err(new Error(`couldn't find editor ${props.editorID}`))
+		}
+
 		if (associations?.[url]) {
 			const editor = registry.get(associations[url])
 			return editor
@@ -42,6 +53,10 @@ export default function FileViewer(props: {url: AutomergeUrl}) {
 			return err(new Error("no editor found"))
 		}
 	}
+
+	createEffect(() => {
+		console.log(editor())
+	})
 
 	const fileHandle = useHandle<{text: string; language?: string}>(
 		() => entry.url,

@@ -1,23 +1,15 @@
 import Icon from "../components/icons/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import repo from "../repo/create.ts"
-import type {
-	AnyDocumentId,
-	AutomergeUrl,
-	ChangeFn,
-	Doc,
-	DocHandle,
-	DocHandleChangePayload,
-} from "@automerge/automerge-repo"
+import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
 import {Button} from "@kobalte/core/button"
 import {
-	createComputed,
 	createEffect,
-	createMemo,
 	createRoot,
 	For,
+	getOwner,
 	Match,
-	onCleanup,
+	runWithOwner,
 	Show,
 	Suspense,
 	Switch,
@@ -33,12 +25,12 @@ import {z} from "zod"
 import {h} from "../schema-helpers.ts"
 import Task, {fromPromise, safelyTry} from "true-myth/task"
 import {
-	autoproduce,
 	createDocumentProjection,
 	useDocumentStore,
 	useHandle,
 } from "automerge-repo-solid-primitives"
-import {access} from "@solid-primitives/utils"
+import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
+import type {DocumentURL} from "./dock-api.ts"
 
 const keynames = {
 	CMD: "Meta",
@@ -149,7 +141,7 @@ const [fileActions] = createStore<FileAction[]>([
 ])
 
 export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
-	const root = createRoot(() => {
+	return createRoot(() => {
 		const file = createDocumentProjection(fileHandle)
 		return safelyTry(() => compile(file.text))
 			.andThen(code => {
@@ -192,7 +184,7 @@ export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
 					})
 				}
 				repo.find<Home>(homeURL()).change(home => {
-					if (!home.editors.includes(url)) {
+					if (![...home.editors].includes(url)) {
 						home.editors.push(url)
 					}
 				})
@@ -204,19 +196,24 @@ export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
 
 export default function DockTab(props: {id: AutomergeUrl}) {
 	const dockAPI = useDockAPI()
-	const handle = useHandle<Entry>(() => props.id, {repo})
-	const entry = createDocumentProjection<Entry>(handle)
+	const entryHandle = useHandle<Entry>(() => props.id, {repo})
+	const entry = createDocumentProjection<Entry>(entryHandle)
+	const editorRegistry = useEditorRegistry()
+	const editors = () => [...(editorRegistry.editors(entry) ?? [])]
 	const [home, changeHome] = useHome()
 	let tabElement!: HTMLDivElement
+
 	createEffect(() => {
 		if (!dockAPI) return
 		if (dockAPI.activePanelID == props.id) tabElement.scrollIntoView()
 	})
 
-	const [file, changeFile, fileHandle] = useDocumentStore<{text: string}>(
+	const [file, _changeFile, fileHandle] = useDocumentStore<{text: string}>(
 		() => entry?.url,
 		{repo}
 	)
+
+	const owner = getOwner()
 
 	return (
 		<Suspense>
@@ -279,6 +276,44 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 								}}>
 								add to sidebar
 							</ContextMenu.Item>
+						</Show>
+						<Show when={editors().length}>
+							<ContextMenu.Sub overlap gutter={-10}>
+								<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
+									open with
+									<div class="pop-menu__item-right-slot">
+										<Icon name="alt-arrow-right-linear" />
+									</div>
+								</ContextMenu.SubTrigger>
+
+								<ContextMenu.Portal>
+									<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
+										<For each={editors()}>
+											{editor => (
+												<ContextMenu.Item
+													class="pop-menu__item"
+													onSelect={() => {
+														const url = new URL(
+															entryHandle()!.url
+														)
+														url.searchParams.set(
+															"editor",
+															editor.id
+														)
+														console.log(url.toString())
+														runWithOwner(owner, () => {
+															dockAPI.openDocument(
+																url.toString() as DocumentURL
+															)
+														})
+													}}>
+													{editor.displayName}
+												</ContextMenu.Item>
+											)}
+										</For>
+									</ContextMenu.SubContent>
+								</ContextMenu.Portal>
+							</ContextMenu.Sub>
 						</Show>
 						<DataDrivenContextMenu
 							items={fileActions}

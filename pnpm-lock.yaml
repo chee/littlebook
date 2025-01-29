@@ -84,6 +84,9 @@ importers:
       '@tomjs/vite-plugin-iconify':
         specifier: ^1.2.1
         version: 1.2.1(@iconify/json@2.2.298)(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2))
+      '@types/commonmark':
+        specifier: ^0.27.9
+        version: 0.27.9
       '@types/micromatch':
         specifier: ^4.0.9
         version: 4.0.9
@@ -92,10 +95,13 @@ importers:
         version: 8.17.1
       automerge-repo-solid-primitives:
         specifier: 2.0.0-beta.5
-        version: 2.0.0-beta.5(solid-js@1.9.4)
+        version: link:../../automerge-repo-solid-primitives
       cabbages:
         specifier: ^0.1.0
         version: 0.1.0
+      commonmark:
+        specifier: ^0.31.2
+        version: 0.31.2
       corvu:
         specifier: ^0.7.1
         version: 0.7.1(solid-js@1.9.4)
@@ -117,6 +123,9 @@ importers:
       file-system-access:
         specifier: ^1.0.4
         version: 1.0.4
+      github-markdown-css:
+        specifier: ^5.8.1
+        version: 5.8.1
       globals:
         specifier: ^15.14.0
         version: 15.14.0
@@ -126,6 +135,9 @@ importers:
       keyboardjs:
         specifier: ^2.7.0
         version: 2.7.0
+      markdown-wasm:
+        specifier: ^1.2.0
+        version: 1.2.0
       micromatch:
         specifier: ^4.0.8
         version: 4.0.8
@@ -2539,6 +2551,9 @@ packages:
   '@types/braces@3.0.5':
     resolution: {integrity: sha512-SQFof9H+LXeWNz8wDe7oN5zu7ket0qwMu5vZubW4GCJ8Kkeh6nBWUz87+KTz/G3Kqsrp0j/W253XJb3KMEeg3w==}
 
+  '@types/commonmark@0.27.9':
+    resolution: {integrity: sha512-d3+57WgyPCcIc6oshmcPkmP4+JqRRot9eeZLsBsutWtIxwWivpoyc2wEcolOp8MyO3ZWN846mMdoR02kdHSMCw==}
+
   '@types/core-js@2.5.8':
     resolution: {integrity: sha512-VgnAj6tIAhJhZdJ8/IpxdatM8G4OD3VWGlp6xIxUGENZlpbob9Ty4VVdC1FIEp0aK6DBscDDjyzy5FB60TuNqg==}
 
@@ -2757,11 +2772,6 @@ packages:
   async@3.2.6:
     resolution: {integrity: sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==}
 
-  automerge-repo-solid-primitives@2.0.0-beta.5:
-    resolution: {integrity: sha512-ULsXh0x42+FB2j6sTIL4R3EKQ/ugzHvKk+3QsRZdrqqnjOaBIHavnbspXrDnAoL+zzEK156PZv4jfI25FQsHoQ==}
-    peerDependencies:
-      solid-js: ^1.8.19
-
   b4a@1.6.7:
     resolution: {integrity: sha512-OnAYlL5b7LEkALw87fUVafQw5rVR9RjwGd4KUwNQ6DrrNmaVaUCgLipfVlzrPQ4tWOR9P0IXGNOx50jYCCdSJg==}
 
@@ -2939,6 +2949,10 @@ packages:
 
   commondir@1.0.1:
     resolution: {integrity: sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==}
+
+  commonmark@0.31.2:
+    resolution: {integrity: sha512-2fRLTyb9r/2835k5cwcAwOj0DEc44FARnMp5veGsJ+mEAZdi52sNopLu07ZyElQUz058H43whzlERDIaaSw4rg==}
+    hasBin: true
 
   compatx@0.1.8:
     resolution: {integrity: sha512-jcbsEAR81Bt5s1qOFymBufmCbXCXbk0Ql+K5ouj6gCyx2yHlu6AgmGIi9HxfKixpUDO5bCFJUHQ5uM6ecbTebw==}
@@ -3147,6 +3161,10 @@ packages:
   encodeurl@2.0.0:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
+
+  entities@3.0.1:
+    resolution: {integrity: sha512-WiyBqoomrwMdFG1e0kqvASYfnlb0lp8M5o5Fw2OFq1hNZxxcNk8Ik0Xm7LxzBhuidnZB/UtBqVCgUz3kBOP51Q==}
+    engines: {node: '>=0.12'}
 
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
@@ -3420,6 +3438,10 @@ packages:
   giget@1.2.3:
     resolution: {integrity: sha512-8EHPljDvs7qKykr6uw8b+lqLiUc/vUg+KVTI0uND4s63TdsZM2Xus3mflvF0DDG9SiM4RlCkFGL+7aAjRmV7KA==}
     hasBin: true
+
+  github-markdown-css@5.8.1:
+    resolution: {integrity: sha512-8G+PFvqigBQSWLQjyzgpa2ThD9bo7+kDsriUIidGcRhXgmcaAWUIpCZf8DavJgc+xifjbCG+GvMyWr0XMXmc7g==}
+    engines: {node: '>=10'}
 
   glob-parent@5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
@@ -3788,6 +3810,12 @@ packages:
   make-error@1.3.6:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
 
+  markdown-wasm@1.2.0:
+    resolution: {integrity: sha512-S12OTkyXCkOgI1n1rZY9cg4bK/PGu80Emjpvwp8BEjwCxhPV3yddF0U6+QhCitdBsI1tzWcoeahmW7k0Pq81OA==}
+
+  mdurl@1.0.1:
+    resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==}
+
   merge-anything@5.1.7:
     resolution: {integrity: sha512-eRtbOb1N5iyH0tkQDAoQ4Ipsp/5qSR79Dzrz8hEPxRX10RWWR/iQXdoKmBSRCThY1Fh5EhISDtpSc93fpxUniQ==}
     engines: {node: '>=12.13'}
@@ -3832,6 +3860,9 @@ packages:
   minimatch@9.0.5:
     resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
+
+  minimist@1.2.8:
+    resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
 
   minipass@3.3.6:
     resolution: {integrity: sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw==}
@@ -7104,6 +7135,8 @@ snapshots:
 
   '@types/braces@3.0.5': {}
 
+  '@types/commonmark@0.27.9': {}
+
   '@types/core-js@2.5.8': {}
 
   '@types/eslint-utils@3.0.5':
@@ -7393,12 +7426,6 @@ snapshots:
 
   async@3.2.6: {}
 
-  automerge-repo-solid-primitives@2.0.0-beta.5(solid-js@1.9.4):
-    dependencies:
-      '@solid-primitives/utils': 6.3.0(solid-js@1.9.4)
-      cabbages: 0.1.0
-      solid-js: 1.9.4
-
   b4a@1.6.7: {}
 
   babel-plugin-jsx-dom-expressions@0.39.5(@babel/core@7.26.0):
@@ -7602,6 +7629,12 @@ snapshots:
 
   commondir@1.0.1: {}
 
+  commonmark@0.31.2:
+    dependencies:
+      entities: 3.0.1
+      mdurl: 1.0.1
+      minimist: 1.2.8
+
   compatx@0.1.8: {}
 
   compress-commons@6.0.2:
@@ -7759,6 +7792,8 @@ snapshots:
   encodeurl@1.0.2: {}
 
   encodeurl@2.0.0: {}
+
+  entities@3.0.1: {}
 
   entities@4.5.0: {}
 
@@ -8127,6 +8162,8 @@ snapshots:
       pathe: 1.1.2
       tar: 6.2.1
 
+  github-markdown-css@5.8.1: {}
+
   glob-parent@5.1.2:
     dependencies:
       is-glob: 4.0.3
@@ -8477,6 +8514,10 @@ snapshots:
 
   make-error@1.3.6: {}
 
+  markdown-wasm@1.2.0: {}
+
+  mdurl@1.0.1: {}
+
   merge-anything@5.1.7:
     dependencies:
       is-what: 4.1.16
@@ -8509,6 +8550,8 @@ snapshots:
   minimatch@9.0.5:
     dependencies:
       brace-expansion: 2.0.1
+
+  minimist@1.2.8: {}
 
   minipass@3.3.6:
     dependencies:

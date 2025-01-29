@@ -9,9 +9,11 @@ import {
 	Show,
 	splitProps,
 	createRoot,
+	createSignal,
+	createEffect,
 } from "solid-js"
 import "./dock.css"
-import {createDockAPI} from "./api.ts"
+import {createDockAPI, type DocumentURL} from "./dock-api.ts"
 import type {AutomergeUrl} from "@automerge/automerge-repo"
 import {Dynamic} from "solid-js/web"
 
@@ -19,11 +21,21 @@ export interface DockComponentProps {
 	// the id of the file to open
 	id: AutomergeUrl
 	dockAPI: DockAPI
+	editorID: string | null
 }
 
 export interface DockHeaderActionProps {
 	groupID: string
 	dockAPI: DockAPI
+	editorID: string | null
+}
+
+function documentURL2AutomergeUrl(
+	url: DocumentURL
+): [AutomergeUrl, URLSearchParams] {
+	const u = new URL(url)
+	const base = u.protocol + u.pathname
+	return [base as AutomergeUrl, u.searchParams]
 }
 
 function createDockContext(dockOptions: {
@@ -40,20 +52,35 @@ function createDockContext(dockOptions: {
 			if (!component()) {
 				console.error(`no such panel component ${options.name}`)
 			}
+
+			const [url, params] = documentURL2AutomergeUrl(
+				options.id as DocumentURL
+			)
+			console.log(url, params)
+			const editorID = params.get("editor")
+
+			console.log({editorID})
+
 			const element = (
 				<div style={{display: "contents"}}>
 					<Show when={component()}>
 						<Dynamic
 							component={component()}
-							id={options.id as AutomergeUrl}
+							id={url}
 							dockAPI={dockAPI}
+							editorID={editorID}
 						/>
 					</Show>
 				</div>
 			) as HTMLElement
 			return {
 				element,
-				init() {},
+				init(options) {
+					// 	setEditorID(options.params.editorID)
+				},
+				// update(options) {
+				// 	setEditorID(options.params.editorID)
+				// },
 			}
 		},
 		createTabComponent(options) {
@@ -62,14 +89,15 @@ function createDockContext(dockOptions: {
 				console.error(`no such tab component ${options.name}`)
 			}
 
+			const [url, params] = documentURL2AutomergeUrl(
+				options.id as DocumentURL
+			)
+			// const editorID = params.get("editor")
+
 			const element = (
 				<div style={{display: "contents"}}>
 					<Show when={component()}>
-						<Dynamic
-							component={component()}
-							id={options.id as AutomergeUrl}
-							dockAPI={dockAPI}
-						/>
+						<Dynamic component={component()} id={url} dockAPI={dockAPI} />
 					</Show>
 				</div>
 			) as HTMLElement

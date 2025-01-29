@@ -93,42 +93,37 @@ export abstract class Registry<
 
 	#listener = (payload: DocumentPayload) => {
 		const {handle} = payload
-		runWithOwner(this.#owner, () => {
-			const doc = createDocumentProjection<{bytes: Uint8Array}>(handle)
-			createComputed(
-				on([() => doc?.bytes], async () => {
-					const parsed =
-						await this.#storedSchema["~standard"].validate(doc)!
-					if (parsed.issues) {
-						if (
-							"type" in doc &&
-							doc.type == this.#name &&
-							handle.docSync()?.bytes
-						) {
+		handle.doc().then(async doc => {
+			if (!doc) return
+			const parsed = await this.#storedSchema["~standard"].validate(doc)!
+			if (parsed.issues) {
+				if (
+					"type" in doc &&
+					doc.type == this.#name &&
+					handle.docSync()?.bytes
+				) {
+					console.warn(
+						`failed to parse ${this.nameWithSpace}document`,
+						parsed.issues
+					)
+				}
+			} else {
+				return importFromAutomerge(parsed.value, this.#schema)
+					.map(bundle => {
+						if (this.records[bundle.id]) {
 							console.warn(
-								`failed to parse ${this.nameWithSpace}document`,
-								parsed.issues
+								`overwriting${this.nameWithPrefixSpace}: [${bundle.id}]`
 							)
 						}
-					} else {
-						importFromAutomerge(parsed.value, this.#schema)
-							.map(bundle => {
-								if (this.records[bundle.id]) {
-									console.warn(
-										`overwriting${this.nameWithPrefixSpace}: [${bundle.id}]`
-									)
-								}
-								this.#updateRecords(parsed.value.id, bundle)
-							})
-							.mapRejected(err => {
-								console.error(
-									`failed to import ${this.nameWithSpace}document`,
-									err
-								)
-							})
-					}
-				})
-			)
+						this.#updateRecords(parsed.value.id, bundle)
+					})
+					.mapRejected(err => {
+						console.error(
+							`failed to import ${this.nameWithSpace}document`,
+							err
+						)
+					})
+			}
 		})
 	}
 

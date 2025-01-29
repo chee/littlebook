@@ -1,9 +1,5 @@
-import {
-	deleteAt,
-	type AutomergeUrl,
-	type DocHandle,
-} from "@automerge/automerge-repo"
-import {createMemo, For, getOwner, runWithOwner, Show} from "solid-js"
+import {type AutomergeUrl, type DocHandle} from "@automerge/automerge-repo"
+import {For, getOwner, runWithOwner, Show} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import repo from "../../../repo/create.ts"
 import "./document-list.css"
@@ -15,15 +11,10 @@ import {ContextMenu} from "@kobalte/core/context-menu"
 import {useContentTypeRegistry} from "../../../registries/content-type/content-type-registry.ts"
 
 export default function HomeWidget() {
-	const [home, changeHome, homeHandle] = useHome()
+	const [home, changeHome] = useHome()
+
 	const owner = getOwner()
 	const dockAPI = useDockAPI()
-
-	// todo why do i have to do this?
-	const uniqueFiles = createMemo(() => {
-		const files = home?.files || []
-		return Array.from(new Set(files)) as AutomergeUrl[]
-	})
 
 	const contentTypes = useContentTypeRegistry()
 
@@ -67,7 +58,7 @@ export default function HomeWidget() {
 			</header>
 			<div class="sidebar-widget__content">
 				<ul class="document-list">
-					<For each={uniqueFiles()}>
+					<For each={home.files}>
 						{url => {
 							const store = createDocumentProjection<Entry>(
 								repo.find(url)
@@ -136,14 +127,13 @@ export default function HomeWidget() {
 												<ContextMenu.Item
 													class="pop-menu__item"
 													onSelect={() => {
-														homeHandle()?.change(home => {
-															const index = Array.from(
-																home.files
-															).indexOf(url)
-															if (index != -1) {
-																deleteAt(home.files, index)
-															}
-														})
+														const files = Array.from(home.files)
+														const index = files.indexOf(url)
+														if (index != -1) {
+															changeHome(home => {
+																home.files.splice(index, 1)
+															})
+														}
 													}}>
 													remove
 												</ContextMenu.Item>

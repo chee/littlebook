@@ -11,6 +11,10 @@ import Workspace from "../components/workspace/workspace.tsx"
 import * as codemirror from "@littlebook/text/codemirror-editor.ts"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
+import * as commonmark from "commonmark"
+import css from "github-markdown-css/github-markdown.css?raw"
+const reader = new commonmark.Parser({smart: true})
+const writer = new commonmark.HtmlRenderer({sourcepos: true})
 
 export default function App() {
 	const [resizableContext, setResizableContext] =
@@ -29,6 +33,35 @@ export default function App() {
 	*/
 
 	editorRegistry.register(codemirror)
+	editorRegistry.register({
+		displayName: "Markdown Preview",
+		id: "markdown-preview",
+		contentTypes: ["public.text", "public.markdown", "public.code"],
+		render(props) {
+			const doc = props.handle.docSync()
+			const [text, settext] = createSignal(doc.text)
+
+			props.handle.on("change", payload => {
+				settext(payload.patchInfo.after.text)
+			})
+			return (
+				<div class="markdown-preview">
+					<style>{
+						/* css */ `
+						.markdown-preview {
+							padding: 1rem;
+							${css}
+						}
+						`
+					}</style>
+					<div
+						class="markdown-body"
+						innerHTML={writer.render(reader.parse(text()))}
+					/>
+				</div>
+			)
+		},
+	})
 
 	const defaultSizes = [0.2, 0.8]
 
@@ -69,7 +102,7 @@ export default function App() {
 			<DockProvider
 				components={{
 					document: props => {
-						return <FileViewer url={props.id} />
+						return <FileViewer url={props.id} {...props} />
 					},
 				}}
 				tabComponents={{
