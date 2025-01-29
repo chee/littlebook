@@ -1,5 +1,5 @@
 // update this when changing the service worker
-const SERVICE_WORKER_VERSION = "lb.v3"
+const SERVICE_WORKER_VERSION = "lb.v4"
 
 self.addEventListener("install", () => {
 	self.skipWaiting()
