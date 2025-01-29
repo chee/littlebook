@@ -1,7 +1,7 @@
 import {For} from "solid-js"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import "./new-document-dropdown.css"
-import Icon from "../icon/icon.tsx"
+import Icon from "../icons/icon.tsx"
 import {useCoderRegistry} from "../../registries/coder/coder-registry.ts"
 import type {Coder} from "../../registries/coder/coder-schema.ts"
 
@@ -20,7 +20,7 @@ export default function NewDocumentMenu(props: {
 			<DropdownMenu.Trigger
 				class="pop-menu__trigger"
 				aria-label="add document">
-				<Icon icon="solar:add-circle-linear" />
+				<Icon name="add-circle-linear" />
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content class="pop-menu__content">
@@ -28,7 +28,7 @@ export default function NewDocumentMenu(props: {
 						<DropdownMenu.SubTrigger class="pop-menu__sub-trigger">
 							create
 							<div class="pop-menu__item-right-slot">
-								<Icon icon="solar:alt-arrow-right-linear" />
+								<Icon name="alt-arrow-right-linear" />
 							</div>
 						</DropdownMenu.SubTrigger>
 						<DropdownMenu.Portal>
@@ -75,17 +75,16 @@ export default function NewDocumentMenu(props: {
 							let coder: Coder | undefined
 
 							if (relevantCoders.length == 0) {
-								// const importAsText = prompt(
-								// 	"unrecognized file type, import as text?"
-								// )
-								// if (
-								// 	importAsText != null &&
-								// 	importAsText.toLowerCase().trim().slice(0, 2) !==
-								// 		"no"
-								// ) {
-								console.log(coders)
-								coder = coders.records["code"]!
-								// }
+								const importAsText = prompt(
+									"unrecognized file type, import as text?"
+								)
+								if (
+									importAsText != null &&
+									importAsText.toLowerCase().trim().slice(0, 2) !==
+										"no"
+								) {
+									coder = coders.records["code"]!
+								}
 							} else if (relevantCoders.length == 1) {
 								coder = relevantCoders[0]
 							} else if (relevantCoders.length > 1) {
@@ -120,7 +119,6 @@ export default function NewDocumentMenu(props: {
 							if (coder) {
 								const content = await coder.fromFile(computerFile)
 								if (content.ok) {
-									console.log(content)
 									props.create({
 										name:
 											computerFileHandle.name ??

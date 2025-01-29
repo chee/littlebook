@@ -54,7 +54,6 @@ export default function FileViewer(props: {url: AutomergeUrl}) {
 		createShortcut(
 			["Meta", "S"],
 			() => {
-				console.log("binband")
 				compileToEditor(fileHandle() as DocHandle<{text: string}>)
 			},
 			{preventDefault: true}
@@ -62,7 +61,6 @@ export default function FileViewer(props: {url: AutomergeUrl}) {
 		createShortcut(
 			["Control", "S"],
 			() => {
-				console.log("ctrl")
 				compileToEditor(fileHandle() as DocHandle<{text: string}>)
 			},
 			{preventDefault: true}

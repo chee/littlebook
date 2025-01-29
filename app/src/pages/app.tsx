@@ -3,7 +3,7 @@ import "./app.css"
 import {type ContextValue} from "corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
 import PageHeader from "../components/page-header/page-header.tsx"
-import Icon from "../components/icon/icon.tsx"
+import Icon from "../components/icons/icon.tsx"
 import FileViewer from "../components/editor/editor.tsx"
 import {Dock, DockProvider} from "../dock/dock.tsx"
 import DockTab from "../dock/dock-tab.tsx"
@@ -82,7 +82,7 @@ export default function App() {
 							<DropdownMenu.Trigger
 								class="pop-menu__trigger dock-header-actions__button"
 								aria-label="more actions">
-								<Icon icon="solar:menu-dots-bold" inline />
+								<Icon name="menu-dots-bold" inline />
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Portal>
 								<DropdownMenu.Content class="pop-menu__content">

@@ -1,6 +1,6 @@
 import {Show, For} from "solid-js"
 import "./page-header.css"
-import Icon from "../icon/icon.tsx"
+import Icon from "../icons/icon.tsx"
 import {Button} from "@kobalte/core/button"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import homeURL from "../../repo/home.ts"
@@ -37,9 +37,9 @@ export default function PageHeader(props: {
 					<Show
 						when={props.leftSidebarCollapsed}
 						fallback={
-							<Icon icon="solar:sidebar-minimalistic-outline" inline />
+							<Icon name="sidebar-minimalistic-outline" inline />
 						}>
-						<Icon icon="solar:sidebar-minimalistic-bold" inline />
+						<Icon name="sidebar-minimalistic-bold" inline />
 					</Show>
 				</Button>
 				<div class="page-header-logo">
@@ -53,7 +53,7 @@ export default function PageHeader(props: {
 					<DropdownMenu.Trigger
 						class="pop-menu__trigger"
 						aria-label="add document">
-						<Icon icon="solar:home-bold" />
+						<Icon name="home-bold" />
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Portal>
 						<DropdownMenu.Content class="pop-menu__content">

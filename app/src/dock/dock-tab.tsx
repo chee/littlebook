@@ -1,4 +1,4 @@
-import Icon from "../components/icon/icon.tsx"
+import Icon from "../components/icons/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import repo from "../repo/create.ts"
 import type {
@@ -224,10 +224,7 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 				<ContextMenu.Trigger class="dock-tab__context-menu-trigger">
 					<div class="dock-tab" ref={tabElement}>
 						<div class="dock-tab__icon">
-							<Icon
-								icon={entry?.icon ?? "solar:document-text-bold"}
-								inline
-							/>
+							<Icon name={entry?.icon || "document-text-bold"} inline />
 						</div>
 						<div class="dock-tab__name">{entry?.name}</div>
 						<Button
@@ -241,7 +238,7 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 							onclick={() => {
 								dockAPI.closePanel(props.id)
 							}}>
-							<Icon icon="solar:close-square-linear" inline />
+							<Icon name="close-square-linear" inline />
 						</Button>
 					</div>
 				</ContextMenu.Trigger>
@@ -328,7 +325,7 @@ export function DataDrivenContextMenu(props: {
 								{(fileAction as FileActionSub).label}
 
 								<div class="pop-menu__item-right-slot">
-									<Icon icon="solar:alt-arrow-right-linear" />
+									<Icon name="alt-arrow-right-linear" />
 								</div>
 							</ContextMenu.SubTrigger>
 
@@ -362,7 +359,7 @@ export function DataDrivenContextMenu(props: {
 										value={choice.value}
 										class="pop-menu__radio-item">
 										<ContextMenu.ItemIndicator class="pop-menu__item-indicator">
-											<Icon icon="solar:check-square-bold" />
+											<Icon name="check-square-bold" />
 										</ContextMenu.ItemIndicator>
 										{choice.label}
 									</ContextMenu.RadioItem>
