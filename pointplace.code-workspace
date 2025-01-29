@@ -18,11 +18,6 @@
 		},
 	],
 	"settings": {
-		"workbench.colorTheme": "Spacedust",
-		"editor.formatOnType": true,
-		"[commonlisp]": {
-			"editor.wordSeparators": "`|;:'\",()",
-		},
-		"netlify.site_id": "pointplace",
+		"workbench.colorTheme": "lychee",
 	},
 }
