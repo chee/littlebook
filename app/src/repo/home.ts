@@ -42,8 +42,8 @@ const [homeURL, setHomeURL] = makePersisted(
 					repo.create<Entry>({
 						type: "file",
 						name: "my manifesto.txt",
-						contentType: "text",
-						url: repo.create<pointplace.file.Text>({
+						contentType: "public.text",
+						url: repo.create({
 							text: "i'm a nice little text document",
 						}).url,
 					}).url,
