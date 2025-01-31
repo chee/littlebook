@@ -2,7 +2,7 @@ import {z} from "zod"
 import {h} from "../schema-helpers.ts"
 import type {AutomergeUrl, Repo} from "@automerge/automerge-repo"
 import {type Accessor} from "solid-js"
-import {useDocumentStore} from "automerge-repo-solid-primitives"
+import {useDocument} from "automerge-repo-solid-primitives"
 import {ContentType} from "../registries/content-type/content-type-schema.ts"
 import repo from "../repo/create.ts"
 
@@ -41,5 +41,5 @@ export async function entryResolver(entry: Entry) {
 }
 
 export function useEntry(url: Accessor<AutomergeUrl>, {repo}: {repo: Repo}) {
-	return useDocumentStore<Entry>(url, {repo})
+	return useDocument<Entry>(url)
 }

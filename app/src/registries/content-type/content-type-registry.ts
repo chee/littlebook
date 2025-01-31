@@ -9,7 +9,10 @@ import {
 	TextShape,
 	CodeContentType,
 	CodeShape,
+	MarkdownContentType,
+	MarkdownShape,
 } from "./content-type-schema.ts"
+import {displayName} from "@littlebook/text/codemirror-editor.ts"
 
 export class ContentTypeRegistry extends Registry<
 	StoredContentType,
@@ -53,7 +56,14 @@ export const code = CodeContentType.parse({
 	schema: CodeShape,
 })
 
-export const KnownContentTypes = [text, code]
+export const markdown = MarkdownContentType.parse({
+	id: "public.markdown",
+	displayName: "markdown",
+	conformsTo: ["public.text", "public.code"],
+	schema: MarkdownShape,
+})
+
+export const KnownContentTypes = [text, code, markdown]
 
 export const ContentTypeRegistryContext = createContext<ContentTypeRegistry>()
 

@@ -1,8 +1,14 @@
 import {type AutomergeUrl, type DocHandle} from "@automerge/automerge-repo"
-import repo from "../../repo/create.ts"
 import "./editor.css"
 
-import {createEffect, ErrorBoundary, onCleanup, Show, Suspense} from "solid-js"
+import {
+	createEffect,
+	createMemo,
+	ErrorBoundary,
+	onCleanup,
+	Show,
+	Suspense,
+} from "solid-js"
 import {type Entry} from "../../documents/entry.ts"
 import {useEditorRegistry} from "../../registries/editor/editor-registry.ts"
 import type {Editor} from "../../registries/editor/editor-schema.ts"
@@ -13,39 +19,34 @@ import {Dynamic} from "solid-js/web"
 import {compileToEditor} from "../../dock/dock-tab.tsx"
 import {createShortcut} from "@solid-primitives/keyboard"
 import {throttle} from "@solid-primitives/scheduled"
-import {
-	createDocumentProjection,
-	useDocumentStore,
-	useHandle,
-} from "automerge-repo-solid-primitives"
+import {useDocument} from "automerge-repo-solid-primitives"
+import type {DocumentURL} from "../../dock/dock-api.ts"
+import {parseDocumentURL} from "../../dock/dock.tsx"
 
-export default function FileViewer(props: {
-	url: AutomergeUrl
-	editorID: string | null
-}) {
+export default function FileViewer(props: {url: DocumentURL}) {
+	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const [home] = useHome()
-
-	const [entry, changeEntry] = useDocumentStore<Entry>(() => props.url, {repo})
+	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
 
 	const registry = useEditorRegistry()
 
-	const editors = () => entry && registry.editors(entry)
+	const editors = () => entry() && registry.editors(entry()!)
 
 	const editor = (): Result<Editor, Error> => {
-		const url = props.url
-		const associations = home?.associations
+		const url = docinfo().url
+		const associations = home()?.associations
+		const associated = associations?.[url]
 		const firstEditor = editors()?.next().value
 
-		console.log(props.editorID)
-		if (props.editorID) {
-			const editor = registry.get(props.editorID)
+		if (docinfo().editor) {
+			const editor = registry.get(docinfo().editor!)
 			return editor
 				? editor
-				: err(new Error(`couldn't find editor ${props.editorID}`))
+				: err(new Error(`couldn't find editor ${docinfo().editor}`))
 		}
 
-		if (associations?.[url]) {
-			const editor = registry.get(associations[url])
+		if (associated) {
+			const editor = registry.get(associated)
 			return editor
 		} else if (firstEditor) {
 			return ok(firstEditor)
@@ -54,18 +55,13 @@ export default function FileViewer(props: {
 		}
 	}
 
-	createEffect(() => {
-		console.log(editor())
-	})
-
-	const fileHandle = useHandle<{text: string; language?: string}>(
-		() => entry.url,
-
-		{repo}
+	// todo this is `unknown` IRL
+	const [file, fileHandle] = useDocument<{text: string; language?: string}>(
+		() => entry()?.url
 	)
 
 	/// todo this doesn't belong here
-	if (entry?.contentType == "text") {
+	if (entry()?.contentType == "public.text") {
 		createShortcut(
 			["Meta", "S"],
 			() => {
@@ -87,24 +83,16 @@ export default function FileViewer(props: {
 		100
 	)
 
-	const file = createDocumentProjection<{text: string; language?: string}>(
-		fileHandle
-	)
-
-	createEffect(() => {
-		// console.log({file}, file.text)
-	})
-
 	createEffect(last => {
 		if (
-			file &&
-			file.text &&
-			file.text != last &&
-			file.language == "javascript"
+			file() &&
+			file()!.text &&
+			file()!.text != last &&
+			file()!.language == "javascript"
 		) {
 			save()
 		}
-		return file?.text
+		return file()?.text
 	})
 
 	const Editor = () =>
@@ -120,23 +108,58 @@ export default function FileViewer(props: {
 	return (
 		<Suspense>
 			<Show
-				when={entry && file && editor() && editor().isOk && fileHandle()}
+				when={
+					entry() && file() && editor() && editor().isOk && fileHandle()
+				}
 				fallback={
 					<EditorFallback
-						entry={entry!}
+						entry={entry()!}
 						editor={editor()}
 						fileHandle={fileHandle()}
 					/>
 				}>
 				<ErrorBoundary
-					fallback={error => <pre>{JSON.stringify(error)}</pre>}>
+					fallback={(error, reset) => {
+						createEffect(test => {
+							if (editor() && test) {
+								reset()
+							}
+							return true
+						})
+						if (!(error instanceof Error)) {
+							return <div>{error.message ?? error}</div>
+						}
+
+						window.e = error
+						return (
+							<article class="error error--editor">
+								<h1>
+									<code>{error.toString()}</code>
+								</h1>
+
+								<div>
+									<code>
+										<pre
+											style={{
+												"line-height": "1.4",
+												padding: "1rem",
+												background: "black",
+												color: "lime",
+											}}>
+											{error.stack}
+										</pre>
+									</code>
+								</div>
+							</article>
+						)
+					}}>
 					<article
 						style={{height: "100%", width: "100%", overflow: "scroll"}}>
 						<Dynamic
 							component={Editor()}
 							handle={fileHandle()}
 							setName={(name: string) => {
-								changeEntry(entry => (entry.name = name))
+								entryHandle()?.change(entry => (entry.name = name))
 							}}
 							cleanup={(fn: () => void) => {
 								onCleanup(fn)

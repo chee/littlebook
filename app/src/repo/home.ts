@@ -1,9 +1,9 @@
 import {makePersisted} from "@solid-primitives/storage"
 import repo from "./create.ts"
 import {createSignal, untrack} from "solid-js"
-import type {AutomergeUrl} from "@automerge/automerge-repo"
+import type {AutomergeUrl, ChangeFn} from "@automerge/automerge-repo"
 import type {Entry} from "../documents/entry.ts"
-import {useDocumentStore} from "automerge-repo-solid-primitives"
+import {useDocument} from "automerge-repo-solid-primitives"
 
 export interface Home {
 	type: "home"
@@ -25,7 +25,7 @@ const forceString = (string: string) =>
 const [homeURL, setHomeURL] = makePersisted(
 	// eslint-disable-next-line solid/reactivity
 	createSignal(
-		forceString(localStorage.getItem("home")) ??
+		forceString(localStorage.getItem("home")!) ??
 			repo.create<Home>({
 				type: "home",
 				name: "home",
@@ -65,7 +65,12 @@ const [homeURL, setHomeURL] = makePersisted(
 setHomeURL(untrack(homeURL))
 
 export function useHome() {
-	return useDocumentStore<Home>(() => homeURL(), {repo})
+	const [doc, handle] = useDocument<Home>(homeURL())
+	return [
+		doc,
+		(change: ChangeFn<Home>) => handle()?.change(change),
+		handle,
+	] as const
 }
 
 export default homeURL

@@ -4,6 +4,7 @@ import {err, ok, type Result} from "true-myth/result"
 import type {Entry} from "../../documents/entry.ts"
 import {Registry} from "../registry.ts"
 import {StoredEditor, Editor} from "./editor-schema.ts"
+import {useContentTypeRegistry} from "../content-type/content-type-registry.ts"
 
 export class EditorRegistry extends Registry<StoredEditor, Editor> {
 	constructor({repo}: {repo: Repo}) {
@@ -19,27 +20,36 @@ export class EditorRegistry extends Registry<StoredEditor, Editor> {
 
 	// this yields in three steps to allow for more specific matches to be yielded first
 	*editors(entry: Entry) {
+		const seen = new Set<Editor>()
 		for (const editor of Object.values(this.records)) {
 			if (typeof editor.contentTypes == "string") continue
 			if (editor.contentTypes.includes(entry.contentType)) {
+				seen.add(editor)
 				yield editor
 			}
 		}
 
-		// if (entry.conformsTo) {
-		// 	for (const editor of Object.values(this.records)) {
-		// 		if (typeof editor.contentTypes == "string") continue
-		// 		if (
-		// 			editor.contentTypes.some(type =>
-		// 				entry.conformsTo?.includes(type)
-		// 			)
-		// 		) {
-		// 			yield editor
-		// 		}
-		// 	}
-		// }
+		const contentTypes = useContentTypeRegistry()
+
+		const entryType = contentTypes.get(entry.contentType)
+
+		if (entryType.isOk && entryType.value.conformsTo) {
+			for (const editor of Object.values(this.records)) {
+				if (typeof editor.contentTypes == "string") continue
+				if (
+					editor.contentTypes.some(type =>
+						entryType.value.conformsTo?.includes(type)
+					) &&
+					!seen.has(editor)
+				) {
+					seen.add(editor)
+					yield editor
+				}
+			}
+		}
 		for (const editor of Object.values(this.records)) {
-			if (editor.contentTypes == "*") {
+			if (editor.contentTypes == "*" && !seen.has(editor)) {
+				seen.add(editor)
 				yield editor
 			}
 		}

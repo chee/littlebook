@@ -28,6 +28,14 @@ export const CodeShape = z.object({
 })
 export const CodeContentType = inferContentType(CodeShape)
 
+export const MarkdownShape = z.object({
+	text: z.string(),
+	language: z.literal("markdown"),
+	editorURL: h.automergeURL().optional(),
+})
+
+export const MarkdownContentType = inferContentType(MarkdownShape)
+
 export const ContentType: z.ZodType<ContentType> = inferContentType(z.unknown())
 
 export type ContentType<T extends z.ZodTypeAny = z.ZodTypeAny> = z.infer<

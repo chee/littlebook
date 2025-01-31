@@ -2,7 +2,11 @@ import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "../registry.ts"
 import {StoredCoder, Coder, inferCoder} from "./coder-schema.ts"
-import {CodeShape, TextShape} from "../content-type/content-type-schema.ts"
+import {
+	CodeShape,
+	MarkdownShape,
+	TextShape,
+} from "../content-type/content-type-schema.ts"
 import {err, ok} from "true-myth/result"
 
 export class CoderRegistry extends Registry<StoredCoder, Coder> {
@@ -107,11 +111,44 @@ const code = inferCoder(CodeShape).parse({
 		}
 	},
 	new() {
-		return {text: ""}
+		return {text: "# my file", language: "javascript"}
 	},
 } satisfies Coder<typeof CodeShape>)
 
-const defaultCoders = [text, code]
+const markdown = inferCoder(MarkdownShape).parse({
+	id: "markdown",
+	displayName: "markdown",
+	contentType: "public.markdown",
+	filePatterns: ["*.md", "*.markdown"],
+	mimeTypes: ["text/markdown"],
+	fromBytes(bytes: Uint8Array) {
+		return text.fromBytes(bytes)
+	},
+	toBytes(value: {text: string}) {
+		return text.toBytes(value)
+	},
+	async fromFile(file) {
+		const bytes = await file.bytes()
+		const content = this.fromBytes(bytes)
+
+		if (!content.ok) {
+			return content
+		}
+
+		return {
+			ok: true,
+			val: {
+				text: content.val.text,
+				language: "markdown",
+			},
+		}
+	},
+	new() {
+		return {text: "", language: "markdown"}
+	},
+} satisfies Coder<typeof CodeShape>)
+
+const defaultCoders = [text, code, markdown]
 
 export const CoderRegistryContext = createContext<CoderRegistry>()
 

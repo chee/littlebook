@@ -9,8 +9,6 @@ import {
 	Show,
 	splitProps,
 	createRoot,
-	createSignal,
-	createEffect,
 } from "solid-js"
 import "./dock.css"
 import {createDockAPI, type DocumentURL} from "./dock-api.ts"
@@ -19,23 +17,24 @@ import {Dynamic} from "solid-js/web"
 
 export interface DockComponentProps {
 	// the id of the file to open
-	id: AutomergeUrl
+	id: DocumentURL
 	dockAPI: DockAPI
-	editorID: string | null
 }
 
 export interface DockHeaderActionProps {
 	groupID: string
 	dockAPI: DockAPI
-	editorID: string | null
 }
 
-function documentURL2AutomergeUrl(
+export function parseDocumentURL(
 	url: DocumentURL
-): [AutomergeUrl, URLSearchParams] {
+): Record<string, string> & {url: AutomergeUrl; editor?: string} {
 	const u = new URL(url)
 	const base = u.protocol + u.pathname
-	return [base as AutomergeUrl, u.searchParams]
+	return {
+		...Object.fromEntries(u.searchParams.entries()),
+		url: base as AutomergeUrl,
+	}
 }
 
 function createDockContext(dockOptions: {
@@ -53,34 +52,20 @@ function createDockContext(dockOptions: {
 				console.error(`no such panel component ${options.name}`)
 			}
 
-			const [url, params] = documentURL2AutomergeUrl(
-				options.id as DocumentURL
-			)
-			console.log(url, params)
-			const editorID = params.get("editor")
-
-			console.log({editorID})
-
 			const element = (
 				<div style={{display: "contents"}}>
 					<Show when={component()}>
 						<Dynamic
 							component={component()}
-							id={url}
+							id={options.id as DocumentURL}
 							dockAPI={dockAPI}
-							editorID={editorID}
 						/>
 					</Show>
 				</div>
 			) as HTMLElement
 			return {
 				element,
-				init(options) {
-					// 	setEditorID(options.params.editorID)
-				},
-				// update(options) {
-				// 	setEditorID(options.params.editorID)
-				// },
+				init() {},
 			}
 		},
 		createTabComponent(options) {
@@ -89,15 +74,14 @@ function createDockContext(dockOptions: {
 				console.error(`no such tab component ${options.name}`)
 			}
 
-			const [url, params] = documentURL2AutomergeUrl(
-				options.id as DocumentURL
-			)
-			// const editorID = params.get("editor")
-
 			const element = (
 				<div style={{display: "contents"}}>
 					<Show when={component()}>
-						<Dynamic component={component()} id={url} dockAPI={dockAPI} />
+						<Dynamic
+							component={component()}
+							id={options.id as DocumentURL}
+							dockAPI={dockAPI}
+						/>
 					</Show>
 				</div>
 			) as HTMLElement

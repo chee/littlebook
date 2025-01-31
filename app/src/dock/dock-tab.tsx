@@ -1,10 +1,11 @@
 import Icon from "../components/icons/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import repo from "../repo/create.ts"
-import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
+import type {AutomergeUrl, Doc, DocHandle} from "@automerge/automerge-repo"
 import {Button} from "@kobalte/core/button"
 import {
 	createEffect,
+	createMemo,
 	createRoot,
 	For,
 	getOwner,
@@ -13,9 +14,10 @@ import {
 	Show,
 	Suspense,
 	Switch,
+	type Accessor,
 } from "solid-js"
 import homeURL, {useHome, type Home} from "../repo/home.ts"
-import {useDockAPI} from "./dock.tsx"
+import {parseDocumentURL, useDockAPI} from "./dock.tsx"
 import type {Entry} from "../documents/entry.ts"
 import {createShortcut} from "@solid-primitives/keyboard"
 import esbuild from "esbuild-wasm"
@@ -24,13 +26,9 @@ import {Editor, StoredEditor} from "../registries/editor/editor-schema.ts"
 import {z} from "zod"
 import {h} from "../schema-helpers.ts"
 import Task, {fromPromise, safelyTry} from "true-myth/task"
-import {
-	createDocumentProjection,
-	useDocumentStore,
-	useHandle,
-} from "automerge-repo-solid-primitives"
 import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
 import type {DocumentURL} from "./dock-api.ts"
+import {useDocument} from "automerge-repo-solid-primitives"
 
 const keynames = {
 	CMD: "Meta",
@@ -99,7 +97,7 @@ const [fileActions] = createStore<FileAction[]>([
 		type: "sub",
 		label: "set language",
 		when(opts: {entry: Entry; file: unknown}) {
-			return opts.entry.contentType == "text"
+			return opts.entry.contentType == "public.text"
 		},
 		sub: [
 			{
@@ -130,7 +128,7 @@ const [fileActions] = createStore<FileAction[]>([
 			const code = CodeFile.safeParse(opts.file)
 			return (
 				code.success &&
-				opts.entry.contentType == "text" &&
+				opts.entry.contentType == "public.text" &&
 				code.data.language == "javascript"
 			)
 		},
@@ -142,7 +140,7 @@ const [fileActions] = createStore<FileAction[]>([
 
 export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
 	return createRoot(() => {
-		const file = createDocumentProjection(fileHandle)
+		const file = fileHandle.docSync()!
 		return safelyTry(() => compile(file.text))
 			.andThen(code => {
 				const bytes = new TextEncoder().encode(code)
@@ -194,24 +192,22 @@ export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
 	})
 }
 
-export default function DockTab(props: {id: AutomergeUrl}) {
+export default function DockTab(props: {url: DocumentURL}) {
+	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const dockAPI = useDockAPI()
-	const entryHandle = useHandle<Entry>(() => props.id, {repo})
-	const entry = createDocumentProjection<Entry>(entryHandle)
+	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
+
 	const editorRegistry = useEditorRegistry()
-	const editors = () => [...(editorRegistry.editors(entry) ?? [])]
+	const editors = () => [...(editorRegistry.editors(entry()!) ?? [])]
 	const [home, changeHome] = useHome()
 	let tabElement!: HTMLDivElement
 
 	createEffect(() => {
 		if (!dockAPI) return
-		if (dockAPI.activePanelID == props.id) tabElement.scrollIntoView()
+		if (dockAPI.activePanelID == props.url) tabElement.scrollIntoView()
 	})
 
-	const [file, _changeFile, fileHandle] = useDocumentStore<{text: string}>(
-		() => entry?.url,
-		{repo}
-	)
+	const [file, fileHandle] = useDocument<unknown>(() => entry()?.url)
 
 	const owner = getOwner()
 
@@ -221,19 +217,22 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 				<ContextMenu.Trigger class="dock-tab__context-menu-trigger">
 					<div class="dock-tab" ref={tabElement}>
 						<div class="dock-tab__icon">
-							<Icon name={entry?.icon || "document-text-bold"} inline />
+							<Icon
+								name={entry()?.icon || "document-text-bold"}
+								inline
+							/>
 						</div>
-						<div class="dock-tab__name">{entry?.name}</div>
+						<div class="dock-tab__name">{entry()?.name}</div>
 						<Button
 							class="dock-tab__close"
-							aria-label={`close panel ${entry?.name}`}
+							aria-label={`close panel ${entry()?.name}`}
 							onmousedown={event => {
 								event.stopImmediatePropagation()
 								event.stopPropagation()
 								event.preventDefault()
 							}}
 							onclick={() => {
-								dockAPI.closePanel(props.id)
+								dockAPI.closePanel(props.url)
 							}}>
 							<Icon name="close-square-linear" inline />
 						</Button>
@@ -243,14 +242,14 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 					<ContextMenu.Content class="pop-menu__content">
 						<ContextMenu.Item
 							class="pop-menu__item"
-							onSelect={() => dockAPI.closePanel(props.id)}>
+							onSelect={() => dockAPI.closePanel(props.url)}>
 							close tab
 						</ContextMenu.Item>
 						<ContextMenu.Item
 							class="pop-menu__item"
 							onSelect={() => {
 								for (const id of dockAPI.panelIDs) {
-									if (id != props.id)
+									if (id != props.url)
 										dockAPI.closePanel(id as AutomergeUrl)
 								}
 							}}>
@@ -259,18 +258,18 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 						<ContextMenu.Separator />
 						<ContextMenu.Item
 							class="pop-menu__item"
-							onSelect={() => navigator.clipboard.writeText(props.id)}>
+							onSelect={() => navigator.clipboard.writeText(props.url)}>
 							copy url
 						</ContextMenu.Item>
 						<ContextMenu.Separator />
-						<Show when={!home?.files.includes(props.id)}>
+						<Show when={!home()?.files.includes(docinfo().url)}>
 							<ContextMenu.Item
 								class="pop-menu__item"
 								onSelect={() => {
 									// eslint-disable-next-line solid/reactivity
 									changeHome(home => {
-										if (!home.files.includes(props.id)) {
-											home.files.push(props.id)
+										if (!home.files.includes(docinfo().url)) {
+											home.files.push(docinfo().url)
 										}
 									})
 								}}>
@@ -300,7 +299,7 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 															"editor",
 															editor.id
 														)
-														console.log(url.toString())
+
 														runWithOwner(owner, () => {
 															dockAPI.openDocument(
 																url.toString() as DocumentURL
@@ -315,12 +314,14 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 								</ContextMenu.Portal>
 							</ContextMenu.Sub>
 						</Show>
-						<DataDrivenContextMenu
-							items={fileActions}
-							entry={entry!}
-							file={file}
-							fileHandle={fileHandle()}
-						/>
+						<Show when={entry() && file()}>
+							<DataDrivenContextMenu
+								items={fileActions}
+								entry={entry as Accessor<Entry>}
+								file={file as Accessor<Doc<unknown>>}
+								fileHandle={fileHandle()!}
+							/>
+						</Show>
 					</ContextMenu.Content>
 				</ContextMenu.Portal>
 			</ContextMenu>
@@ -330,12 +331,12 @@ export default function DockTab(props: {id: AutomergeUrl}) {
 
 export function DataDrivenContextMenu(props: {
 	items: typeof fileActions
-	entry: Entry
-	file: unknown
+	entry: Accessor<Entry>
+	file: Accessor<Doc<unknown>>
 	fileHandle: DocHandle<unknown>
 }) {
-	const when = (fn?: (opts: {entry: Entry; file: unknown}) => boolean) =>
-		fn ? fn({entry: props.entry, file: props.file}) : true
+	const when = (fn?: (opts: {entry: Entry; file: Doc<unknown>}) => boolean) =>
+		fn ? fn({entry: props.entry(), file: props.file()}) : true
 
 	return (
 		<For each={props.items}>
@@ -380,7 +381,7 @@ export function DataDrivenContextMenu(props: {
 					<Match when={fileAction.type == "radio-group"}>
 						<ContextMenu.RadioGroup
 							value={(fileAction as FileActionRadioGroup).value({
-								file: props.file as CodeFile,
+								file: props.file() as CodeFile,
 							})}
 							onChange={value =>
 								(fileAction as FileActionRadioGroup).action!({

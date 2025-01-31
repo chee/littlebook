@@ -18,11 +18,12 @@ export const contentTypes = ["public.text", "public.code"]
 
 // todo should something like this be part of the API, and caled by the
 // editor.tsx before passing the doc to the plugin?
+// todo YES
 function shape(doc: any): doc is {
 	text: string
 	language?: "python" | "markdown" | "javascript" | "html"
 } {
-	return "text" in doc && typeof doc.text == "string"
+	return doc && "text" in doc && typeof doc.text == "string"
 }
 
 export function render(props: {

@@ -1,17 +1,12 @@
-import {type DocumentPayload, type Repo} from "@automerge/automerge-repo"
 import {
-	createComputed,
-	getOwner,
-	on,
-	onCleanup,
-	runWithOwner,
-	type Owner,
-} from "solid-js"
+	type DocumentPayload,
+	type Repo,
+	type DocHandleChangePayload,
+} from "@automerge/automerge-repo"
+import {getOwner, onCleanup, type Owner} from "solid-js"
 import {createStore, type SetStoreFunction} from "solid-js/store"
 import {err, ok, type Result} from "true-myth/result"
-import type Unit from "true-myth/unit"
 import {Task} from "true-myth/task"
-import {createDocumentProjection} from "automerge-repo-solid-primitives"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 
 export function importFromAutomerge<T extends StandardSchemaV1>(
@@ -80,7 +75,7 @@ export abstract class Registry<
 		this.#storedSchema = storedSchema
 		this.#schema = schema
 
-		repo.on("document", this.#listener)
+		repo.on("document", this.#documentListener)
 		onCleanup(() => {
 			this.deconstructor()
 		})
@@ -91,7 +86,7 @@ export abstract class Registry<
 		this.#updateRecords = updateRecords
 	}
 
-	#listener = (payload: DocumentPayload) => {
+	#documentListener = (payload: DocumentPayload) => {
 		const {handle} = payload
 		handle.doc().then(async doc => {
 			if (!doc) return
@@ -108,23 +103,29 @@ export abstract class Registry<
 					)
 				}
 			} else {
-				return importFromAutomerge(parsed.value, this.#schema)
-					.map(bundle => {
-						if (this.records[bundle.id]) {
-							console.warn(
-								`overwriting${this.nameWithPrefixSpace}: [${bundle.id}]`
-							)
-						}
-						this.#updateRecords(parsed.value.id, bundle)
-					})
-					.mapRejected(err => {
-						console.error(
-							`failed to import ${this.nameWithSpace}document`,
-							err
-						)
-					})
+				handle.on("change", this.#changeListener)
+				return this.#import(parsed.value)
 			}
 		})
+	}
+
+	#changeListener = (payload: DocHandleChangePayload<Stored>) => {
+		return this.#import(payload.patchInfo.after)
+	}
+
+	#import = (doc: Stored) => {
+		return importFromAutomerge(doc, this.#schema)
+			.map(bundle => {
+				if (this.records[bundle.id]) {
+					console.warn(
+						`overwriting${this.nameWithPrefixSpace}: [${bundle.id}]`
+					)
+				}
+				this.#updateRecords(doc.id, bundle)
+			})
+			.mapRejected(err => {
+				console.error(`failed to import ${this.nameWithSpace}document`, err)
+			})
 	}
 
 	// todo should i just make this async?
@@ -156,6 +157,6 @@ export abstract class Registry<
 	}
 
 	deconstructor() {
-		this.#repo.off("document", this.#listener)
+		this.#repo.off("document", this.#documentListener)
 	}
 }

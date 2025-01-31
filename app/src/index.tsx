@@ -35,6 +35,8 @@ import {
 } from "./registries/coder/coder-registry.ts"
 
 import repo from "./repo/create.ts"
+import {RepoContext} from "automerge-repo-solid-primitives"
+import type {Repo} from "@automerge/automerge-repo/slim"
 
 render(
 	() => (
@@ -42,7 +44,9 @@ render(
 			value={new ContentTypeRegistry({repo})}>
 			<CoderRegistryContext.Provider value={new CoderRegistry({repo})}>
 				<EditorRegistryContext.Provider value={new EditorRegistry({repo})}>
-					<App />
+					<RepoContext.Provider value={repo as unknown as Repo}>
+						<App />
+					</RepoContext.Provider>
 				</EditorRegistryContext.Provider>
 			</CoderRegistryContext.Provider>
 		</ContentTypeRegistryContext.Provider>

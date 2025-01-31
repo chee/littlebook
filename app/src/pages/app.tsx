@@ -13,6 +13,7 @@ import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
 import * as commonmark from "commonmark"
 import css from "github-markdown-css/github-markdown.css?raw"
+import {MarkdownShape} from "../registries/content-type/content-type-schema.ts"
 const reader = new commonmark.Parser({smart: true})
 const writer = new commonmark.HtmlRenderer({sourcepos: true})
 
@@ -20,8 +21,7 @@ const writer = new commonmark.HtmlRenderer({sourcepos: true})
 // that they own. stored in the entry itself or in the user's home, perhaps
 
 export default function App() {
-	const [resizableContext, setResizableContext] =
-		createSignal<ContextValue | null>(null)
+	const [resizableContext, setResizableContext] = createSignal<ContextValue>()
 
 	const editorRegistry = useEditorRegistry()
 
@@ -39,14 +39,18 @@ export default function App() {
 	editorRegistry.register({
 		displayName: "Markdown Preview",
 		id: "markdown-preview",
-		contentTypes: ["public.text", "public.markdown", "public.code"],
+		contentTypes: ["public.markdown"],
 		render(props) {
-			const doc = props.handle.docSync()
+			// eslint-disable-next-line solid/reactivity
+			const doc = MarkdownShape.parse(props.handle.docSync())
 			const [text, settext] = createSignal(doc.text)
 
+			// eslint-disable-next-line solid/reactivity
 			props.handle.on("change", payload => {
-				settext(payload.patchInfo.after.text)
+				const after = MarkdownShape.parse(payload.patchInfo.after)
+				settext(after.text)
 			})
+
 			return (
 				<div class="markdown-preview">
 					<style>{
@@ -59,10 +63,11 @@ export default function App() {
 					}</style>
 					<div
 						class="markdown-body"
+						// eslint-disable-next-line solid/no-innerhtml
 						innerHTML={writer.render(reader.parse(text()))}
 					/>
 				</div>
-			)
+			) as HTMLElement
 		},
 	})
 
@@ -105,11 +110,13 @@ export default function App() {
 			<DockProvider
 				components={{
 					document: props => {
-						return <FileViewer url={props.id} {...props} />
+						return <FileViewer url={props.id} />
 					},
 				}}
 				tabComponents={{
-					document: DockTab,
+					document: props => {
+						return <DockTab url={props.id} />
+					},
 				}}
 				watermarkComponent={() => <div class="dock-watermark" />}
 				rightHeaderActionComponent={props => (

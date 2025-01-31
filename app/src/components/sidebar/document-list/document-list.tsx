@@ -3,13 +3,15 @@ import {For, getOwner, runWithOwner, Show} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import repo from "../../../repo/create.ts"
 import "./document-list.css"
-import {createDocumentProjection} from "automerge-repo-solid-primitives"
+import {makeDocumentProjection} from "automerge-repo-solid-primitives"
 import {useHome} from "../../../repo/home.ts"
 import type {Entry} from "../../../documents/entry.ts"
-import {useDockAPI} from "../../../dock/dock.tsx"
+import {parseDocumentURL, useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {useContentTypeRegistry} from "../../../registries/content-type/content-type-registry.ts"
 
+// todo this should use a generic DocumentList, with special behaviours
+// and user can pin a folder to the sidebar as one of those
 export default function HomeWidget() {
 	const [home, changeHome] = useHome()
 
@@ -31,7 +33,7 @@ export default function HomeWidget() {
 				console.log(event.dataTransfer, event)
 			}}>
 			<header class="sidebar-widget__header">
-				<span>{home?.name}</span>
+				<span>{home()?.name}</span>
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
 						create={({name, content, contentType}) => {
@@ -58,13 +60,12 @@ export default function HomeWidget() {
 			</header>
 			<div class="sidebar-widget__content">
 				<ul class="document-list">
-					<For each={home.files}>
+					<For each={home()?.files}>
 						{url => {
-							const store = createDocumentProjection<Entry>(
-								repo.find(url)
-							)
+							const store = makeDocumentProjection(repo.find<Entry>(url))
 							const pressed = () =>
-								dockAPI?.activePanelID == url
+								// move parseDocumentURL features into the api
+								parseDocumentURL(dockAPI?.activePanelID).url == url
 									? "true"
 									: dockAPI?.panelIDs?.includes(url)
 										? "mixed"
@@ -127,7 +128,9 @@ export default function HomeWidget() {
 												<ContextMenu.Item
 													class="pop-menu__item"
 													onSelect={() => {
-														const files = Array.from(home.files)
+														const files = Array.from(
+															home()?.files || []
+														)
 														const index = files.indexOf(url)
 														if (index != -1) {
 															changeHome(home => {
