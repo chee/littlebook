@@ -289,5 +289,5 @@ export function useDocument<T>(
 		},
 		[handle]
 	)
-	return [handle?.docSync(), changeDoc] as const
+	return [handle.doc(), changeDoc] as const
 }

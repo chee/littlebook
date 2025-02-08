@@ -9,7 +9,7 @@ export default {
 		cleanup(fn: () => void): void
 	}) {
 		const editor = new EditorView({
-			doc: props.handle.docSync()?.text,
+			doc: props.handle.doc()?.text,
 			extensions: [
 				minimalSetup,
 				automergeSyncPlugin({
