@@ -1,4 +1,33 @@
-.editor {
+:root {
+	--file-viewer-fill: var(--dock-fill);
+	--file-viewer-line: var(--dock-line);
+	--file-viewer-status-bar__font-size: 12px;
+	--file-viewer-status-bar__height: 16px;
+	--file-viewer-status-bar-fill: color-mix(
+		in srgb,
+		var(--melon),
+		var(--file-viewer-fill) 80%
+	);
+}
+
+.file-viewer {
 	height: 100%;
 	overflow: scroll;
+}
+
+.file-viewer__content {
+	height: calc(100% - var(--file-viewer-status-bar__height));
+	width: 100%;
+	overflow: scroll;
+}
+
+.file-viewer-status-bar {
+	background: var(--file-viewer-status-bar-fill);
+	height: var(--file-viewer-status-bar__height);
+	font-size: var(--file-viewer-status-bar__font-size);
+	display: flex;
+	font-family: var(--family-mono);
+	padding-inline: 0.5em;
+	gap: 1em;
+	border-top: 1px solid var(--file-viewer-line);
 }

@@ -1,4 +1,4 @@
-import {type AutomergeUrl, type DocHandle} from "@automerge/automerge-repo"
+import {type DocHandle} from "@automerge/automerge-repo"
 import "./editor.css"
 
 import {
@@ -10,50 +10,20 @@ import {
 	Suspense,
 } from "solid-js"
 import {type Entry} from "../../documents/entry.ts"
-import {useEditorRegistry} from "../../registries/editor/editor-registry.ts"
-import type {Editor} from "../../registries/editor/editor-schema.ts"
-import {useHome} from "../../repo/home.ts"
 import EditorFallback from "./fallback.tsx"
-import {err, ok, type Result} from "true-myth/result"
 import {Dynamic} from "solid-js/web"
 import {compileToEditor} from "../../dock/dock-tab.tsx"
 import {createShortcut} from "@solid-primitives/keyboard"
 import {throttle} from "@solid-primitives/scheduled"
-import {useDocument} from "automerge-repo-solid-primitives"
+import {useDocument} from "solid-automerge"
 import type {DocumentURL} from "../../dock/dock-api.ts"
 import {parseDocumentURL} from "../../dock/dock.tsx"
+import {usePerfectEditor} from "./usePerfectEditor.tsx"
 
 export default function FileViewer(props: {url: DocumentURL}) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
-	const [home] = useHome()
 	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
-
-	const registry = useEditorRegistry()
-
-	const editors = () => entry() && registry.editors(entry()!)
-
-	const editor = (): Result<Editor, Error> => {
-		const url = docinfo().url
-		const associations = home()?.associations
-		const associated = associations?.[url]
-		const firstEditor = editors()?.next().value
-
-		if (docinfo().editor) {
-			const editor = registry.get(docinfo().editor!)
-			return editor
-				? editor
-				: err(new Error(`couldn't find editor ${docinfo().editor}`))
-		}
-
-		if (associated) {
-			const editor = registry.get(associated)
-			return editor
-		} else if (firstEditor) {
-			return ok(firstEditor)
-		} else {
-			return err(new Error("no editor found"))
-		}
-	}
+	const editor = usePerfectEditor(() => props.url)
 
 	// todo this is `unknown` IRL
 	const [file, fileHandle] = useDocument<{text: string; language?: string}>(
@@ -103,7 +73,7 @@ export default function FileViewer(props: {url: DocumentURL}) {
 			id: "",
 			contentTypes: [],
 			displayName: "",
-		})?.render
+		})
 
 	return (
 		<Suspense>
@@ -132,31 +102,22 @@ export default function FileViewer(props: {url: DocumentURL}) {
 
 						window.e = error
 						return (
-							<article class="error error--editor">
+							<article class="error error--file-viewer">
 								<h1>
 									<code>{error.toString()}</code>
 								</h1>
 
 								<div>
 									<code>
-										<pre
-											style={{
-												"line-height": "1.4",
-												padding: "1rem",
-												background: "black",
-												color: "lime",
-											}}>
-											{error.stack}
-										</pre>
+										<pre>{error.stack}</pre>
 									</code>
 								</div>
 							</article>
 						)
 					}}>
-					<article
-						style={{height: "100%", width: "100%", overflow: "scroll"}}>
+					<article class="file-viewer__content">
 						<Dynamic
-							component={Editor()}
+							component={Editor().render}
 							handle={fileHandle()}
 							setName={(name: string) => {
 								entryHandle()?.change(entry => (entry.name = name))
@@ -166,6 +127,11 @@ export default function FileViewer(props: {url: DocumentURL}) {
 							}}
 						/>
 					</article>
+					<footer class="file-viewer-status-bar">
+						<span class="file-viewer-status-bar__editor-name">
+							{Editor().displayName}
+						</span>
+					</footer>
 				</ErrorBoundary>
 			</Show>
 		</Suspense>
