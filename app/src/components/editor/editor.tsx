@@ -117,6 +117,9 @@ export default function FileViewer(props: {url: DocumentURL}) {
 					}}>
 					<article class="file-viewer__content">
 						<Dynamic
+							// todo add callbacks for adding:
+							// - item to status bar
+							// - command to tab context menu
 							component={Editor().render}
 							handle={fileHandle()}
 							setName={(name: string) => {
