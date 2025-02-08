@@ -1,23 +1,23 @@
 {
 	"folders": [
 		{
-			"name": "✨ @pointplace/monorepo",
+			"name": "⚡ mono",
 			"path": ".",
 		},
 		{
-			"name": "🚀 @pointplace/app",
+			"name": "💞 app",
 			"path": "app",
 		},
 		{
-			"name": "@littlebook/text",
+			"name": "🔌 codemirror",
 			"path": "plugins/codemirror",
 		},
 		{
-			"name": "@littlebook/tldraw",
+			"name": "🔌 tldraw",
 			"path": "plugins/tldraw",
 		},
 	],
 	"settings": {
-		"workbench.colorTheme": "lychee",
+		"workbench.colorTheme": "Caddy",
 	},
 }
