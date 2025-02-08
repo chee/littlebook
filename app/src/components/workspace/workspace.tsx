@@ -42,13 +42,20 @@ const Workspace: ParentComponent<{
 	}
 	const loadhash = location.hash.slice(1)
 	window.addEventListener("hashchange", onhash)
+
 	onCleanup(() => {
 		window.removeEventListener("hashchange", onhash)
 	})
+
 	dockAPI.onLayoutChange(() => {
 		const layout: SerializedDockview = dockAPI.serializeLayout()
 		localStorage.setItem("layout", JSON.stringify(layout))
-		location.hash = dockAPI?.activePanelID
+		const hash = dockAPI?.activePanelID
+		if (hash) {
+			location.hash = hash
+		} else {
+			location.hash = ""
+		}
 	})
 
 	const mySerializedLayout = localStorage.getItem("layout")
