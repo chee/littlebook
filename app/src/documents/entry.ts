@@ -2,7 +2,7 @@ import {z} from "zod"
 import {h} from "../schema-helpers.ts"
 import type {AutomergeUrl, Repo} from "@automerge/automerge-repo"
 import {type Accessor} from "solid-js"
-import {useDocument} from "automerge-repo-solid-primitives"
+import {useDocument} from "solid-automerge"
 import {ContentType} from "../registries/content-type/content-type-schema.ts"
 import repo from "../repo/create.ts"
 
@@ -35,8 +35,8 @@ export const ResolvedEntry = z.object({
 export type ResolvedEntry = z.infer<typeof ResolvedEntry>
 
 export async function entryResolver(entry: Entry) {
-	const file = await repo.find(entry.url).doc()
-	const contentType = await repo.find(entry.contentType).doc()
+	const file = (await repo.findClassic(entry.url)).doc()
+	const contentType = (await repo.findClassic(entry.contentType)).doc()
 	return {name: entry.name, icon: entry.icon, contentType, file}
 }
 
