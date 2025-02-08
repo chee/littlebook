@@ -1,5 +1,5 @@
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
-import {EditorView, lineNumbers} from "@codemirror/view"
+import {EditorView, lineNumbers, keymap} from "@codemirror/view"
 import {Compartment} from "@codemirror/state"
 import {minimalSetup} from "codemirror"
 import {
@@ -42,7 +42,7 @@ export function render(props: {
 	const style = new CSSStyleSheet()
 	style.replaceSync(/*css*/ `
 		.cm-editor {
-			height: 100%;			
+			height: 100%;
 			font-size: var(--font-size);
 			font-family: var(--family-mono);
 			background: var(--fill);
@@ -57,7 +57,7 @@ export function render(props: {
 		}
 	} catch {}
 
-	const file = props.handle.docSync()
+	const file = props.handle.doc()
 
 	if (!shape(file)) {
 		console.error("doc is wrong shape")
@@ -72,6 +72,7 @@ export function render(props: {
 			indentUnit.of("\t"),
 			languageCompartment.of([]),
 			lineNumbersCompartment.of([]),
+			EditorView.lineWrapping,
 			automergeSyncPlugin({
 				handle: props.handle,
 				path: ["text"],
@@ -105,6 +106,7 @@ export function render(props: {
 				.then(mod => mod.markdown)
 				.then(async markdown => {
 					return markdown({
+						addKeymap: true,
 						codeLanguages: [
 							LanguageDescription.of({
 								name: "javascript",
