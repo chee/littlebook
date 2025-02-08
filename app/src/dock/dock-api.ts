@@ -8,6 +8,8 @@ import {onCleanup} from "solid-js"
 import {createStore} from "solid-js/store"
 import Result, {err, ok} from "true-myth/result"
 import type Unit from "true-myth/unit"
+import {parseDocumentURL, renderDocumentURL} from "./dock.tsx"
+import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
 
 export type DocumentURL = AutomergeUrl & {type: "document"}
 
@@ -22,18 +24,25 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 	}
 	const [dockAPI, updateAPI] = createStore({
 		openDocument(id: DocumentURL | AutomergeUrl, component = "document") {
+			const docinfo = parseDocumentURL(id as DocumentURL)
+			if (!docinfo.editor) {
+				const perfectEditor = usePerfectEditor(() => id as DocumentURL)()
+				if (perfectEditor.isOk) {
+					docinfo.editor = perfectEditor.value.id
+					id = renderDocumentURL(docinfo)
+				}
+			}
+
 			const existing = dockviewAPI.getPanel(id)
 
 			if (existing) {
 				existing.api.setActive()
-				// existing.api.updateParameters({id, editorID})
 			} else {
 				dockviewAPI.addPanel({
 					id,
 					component,
 					tabComponent: component,
 					renderer: "always",
-					// params: {id, editorID},
 				})
 			}
 		},
@@ -64,7 +73,7 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		serializeLayout() {
 			return dockviewAPI.toJSON()
 		},
-		activePanelID: dockviewAPI.activePanel?.id,
+		activePanelID: dockviewAPI.activePanel?.id as DocumentURL | undefined,
 		panelIDs: dockviewAPI.panels.map(p => p.id),
 	})
 
