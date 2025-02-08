@@ -14,7 +14,6 @@
 .dock-tab {
 	display: flex;
 	place-items: center;
-	/* place-content: center; */
 	font-weight: 500;
 	height: 100%;
 	gap: 1ex;
@@ -43,4 +42,21 @@
 	&:hover {
 		background: color-mix(in srgb, var(--dock-fill), var(--dock-line) 10%);
 	}
+}
+
+/* .dock-tab__editor {
+	background: black;
+	color: white;
+	font-size: 10px;
+	padding: 4px;
+	border-radius: 2px;
+} */
+
+.dock-tab__editor-tooltip {
+	background: var(--line);
+	color: var(--fill);
+	z-index: 0;
+	font-size: 12px;
+	padding: 0.5rem;
+	border-radius: 16px;
 }
