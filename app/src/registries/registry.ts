@@ -8,6 +8,7 @@ import {createStore, type SetStoreFunction} from "solid-js/store"
 import {err, ok, type Result} from "true-myth/result"
 import {Task} from "true-myth/task"
 import type {StandardSchemaV1} from "@standard-schema/spec"
+import type Unit from "true-myth/unit"
 
 export function importFromAutomerge<T extends StandardSchemaV1>(
 	doc: {bytes: Uint8Array},
@@ -88,14 +89,15 @@ export abstract class Registry<
 
 	#documentListener = (payload: DocumentPayload) => {
 		const {handle} = payload
-		handle.doc().then(async doc => {
-			if (!doc) return
+		const doc = handle.doc()
+		if (!doc) return
+		return (async () => {
 			const parsed = await this.#storedSchema["~standard"].validate(doc)!
 			if (parsed.issues) {
 				if (
 					"type" in doc &&
 					doc.type == this.#name &&
-					handle.docSync()?.bytes
+					handle.doc()?.bytes
 				) {
 					console.warn(
 						`failed to parse ${this.nameWithSpace}document`,
@@ -106,7 +108,7 @@ export abstract class Registry<
 				handle.on("change", this.#changeListener)
 				return this.#import(parsed.value)
 			}
-		})
+		})()
 	}
 
 	#changeListener = (payload: DocHandleChangePayload<Stored>) => {
