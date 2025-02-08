@@ -3,15 +3,17 @@ import {For, getOwner, runWithOwner, Show} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import repo from "../../../repo/create.ts"
 import "./document-list.css"
-import {makeDocumentProjection} from "automerge-repo-solid-primitives"
+import {useDocument} from "solid-automerge"
 import {useHome} from "../../../repo/home.ts"
 import type {Entry} from "../../../documents/entry.ts"
 import {parseDocumentURL, useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {useContentTypeRegistry} from "../../../registries/content-type/content-type-registry.ts"
+import OpenWithContextMenu from "../../../dock/open-with.tsx"
+import type {DocumentURL} from "../../../dock/dock-api.ts"
 
-// todo this should use a generic DocumentList, with special behaviours
-// and user can pin a folder to the sidebar as one of those
+// todo this should use a generic DocumentList, wrapped with special behaviours
+// and user can pin a folder to the sidebar as a DocumentList
 export default function HomeWidget() {
 	const [home, changeHome] = useHome()
 
@@ -62,14 +64,17 @@ export default function HomeWidget() {
 				<ul class="document-list">
 					<For each={home()?.files}>
 						{url => {
-							const store = makeDocumentProjection(repo.find<Entry>(url))
-							const pressed = () =>
+							const [doc, handle] = useDocument<Entry>(url)
+							const pressed = () => {
+								if (!dockAPI || !dockAPI.activePanelID) return "false"
 								// move parseDocumentURL features into the api
-								parseDocumentURL(dockAPI?.activePanelID).url == url
+								return parseDocumentURL(dockAPI.activePanelID).url ==
+									url
 									? "true"
 									: dockAPI?.panelIDs?.includes(url)
 										? "mixed"
 										: "false"
+							}
 
 							{
 								/* todo
@@ -102,8 +107,8 @@ export default function HomeWidget() {
 												)
 											}
 											aria-pressed={pressed()}>
-											<Show when={store} fallback="">
-												{store.name ?? url}
+											<Show when={doc()} fallback="">
+												{doc()!.name ?? url}
 											</Show>
 										</ContextMenu.Trigger>
 										<ContextMenu.Portal>
@@ -113,14 +118,12 @@ export default function HomeWidget() {
 													onSelect={() => {
 														const name = window.prompt(
 															"rename to:",
-															store.name
+															doc()!.name
 														)
 														if (name) {
-															repo
-																.find<Entry>(url)
-																.change(doc => {
-																	doc.name = name
-																})
+															handle()?.change(doc => {
+																doc.name = name
+															})
 														}
 													}}>
 													rename
@@ -140,6 +143,9 @@ export default function HomeWidget() {
 													}}>
 													remove
 												</ContextMenu.Item>
+												<OpenWithContextMenu
+													url={url as DocumentURL}
+												/>
 											</ContextMenu.Content>
 										</ContextMenu.Portal>
 									</ContextMenu>
