@@ -6,11 +6,11 @@ export async function createAutomergeRepo() {
 	const repo = new Automerge.Repo({
 		network: [new BrowserWebSocketClientAdapter("wss://galaxy.observer/")],
 		storage: new IndexedDBStorageAdapter("pointplace"),
+		enableRemoteHeadsGossiping: true,
 	})
 	await repo.networkSubsystem.whenReady()
 	return repo
 }
-
 const repo = await createAutomergeRepo()
 
 window.repo = repo
