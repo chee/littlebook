@@ -27,7 +27,7 @@ const Workspace: ParentComponent<{
 	createEffect(() => {
 		for (const editor of home?.editors ?? []) {
 			// kick off the editorRegistry knowing about these
-			repo.find(editor).docSync()
+			repo.findClassic(editor)
 		}
 	})
 	const owner = getOwner()
