@@ -3,7 +3,7 @@ import repo from "./create.ts"
 import {createSignal, untrack} from "solid-js"
 import type {AutomergeUrl, ChangeFn} from "@automerge/automerge-repo"
 import type {Entry} from "../documents/entry.ts"
-import {useDocument} from "automerge-repo-solid-primitives"
+import {useDocument} from "solid-automerge"
 
 export interface Home {
 	type: "home"
@@ -65,7 +65,7 @@ const [homeURL, setHomeURL] = makePersisted(
 setHomeURL(untrack(homeURL))
 
 export function useHome() {
-	const [doc, handle] = useDocument<Home>(homeURL())
+	const [doc, handle] = useDocument<Home>(homeURL(), {repo})
 	return [
 		doc,
 		(change: ChangeFn<Home>) => handle()?.change(change),
