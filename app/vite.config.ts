@@ -17,4 +17,7 @@ export default defineConfig({
 		minify: false,
 		target: ["firefox127", "safari17"],
 	},
+	server: {
+		port: 1111,
+	},
 })
