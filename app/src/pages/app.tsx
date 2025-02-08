@@ -11,15 +11,10 @@ import Workspace from "../components/workspace/workspace.tsx"
 import * as codemirror from "@littlebook/text/codemirror-editor.ts"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
-import * as commonmark from "commonmark"
-import css from "github-markdown-css/github-markdown.css?raw"
-import {MarkdownShape} from "../registries/content-type/content-type-schema.ts"
-const reader = new commonmark.Parser({smart: true})
-const writer = new commonmark.HtmlRenderer({sourcepos: true})
+import markdownPreview from "../editors/markdown-preview.tsx"
 
 // todo maybe editors should be passed a `setMeta` function and a `meta` object
 // that they own. stored in the entry itself or in the user's home, perhaps
-
 export default function App() {
 	const [resizableContext, setResizableContext] = createSignal<ContextValue>()
 
@@ -36,40 +31,7 @@ export default function App() {
 	*/
 
 	editorRegistry.register(codemirror)
-	editorRegistry.register({
-		displayName: "Markdown Preview",
-		id: "markdown-preview",
-		contentTypes: ["public.markdown"],
-		render(props) {
-			// eslint-disable-next-line solid/reactivity
-			const doc = MarkdownShape.parse(props.handle.docSync())
-			const [text, settext] = createSignal(doc.text)
-
-			// eslint-disable-next-line solid/reactivity
-			props.handle.on("change", payload => {
-				const after = MarkdownShape.parse(payload.patchInfo.after)
-				settext(after.text)
-			})
-
-			return (
-				<div class="markdown-preview">
-					<style>{
-						/* css */ `
-						.markdown-preview {
-							padding: 1rem;
-							${css}
-						}
-						`
-					}</style>
-					<div
-						class="markdown-body"
-						// eslint-disable-next-line solid/no-innerhtml
-						innerHTML={writer.render(reader.parse(text()))}
-					/>
-				</div>
-			) as HTMLElement
-		},
-	})
+	editorRegistry.register(markdownPreview)
 
 	const defaultSizes = [0.2, 0.8]
 
