@@ -1,12 +1,19 @@
-import type {AutomergeUrl} from "@automerge/automerge-repo"
+import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
 import repo from "./create.ts"
-import homeURL from "./home.ts"
+import homeURL, {type Home} from "./home.ts"
 const api = {
 	get home() {
-		return repo.find(homeURL())
+		return repo.findWithProgress<Home>(homeURL()).handle
 	},
 	get current() {
-		return repo.find(location.hash.slice(1) as AutomergeUrl)
+		return repo.findWithProgress(location.hash.slice(1) as AutomergeUrl)
+			.handle
+	},
+	get hdoc() {
+		return this.home.doc()
+	},
+	get cdoc() {
+		return this.current.doc()
 	},
 }
 window.api = api
