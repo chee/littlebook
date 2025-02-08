@@ -1,23 +1,22 @@
-import {Show, For, createMemo, getOwner, runWithOwner} from "solid-js"
+import {Show, For, createMemo} from "solid-js"
 import {ContextMenu} from "@kobalte/core"
 import Icon from "../components/icons/icon.tsx"
 import type {DocumentURL} from "./dock-api.ts"
-import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
+import {useEditorRegistry} from "../registries/editor-registry.ts"
 import {useDocument} from "solid-automerge"
 import type {Entry} from "../documents/entry.ts"
-import {parseDocumentURL, useDockAPI} from "./dock.tsx"
+import {parseDocumentURL} from "./dock.tsx"
 
+// todo hide openwithmenu when the only editor is the current editor
 export default function OpenWithContextMenu(props: {
 	url: DocumentURL
 	currentEditorID?: string
+	openDocument: (url: DocumentURL) => void
 }) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
 	const editorRegistry = useEditorRegistry()
 	const editors = () => [...(editorRegistry.editors(entry()!) ?? [])]
-	const owner = getOwner()
-
-	const dockAPI = useDockAPI()
 
 	return (
 		<Show when={editors().length}>
@@ -37,11 +36,7 @@ export default function OpenWithContextMenu(props: {
 									onSelect={() => {
 										const url = new URL(entryHandle()!.url)
 										url.searchParams.set("editor", choice.id)
-										runWithOwner(owner, () => {
-											dockAPI.openDocument(
-												url.toString() as DocumentURL
-											)
-										})
+										props.openDocument(url.toString() as DocumentURL)
 									}}
 									disabled={choice.id == props.currentEditorID}
 									class="pop-menu__item">

@@ -5,6 +5,7 @@ import {
 	createEffect,
 	createMemo,
 	ErrorBoundary,
+	For,
 	onCleanup,
 	Show,
 	Suspense,
@@ -19,8 +20,16 @@ import {useDocument} from "solid-automerge"
 import type {DocumentURL} from "../../dock/dock-api.ts"
 import {parseDocumentURL} from "../../dock/dock.tsx"
 import {usePerfectEditor} from "./usePerfectEditor.tsx"
+import clsx from "clsx"
+import {useContentTypeRegistry} from "../../registries/content-type-registry.ts"
+import {createStore} from "solid-js/store"
 
-export default function FileViewer(props: {url: DocumentURL}) {
+const log = window.log.extend("file-viewer")
+
+export default function FileViewer(props: {
+	url: DocumentURL
+	isActive?: boolean
+}) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
 	const editor = usePerfectEditor(() => props.url)
@@ -75,6 +84,22 @@ export default function FileViewer(props: {url: DocumentURL}) {
 			displayName: "",
 		})
 
+	const [statusItems, setStatusItems] = createStore([])
+
+	createEffect(() => {
+		log("editor update", Editor()?.id)
+		log("entry url update", entry()?.url)
+	})
+
+	const contentTypeName = () => {
+		const result = useContentTypeRegistry().get(entry()!.contentType)
+		if (result.isOk && result.value.displayName) {
+			return result.value.displayName
+		} else {
+			return entry()!.contentType
+		}
+	}
+
 	return (
 		<Suspense>
 			<Show
@@ -90,8 +115,8 @@ export default function FileViewer(props: {url: DocumentURL}) {
 				}>
 				<ErrorBoundary
 					fallback={(error, reset) => {
-						createEffect(test => {
-							if (editor() && test) {
+						createEffect(again => {
+							if (editor() && again) {
 								reset()
 							}
 							return true
@@ -100,7 +125,6 @@ export default function FileViewer(props: {url: DocumentURL}) {
 							return <div>{error.message ?? error}</div>
 						}
 
-						window.e = error
 						return (
 							<article class="error error--file-viewer">
 								<h1>
@@ -120,20 +144,32 @@ export default function FileViewer(props: {url: DocumentURL}) {
 							// todo add callbacks for adding:
 							// - item to status bar
 							// - command to tab context menu
+							// todo also include isActive
 							component={Editor().render}
 							handle={fileHandle()}
 							setName={(name: string) => {
+								log("setting name", name)
 								entryHandle()?.change(entry => (entry.name = name))
 							}}
+							setStatusItems={setStatusItems}
 							cleanup={(fn: () => void) => {
 								onCleanup(fn)
 							}}
 						/>
 					</article>
-					<footer class="file-viewer-status-bar">
+					<footer
+						class={clsx(
+							"file-viewer-status-bar",
+							props.isActive && "file-viewer-status-bar--active"
+						)}>
 						<span class="file-viewer-status-bar__editor-name">
 							{Editor().displayName}
 						</span>
+						<span class="file-viewer-status-bar__content-type">
+							{contentTypeName()}
+						</span>
+
+						<For each={statusItems}>{item => <span>{item}</span>}</For>
 					</footer>
 				</ErrorBoundary>
 			</Show>

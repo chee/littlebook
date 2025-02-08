@@ -2,5 +2,5 @@ packages:
   - app
   - libraries/*
   - plugins/*
-  - types
+  - schemas
   - tools/*

@@ -5,16 +5,20 @@
 			"path": ".",
 		},
 		{
-			"name": "💞 app",
-			"path": "app",
-		},
-		{
 			"name": "🔌 codemirror",
 			"path": "plugins/codemirror",
 		},
 		{
 			"name": "🔌 tldraw",
 			"path": "plugins/tldraw",
+		},
+		{
+			"name": "🤖 schemas",
+			"path": "schemas",
+		},
+		{
+			"name": "💞 app",
+			"path": "app",
 		},
 	],
 	"settings": {

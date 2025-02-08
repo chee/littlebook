@@ -9,12 +9,11 @@ import {
 } from "@codemirror/language"
 import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
-import type {DocHandle} from "@automerge/automerge-repo"
 
 export const id = "codemirror"
-export const displayName = "Codemirror Text Editor"
+export const displayName = "codemirror"
 
-export const contentTypes = ["public.text", "public.code"]
+export const contentTypes = ["public.text", "public.code", "public.markdown"]
 
 // todo should something like this be part of the API, and caled by the
 // editor.tsx before passing the doc to the plugin?
@@ -26,10 +25,10 @@ function shape(doc: any): doc is {
 	return doc && "text" in doc && typeof doc.text == "string"
 }
 
-export function render(props: {
-	handle: DocHandle<unknown>
-	cleanup(fn: () => void): void
-}) {
+export function render(props: EditorAPI<{text: string; language?: string}>) {
+	props.setStatusItems?.(["lol", "hmmm", "hehe"])
+
+	const path = props.path ?? ["text"]
 	const parent = document.createElement("div")
 	parent.style.display = "contents"
 	const languageCompartment = new Compartment()
@@ -61,7 +60,9 @@ export function render(props: {
 
 	if (!shape(file)) {
 		console.error("doc is wrong shape")
-		return
+		const fallback = document.createElement("div")
+		fallback.textContent = "doc is wrong shape"
+		return fallback
 	}
 
 	const view = new EditorView({
@@ -75,7 +76,7 @@ export function render(props: {
 			EditorView.lineWrapping,
 			automergeSyncPlugin({
 				handle: props.handle,
-				path: ["text"],
+				path,
 			}),
 			theme.of(getSchemeTheme()),
 		],
@@ -140,6 +141,7 @@ export function render(props: {
 			console.error("doc is wrong shape")
 			return
 		}
+		console.log("langing")
 		const lang = file?.language && languages[file.language]
 		if (lang) {
 			lang().then(ext => {
@@ -162,13 +164,27 @@ export function render(props: {
 
 	onlang()
 
+	// @ts-expect-error todo
 	props.handle.on("change", change => {
+		// @ts-expect-error todo
 		if (change.patches.some(patch => patch.path.join(".") == "language")) {
 			onlang()
+		}
+		const doc = change.patchInfo.after
+
+		if (doc.language == "markdown") {
+			const firstLine = doc.text.slice(0, doc.text.indexOf("\n"))
+			const title = firstLine.slice(2).trim()
+			if (firstLine && firstLine.startsWith("# ") && title) {
+				props.setName(title)
+			} else {
+				props.setName("untitled")
+			}
 		}
 	})
 
 	props.cleanup(() => {
+		console.log("cleaninup")
 		props.handle.off("change", onlang)
 		view.destroy()
 	})

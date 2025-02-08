@@ -11,15 +11,21 @@
 	--dv-drag-over-border-color: var(--blue-crayola);
 	--dv-tabs-container-scrollbar-color: #888;
 	--dv-icon-hover-background-color: rgba(255, 255, 255, 0.5);
-	--dv-floating-box-shadow: 1px 1px pink, 2px 2px pink, 3px 3px pink,
-		4px 4px pink;
+	--dv-floating-box-shadow: 1px 1px var(--dock-line), 2px 2px var(--dock-line),
+		3px 3px var(--dock-line), 4px 4px var(--dock-line),
+		0 0 4px color-mix(in srgb, var(--dock-line), transparent 80%);
 	--dv-overlay-z-index: 999;
+	--dv-tab-divider-color: var(--dock-line);
 
 	--dv-group-view-background-color: var(--dock-fill);
 	--dv-tabs-and-actions-container-background-color: var(--dock-fill);
 
-	--dv-activegroup-visiblepanel-tab-background-color: var(--carribean-current);
-	--dv-activegroup-visiblepanel-tab-color: white;
+	--dock-item-fill--active: var(--carribean-current);
+	--dock-item-line--active: white;
+	--dv-activegroup-visiblepanel-tab-background-color: var(
+		--dock-item-fill--active
+	);
+	--dv-activegroup-visiblepanel-tab-color: var(--dock-item-line--active);
 
 	--dv-activegroup-hiddenpanel-tab-background-color: color-mix(
 		in srgb,
@@ -31,7 +37,7 @@
 	--dv-inactivegroup-visiblepanel-tab-background-color: color-mix(
 		in srgb,
 		var(--dv-activegroup-hiddenpanel-tab-background-color),
-		var(--dv-activegroup-visiblepanel-tab-background-color) 20%
+		var(--dv-activegroup-visiblepanel-tab-background-color) 30%
 	);
 	--dv-inactivegroup-visiblepanel-tab-color: black;
 
@@ -58,4 +64,19 @@
 	.dv-tabs-container {
 		scrollbar-width: none;
 	}
+}
+
+.dv-resize-container .dv-resize-handle-right {
+	width: 7px;
+	right: -5px;
+}
+.dv-resize-container .dv-resize-handle-bottomright {
+	height: 8px;
+	width: 8px;
+	right: -5px;
+	bottom: -5px;
+}
+.dv-resize-container .dv-resize-handle-bottom {
+	height: 8px;
+	bottom: -5px;
 }

@@ -1,0 +1,25 @@
+{
+	"name": "@pointplace/schemas",
+	"version": "1.0.0",
+	"description": "",
+	"main": "output/index.js",
+	"author": "chee",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"mk": "tsc",
+		"w": "tsc -w",
+		"build": "pnpm mk",
+		"dev": "pnpm w"
+	},
+	"dependencies": {
+		"valibot": "1.0.0-beta.15"
+	},
+	"devDependencies": {
+		"@automerge/automerge-repo": "2.0.0-alpha.22",
+		"typescript": "^5.7.3"
+	},
+	"peerDependencies": {
+		"@automerge/automerge-repo": "2.0.0-alpha.22"
+	}
+}

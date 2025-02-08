@@ -10,6 +10,7 @@ import {
 	For,
 	getOwner,
 	Match,
+	runWithOwner,
 	Show,
 	Suspense,
 	Switch,
@@ -21,10 +22,10 @@ import type {Entry} from "../documents/entry.ts"
 import {createShortcut} from "@solid-primitives/keyboard"
 import esbuild from "esbuild-wasm"
 import {createStore} from "solid-js/store"
-import {Editor, StoredEditor} from "../registries/editor/editor-schema.ts"
+import {Editor, StoredEditor} from "../../../schemas/src/editor.ts"
 import {z} from "zod"
 import {h} from "../schema-helpers.ts"
-import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
+import {useEditorRegistry} from "../registries/editor-registry.ts"
 import type {DocumentURL} from "./dock-api.ts"
 import {useDocument} from "solid-automerge"
 import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
@@ -213,6 +214,10 @@ export default function DockTab(props: {url: DocumentURL}) {
 	const editorID = () =>
 		editor().isOk ? (editor() as Ok<Editor, Error>).value.id : undefined
 
+	const owner = getOwner()
+	const openDocument = (url: DocumentURL) =>
+		runWithOwner(owner, () => dockAPI.openDocument(url))
+
 	return (
 		<Suspense>
 			<ContextMenu>
@@ -240,7 +245,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 						<Button
 							class="dock-tab__close"
 							aria-label={`close panel ${entry()?.name}`}
-							onmousedown={event => {
+							onmousedown={(event: MouseEvent) => {
 								event.stopImmediatePropagation()
 								event.stopPropagation()
 								event.preventDefault()
@@ -293,6 +298,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 						<OpenWithContextMenu
 							url={props.url}
 							currentEditorID={editorID()}
+							openDocument={url => openDocument(url)}
 						/>
 						<Show when={entry() && file()}>
 							<DataDrivenContextMenu

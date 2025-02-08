@@ -17,7 +17,7 @@ import {useDockAPI} from "../../dock/dock.tsx"
 const Workspace: ParentComponent<{
 	sizes: number[]
 	setSizes: Setter<number[]>
-	setResizableContext: Setter<ContextValue>
+	setResizableContext: Setter<ContextValue | undefined>
 	setLastLeftSidebarExpandedSize: Setter<number>
 }> = props => {
 	const dockAPI = useDockAPI()
@@ -25,7 +25,7 @@ const Workspace: ParentComponent<{
 	const [home] = useHome()
 
 	createEffect(() => {
-		for (const editor of home?.editors ?? []) {
+		for (const editor of home()?.editors ?? []) {
 			// kick off the editorRegistry knowing about these
 			repo.findClassic(editor)
 		}

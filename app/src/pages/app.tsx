@@ -10,7 +10,7 @@ import DockTab from "../dock/dock-tab.tsx"
 import Workspace from "../components/workspace/workspace.tsx"
 import * as codemirror from "@littlebook/text/codemirror-editor.ts"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
-import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
+import {useEditorRegistry} from "../registries/editor-registry.ts"
 import markdownPreview from "../editors/markdown-preview.tsx"
 
 // todo maybe editors should be passed a `setMeta` function and a `meta` object
@@ -72,7 +72,12 @@ export default function App() {
 			<DockProvider
 				components={{
 					document: props => {
-						return <FileViewer url={props.id} />
+						return (
+							<FileViewer
+								url={props.id}
+								isActive={props.dockAPI.activePanelID == props.id}
+							/>
+						)
 					},
 				}}
 				tabComponents={{

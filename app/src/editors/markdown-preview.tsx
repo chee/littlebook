@@ -1,6 +1,4 @@
 import {createResource, createSignal} from "solid-js"
-import {MarkdownShape} from "../registries/content-type/content-type-schema.ts"
-import type {Editor} from "../registries/editor/editor-schema.ts"
 import githubMarkdownCSS from "github-markdown-css/github-markdown.css?raw"
 import rehypeStarryNight from "rehype-starry-night"
 import rehypeReact from "rehype-react"
@@ -8,6 +6,8 @@ import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
+import {MarkdownShape, type Editor} from "@pointplace/schemas"
+import {parse} from "valibot"
 
 const markdown = await unified()
 	.use(remarkParse)
@@ -22,17 +22,17 @@ const markdown = await unified()
 	})
 
 export default {
-	displayName: "Markdown Preview",
+	displayName: "markdown preview",
 	id: "markdown-preview",
 	contentTypes: ["public.markdown"],
 	render(props) {
 		// eslint-disable-next-line solid/reactivity
-		const doc = MarkdownShape.parse(props.handle.doc())
+		const doc = parse(MarkdownShape, props.handle.doc())
 		const [text, settext] = createSignal(doc.text)
 
 		// eslint-disable-next-line solid/reactivity
 		props.handle.on("change", payload => {
-			const after = MarkdownShape.parse(payload.patchInfo.after)
+			const after = parse(MarkdownShape, payload.patchInfo.after)
 			settext(() => after.text)
 		})
 

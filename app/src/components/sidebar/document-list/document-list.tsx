@@ -8,9 +8,10 @@ import {useHome} from "../../../repo/home.ts"
 import type {Entry} from "../../../documents/entry.ts"
 import {parseDocumentURL, useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
-import {useContentTypeRegistry} from "../../../registries/content-type/content-type-registry.ts"
+import {useContentTypeRegistry} from "../../../registries/content-type-registry.ts"
 import OpenWithContextMenu from "../../../dock/open-with.tsx"
 import type {DocumentURL} from "../../../dock/dock-api.ts"
+import Icon from "../../icons/icon.tsx"
 
 // todo this should use a generic DocumentList, wrapped with special behaviours
 // and user can pin a folder to the sidebar as a DocumentList
@@ -21,15 +22,20 @@ export default function HomeWidget() {
 	const dockAPI = useDockAPI()
 
 	const contentTypes = useContentTypeRegistry()
+	const openDocument = (url: DocumentURL) =>
+		runWithOwner(owner, () => dockAPI.openDocument(url))
 
 	return (
 		<div
 			class="sidebar-widget"
 			ondragover={event => {
 				event.preventDefault()
+				console.log(event.dataTransfer?.getData("text/plain"))
+				console.log(event.dataTransfer?.files)
 			}}
 			ondrop={event => {
 				event.preventDefault()
+				if (!event.dataTransfer) return
 				event.dataTransfer.dropEffect = "link"
 				console.log(event.dataTransfer.getData("text/plain"))
 				console.log(event.dataTransfer, event)
@@ -106,9 +112,30 @@ export default function HomeWidget() {
 													dockAPI.openDocument(url)
 												)
 											}
+											ondblclick={() => {
+												const name = window.prompt(
+													"rename to:",
+													doc()!.name
+												)
+												if (name) {
+													handle()?.change(doc => {
+														doc.name = name
+													})
+												}
+											}}
 											aria-pressed={pressed()}>
 											<Show when={doc()} fallback="">
-												{doc()!.name ?? url}
+												<span class="document-list-item__icon">
+													<Icon
+														icon={
+															doc()?.icon ||
+															"solar:document-outline"
+														}
+													/>
+												</span>
+												<span class="document-list-item__name">
+													{doc()!.name ?? url}
+												</span>
 											</Show>
 										</ContextMenu.Trigger>
 										<ContextMenu.Portal>
@@ -145,6 +172,7 @@ export default function HomeWidget() {
 												</ContextMenu.Item>
 												<OpenWithContextMenu
 													url={url as DocumentURL}
+													openDocument={openDocument}
 												/>
 											</ContextMenu.Content>
 										</ContextMenu.Portal>

@@ -9,6 +9,7 @@ import {
 	Show,
 	splitProps,
 	createRoot,
+	getOwner,
 } from "solid-js"
 import "./dock.css"
 import {createDockAPI, type DocumentURL} from "./dock-api.ts"
@@ -152,6 +153,7 @@ export const DockProvider: ParentComponent<
 	const [props, dockContextOptions] = splitProps(dockProviderProps, [
 		"children",
 	])
+
 	const dockContext = createDockContext(dockContextOptions)
 
 	onCleanup(() => {

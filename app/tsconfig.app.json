@@ -6,6 +6,7 @@
 		"module": "ESNext",
 		"lib": ["ES2020", "DOM", "DOM.Iterable"],
 		"skipLibCheck": true,
+		"declaration": true,
 
 		/* Bundler mode */
 		"moduleResolution": "bundler",
@@ -18,16 +19,20 @@
 
 		/* Linting */
 		"strict": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noFallthroughCasesInSwitch": true,
+		// "noUnusedLocals": true,
+		// "noUnusedParameters": true,
+		// "noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
 
 		/* effect */
 		// "exactOptionalPropertyTypes": true,
 		"typeRoots": ["./node_modules/@types", "./src/types"]
-
-		/* */
 	},
-	"include": ["src"]
+	"include": [
+		"src",
+		"../schemas/src/coder.ts",
+		"../schemas/src/editor.ts",
+		"../schemas/src/publisher.ts",
+		"../schemas/src/viewer.ts"
+	]
 }

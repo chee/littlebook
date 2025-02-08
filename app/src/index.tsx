@@ -9,8 +9,13 @@ import {render} from "solid-js/web"
 import App from "./pages/app.tsx"
 import {attachDevtoolsOverlay} from "@solid-devtools/overlay"
 import registerServiceWorker from "./register-service-worker.ts"
-import "./documents/entry.ts"
 import "./repo/api.ts"
+
+declare global {
+	interface Window {
+		log: ReturnType<typeof import("debug")>
+	}
+}
 
 if (import.meta.env.DEV) {
 	attachDevtoolsOverlay()
@@ -23,26 +28,35 @@ const root = document.getElementById("root")!
 import {
 	EditorRegistry,
 	EditorRegistryContext,
-} from "./registries/editor/editor-registry.ts"
+} from "./registries/editor-registry.ts"
 
 import {
 	ContentTypeRegistry,
 	ContentTypeRegistryContext,
-} from "./registries/content-type/content-type-registry.ts"
+} from "./registries/content-type-registry.ts"
 
 import {
 	CoderRegistry,
 	CoderRegistryContext,
-} from "./registries/coder/coder-registry.ts"
+} from "./registries/coder-registry.ts"
 
 import repo from "./repo/create.ts"
 import {RepoContext} from "solid-automerge"
 import {createRoot} from "solid-js"
+import {PublisherRegistry} from "./registries/publisher-registry.ts"
+import PluginAPI, {PluginAPIContext} from "./plugins/plugin-api.ts"
 
 createRoot(() => {
 	const contentTypeRegistry = new ContentTypeRegistry({repo})
 	const coderRegistry = new CoderRegistry({repo})
 	const editorRegistry = new EditorRegistry({repo, contentTypeRegistry})
+	const publisherRegistry = new PublisherRegistry({repo, contentTypeRegistry})
+	const pluginAPI = new PluginAPI({
+		editorRegistry,
+		coderRegistry,
+		contentTypeRegistry,
+		publisherRegistry,
+	})
 
 	render(
 		() => (
@@ -50,7 +64,9 @@ createRoot(() => {
 				<CoderRegistryContext.Provider value={coderRegistry}>
 					<EditorRegistryContext.Provider value={editorRegistry}>
 						<RepoContext.Provider value={repo}>
-							<App />
+							<PluginAPIContext.Provider value={pluginAPI}>
+								<App />
+							</PluginAPIContext.Provider>
 						</RepoContext.Provider>
 					</EditorRegistryContext.Provider>
 				</CoderRegistryContext.Provider>

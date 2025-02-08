@@ -9,6 +9,7 @@ import {err, ok, type Result} from "true-myth/result"
 import {Task} from "true-myth/task"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 import type Unit from "true-myth/unit"
+const log = window.log.extend("registries")
 
 export function importFromAutomerge<T extends StandardSchemaV1>(
 	doc: {bytes: Uint8Array},
@@ -83,6 +84,7 @@ export abstract class Registry<
 
 		// using records to describe the individual items managed by this registry
 		const [records, updateRecords] = createStore<Record<string, Shape>>({})
+		// eslint-disable-next-line solid/reactivity
 		this.records = records
 		this.#updateRecords = updateRecords
 	}
@@ -130,22 +132,8 @@ export abstract class Registry<
 			})
 	}
 
-	// todo should i just make this async?
-	register(unknown: Shape): Result<Unit, Error> {
-		const record = this.#schema["~standard"].validate(unknown)
-		if (record instanceof Promise) {
-			record.then(record => {
-				if (record.issues) {
-					console.error(
-						`failed to register${this.nameWithPrefixSpace}`,
-						record.issues
-					)
-				} else {
-					this.#updateRecords(record.value.id, record.value)
-				}
-			})
-			return ok()
-		}
+	async register(unknown: Shape): Promise<Result<Unit, Error>> {
+		const record = await this.#schema["~standard"].validate(unknown)
 		if (record.issues) {
 			console.error(
 				`failed to register${this.nameWithPrefixSpace}`,
