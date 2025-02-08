@@ -3,11 +3,11 @@ import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
 import {
 	StoredCoder,
-	Coder,
 	inferCoder,
 	TextShape,
 	CodeShape,
 	MarkdownShape,
+	Coder,
 } from "@pointplace/schemas"
 import * as v from "valibot"
 
@@ -19,6 +19,7 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 			storedSchema: StoredCoder,
 			name: "coder",
 		})
+
 		for (const coder of defaultCoders) {
 			this.register(coder)
 		}

@@ -1,4 +1,8 @@
-import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/automerge-repo"
+import {
+	isValidAutomergeUrl,
+	type AutomergeUrl,
+	type DocHandle,
+} from "@automerge/automerge-repo"
 import {
 	any,
 	args,

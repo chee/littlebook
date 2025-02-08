@@ -1,4 +1,5 @@
 import {
+	any,
 	args,
 	array,
 	awaitAsync,
@@ -6,6 +7,7 @@ import {
 	instance,
 	object,
 	optional,
+	parse,
 	pipe,
 	pipeAsync,
 	promise,
@@ -14,8 +16,13 @@ import {
 	string,
 	tuple,
 	unknown,
+	type BaseIssue,
 	type BaseSchema,
+	type InferDefault,
+	type InferInput,
 	type InferOutput,
+	type LooseObjectSchema,
+	type ObjectSchema,
 } from "valibot"
 import {result, stored} from "./util.js"
 
@@ -43,7 +50,6 @@ export function inferCoder<T extends BaseSchema<any, any, any>>(schema: T) {
 			args(tuple([schema])),
 			returns(result(instance(Uint8Array)))
 		),
-
 		fromFile: pipe(
 			function_(),
 			args(tuple([instance(File)])),
@@ -54,7 +60,11 @@ export function inferCoder<T extends BaseSchema<any, any, any>>(schema: T) {
 	})
 }
 
-export const Coder = inferCoder(unknown())
+export const Coder = inferCoder(unknown()) as BaseSchema<
+	Coder,
+	Coder,
+	BaseIssue<unknown>
+>
 
 export type Coder<
 	T extends BaseSchema<any, any, any> = BaseSchema<any, any, any>,

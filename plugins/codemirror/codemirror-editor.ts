@@ -9,11 +9,12 @@ import {
 } from "@codemirror/language"
 import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
+import type {EditorAPI} from "@pointplace/schemas"
 
 export const id = "codemirror"
 export const displayName = "codemirror"
 
-export const contentTypes = ["public.text", "public.code", "public.markdown"]
+export const contentTypes = ["public.text", "public.code"]
 
 // todo should something like this be part of the API, and caled by the
 // editor.tsx before passing the doc to the plugin?
@@ -25,9 +26,11 @@ function shape(doc: any): doc is {
 	return doc && "text" in doc && typeof doc.text == "string"
 }
 
-export function render(props: EditorAPI<{text: string; language?: string}>) {
-	props.setStatusItems?.(["lol", "hmmm", "hehe"])
-
+export function render(
+	props: EditorAPI<{text: string; language?: string}> & {
+		path?: (string | number)[]
+	}
+) {
 	const path = props.path ?? ["text"]
 	const parent = document.createElement("div")
 	parent.style.display = "contents"
@@ -164,9 +167,7 @@ export function render(props: EditorAPI<{text: string; language?: string}>) {
 
 	onlang()
 
-	// @ts-expect-error todo
 	props.handle.on("change", change => {
-		// @ts-expect-error todo
 		if (change.patches.some(patch => patch.path.join(".") == "language")) {
 			onlang()
 		}

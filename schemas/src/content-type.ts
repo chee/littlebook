@@ -5,6 +5,7 @@ import {
 	optional,
 	string,
 	unknown,
+	type BaseIssue,
 	type BaseSchema,
 	type InferOutput,
 } from "valibot"
@@ -46,7 +47,11 @@ export const MarkdownShape = object({
 
 export const MarkdownContentType = inferContentType(MarkdownShape)
 
-export const ContentType = inferContentType(unknown())
+export const ContentType = inferContentType(unknown()) as BaseSchema<
+	ContentType,
+	ContentType,
+	BaseIssue<unknown>
+>
 
 export type ContentType<
 	T extends BaseSchema<any, any, any> = BaseSchema<any, any, any>,

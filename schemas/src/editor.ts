@@ -31,7 +31,7 @@ export const EditorAPI = object({
 	registerKeybinding: pipe(function_(), args(tuple([string(), function_()]))),
 })
 
-export type EditorAPI<T> = InferOutput<typeof EditorAPI> & {
+export type EditorAPI<T> = Omit<InferOutput<typeof EditorAPI>, "handle"> & {
 	handle: DocHandle<T>
 }
 
