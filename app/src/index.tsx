@@ -10,6 +10,7 @@ import App from "./pages/app.tsx"
 import {attachDevtoolsOverlay} from "@solid-devtools/overlay"
 import registerServiceWorker from "./register-service-worker.ts"
 import "./documents/entry.ts"
+import "./repo/api.ts"
 
 if (import.meta.env.DEV) {
 	attachDevtoolsOverlay()
