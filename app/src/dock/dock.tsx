@@ -26,15 +26,27 @@ export interface DockHeaderActionProps {
 	dockAPI: DockAPI
 }
 
-export function parseDocumentURL(
-	url: DocumentURL
-): Record<string, string> & {url: AutomergeUrl; editor?: string} {
+type ParsedDocumentURL = Record<string, string> & {
+	url: AutomergeUrl
+	editor?: string
+}
+
+export function parseDocumentURL(url: DocumentURL): ParsedDocumentURL {
 	const u = new URL(url)
 	const base = u.protocol + u.pathname
 	return {
 		...Object.fromEntries(u.searchParams.entries()),
 		url: base as AutomergeUrl,
 	}
+}
+
+export function renderDocumentURL(docinfo: ParsedDocumentURL): DocumentURL {
+	const u = new URL(docinfo.url)
+	for (const [key, value] of Object.entries(docinfo)) {
+		if (key === "url") continue
+		u.searchParams.set(key, value)
+	}
+	return u.toString() as DocumentURL
 }
 
 function createDockContext(dockOptions: {
