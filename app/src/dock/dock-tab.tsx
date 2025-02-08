@@ -10,7 +10,6 @@ import {
 	For,
 	getOwner,
 	Match,
-	runWithOwner,
 	Show,
 	Suspense,
 	Switch,
@@ -25,10 +24,13 @@ import {createStore} from "solid-js/store"
 import {Editor, StoredEditor} from "../registries/editor/editor-schema.ts"
 import {z} from "zod"
 import {h} from "../schema-helpers.ts"
-import Task, {fromPromise, safelyTry} from "true-myth/task"
 import {useEditorRegistry} from "../registries/editor/editor-registry.ts"
 import type {DocumentURL} from "./dock-api.ts"
-import {useDocument} from "automerge-repo-solid-primitives"
+import {useDocument} from "solid-automerge"
+import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
+import type {Ok} from "true-myth/result"
+import {Tooltip} from "@kobalte/core/tooltip"
+import OpenWithContextMenu from "./open-with.tsx"
 
 const keynames = {
 	CMD: "Meta",
@@ -139,55 +141,50 @@ const [fileActions] = createStore<FileAction[]>([
 ])
 
 export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
-	return createRoot(() => {
-		const file = fileHandle.docSync()!
-		return safelyTry(() => compile(file.text))
-			.andThen(code => {
+	return createRoot(async () => {
+		const file = fileHandle.doc()!
+		return compile(file.text)
+			.then(code => {
 				const bytes = new TextEncoder().encode(code)
 				const blob = new Blob([bytes], {
 					type: "application/javascript",
 				})
 				const blobURL = URL.createObjectURL(blob)
-				return fromPromise(import(/* @vite-ignore */ blobURL)).map(mod => ({
+				return import(/* @vite-ignore */ blobURL).then(mod => ({
 					bytes,
 					mod,
 				}))
 			})
-			.andThen(result => {
+			.then(result => {
 				const parsed = Editor.safeParse(result.mod)
 				if (!parsed.success) {
-					return Task.reject(
-						new Error("document doesn't look like an editor")
-					)
+					throw new Error("document doesn't look like an editor")
 				}
 				const editor = {...(result.mod as StoredEditor)}
 				delete (editor as Partial<Editor>).render
 				editor.bytes = result.bytes
 				editor.type = "editor"
-				let url: AutomergeUrl
-				if (fileHandle.docSync()!.storedURL) {
-					const existing = repo.find<StoredEditor>(
-						fileHandle.docSync()!.storedURL!
-					)
-					existing.whenReady().then(() => {
-						existing.change(doc => {
-							doc.bytes = editor.bytes
-						})
-					})
-					url = existing.url
-				} else {
-					const url = repo.create(editor).url
-					fileHandle.change(file => {
-						file.storedURL = url
-					})
-				}
-				repo.find<Home>(homeURL()).change(home => {
-					if (![...home.editors].includes(url)) {
-						home.editors.push(url)
-					}
-				})
 
-				return Task.resolve()
+				if (fileHandle.doc()!.storedURL) {
+					return repo
+						.find<StoredEditor>(fileHandle.doc()!.storedURL!)
+						.then(async handle => {
+							handle.change(doc => {
+								doc.bytes = editor.bytes
+							})
+							const homeHandle = await repo.findClassic<Home>(homeURL())
+							homeHandle.change(home => {
+								if (![...home.editors].includes(handle.url)) {
+									home.editors.push(handle.url)
+								}
+							})
+						})
+				}
+
+				const url = repo.create(editor).url
+				fileHandle.change(file => {
+					file.storedURL = url
+				})
 			})
 	})
 }
@@ -195,10 +192,9 @@ export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
 export default function DockTab(props: {url: DocumentURL}) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const dockAPI = useDockAPI()
-	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
+	const [entry] = useDocument<Entry>(() => docinfo().url)
 
-	const editorRegistry = useEditorRegistry()
-	const editors = () => [...(editorRegistry.editors(entry()!) ?? [])]
+	const editor = usePerfectEditor(() => props.url)
 	const [home, changeHome] = useHome()
 	let tabElement!: HTMLDivElement
 
@@ -209,7 +205,13 @@ export default function DockTab(props: {url: DocumentURL}) {
 
 	const [file, fileHandle] = useDocument<unknown>(() => entry()?.url)
 
-	const owner = getOwner()
+	const editorDisplayName = () =>
+		editor().isOk
+			? (editor() as Ok<Editor, Error>).value.displayName
+			: undefined
+
+	const editorID = () =>
+		editor().isOk ? (editor() as Ok<Editor, Error>).value.id : undefined
 
 	return (
 		<Suspense>
@@ -217,11 +219,23 @@ export default function DockTab(props: {url: DocumentURL}) {
 				<ContextMenu.Trigger class="dock-tab__context-menu-trigger">
 					<div class="dock-tab" ref={tabElement}>
 						<div class="dock-tab__icon">
-							<Icon
-								name={entry()?.icon || "document-text-bold"}
-								inline
-							/>
+							<Tooltip openDelay={0} closeDelay={0}>
+								<Tooltip.Trigger class="dock-tab__editor-icon">
+									<Icon
+										name={entry()?.icon || "document-text-bold"}
+										inline
+									/>
+								</Tooltip.Trigger>
+
+								<Tooltip.Portal>
+									<Tooltip.Content class="dock-tab__editor-tooltip">
+										<Tooltip.Arrow />
+										{editorDisplayName()}
+									</Tooltip.Content>
+								</Tooltip.Portal>
+							</Tooltip>
 						</div>
+
 						<div class="dock-tab__name">{entry()?.name}</div>
 						<Button
 							class="dock-tab__close"
@@ -276,44 +290,10 @@ export default function DockTab(props: {url: DocumentURL}) {
 								add to sidebar
 							</ContextMenu.Item>
 						</Show>
-						<Show when={editors().length}>
-							<ContextMenu.Sub overlap gutter={-10}>
-								<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
-									open with
-									<div class="pop-menu__item-right-slot">
-										<Icon name="alt-arrow-right-linear" />
-									</div>
-								</ContextMenu.SubTrigger>
-
-								<ContextMenu.Portal>
-									<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
-										<For each={editors()}>
-											{editor => (
-												<ContextMenu.Item
-													class="pop-menu__item"
-													onSelect={() => {
-														const url = new URL(
-															entryHandle()!.url
-														)
-														url.searchParams.set(
-															"editor",
-															editor.id
-														)
-
-														runWithOwner(owner, () => {
-															dockAPI.openDocument(
-																url.toString() as DocumentURL
-															)
-														})
-													}}>
-													{editor.displayName}
-												</ContextMenu.Item>
-											)}
-										</For>
-									</ContextMenu.SubContent>
-								</ContextMenu.Portal>
-							</ContextMenu.Sub>
-						</Show>
+						<OpenWithContextMenu
+							url={props.url}
+							currentEditorID={editorID()}
+						/>
 						<Show when={entry() && file()}>
 							<DataDrivenContextMenu
 								items={fileActions}
