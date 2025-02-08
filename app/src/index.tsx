@@ -36,21 +36,26 @@ import {
 } from "./registries/coder/coder-registry.ts"
 
 import repo from "./repo/create.ts"
-import {RepoContext} from "automerge-repo-solid-primitives"
-import type {Repo} from "@automerge/automerge-repo/slim"
+import {RepoContext} from "solid-automerge"
+import {createRoot} from "solid-js"
 
-render(
-	() => (
-		<ContentTypeRegistryContext.Provider
-			value={new ContentTypeRegistry({repo})}>
-			<CoderRegistryContext.Provider value={new CoderRegistry({repo})}>
-				<EditorRegistryContext.Provider value={new EditorRegistry({repo})}>
-					<RepoContext.Provider value={repo as unknown as Repo}>
-						<App />
-					</RepoContext.Provider>
-				</EditorRegistryContext.Provider>
-			</CoderRegistryContext.Provider>
-		</ContentTypeRegistryContext.Provider>
-	),
-	root
-)
+createRoot(() => {
+	const contentTypeRegistry = new ContentTypeRegistry({repo})
+	const coderRegistry = new CoderRegistry({repo})
+	const editorRegistry = new EditorRegistry({repo, contentTypeRegistry})
+
+	render(
+		() => (
+			<ContentTypeRegistryContext.Provider value={contentTypeRegistry}>
+				<CoderRegistryContext.Provider value={coderRegistry}>
+					<EditorRegistryContext.Provider value={editorRegistry}>
+						<RepoContext.Provider value={repo}>
+							<App />
+						</RepoContext.Provider>
+					</EditorRegistryContext.Provider>
+				</CoderRegistryContext.Provider>
+			</ContentTypeRegistryContext.Provider>
+		),
+		root
+	)
+})

@@ -12,7 +12,6 @@ import {
 	MarkdownContentType,
 	MarkdownShape,
 } from "./content-type-schema.ts"
-import {displayName} from "@littlebook/text/codemirror-editor.ts"
 
 export class ContentTypeRegistry extends Registry<
 	StoredContentType,
@@ -30,6 +29,7 @@ export class ContentTypeRegistry extends Registry<
 		}
 	}
 
+	// todo recursively look up conformance
 	*typesConformingTo(conformsTo: string) {
 		for (const type of Object.values(this.records)) {
 			if (type.conformsTo?.includes(conformsTo)) {

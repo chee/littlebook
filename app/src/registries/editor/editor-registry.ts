@@ -4,18 +4,27 @@ import {err, ok, type Result} from "true-myth/result"
 import type {Entry} from "../../documents/entry.ts"
 import {Registry} from "../registry.ts"
 import {StoredEditor, Editor} from "./editor-schema.ts"
-import {useContentTypeRegistry} from "../content-type/content-type-registry.ts"
+import {type ContentTypeRegistry} from "../content-type/content-type-registry.ts"
 
 export class EditorRegistry extends Registry<StoredEditor, Editor> {
-	constructor({repo}: {repo: Repo}) {
+	#contentTypeRegistry: ContentTypeRegistry
+
+	constructor({
+		repo,
+		contentTypeRegistry,
+	}: {
+		repo: Repo
+		contentTypeRegistry: ContentTypeRegistry
+	}) {
 		super({repo, storedSchema: StoredEditor, schema: Editor, name: "editor"})
+		this.#contentTypeRegistry = contentTypeRegistry
 	}
 
 	/*
 	 * a way to add these:
 	 * 1. cli: build the bundle
 	 * 2. cli: cat bundle.js|base64 -w0|pbcopy
-	 * 3. browser: repo.find(url).change(doc => doc.bytes = Uint8Array.fromBas64(`⌘+v`))<RET>
+	 * 3. browser: repo.find(url).change(doc => doc.bytes = Uint8Array.fromBase64(`⌘+v`))<RET>
 	 */
 
 	// this yields in three steps to allow for more specific matches to be yielded first
@@ -29,9 +38,7 @@ export class EditorRegistry extends Registry<StoredEditor, Editor> {
 			}
 		}
 
-		const contentTypes = useContentTypeRegistry()
-
-		const entryType = contentTypes.get(entry.contentType)
+		const entryType = this.#contentTypeRegistry.get(entry.contentType)
 
 		if (entryType.isOk && entryType.value.conformsTo) {
 			for (const editor of Object.values(this.records)) {
