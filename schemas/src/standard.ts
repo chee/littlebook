@@ -1,36 +1,24 @@
-import {
-	array,
-	function_,
-	literal,
-	object,
-	pipe,
-	readonly,
-	returns,
-	string,
-	undefined_,
-	union,
-	type BaseSchema,
-} from "valibot"
+import {array, literal, object, string, union, z, ZodTypeAny} from "zod"
 
-export function stdSuccess<T extends BaseSchema<any, any, any>>(schema: T) {
+export function stdSuccess<T extends ZodTypeAny>(schema: T) {
 	return object({
 		value: schema,
-		issues: undefined_(),
+		issues: z.undefined(),
 	})
 }
 
 export const stdFailure = object({
-	issues: pipe(array(string()), readonly()),
+	issues: array(string()).readonly(),
 })
 
-export function stdResult<T extends BaseSchema<any, any, any>>(schema: T) {
+export function stdResult<T extends ZodTypeAny>(schema: T) {
 	return union([stdSuccess(schema), stdFailure])
 }
 
-export function stdSchema<T extends BaseSchema<any, any, any>>(schema: T) {
+export function stdSchema<T extends ZodTypeAny>(schema: T) {
 	return object({
 		"~standard": object({
-			validate: pipe(function_(), returns(stdResult(schema))),
+			validate: z.function().args().returns(stdResult(schema)),
 			version: literal(1),
 			vendor: string(),
 		}),

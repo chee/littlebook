@@ -1,75 +1,36 @@
-import {
-	any,
-	args,
-	array,
-	awaitAsync,
-	function_,
-	instance,
-	object,
-	optional,
-	parse,
-	pipe,
-	pipeAsync,
-	promise,
-	returns,
-	returnsAsync,
-	string,
-	tuple,
-	unknown,
-	type BaseIssue,
-	type BaseSchema,
-	type InferDefault,
-	type InferInput,
-	type InferOutput,
-	type LooseObjectSchema,
-	type ObjectSchema,
-} from "valibot"
-import {result, stored} from "./util.js"
+import {array, object, string, z, type ZodTypeAny} from "zod"
+import {bytes, result, stored} from "./util.js"
 
 export const CoderMetadata = object({
 	id: string(),
 	displayName: string(),
 	contentType: string(),
-	plugin: optional(string()),
-	mimeTypes: optional(array(string())),
-	filePatterns: optional(array(string())),
-	recommendedFileExtension: optional(string()),
+	plugin: string().optional(),
+	mimeTypes: array(string()).optional(),
+	filePatterns: array(string()).optional(),
+	recommendedFileExtension: string().optional(),
 })
 
-export type CoderMetadata = InferOutput<typeof CoderMetadata>
+export type CoderMetadata = z.infer<typeof CoderMetadata>
 
-export function inferCoder<T extends BaseSchema<any, any, any>>(schema: T) {
+export function inferCoder<T extends ZodTypeAny>(schema: T) {
 	return object({
-		fromBytes: pipe(
-			function_(),
-			args(tuple([instance(Uint8Array)])),
-			returns(result(schema))
-		),
-		toBytes: pipe(
-			function_(),
-			args(tuple([schema])),
-			returns(result(instance(Uint8Array)))
-		),
-		fromFile: pipe(
-			function_(),
-			args(tuple([instance(File)])),
-			returnsAsync(pipeAsync(promise(), awaitAsync(), result(schema)))
-		),
-		new: pipe(function_(), returns(schema)),
-		...CoderMetadata.entries,
-	})
+		fromBytes: z.function().args(bytes).returns(result(schema)),
+		toBytes: z.function().args(schema).returns(result(bytes)),
+		fromFile: z
+			.function()
+			.args(z.instanceof(File))
+			.returns(z.promise(result(schema))),
+		new: z.function().returns(schema),
+	}).extend(CoderMetadata.shape)
 }
 
-export const Coder = inferCoder(unknown()) as BaseSchema<
-	Coder,
-	Coder,
-	BaseIssue<unknown>
+export const Coder = inferCoder(z.unknown())
+
+export type Coder<T extends ZodTypeAny = ZodTypeAny> = z.infer<
+	ReturnType<typeof inferCoder<T>>
 >
 
-export type Coder<
-	T extends BaseSchema<any, any, any> = BaseSchema<any, any, any>,
-> = InferOutput<ReturnType<typeof inferCoder<T>>>
+export const StoredCoder = stored("coder", CoderMetadata.shape)
 
-export const StoredCoder = stored("coder", CoderMetadata.entries)
-
-export type StoredCoder = InferOutput<typeof StoredCoder>
+export type StoredCoder = z.infer<typeof StoredCoder>
