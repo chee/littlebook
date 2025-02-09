@@ -1,21 +1,21 @@
-import * as v from "valibot"
+import {z} from "zod"
 import {automergeURL} from "./util.js"
 
-export const Entry = v.object({
+export const Entry = z.object({
 	/**
 	 * an entry that describes and points to a file
 	 */
-	type: v.literal("file"),
+	type: z.literal("file"),
 	// the file's name
-	name: v.string(),
+	name: z.string(),
 	// a solar icon name or a URL or a dataURI or an automerge url to bytes doc
-	icon: v.optional(v.string()),
+	icon: z.string().optional(),
 	// the file's contentType
-	contentType: v.string(),
-	contentTypeURL: v.optional(automergeURL),
+	contentType: z.string(),
+	contentTypeURL: automergeURL.optional(),
 
 	// a ref to the file
 	url: automergeURL,
 })
 
-export type Entry = v.InferOutput<typeof Entry>
+export type Entry = z.infer<typeof Entry>

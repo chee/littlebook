@@ -3,11 +3,11 @@ import type Result from "true-myth/result"
 import {err, ok} from "true-myth/result"
 import type {DocumentURL} from "../../dock/dock-api.ts"
 import {parseDocumentURL} from "../../dock/dock.tsx"
-import type {Entry} from "../../documents/entry.ts"
 import {useEditorRegistry} from "../../registries/editor-registry.ts"
 import type {Editor} from "../../../../schemas/src/editor.ts"
 import {useHome} from "../../repo/home.ts"
 import {useDocument} from "solid-automerge"
+import type {Entry} from "@pointplace/schemas"
 
 // todo usePerfectIcon that starts with entry, then editor, then contenttype,
 // then defaults to a document icon

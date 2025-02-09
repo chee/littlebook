@@ -9,7 +9,7 @@ import {
 	MarkdownShape,
 	Coder,
 } from "@pointplace/schemas"
-import * as v from "valibot"
+import type {StandardSchemaV1} from "@standard-schema/spec"
 
 export class CoderRegistry extends Registry<StoredCoder, Coder> {
 	constructor({repo}: {repo: Repo}) {
@@ -59,97 +59,109 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 }
 
 // todo i forgot about async coders again
-const text = v.parse(inferCoder(TextShape), {
-	id: "text",
-	displayName: "plain text",
-	contentType: "public.text",
-	mimeTypes: ["text/plain"],
-	fromBytes(bytes: Uint8Array) {
-		try {
-			return {ok: true, val: {text: new TextDecoder().decode(bytes)}}
-		} catch (error) {
-			return {ok: false, err: error as Error}
-		}
-	},
-	toBytes(content: {text: string}) {
-		try {
-			return {ok: true, val: new TextEncoder().encode(content.text)}
-		} catch (error) {
-			return {ok: false, err: error as Error}
-		}
-	},
-	async fromFile(file) {
-		const bytes = new Uint8Array(await file.arrayBuffer())
-		return this.fromBytes(bytes)
-	},
-	new() {
-		return {text: ""}
-	},
-} satisfies Coder<typeof TextShape>)
+const text = (
+	inferCoder(TextShape)["~standard"].validate({
+		id: "text",
+		displayName: "plain text",
+		contentType: "public.text",
+		mimeTypes: ["text/plain"],
+		fromBytes(bytes: Uint8Array) {
+			try {
+				return {ok: true, val: {text: new TextDecoder().decode(bytes)}}
+			} catch (error) {
+				return {ok: false, err: error as Error}
+			}
+		},
+		toBytes(content: {text: string}) {
+			try {
+				return {ok: true, val: new TextEncoder().encode(content.text)}
+			} catch (error) {
+				return {ok: false, err: error as Error}
+			}
+		},
+		async fromFile(file) {
+			const bytes = new Uint8Array(await file.arrayBuffer())
+			return this.fromBytes(bytes)
+		},
+		new() {
+			return {text: ""}
+		},
+	} satisfies Coder<typeof TextShape>) as StandardSchemaV1.SuccessResult<
+		Coder<typeof TextShape>
+	>
+).value
 
-const code = v.parse(inferCoder(CodeShape), {
-	id: "code",
-	displayName: "computer code",
-	contentType: "public.code",
-	fromBytes(bytes: Uint8Array) {
-		return text.fromBytes(bytes)
-	},
-	toBytes(value: {text: string}) {
-		return text.toBytes(value)
-	},
-	async fromFile(file) {
-		const bytes = new Uint8Array(await file.arrayBuffer())
-		const content = this.fromBytes(bytes)
+const code = (
+	inferCoder(CodeShape)["~standard"].validate({
+		id: "code",
+		displayName: "computer code",
+		contentType: "public.code",
+		fromBytes(bytes: Uint8Array) {
+			return text.fromBytes(bytes)
+		},
+		toBytes(value: {text: string}) {
+			return text.toBytes(value)
+		},
+		async fromFile(file) {
+			const bytes = new Uint8Array(await file.arrayBuffer())
+			const content = this.fromBytes(bytes)
 
-		if (!content.ok) {
-			return content
-		}
+			if (!content.ok) {
+				return content
+			}
 
-		return {
-			ok: true,
-			val: {
-				text: content.val.text,
-				language: file.type.slice(file.type.indexOf("/") + 1),
-			},
-		}
-	},
-	new() {
-		return {text: "# my file", language: "javascript"}
-	},
-} satisfies Coder<typeof CodeShape>)
+			return {
+				ok: true,
+				val: {
+					text: content.val.text,
+					language: file.type.slice(file.type.indexOf("/") + 1),
+				},
+			}
+		},
+		new() {
+			return {text: "# my file", language: "javascript"}
+		},
+	} satisfies Coder<typeof CodeShape>) as StandardSchemaV1.SuccessResult<
+		Coder<typeof CodeShape>
+	>
+).value
 
-const markdown = v.parse(inferCoder(MarkdownShape), {
-	id: "markdown",
-	displayName: "markdown",
-	contentType: "public.markdown",
-	filePatterns: ["*.md", "*.markdown"],
-	mimeTypes: ["text/markdown"],
-	fromBytes(bytes: Uint8Array) {
-		return text.fromBytes(bytes)
-	},
-	toBytes(value: {text: string}) {
-		return text.toBytes(value)
-	},
-	async fromFile(file) {
-		const bytes = new Uint8Array(await file.arrayBuffer())
-		const content = this.fromBytes(bytes)
+const markdown = (
+	inferCoder(MarkdownShape)["~standard"].validate({
+		id: "markdown",
+		displayName: "markdown",
+		contentType: "public.markdown",
+		filePatterns: ["*.md", "*.markdown"],
+		mimeTypes: ["text/markdown"],
+		fromBytes(bytes: Uint8Array) {
+			return text.fromBytes(bytes)
+		},
+		toBytes(value: {text: string}) {
+			return text.toBytes(value)
+		},
+		async fromFile(file) {
+			const bytes = new Uint8Array(await file.arrayBuffer())
+			const content = this.fromBytes(bytes)
 
-		if (!content.ok) {
-			return content
-		}
+			if (!content.ok) {
+				return content
+			}
 
-		return {
-			ok: true,
-			val: {
-				text: content.val.text,
-				language: "markdown",
-			},
-		}
-	},
-	new() {
-		return {text: "", language: "markdown"}
-	},
-} satisfies Coder<typeof CodeShape>)
+			return {
+				ok: true,
+				val: {
+					text: content.val.text,
+					language: "markdown",
+				},
+			}
+		},
+		new() {
+			return {text: "", language: "markdown"}
+		},
+	} satisfies Coder<typeof CodeShape>) as StandardSchemaV1.SuccessResult<
+		Coder<typeof CodeShape>
+	>
+).value
 
 const defaultCoders = [text, code, markdown]
 

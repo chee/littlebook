@@ -12,7 +12,7 @@ import {
 	TextContentType,
 	TextShape,
 } from "@pointplace/schemas"
-import * as v from "valibot"
+import type {StandardSchemaV1} from "@standard-schema/spec"
 
 export class ContentTypeRegistry extends Registry<
 	StoredContentType,
@@ -49,25 +49,31 @@ export class ContentTypeRegistry extends Registry<
 	}
 }
 
-export const text = v.parse(TextContentType, {
-	id: "public.text",
-	displayName: "plain text",
-	schema: TextShape,
-})
+export const text = (
+	TextContentType["~standard"].validate({
+		id: "public.text",
+		displayName: "plain text",
+		schema: TextShape,
+	}) as StandardSchemaV1.SuccessResult<ContentType<typeof TextContentType>>
+).value
 
-export const code = v.parse(CodeContentType, {
-	id: "public.code",
-	displayName: "computer code",
-	conformsTo: ["public.text"],
-	schema: CodeShape,
-})
+export const code = (
+	CodeContentType["~standard"].validate({
+		id: "public.code",
+		displayName: "computer code",
+		conformsTo: ["public.text"],
+		schema: CodeShape,
+	}) as StandardSchemaV1.SuccessResult<ContentType<typeof CodeContentType>>
+).value
 
-export const markdown = v.parse(MarkdownContentType, {
-	id: "public.markdown",
-	displayName: "markdown",
-	conformsTo: ["public.text", "public.code"],
-	schema: MarkdownShape,
-})
+export const markdown = (
+	MarkdownContentType["~standard"].validate({
+		id: "public.markdown",
+		displayName: "markdown",
+		conformsTo: ["public.text", "public.code"],
+		schema: MarkdownShape,
+	}) as StandardSchemaV1.SuccessResult<ContentType<typeof MarkdownContentType>>
+).value
 
 export const KnownContentTypes = [text, code, markdown]
 

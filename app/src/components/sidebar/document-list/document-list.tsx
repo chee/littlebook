@@ -5,13 +5,13 @@ import repo from "../../../repo/create.ts"
 import "./document-list.css"
 import {useDocument} from "solid-automerge"
 import {useHome} from "../../../repo/home.ts"
-import type {Entry} from "../../../documents/entry.ts"
 import {parseDocumentURL, useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {useContentTypeRegistry} from "../../../registries/content-type-registry.ts"
 import OpenWithContextMenu from "../../../dock/open-with.tsx"
 import type {DocumentURL} from "../../../dock/dock-api.ts"
 import Icon from "../../icons/icon.tsx"
+import type {Entry} from "@pointplace/schemas"
 
 // todo this should use a generic DocumentList, wrapped with special behaviours
 // and user can pin a folder to the sidebar as a DocumentList

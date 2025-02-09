@@ -1,49 +1,41 @@
-import * as v from "valibot"
-import {bytes, result, stored, type BaseSchemaAny} from "./util.js"
+import {z, type ZodTypeAny} from "zod"
+import {bytes, result, stored} from "./util.js"
 
-export const CoderMetadata = v.object({
-	id: v.string(),
-	displayName: v.string(),
-	contentType: v.string(),
-	plugin: v.optional(v.string()),
-	mimeTypes: v.optional(v.array(v.string())),
-	filePatterns: v.optional(v.array(v.string())),
-	recommendedFileExtension: v.optional(v.string()),
+export const CoderMetadata = z.object({
+	id: z.string(),
+	displayName: z.string(),
+	contentType: z.string(),
+	plugin: z.string().optional(),
+	mimeTypes: z.array(z.string()).optional(),
+	filePatterns: z.array(z.string()).optional(),
+	recommendedFileExtension: z.string().optional(),
 })
 
-export type CoderMetadata = v.InferOutput<typeof CoderMetadata>
+export type CoderMetadata = z.infer<typeof CoderMetadata>
 
-export function inferCoder<T extends BaseSchemaAny>(schema: T) {
-	return v.object({
-		fromBytes: v.pipe(
-			v.function(),
-			v.args(v.tuple([bytes])),
-			v.returns(result(schema))
-		),
+export function inferCoder<T extends ZodTypeAny>(schema: T) {
+	return z
+		.object({
+			fromBytes: z.function().args(bytes).returns(result(schema)),
 
-		toBytes: v.pipe(
-			v.function(),
-			v.args(v.tuple([schema])),
-			v.returns(bytes)
-		),
+			toBytes: z.function().args(schema).returns(result(bytes)),
 
-		fromFile: v.pipe(
-			v.function(),
-			v.args(v.tuple([v.instance(File)])),
-			v.returns(schema)
-		),
+			fromFile: z
+				.function()
+				.args(z.instanceof(File))
+				.returns(z.promise(result(schema))),
 
-		new: v.pipe(v.function(), v.returns(schema)),
-		...CoderMetadata.entries,
-	})
+			new: z.function().returns(schema),
+		})
+		.extend(CoderMetadata.shape)
 }
 
-export const Coder = inferCoder(v.unknown())
+export const Coder = inferCoder(z.unknown())
 
-export type Coder<T extends BaseSchemaAny = BaseSchemaAny> = v.InferOutput<
+export type Coder<T extends ZodTypeAny = ZodTypeAny> = z.infer<
 	ReturnType<typeof inferCoder<T>>
 >
 
-export const StoredCoder = stored("coder", CoderMetadata.entries)
+export const StoredCoder = stored("coder", CoderMetadata.shape)
 
-export type StoredCoder = v.InferOutput<typeof StoredCoder>
+export type StoredCoder = z.infer<typeof StoredCoder>

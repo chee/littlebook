@@ -9,13 +9,12 @@ import {err, ok, type Result} from "true-myth/result"
 import {Task} from "true-myth/task"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 import type Unit from "true-myth/unit"
-import type {BaseSchema, ObjectSchema} from "valibot"
 const log = window.log.extend("registries")
 
 export function importFromAutomerge<T extends StandardSchemaV1>(
 	doc: {bytes: Uint8Array},
 	schema: T
-): Task<StandardSchemaV1.InferOutput<T>, Error> {
+): Task<StandardSchemaV1.InferInput<T>, Error> {
 	return new Task(async (yay, boo) => {
 		const blob = new Blob([doc.bytes], {type: "application/javascript"})
 		const blobURL = URL.createObjectURL(blob)

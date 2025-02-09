@@ -18,20 +18,19 @@ import {
 } from "solid-js"
 import homeURL, {useHome, type Home} from "../repo/home.ts"
 import {parseDocumentURL, useDockAPI} from "./dock.tsx"
-import type {Entry} from "../documents/entry.ts"
 import {createShortcut} from "@solid-primitives/keyboard"
 import esbuild from "esbuild-wasm"
 import {createStore} from "solid-js/store"
 import {Editor, StoredEditor} from "../../../schemas/src/editor.ts"
 import {z} from "zod"
 import {h} from "../schema-helpers.ts"
-import {useEditorRegistry} from "../registries/editor-registry.ts"
 import type {DocumentURL} from "./dock-api.ts"
 import {useDocument} from "solid-automerge"
 import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
 import type {Ok} from "true-myth/result"
 import {Tooltip} from "@kobalte/core/tooltip"
 import OpenWithContextMenu from "./open-with.tsx"
+import type {Entry} from "@pointplace/schemas"
 
 const keynames = {
 	CMD: "Meta",
@@ -156,9 +155,10 @@ export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
 					mod,
 				}))
 			})
-			.then(result => {
-				const parsed = Editor.safeParse(result.mod)
-				if (!parsed.success) {
+			.then(async result => {
+				const parsed = await Editor["~standard"].validate(result.mod)
+				if (parsed.issues) {
+					console.error(parsed.issues)
 					throw new Error("document doesn't look like an editor")
 				}
 				const editor = {...(result.mod as StoredEditor)}

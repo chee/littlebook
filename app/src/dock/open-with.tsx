@@ -4,8 +4,8 @@ import Icon from "../components/icons/icon.tsx"
 import type {DocumentURL} from "./dock-api.ts"
 import {useEditorRegistry} from "../registries/editor-registry.ts"
 import {useDocument} from "solid-automerge"
-import type {Entry} from "../documents/entry.ts"
 import {parseDocumentURL} from "./dock.tsx"
+import type {Entry} from "@pointplace/schemas"
 
 // todo hide openwithmenu when the only editor is the current editor
 export default function OpenWithContextMenu(props: {

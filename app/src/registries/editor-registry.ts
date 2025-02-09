@@ -5,7 +5,7 @@ import {Registry} from "./registry.ts"
 import {type ContentTypeRegistry} from "./content-type-registry.ts"
 import {Editor, StoredEditor, type Entry} from "@pointplace/schemas"
 
-export class EditorRegistry extends Registry<StoredEditor, Editor> {
+export class EditorRegistry extends Registry<StoredEditor, Editor<unknown>> {
 	#contentTypeRegistry: ContentTypeRegistry
 
 	constructor({
@@ -28,7 +28,7 @@ export class EditorRegistry extends Registry<StoredEditor, Editor> {
 
 	// this yields in three steps to allow for more specific matches to be yielded first
 	*editors(entry: Entry) {
-		const seen = new Set<Editor>()
+		const seen = new Set<Editor<unknown>>()
 		for (const editor of Object.values(this.records)) {
 			if (typeof editor.contentTypes == "string") continue
 			if (editor.contentTypes.includes(entry.contentType)) {
@@ -62,7 +62,7 @@ export class EditorRegistry extends Registry<StoredEditor, Editor> {
 		}
 	}
 
-	get(id: string): Result<Editor, Error> {
+	get<T>(id: string): Result<Editor<T>, Error> {
 		const editor = this.records[id]
 		return editor ? ok(editor) : err(new Error(`editor not found: ${id}`))
 	}

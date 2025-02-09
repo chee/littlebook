@@ -10,7 +10,6 @@ import {
 	Show,
 	Suspense,
 } from "solid-js"
-import {type Entry} from "../../documents/entry.ts"
 import EditorFallback from "./fallback.tsx"
 import {Dynamic} from "solid-js/web"
 import {compileToEditor} from "../../dock/dock-tab.tsx"
@@ -23,6 +22,7 @@ import {usePerfectEditor} from "./usePerfectEditor.tsx"
 import clsx from "clsx"
 import {useContentTypeRegistry} from "../../registries/content-type-registry.ts"
 import {createStore} from "solid-js/store"
+import type {Entry} from "@pointplace/schemas"
 
 const log = window.log.extend("file-viewer")
 
@@ -116,6 +116,7 @@ export default function FileViewer(props: {
 				<ErrorBoundary
 					fallback={(error, reset) => {
 						createEffect(again => {
+							console.error(error)
 							if (editor() && again) {
 								reset()
 							}
@@ -155,6 +156,7 @@ export default function FileViewer(props: {
 							cleanup={(fn: () => void) => {
 								onCleanup(fn)
 							}}
+							registerKeybinding={(key: string) => {}}
 						/>
 					</article>
 					<footer

@@ -1,33 +1,34 @@
 import {AutomergeUrl, isValidAutomergeUrl} from "@automerge/automerge-repo"
-import * as v from "valibot"
+import {z, type ZodObject, type ZodTypeAny} from "zod"
 
-export type BaseSchemaAny = v.BaseSchema<any, any, any>
-export type ObjectSchemaAny = v.ObjectSchema<any, any>
+export const automergeURL = z.custom<AutomergeUrl>(isValidAutomergeUrl)
 
-export const automergeURL = v.custom<AutomergeUrl>(isValidAutomergeUrl)
-
-export const bytes = v.instance(Uint8Array)
+export const bytes = z.custom<Uint8Array>(val => val instanceof Uint8Array)
 
 // a compiled tool as stored in automerge
-export function stored<T extends v.ObjectEntries>(type: string, metadata: T) {
-	return v.object({
-		type: v.literal(type),
-		bytes: bytes,
-		...metadata,
-	})
+export function stored<Metadata extends z.ZodRawShape>(
+	type: string,
+	metadata: Metadata
+) {
+	return z
+		.object({
+			type: z.literal(type),
+			bytes: bytes,
+		})
+		.extend(metadata)
 }
 
-export function ok<T extends BaseSchemaAny>(schema: T) {
-	return v.object({
-		ok: v.literal(true),
+export function ok<T extends ZodTypeAny>(schema: T) {
+	return z.object({
+		ok: z.literal(true),
 		val: schema,
 	})
 }
 
-export const err = v.object({
-	ok: v.literal(false),
+export const err = z.object({
+	ok: z.literal(false),
 })
 
-export function result<T extends BaseSchemaAny>(schema: T) {
-	return v.variant("ok", [ok(schema), err])
+export function result<T extends ZodTypeAny>(schema: T) {
+	return z.discriminatedUnion("ok", [ok(schema), err])
 }
