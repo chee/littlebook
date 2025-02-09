@@ -1,35 +1,52 @@
 import {DocHandle} from "@automerge/automerge-repo"
 import {stored} from "./util.js"
-import {array, literal, object, string, union, z} from "zod"
+import * as v from "valibot"
 
-export const EditorMetadata = object({
-	id: string(),
-	displayName: string(),
-	contentTypes: union([array(string()), literal("*")]),
+export const EditorMetadata = v.object({
+	id: v.string(),
+	displayName: v.string(),
+	contentTypes: v.union([v.array(v.string()), v.literal("*")]),
 })
 
-export type EditorMetadata = z.infer<typeof EditorMetadata>
+export type EditorMetadata = v.InferOutput<typeof EditorMetadata>
 
-export const EditorAPI = object({
-	handle: z.instanceof(DocHandle),
-	setName: z.function().args(string()).returns(z.void()),
-	cleanup: z.function().args().returns(z.void()),
-	setStatusItems: z.function().args(array(string())).returns(z.void()),
-	registerKeybinding: z.function().args(string(), z.function()),
+export const EditorAPI = v.object({
+	handle: v.instance(DocHandle),
+	setName: v.pipe(
+		v.function(),
+		v.args(v.tuple([v.string()])),
+		v.returns(v.void())
+	),
+	cleanup: v.pipe(v.function(), v.returns(v.void())),
+	setStatusItems: v.pipe(
+		v.function(),
+		v.args(v.tuple([v.array(v.string())])),
+		v.returns(v.void())
+	),
+	registerKeybinding: v.pipe(
+		v.function(),
+		v.args(v.tuple([v.string()])),
+		v.returns(v.function())
+	),
 })
 
-export type EditorAPI<T> = Omit<z.infer<typeof EditorAPI>, "handle"> & {
+export type EditorAPI<T> = Omit<v.InferOutput<typeof EditorAPI>, "handle"> & {
 	handle: DocHandle<T>
 }
 
-export const Editor = object({
-	render: z.function().args(EditorAPI).returns(z.instanceof(HTMLElement)),
-}).extend(EditorMetadata.shape)
+export const Editor = v.object({
+	render: v.pipe(
+		v.function(),
+		v.args(v.tuple([EditorAPI])),
+		v.returns(v.instance(HTMLElement))
+	),
+	...EditorMetadata.entries,
+})
 
-export type Editor<T> = Omit<z.infer<typeof Editor>, "render"> & {
+export type Editor<T> = Omit<v.InferOutput<typeof Editor>, "render"> & {
 	render: (api: EditorAPI<T>) => HTMLElement
 }
 
-export const StoredEditor = stored("editor", EditorMetadata.shape)
+export const StoredEditor = stored("editor", EditorMetadata.entries)
 
-export type StoredEditor = z.infer<typeof StoredEditor>
+export type StoredEditor = v.InferOutput<typeof StoredEditor>

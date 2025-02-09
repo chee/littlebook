@@ -1,55 +1,49 @@
-import {
-	array,
-	literal,
-	object,
-	string,
-	unknown,
-	type z,
-	type ZodTypeAny,
-} from "zod"
+import * as v from "valibot"
 import {stdSchema} from "./standard.js"
-import {automergeURL, stored} from "./util.js"
+import {automergeURL, stored, type BaseSchemaAny} from "./util.js"
+import type {InferOutput} from "valibot"
 
-export const ContentTypeMetadata = object({
-	id: string(),
-	displayName: string(),
-	conformsTo: array(string()).optional(),
-	icon: string().optional(),
+export const ContentTypeMetadata = v.object({
+	id: v.string(),
+	displayName: v.string(),
+	conformsTo: v.optional(v.array(v.string())),
+	icon: v.optional(v.string()),
 })
 
-export function inferContentType<T extends ZodTypeAny>(shape: T) {
-	return object({
+export function inferContentType<T extends BaseSchemaAny>(shape: T) {
+	return v.object({
 		schema: stdSchema(shape),
-	}).extend(ContentTypeMetadata.shape)
+		...ContentTypeMetadata.entries,
+	})
 }
 
-export const TextShape = object({text: string()})
+export const TextShape = v.object({text: v.string()})
 
 export const TextContentType = inferContentType(TextShape)
 
-export const CodeShape = object({
-	text: string(),
-	language: string().optional(),
-	editorURL: automergeURL.optional(),
+export const CodeShape = v.object({
+	text: v.string(),
+	language: v.optional(v.string()),
+	editorURL: v.optional(automergeURL),
 })
 export const CodeContentType = inferContentType(CodeShape)
 
-export const MarkdownShape = object({
-	text: string(),
-	language: literal("markdown"),
-	editorURL: automergeURL.optional(),
+export const MarkdownShape = v.object({
+	text: v.string(),
+	language: v.literal("markdown"),
+	editorURL: v.optional(automergeURL),
 })
 
 export const MarkdownContentType = inferContentType(MarkdownShape)
 
-export const ContentType = inferContentType(unknown())
+export const ContentType = inferContentType(v.unknown())
 
-export type ContentType<T extends ZodTypeAny = ZodTypeAny> = z.infer<
+export type ContentType<T extends BaseSchemaAny> = InferOutput<
 	ReturnType<typeof inferContentType<T>>
 >
 
-export type ContentTypeMetadata = z.infer<typeof ContentTypeMetadata>
+export type ContentTypeMetadata = InferOutput<typeof ContentTypeMetadata>
 
-export const StoredContentType = stored("type", ContentTypeMetadata.shape)
+export const StoredContentType = stored("type", ContentTypeMetadata.entries)
 
-export type StoredContentType = z.infer<typeof StoredContentType>
+export type StoredContentType = InferOutput<typeof StoredContentType>
