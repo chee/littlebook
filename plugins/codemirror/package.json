@@ -32,13 +32,16 @@
 	"dependencies": {
 		"@codemirror/lang-json": "^6.0.1",
 		"@pointplace/schemas": "workspace:^",
+		"@tanstack/solid-table": "^8.20.5",
 		"@uiw/codemirror-theme-dracula": "^4.23.0",
-		"@uiw/codemirror-theme-github": "^4.23.0"
+		"@uiw/codemirror-theme-github": "^4.23.0",
+		"esbuild-wasm": "^0.24.2",
+		"valibot": "1.0.0-beta.15"
 	},
 	"devDependencies": {
 		"@automerge/automerge": "^2.2.4",
 		"@automerge/automerge-codemirror": "^0.0.12",
-		"@automerge/automerge-repo": "2.0.0-alpha.14",
+		"@automerge/automerge-repo": "2.0.0-alpha.22",
 		"@codemirror/lang-html": "^6.4.9",
 		"@codemirror/lang-javascript": "^6.2.2",
 		"@codemirror/lang-markdown": "^6.2.5",
@@ -52,6 +55,6 @@
 		"esbuild": "^0.21.5"
 	},
 	"peerDependencies": {
-		"@automerge/automerge-repo": "2.0.0-alpha.14"
+		"@automerge/automerge-repo": "2.0.0-alpha.22"
 	}
 }

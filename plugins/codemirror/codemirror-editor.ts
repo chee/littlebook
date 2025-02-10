@@ -5,29 +5,42 @@ import {minimalSetup} from "codemirror"
 import {
 	LanguageDescription,
 	indentUnit,
+	language,
 	type LanguageSupport,
 } from "@codemirror/language"
 import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
-import type {EditorAPI} from "@pointplace/schemas"
+import {
+	automergeURL,
+	Editor,
+	type EditorAPI,
+	type Entry,
+	type FileMenuItem,
+	type StoredEditor,
+} from "@pointplace/schemas"
+import * as v from "valibot"
+import {
+	isValidAutomergeUrl,
+	type AutomergeUrl,
+	type DocHandle,
+	type Repo,
+} from "@automerge/automerge-repo"
 
 export const id = "codemirror"
 export const displayName = "codemirror"
 
 export const contentTypes = ["public.text", "public.code"]
 
-// todo should something like this be part of the API, and caled by the
-// editor.tsx before passing the doc to the plugin?
-// todo YES
-function shape(doc: any): doc is {
-	text: string
-	language?: "python" | "markdown" | "javascript" | "html"
-} {
-	return doc && "text" in doc && typeof doc.text == "string"
-}
+const schema = v.object({
+	text: v.string(),
+	language: v.optional(v.string()),
+	storedURL: v.optional(v.custom<AutomergeUrl>(isValidAutomergeUrl)),
+})
+
+type CodemirrorFile = v.InferOutput<typeof schema>
 
 export function render(
-	props: EditorAPI<{text: string; language?: string}> & {
+	props: EditorAPI<CodemirrorFile> & {
 		path?: (string | number)[]
 	}
 ) {
@@ -61,13 +74,6 @@ export function render(
 
 	const file = props.handle.doc()
 
-	if (!shape(file)) {
-		console.error("doc is wrong shape")
-		const fallback = document.createElement("div")
-		fallback.textContent = "doc is wrong shape"
-		return fallback
-	}
-
 	const view = new EditorView({
 		doc: file?.text ?? "",
 		parent,
@@ -78,6 +84,7 @@ export function render(
 			lineNumbersCompartment.of([]),
 			EditorView.lineWrapping,
 			automergeSyncPlugin({
+				// @ts-expect-error until Automerge 2.0
 				handle: props.handle,
 				path,
 			}),
@@ -93,7 +100,7 @@ export function render(
 
 	darkmatch.addEventListener("change", onschemechange)
 
-	props.cleanup(() => {
+	props.onCleanup(() => {
 		darkmatch.removeEventListener("change", onschemechange)
 	})
 
@@ -140,11 +147,6 @@ export function render(
 	}
 
 	function onlang() {
-		if (!shape(file)) {
-			console.error("doc is wrong shape")
-			return
-		}
-		console.log("langing")
 		const lang = file?.language && languages[file.language]
 		if (lang) {
 			lang().then(ext => {
@@ -168,7 +170,13 @@ export function render(
 	onlang()
 
 	props.handle.on("change", change => {
-		if (change.patches.some(patch => patch.path.join(".") == "language")) {
+		console.log(change.patches)
+		if (
+			change.patches.some(patch => {
+				return patch.path[0] == "language"
+			})
+		) {
+			console.log("language changed")
 			onlang()
 		}
 		const doc = change.patchInfo.after
@@ -177,20 +185,49 @@ export function render(
 			const firstLine = doc.text.slice(0, doc.text.indexOf("\n"))
 			const title = firstLine.slice(2).trim()
 			if (firstLine && firstLine.startsWith("# ") && title) {
-				props.setName(title)
+				props.updateName(title)
 			} else {
-				props.setName("untitled")
+				props.updateName("untitled")
 			}
 		}
 	})
 
-	props.cleanup(() => {
-		console.log("cleaninup")
+	props.onCleanup(() => {
 		props.handle.off("change", onlang)
 		view.destroy()
 	})
 
 	return parent
+}
+
+export function getFileMenu() {
+	return [
+		{
+			type: "sub",
+			label: "set language",
+			sub: [
+				{
+					type: "choice",
+					choices: [
+						{label: "plain", value: ""},
+						{label: "javascript", value: "javascript"},
+						{label: "python", value: "python"},
+						{label: "html", value: "html"},
+						{label: "markdown", value: "markdown"},
+						{label: "json", value: "json"},
+					],
+					value(opts) {
+						return (opts.file as CodemirrorFile).language ?? ""
+					},
+					action(opts) {
+						opts.fileHandle.change(file => {
+							;(file as CodemirrorFile).language = opts.value
+						})
+					},
+				},
+			],
+		},
+	] satisfies FileMenuItem[]
 }
 
 export default {render}
