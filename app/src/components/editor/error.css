@@ -1,8 +1,14 @@
 .error {
+	overflow: scroll;
+	white-space: pre-wrap;
+	height: 100%;
+	background: #333;
+	color: #9ff;
 	pre {
 		line-height: 1.4;
 		padding: 1rem;
-		background: black;
-		color: lime;
+		background: #242;
+		color: #6fc;
+		white-space: pre-wrap;
 	}
 }

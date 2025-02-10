@@ -1,0 +1,57 @@
+.automerge-editor {
+	font-family: monospace;
+}
+
+.automerge-editor {
+	width: 100%;
+	border-spacing: 1ex;
+	border-collapse: separate;
+}
+
+.automerge-editor__row {
+	/* display: grid; */
+	/* gap: 1ex; */
+	/* margin-bottom: 0.25rem; */
+	/* place-content: center; */
+	/* font-size: 1rem; */
+	/* grid-template-columns: 5rem 1fr; */
+	gap: 1ch;
+}
+
+.automerge-editor__key {
+	font-weight: bold;
+	padding: 0.5em;
+	display: "";
+	text-overflow: ellipsis;
+	overflow: hidden;
+	/* &::before { */
+	/* content: "“"; */
+	/* } */
+	/* &::after { */
+	/* content: "”"; */
+	/* } */
+}
+
+.automerge-editor__value {
+	/* &::before { */
+	/* content: ":"; */
+	/* } */
+	width: 100%;
+	/* display: flex; */
+	/* place-items: center; */
+	textarea {
+		width: 100%;
+	}
+	input,
+	textarea {
+		.automerge-editor__row--string & {
+			background-color: #bfe;
+		}
+
+		padding: 0.5em;
+		display: block;
+		&:focus-within {
+			outline: 2px solid #000;
+		}
+	}
+}

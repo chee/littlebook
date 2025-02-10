@@ -1,5 +1,5 @@
-import {type DocHandle} from "@automerge/automerge-repo"
 import "./editor.css"
+import "./error.css"
 
 import {
 	createEffect,
@@ -7,14 +7,12 @@ import {
 	ErrorBoundary,
 	For,
 	onCleanup,
+	onMount,
 	Show,
 	Suspense,
 } from "solid-js"
 import EditorFallback from "./fallback.tsx"
 import {Dynamic} from "solid-js/web"
-import {compileToEditor} from "../../dock/dock-tab.tsx"
-import {createShortcut} from "@solid-primitives/keyboard"
-import {throttle} from "@solid-primitives/scheduled"
 import {useDocument} from "solid-automerge"
 import type {DocumentURL} from "../../dock/dock-api.ts"
 import {parseDocumentURL} from "../../dock/dock.tsx"
@@ -23,6 +21,8 @@ import clsx from "clsx"
 import {useContentTypeRegistry} from "../../registries/content-type-registry.ts"
 import {createStore} from "solid-js/store"
 import type {Entry} from "@pointplace/schemas"
+import repo from "../../repo/create.ts"
+import {updateFileMenu} from "./filemenu.tsx"
 
 const log = window.log.extend("file-viewer")
 
@@ -31,15 +31,16 @@ export default function FileViewer(props: {
 	isActive?: boolean
 }) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
-	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
+	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url, {repo})
 	const editor = usePerfectEditor(() => props.url)
 
 	// todo this is `unknown` IRL
 	const [file, fileHandle] = useDocument<{text: string; language?: string}>(
-		() => entry()?.url
+		() => entry()?.url,
+		{repo}
 	)
 
-	/// todo this doesn't belong here
+	/* 	/// todo this doesn't belong here
 	if (entry()?.contentType == "public.text") {
 		createShortcut(
 			["Meta", "S"],
@@ -60,21 +61,22 @@ export default function FileViewer(props: {
 	const save = throttle(
 		() => compileToEditor(fileHandle() as DocHandle<{text: string}>),
 		100
-	)
+	) */
 
-	createEffect(last => {
-		if (
-			file() &&
-			file()!.text &&
-			file()!.text != last &&
-			file()!.language == "javascript"
-		) {
-			save()
-		}
-		return file()?.text
-	})
+	// createEffect(last => {
+	// 	if (
+	// 		file() &&
+	// 		file()!.text &&
+	// 		file()!.text != last &&
+	// 		file()!.language == "javascript"
+	// 	) {
+	// 		save()
+	// 	}
+	// 	return file()?.text
+	// })
 
 	const Editor = () =>
+		// todo no
 		editor()?.unwrapOr({
 			render() {
 				return <div />
@@ -84,7 +86,7 @@ export default function FileViewer(props: {
 			displayName: "",
 		})
 
-	const [statusItems, setStatusItems] = createStore([])
+	const [statusItems, updateStatusItems] = createStore([])
 
 	createEffect(() => {
 		log("editor update", Editor()?.id)
@@ -142,21 +144,23 @@ export default function FileViewer(props: {
 					}}>
 					<article class="file-viewer__content">
 						<Dynamic
-							// todo add callbacks for adding:
-							// - item to status bar
-							// - command to tab context menu
-							// todo also include isActive
 							component={Editor().render}
 							handle={fileHandle()}
-							setName={(name: string) => {
+							updateName={(name: string) => {
 								log("setting name", name)
 								entryHandle()?.change(entry => (entry.name = name))
 							}}
-							setStatusItems={setStatusItems}
-							cleanup={(fn: () => void) => {
+							updateStatusItems={updateStatusItems}
+							updateFileMenu={updateFileMenu}
+							onMount={(fn: () => void) => {
+								onMount(fn)
+							}}
+							onCleanup={(fn: () => void) => {
 								onCleanup(fn)
 							}}
 							registerKeybinding={(key: string) => {}}
+							isActive={() => props.isActive}
+							repo={repo}
 						/>
 					</article>
 					<footer

@@ -1,11 +1,11 @@
-import {Show, For} from "solid-js"
+import {Show} from "solid-js"
 import "./page-header.css"
 import Icon from "../icons/icon.tsx"
 import {Button} from "@kobalte/core/button"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import homeURL from "../../repo/home.ts"
 
-/* 
+/*
 // todo
 add a button for adding new
 	- editors
@@ -20,7 +20,6 @@ add a button in the top right for
 	- changing your name/profile image?
 	- exporting your entire indexeddb database
 	- loading an entire indexedb database
-  
 */
 export default function PageHeader(props: {
 	leftSidebarCollapsed: boolean

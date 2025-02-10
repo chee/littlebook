@@ -7,7 +7,6 @@ import {useDocument} from "solid-automerge"
 import {parseDocumentURL} from "./dock.tsx"
 import type {Entry} from "@pointplace/schemas"
 
-// todo hide openwithmenu when the only editor is the current editor
 export default function OpenWithContextMenu(props: {
 	url: DocumentURL
 	currentEditorID?: string
@@ -19,7 +18,7 @@ export default function OpenWithContextMenu(props: {
 	const editors = () => [...(editorRegistry.editors(entry()!) ?? [])]
 
 	return (
-		<Show when={editors().length}>
+		<Show when={editors().length > 1}>
 			<ContextMenu.Sub overlap gutter={-10}>
 				<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
 					open with

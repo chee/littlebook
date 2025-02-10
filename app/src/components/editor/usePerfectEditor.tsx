@@ -12,13 +12,13 @@ import type {Entry} from "@pointplace/schemas"
 // todo usePerfectIcon that starts with entry, then editor, then contenttype,
 // then defaults to a document icon
 
-export function usePerfectEditor(url: () => DocumentURL) {
+export function usePerfectEditor<Shape = unknown>(url: () => DocumentURL) {
 	const docinfo = createMemo(() => parseDocumentURL(url()))
 	const [home] = useHome()
 	const [entry] = useDocument<Entry>(() => docinfo().url)
 	const registry = useEditorRegistry()
 	const editors = () => entry() && registry.editors(entry()!)
-	const editor = (): Result<Editor, Error> => {
+	const editor = (): Result<Editor<Shape>, Error> => {
 		const url = docinfo().url
 		const associations = home()?.associations
 		const associated = associations?.[url]

@@ -68,7 +68,6 @@
 		"true-myth": "^8.4.0",
 		"tsx": "^4.19.2",
 		"unified": "^11.0.5",
-		"valibot": "1.0.0-beta.15",
 		"vinxi": "^0.5.1",
 		"zod": "^3.24.1",
 		"zod-to-json-schema": "^3.24.1",

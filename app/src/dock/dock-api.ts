@@ -14,6 +14,7 @@ import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
 export type DocumentURL = AutomergeUrl & {type: "document"}
 
 export function createDockAPI(dockviewAPI: DockviewApi) {
+	window.dockViewAPI = dockviewAPI
 	const owner = getOwner()!
 	function loadLayout(layout: SerializedDockview): Result<Unit, Error> {
 		try {

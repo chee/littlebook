@@ -43,15 +43,15 @@ export abstract class Registry<
 
 	#updateRecords: SetStoreFunction<Record<string, Shape>>
 
-	#name = ""
+	#type = ""
 
 	get nameWithSpace() {
-		if (this.#name) return this.#name + " "
+		if (this.#type) return this.#type + " "
 		else return ""
 	}
 
 	get nameWithPrefixSpace() {
-		if (this.#name) return " " + this.#name
+		if (this.#type) return " " + this.#type
 		else return ""
 	}
 
@@ -59,14 +59,14 @@ export abstract class Registry<
 		repo,
 		storedSchema,
 		schema,
-		name = "",
+		type = "",
 	}: {
 		repo: Repo
 		storedSchema: StandardSchemaV1<Stored>
 		schema: StandardSchemaV1<Shape>
-		name?: string
+		type: string
 	}) {
-		this.#name = name
+		this.#type = type
 		this.#repo = repo
 		this.#owner = getOwner()!
 		if (!this.#owner) {
@@ -98,7 +98,7 @@ export abstract class Registry<
 			if (parsed.issues) {
 				if (
 					"type" in doc &&
-					doc.type == this.#name &&
+					doc.type == this.#type &&
 					handle.doc()?.bytes
 				) {
 					console.warn(

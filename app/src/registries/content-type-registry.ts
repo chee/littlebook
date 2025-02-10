@@ -23,14 +23,13 @@ export class ContentTypeRegistry extends Registry<
 			repo,
 			storedSchema: StoredContentType,
 			schema: ContentType,
-			name: "content-type",
+			type: "content-type",
 		})
 		for (const type of KnownContentTypes) {
 			this.register(type)
 		}
 	}
 
-	// todo recursively look up conformance
 	*typesConformingTo(conformsTo: string): Generator<ContentType> {
 		for (const type of Object.values(this.records)) {
 			if (type.conformsTo?.includes(conformsTo)) {

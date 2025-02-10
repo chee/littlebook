@@ -191,9 +191,6 @@ importers:
       unified:
         specifier: ^11.0.5
         version: 11.0.5
-      valibot:
-        specifier: 1.0.0-beta.15
-        version: 1.0.0-beta.15(typescript@5.6.3)
       vinxi:
         specifier: ^0.5.1
         version: 0.5.1(@types/node@22.10.7)(db0@0.2.1)(debug@4.4.0)(ioredis@5.4.2)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)(typescript@5.6.3)
@@ -255,12 +252,21 @@ importers:
       '@pointplace/schemas':
         specifier: workspace:^
         version: link:../../schemas
+      '@tanstack/solid-table':
+        specifier: ^8.20.5
+        version: 8.20.5(solid-js@1.9.4)
       '@uiw/codemirror-theme-dracula':
         specifier: ^4.23.0
         version: 4.23.7(@codemirror/language@6.10.8)(@codemirror/state@6.5.1)(@codemirror/view@6.36.2)
       '@uiw/codemirror-theme-github':
         specifier: ^4.23.0
         version: 4.23.7(@codemirror/language@6.10.8)(@codemirror/state@6.5.1)(@codemirror/view@6.36.2)
+      esbuild-wasm:
+        specifier: ^0.24.2
+        version: 0.24.2
+      valibot:
+        specifier: 1.0.0-beta.15
+        version: 1.0.0-beta.15(typescript@5.7.3)
     devDependencies:
       '@automerge/automerge':
         specifier: ^2.2.4
@@ -269,8 +275,8 @@ importers:
         specifier: ^0.0.12
         version: 0.0.12
       '@automerge/automerge-repo':
-        specifier: 2.0.0-alpha.14
-        version: 2.0.0-alpha.14(@types/node@20.17.14)(typescript@5.7.3)
+        specifier: 2.0.0-alpha.22
+        version: 2.0.0-alpha.22(@types/node@20.17.14)(typescript@5.7.3)
       '@codemirror/lang-html':
         specifier: ^6.4.9
         version: 6.4.9
@@ -359,6 +365,9 @@ importers:
 
   schemas:
     dependencies:
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
       zod:
         specifier: ^3.24.1
         version: 3.24.1
@@ -384,9 +393,6 @@ packages:
 
   '@automerge/automerge-repo-storage-indexeddb@2.0.0-alpha.22':
     resolution: {integrity: sha512-2xRc4xx/iHZo/EPkbtEEImBKvZHhiC+yEy4JKBYc13VnxkLPbzpcT5/jL+NrdcMrEBMt3OzumVZtARYWhL4u0A==}
-
-  '@automerge/automerge-repo@2.0.0-alpha.14':
-    resolution: {integrity: sha512-nAI2YczFxKqotcuWf50kgHdpW+vZ1dMd0K86TP99qdN8vMM+YYu/TIrEseq7uzwJC/VF/KTtwdwBCuK77+zsGw==}
 
   '@automerge/automerge-repo@2.0.0-alpha.22':
     resolution: {integrity: sha512-OtvqNPEsL3iLNV3mFANKVXMjSTjZwHQ4b52MphQhIursUkJglxf251wy6Y6b10uY5GJks/abNIz8KUXasRPwxw==}
@@ -5479,7 +5485,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@automerge/automerge-repo@2.0.0-alpha.14(@types/node@20.17.14)(typescript@5.7.3)':
+  '@automerge/automerge-repo@2.0.0-alpha.22(@types/node@20.17.14)(typescript@5.7.3)':
     dependencies:
       '@automerge/automerge': 2.2.8
       bs58check: 3.0.1
@@ -5522,7 +5528,7 @@ snapshots:
       '@automerge/automerge': 2.2.8
       bs58check: 3.0.1
       cbor-x: 1.6.0
-      debug: 4.4.0
+      debug: 4.4.0(supports-color@9.4.0)
       eventemitter3: 5.0.1
       fast-sha256: 1.3.0
       tiny-typed-emitter: 2.1.0
@@ -8419,10 +8425,6 @@ snapshots:
     dependencies:
       ms: 2.0.0
 
-  debug@4.4.0:
-    dependencies:
-      ms: 2.1.3
-
   debug@4.4.0(supports-color@9.4.0):
     dependencies:
       ms: 2.1.3
@@ -10735,9 +10737,9 @@ snapshots:
 
   v8-compile-cache-lib@3.0.1: {}
 
-  valibot@1.0.0-beta.15(typescript@5.6.3):
+  valibot@1.0.0-beta.15(typescript@5.7.3):
     optionalDependencies:
-      typescript: 5.6.3
+      typescript: 5.7.3
 
   validate-html-nesting@1.2.2: {}
 

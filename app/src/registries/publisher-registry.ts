@@ -4,7 +4,16 @@ import {Registry} from "./registry.ts"
 import {err, ok, type Result} from "true-myth/result"
 import type {ContentTypeRegistry} from "./content-type-registry.ts"
 import {Automerge} from "@automerge/automerge-repo/slim"
-import {Publisher, StoredPublisher, type Entry} from "@pointplace/schemas"
+import {
+	Editor,
+	Publisher,
+	StoredPublisher,
+	type Entry,
+	type StoredEditor,
+} from "@pointplace/schemas"
+import repo from "../repo/create.ts"
+import type {Home} from "../repo/home.ts"
+import homeURL from "../repo/home.ts"
 
 export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 	private contentTypeRegistry: ContentTypeRegistry
@@ -18,10 +27,12 @@ export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 	}) {
 		super({
 			repo,
+			type: "publisher",
 			storedSchema: StoredPublisher,
 			schema: Publisher,
 		})
 		this.contentTypeRegistry = contentTypeRegistry
+		this.register(compileToEditor)
 		this.register(exportAutomerge)
 	}
 
@@ -82,6 +93,7 @@ const exportAutomerge: Publisher = {
 	id: "export-automerge",
 	displayName: "Automerge File",
 	contentTypes: "*",
+	category: "export",
 	publish: async ({handle, entry}) => {
 		const doc = handle.doc()
 		const a = document.createElement("a")
@@ -89,4 +101,79 @@ const exportAutomerge: Publisher = {
 		a.href = URL.createObjectURL(new Blob([Automerge.save(doc)]))
 		a.click()
 	},
+}
+
+const compileToEditor: Publisher = {
+	id: "compile-to-editor",
+	displayName: "Compile to Editor",
+	contentTypes: ["public.code"],
+	category: "reïmport",
+	publish: async ({handle, entry}) => {
+		const file = handle.doc()
+		return compile(file.text)
+			.then(code => {
+				const bytes = new TextEncoder().encode(code)
+				const blob = new Blob([bytes], {
+					type: "application/javascript",
+				})
+				const blobURL = URL.createObjectURL(blob)
+				return import(/* @vite-ignore */ blobURL).then(mod => ({
+					bytes,
+					mod,
+				}))
+			})
+			.then(async result => {
+				const parsed = await Editor["~standard"].validate(result.mod)
+				if (parsed.issues) {
+					console.error(parsed.issues)
+					throw new Error("document doesn't look like an editor")
+				}
+				const editor = {...(result.mod as StoredEditor)}
+				delete (editor as Partial<Editor<unknown>>).render
+				editor.bytes = result.bytes
+				editor.type = "editor"
+
+				if (file.storedURL) {
+					return repo
+						.find<StoredEditor>(file.storedURL)
+						.then(async handle => {
+							handle.change(doc => {
+								doc.bytes = editor.bytes
+							})
+							const homeHandle = await repo.findClassic<Home>(homeURL())
+							homeHandle.change(home => {
+								if (![...home.editors].includes(handle.url)) {
+									home.editors.push(handle.url)
+								}
+							})
+						})
+				}
+
+				const url = repo.create(editor).url
+				handle.change(file => {
+					file.storedURL = url
+				})
+				const homeHandle = await repo.findClassic<Home>(homeURL())
+				homeHandle.change(home => {
+					if (![...home.editors].includes(handle.url)) {
+						home.editors.push(handle.url)
+					}
+				})
+			})
+	},
+}
+
+const esbuild = await import("esbuild-wasm")
+const wasm = await import("esbuild-wasm/esbuild.wasm?url")
+
+await esbuild.initialize({
+	wasmURL: wasm.default,
+})
+
+async function compile(text: string) {
+	const result = await esbuild.transform(text, {
+		loader: "ts",
+		target: "esnext",
+	})
+	return result.code
 }

@@ -4,8 +4,10 @@ import {err, ok, type Result} from "true-myth/result"
 import {Registry} from "./registry.ts"
 import {type ContentTypeRegistry} from "./content-type-registry.ts"
 import {Editor, StoredEditor, type Entry} from "@pointplace/schemas"
+import type {StandardSchemaV1} from "@standard-schema/spec"
 
-export class EditorRegistry extends Registry<StoredEditor, Editor<unknown>> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class EditorRegistry extends Registry<StoredEditor, Editor<any>> {
 	#contentTypeRegistry: ContentTypeRegistry
 
 	constructor({
@@ -15,7 +17,12 @@ export class EditorRegistry extends Registry<StoredEditor, Editor<unknown>> {
 		repo: Repo
 		contentTypeRegistry: ContentTypeRegistry
 	}) {
-		super({repo, storedSchema: StoredEditor, schema: Editor, name: "editor"})
+		super({
+			repo,
+			storedSchema: StoredEditor,
+			schema: Editor as StandardSchemaV1<Editor<unknown>>,
+			type: "editor",
+		})
 		this.#contentTypeRegistry = contentTypeRegistry
 	}
 

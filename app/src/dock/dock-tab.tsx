@@ -1,29 +1,21 @@
 import Icon from "../components/icons/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
-import repo from "../repo/create.ts"
-import type {AutomergeUrl, Doc, DocHandle} from "@automerge/automerge-repo"
+import type {AutomergeUrl, Doc} from "@automerge/automerge-repo"
 import {Button} from "@kobalte/core/button"
 import {
 	createEffect,
 	createMemo,
-	createRoot,
 	For,
 	getOwner,
-	Match,
 	runWithOwner,
 	Show,
 	Suspense,
-	Switch,
 	type Accessor,
 } from "solid-js"
-import homeURL, {useHome, type Home} from "../repo/home.ts"
+import {useHome} from "../repo/home.ts"
 import {parseDocumentURL, useDockAPI} from "./dock.tsx"
 import {createShortcut} from "@solid-primitives/keyboard"
-import esbuild from "esbuild-wasm"
-import {createStore} from "solid-js/store"
-import {Editor, StoredEditor} from "../../../schemas/src/editor.ts"
-import {z} from "zod"
-import {h} from "../schema-helpers.ts"
+import {Editor} from "../../../schemas/src/editor.ts"
 import type {DocumentURL} from "./dock-api.ts"
 import {useDocument} from "solid-automerge"
 import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
@@ -31,6 +23,8 @@ import type {Ok} from "true-myth/result"
 import {Tooltip} from "@kobalte/core/tooltip"
 import OpenWithContextMenu from "./open-with.tsx"
 import type {Entry} from "@pointplace/schemas"
+import {FileContextMenu} from "../components/editor/filemenu.tsx"
+import {usePublisherRegistry} from "../registries/publisher-registry.ts"
 
 const keynames = {
 	CMD: "Meta",
@@ -62,134 +56,6 @@ export function createKeybinding(
 	createShortcut(keys, action, options)
 }
 
-const CodeFile = z.object({
-	text: z.string(),
-	language: z.string().optional(),
-	storedURL: h.automergeURL().optional(),
-})
-
-type CodeFile = z.infer<typeof CodeFile>
-
-interface FileActionAction {
-	type: "action"
-	label: string
-	keybinding?: string
-	when?(opts: {entry: Entry; file: unknown}): boolean
-	action(opts: {fileHandle: DocHandle<unknown>}): void
-}
-
-interface FileActionSub {
-	type: "sub"
-	label: string
-	when?(opts: {entry: Entry; file: unknown}): boolean
-	sub: FileAction[]
-}
-
-interface FileActionRadioGroup {
-	type: "radio-group"
-	value(opts: {file: CodeFile}): string
-	choices: {label: string; value: string}[]
-	action(opts: {fileHandle: DocHandle<unknown>; value: string}): void
-}
-
-type FileAction = FileActionAction | FileActionSub | FileActionRadioGroup
-
-const [fileActions] = createStore<FileAction[]>([
-	{
-		type: "sub",
-		label: "set language",
-		when(opts: {entry: Entry; file: unknown}) {
-			return opts.entry.contentType == "public.text"
-		},
-		sub: [
-			{
-				type: "radio-group",
-				choices: [
-					{label: "plain", value: ""},
-					{label: "javascript", value: "javascript"},
-					{label: "python", value: "python"},
-					{label: "html", value: "html"},
-					{label: "markdown", value: "markdown"},
-					{label: "json", value: "json"},
-				],
-				value(opts: {file: CodeFile}) {
-					return opts.file.language ?? ""
-				},
-				action(opts: {fileHandle: DocHandle<CodeFile>; value: string}) {
-					opts.fileHandle.change(file => {
-						file.language = opts.value
-					})
-				},
-			},
-		],
-	},
-	{
-		type: "action",
-		label: "compile to editor",
-		when(opts: {entry: Entry; file: unknown}) {
-			const code = CodeFile.safeParse(opts.file)
-			return (
-				code.success &&
-				opts.entry.contentType == "public.text" &&
-				code.data.language == "javascript"
-			)
-		},
-		action(opts: {fileHandle: DocHandle<CodeFile>}) {
-			compileToEditor(opts.fileHandle)
-		},
-	},
-])
-
-export function compileToEditor(fileHandle: DocHandle<CodeFile>) {
-	return createRoot(async () => {
-		const file = fileHandle.doc()!
-		return compile(file.text)
-			.then(code => {
-				const bytes = new TextEncoder().encode(code)
-				const blob = new Blob([bytes], {
-					type: "application/javascript",
-				})
-				const blobURL = URL.createObjectURL(blob)
-				return import(/* @vite-ignore */ blobURL).then(mod => ({
-					bytes,
-					mod,
-				}))
-			})
-			.then(async result => {
-				const parsed = await Editor["~standard"].validate(result.mod)
-				if (parsed.issues) {
-					console.error(parsed.issues)
-					throw new Error("document doesn't look like an editor")
-				}
-				const editor = {...(result.mod as StoredEditor)}
-				delete (editor as Partial<Editor>).render
-				editor.bytes = result.bytes
-				editor.type = "editor"
-
-				if (fileHandle.doc()!.storedURL) {
-					return repo
-						.find<StoredEditor>(fileHandle.doc()!.storedURL!)
-						.then(async handle => {
-							handle.change(doc => {
-								doc.bytes = editor.bytes
-							})
-							const homeHandle = await repo.findClassic<Home>(homeURL())
-							homeHandle.change(home => {
-								if (![...home.editors].includes(handle.url)) {
-									home.editors.push(handle.url)
-								}
-							})
-						})
-				}
-
-				const url = repo.create(editor).url
-				fileHandle.change(file => {
-					file.storedURL = url
-				})
-			})
-	})
-}
-
 export default function DockTab(props: {url: DocumentURL}) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const dockAPI = useDockAPI()
@@ -208,15 +74,39 @@ export default function DockTab(props: {url: DocumentURL}) {
 
 	const editorDisplayName = () =>
 		editor().isOk
-			? (editor() as Ok<Editor, Error>).value.displayName
+			? (editor() as Ok<Editor<unknown>, Error>).value.displayName
 			: undefined
 
 	const editorID = () =>
-		editor().isOk ? (editor() as Ok<Editor, Error>).value.id : undefined
+		editor().isOk
+			? (editor() as Ok<Editor<unknown>, Error>).value.id
+			: undefined
 
 	const owner = getOwner()
 	const openDocument = (url: DocumentURL) =>
 		runWithOwner(owner, () => dockAPI.openDocument(url))
+
+	const fileMenu = () => {
+		const ed = editor()
+		if (ed.isOk) {
+			if (ed.value.getFileMenu) {
+				return ed.value.getFileMenu()
+			}
+		}
+	}
+
+	const publisherRegistry = usePublisherRegistry()
+
+	const publishers = () => {
+		const entrY = entry()
+		if (entrY) {
+			return Object.groupBy(
+				publisherRegistry.publishers(entrY),
+				x => x.category ?? "other"
+			)
+		}
+		return {}
+	}
 
 	return (
 		<Suspense>
@@ -280,7 +170,75 @@ export default function DockTab(props: {url: DocumentURL}) {
 							onSelect={() => navigator.clipboard.writeText(props.url)}>
 							copy url
 						</ContextMenu.Item>
-						<ContextMenu.Separator />
+						<Show
+							when={
+								entry() && file() && Object.keys(publishers()).length
+							}>
+							<For each={Object.entries(publishers())}>
+								{([category, publishers]) => {
+									if (category == "other") {
+										return (
+											<For each={publishers}>
+												{publisher => {
+													console.log("other", {
+														category,
+														publisher,
+													})
+													return (
+														<ContextMenu.Item
+															class="pop-menu__item"
+															onSelect={() => {
+																publisher.publish({
+																	entry: entry()!,
+																	handle: fileHandle()!,
+																})
+															}}>
+															{publisher.displayName}
+														</ContextMenu.Item>
+													)
+												}}
+											</For>
+										)
+									} else {
+										return (
+											<ContextMenu.Sub overlap gutter={-10}>
+												<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
+													{category}
+													<div class="pop-menu__item-right-slot">
+														<Icon name="alt-arrow-right-linear" />
+													</div>
+												</ContextMenu.SubTrigger>
+												<ContextMenu.Portal>
+													<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
+														<For each={publishers}>
+															{publisher => {
+																console.log({
+																	category,
+																	publisher,
+																})
+																return (
+																	<ContextMenu.Item
+																		class="pop-menu__item"
+																		onSelect={() => {
+																			publisher.publish({
+																				entry: entry()!,
+																				handle:
+																					fileHandle()!,
+																			})
+																		}}>
+																		{publisher.displayName}
+																	</ContextMenu.Item>
+																)
+															}}
+														</For>
+													</ContextMenu.SubContent>
+												</ContextMenu.Portal>
+											</ContextMenu.Sub>
+										)
+									}
+								}}
+							</For>
+						</Show>
 						<Show when={!home()?.files.includes(docinfo().url)}>
 							<ContextMenu.Item
 								class="pop-menu__item"
@@ -300,9 +258,10 @@ export default function DockTab(props: {url: DocumentURL}) {
 							currentEditorID={editorID()}
 							openDocument={url => openDocument(url)}
 						/>
-						<Show when={entry() && file()}>
-							<DataDrivenContextMenu
-								items={fileActions}
+						<Show when={entry() && file() && fileMenu()?.length}>
+							<ContextMenu.Separator class="pop-menu__separator" />
+							<FileContextMenu
+								items={fileMenu()!}
 								entry={entry as Accessor<Entry>}
 								file={file as Accessor<Doc<unknown>>}
 								fileHandle={fileHandle()!}
@@ -313,98 +272,4 @@ export default function DockTab(props: {url: DocumentURL}) {
 			</ContextMenu>
 		</Suspense>
 	) as HTMLElement
-}
-
-export function DataDrivenContextMenu(props: {
-	items: typeof fileActions
-	entry: Accessor<Entry>
-	file: Accessor<Doc<unknown>>
-	fileHandle: DocHandle<unknown>
-}) {
-	const when = (fn?: (opts: {entry: Entry; file: Doc<unknown>}) => boolean) =>
-		fn ? fn({entry: props.entry(), file: props.file()}) : true
-
-	return (
-		<For each={props.items}>
-			{fileAction => (
-				<Switch>
-					<Match
-						when={fileAction.type == "action" && when(fileAction.when)}>
-						<ContextMenu.Item
-							class="pop-menu__item"
-							onSelect={() =>
-								(fileAction as FileActionAction).action!({
-									fileHandle: props.fileHandle,
-								})
-							}>
-							{(fileAction as FileActionAction).label}
-						</ContextMenu.Item>
-					</Match>
-
-					<Match when={fileAction.type == "sub" && when(fileAction.when)}>
-						<ContextMenu.Sub overlap gutter={-10}>
-							<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
-								{(fileAction as FileActionSub).label}
-
-								<div class="pop-menu__item-right-slot">
-									<Icon name="alt-arrow-right-linear" />
-								</div>
-							</ContextMenu.SubTrigger>
-
-							<ContextMenu.Portal>
-								<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
-									<DataDrivenContextMenu
-										items={(fileAction as FileActionSub).sub}
-										entry={props.entry}
-										file={props.file}
-										fileHandle={props.fileHandle}
-									/>
-								</ContextMenu.SubContent>
-							</ContextMenu.Portal>
-						</ContextMenu.Sub>
-					</Match>
-
-					<Match when={fileAction.type == "radio-group"}>
-						<ContextMenu.RadioGroup
-							value={(fileAction as FileActionRadioGroup).value({
-								file: props.file() as CodeFile,
-							})}
-							onChange={value =>
-								(fileAction as FileActionRadioGroup).action!({
-									fileHandle: props.fileHandle,
-									value,
-								})
-							}>
-							<For each={(fileAction as FileActionRadioGroup).choices}>
-								{choice => (
-									<ContextMenu.RadioItem
-										value={choice.value}
-										class="pop-menu__radio-item">
-										<ContextMenu.ItemIndicator class="pop-menu__item-indicator">
-											<Icon name="check-square-bold" />
-										</ContextMenu.ItemIndicator>
-										{choice.label}
-									</ContextMenu.RadioItem>
-								)}
-							</For>
-						</ContextMenu.RadioGroup>
-					</Match>
-				</Switch>
-			)}
-		</For>
-	)
-}
-
-const wasm = await import("esbuild-wasm/esbuild.wasm?url")
-
-await esbuild.initialize({
-	wasmURL: wasm.default,
-})
-
-async function compile(text: string) {
-	const result = await esbuild.transform(text, {
-		loader: "ts",
-		target: "esnext",
-	})
-	return result.code
 }

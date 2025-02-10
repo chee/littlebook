@@ -31,7 +31,6 @@ const [homeURL, setHomeURL] = makePersisted(
 				name: "home",
 				importers: [],
 				publishers: [],
-				// todo automatically populate with repo.on("document")
 				editors: [],
 				treeviewers: [],
 				tabviewers: [],

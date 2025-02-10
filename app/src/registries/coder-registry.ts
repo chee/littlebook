@@ -10,6 +10,7 @@ import {
 	Coder,
 } from "@pointplace/schemas"
 import type {StandardSchemaV1} from "@standard-schema/spec"
+import {useContentTypeRegistry} from "./content-type-registry.ts"
 
 export class CoderRegistry extends Registry<StoredCoder, Coder> {
 	constructor({repo}: {repo: Repo}) {
@@ -17,7 +18,7 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 			repo,
 			schema: Coder,
 			storedSchema: StoredCoder,
-			name: "coder",
+			type: "coder",
 		})
 
 		for (const coder of defaultCoders) {
@@ -58,7 +59,6 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 	}
 }
 
-// todo i forgot about async coders again
 const text = (
 	inferCoder(TextShape)["~standard"].validate({
 		id: "text",
@@ -104,11 +104,12 @@ const code = (
 		},
 		async fromFile(file) {
 			const bytes = new Uint8Array(await file.arrayBuffer())
-			const content = this.fromBytes(bytes)
+			const content = await this.fromBytes(bytes)
 
 			if (!content.ok) {
 				return content
 			}
+			console.log(file.type)
 
 			return {
 				ok: true,
@@ -119,7 +120,10 @@ const code = (
 			}
 		},
 		new() {
-			return {text: "# my file", language: "javascript"}
+			return {
+				text: `function hello() {\n\treturn "world"\n}`,
+				language: "javascript",
+			}
 		},
 	} satisfies Coder<typeof CodeShape>) as StandardSchemaV1.SuccessResult<
 		Coder<typeof CodeShape>
@@ -141,7 +145,7 @@ const markdown = (
 		},
 		async fromFile(file) {
 			const bytes = new Uint8Array(await file.arrayBuffer())
-			const content = this.fromBytes(bytes)
+			const content = await this.fromBytes(bytes)
 
 			if (!content.ok) {
 				return content

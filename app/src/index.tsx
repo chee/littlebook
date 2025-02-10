@@ -43,7 +43,10 @@ import {
 import repo from "./repo/create.ts"
 import {RepoContext} from "solid-automerge"
 import {createRoot} from "solid-js"
-import {PublisherRegistry} from "./registries/publisher-registry.ts"
+import {
+	PublisherRegistry,
+	PublisherRegistryContext,
+} from "./registries/publisher-registry.ts"
 import PluginAPI, {PluginAPIContext} from "./plugins/plugin-api.ts"
 
 createRoot(() => {
@@ -63,11 +66,13 @@ createRoot(() => {
 			<ContentTypeRegistryContext.Provider value={contentTypeRegistry}>
 				<CoderRegistryContext.Provider value={coderRegistry}>
 					<EditorRegistryContext.Provider value={editorRegistry}>
-						<RepoContext.Provider value={repo}>
-							<PluginAPIContext.Provider value={pluginAPI}>
-								<App />
-							</PluginAPIContext.Provider>
-						</RepoContext.Provider>
+						<PublisherRegistryContext.Provider value={publisherRegistry}>
+							<RepoContext.Provider value={repo}>
+								<PluginAPIContext.Provider value={pluginAPI}>
+									<App />
+								</PluginAPIContext.Provider>
+							</RepoContext.Provider>
+						</PublisherRegistryContext.Provider>
 					</EditorRegistryContext.Provider>
 				</CoderRegistryContext.Provider>
 			</ContentTypeRegistryContext.Provider>
