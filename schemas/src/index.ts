@@ -1,3 +1,4 @@
+export * from "./filemenu.js"
 export * from "./coder.js"
 export * from "./content-type.js"
 export * from "./editor.js"

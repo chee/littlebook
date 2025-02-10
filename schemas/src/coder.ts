@@ -1,5 +1,5 @@
 import {z, type ZodTypeAny} from "zod"
-import {bytes, result, stored} from "./util.js"
+import {bytes, maybePromise, result, stored} from "./util.js"
 
 export const CoderMetadata = z.object({
 	id: z.string(),
@@ -16,7 +16,10 @@ export type CoderMetadata = z.infer<typeof CoderMetadata>
 export function inferCoder<T extends ZodTypeAny>(schema: T) {
 	return z
 		.object({
-			fromBytes: z.function().args(bytes).returns(result(schema)),
+			fromBytes: z
+				.function()
+				.args(bytes)
+				.returns(maybePromise(result(schema))),
 
 			toBytes: z.function().args(schema).returns(result(bytes)),
 

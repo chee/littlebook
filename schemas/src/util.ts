@@ -32,3 +32,7 @@ export const err = z.object({
 export function result<T extends ZodTypeAny>(schema: T) {
 	return z.discriminatedUnion("ok", [ok(schema), err])
 }
+
+export function maybePromise<T extends ZodTypeAny>(schema: T) {
+	return z.union([schema, z.promise(schema)] as const)
+}

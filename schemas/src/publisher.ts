@@ -2,12 +2,13 @@ import {DocHandle} from "@automerge/automerge-repo"
 import {Entry} from "./entry.js"
 import {stored} from "./util.js"
 import {z} from "zod"
+import {stdSchema} from "./standard.js"
 
 export const PublisherMetadata = z.object({
 	id: z.string(),
 	displayName: z.string(),
 	contentTypes: z.union([z.array(z.string()), z.literal("*")]),
-	category: z.enum(["export"]).optional(),
+	category: z.enum(["export", "reïmport"]).optional(),
 })
 
 export const Publisher = z
@@ -22,6 +23,7 @@ export const Publisher = z
 				})
 			)
 			.returns(z.promise(z.void())),
+		schema: stdSchema(z.unknown()).optional(),
 	})
 	.extend(PublisherMetadata.shape)
 
