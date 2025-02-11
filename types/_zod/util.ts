@@ -1,5 +1,5 @@
 import {AutomergeUrl, isValidAutomergeUrl} from "@automerge/automerge-repo"
-import {z, type ZodObject, type ZodTypeAny} from "zod"
+import {z, type ZodTypeAny} from "zod"
 
 export const automergeURL = z.custom<AutomergeUrl>(isValidAutomergeUrl)
 
@@ -31,8 +31,4 @@ export const err = z.object({
 
 export function result<T extends ZodTypeAny>(schema: T) {
 	return z.discriminatedUnion("ok", [ok(schema), err])
-}
-
-export function maybePromise<T extends ZodTypeAny>(schema: T) {
-	return z.union([schema, z.promise(schema)] as const)
 }
