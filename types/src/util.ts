@@ -72,6 +72,7 @@ export function ok<T extends v.GenericSchema>(schema: T) {
 
 export const err = v.object({
 	ok: v.literal(false),
+	err: v.instance(Error),
 })
 
 export function result<T extends v.GenericSchema>(schema: T) {
