@@ -166,10 +166,6 @@ export default function DockTab(props: {url: DocumentURL}) {
 										return (
 											<For each={publishers}>
 												{publisher => {
-													console.log("other", {
-														category,
-														publisher,
-													})
 													return (
 														<ContextMenu.Item
 															class="pop-menu__item"
@@ -198,10 +194,6 @@ export default function DockTab(props: {url: DocumentURL}) {
 													<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
 														<For each={publishers}>
 															{publisher => {
-																console.log({
-																	category,
-																	publisher,
-																})
 																return (
 																	<ContextMenu.Item
 																		class="pop-menu__item"

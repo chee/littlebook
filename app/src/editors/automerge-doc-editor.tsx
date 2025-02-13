@@ -20,10 +20,8 @@ import {
 } from "@tanstack/solid-table"
 
 function StringEditor(props: {value: string; change: (value: string) => void}) {
-	console.log("i am being recreated!")
 	return (
 		<textarea
-			type="text"
 			value={props.value}
 			oninput={event => props.change(event.currentTarget.value)}
 		/>
@@ -76,7 +74,7 @@ function AutomergeEditor(props: {
 								: value() instanceof Uint8Array
 									? "uint8array"
 									: typeof value()
-					createEffect(() => console.log(type()))
+
 					return (
 						<tr
 							class={`automerge-editor__row automerge-editor__row--${type()}`}>
