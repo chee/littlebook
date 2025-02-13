@@ -22,6 +22,7 @@ import {useContentTypeRegistry} from "../../registries/content-type-registry.ts"
 import {createStore} from "solid-js/store"
 import type {Entry} from "@pointplace/types"
 import repo from "../../repo/create.ts"
+import {updateText} from "@automerge/automerge-repo"
 
 const log = window.log.extend("file-viewer")
 
@@ -119,10 +120,13 @@ export default function FileViewer(props: {
 						<Dynamic
 							component={editor()!.render}
 							handle={fileHandle()!}
-							updateName={(name: string) => {
-								log("setting name", name)
-								entryHandle()?.change(entry => (entry.name = name))
-							}}
+							// todo maybe an `updateIndex` for search
+							// but maybe that's the content-type's job
+							updateName={(name: string) =>
+								entryHandle()?.change(entry =>
+									updateText(entry, ["name"], name)
+								)
+							}
 							updateStatusItems={updateStatusItems}
 							onMount={(fn: () => void) => {
 								onMount(fn)

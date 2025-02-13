@@ -11,7 +11,6 @@ import "./document-list.css"
 import {useDocument} from "solid-automerge"
 import {useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
-import {useContentTypeRegistry} from "../../../registries/content-type-registry.ts"
 import OpenWithContextMenu from "../../../dock/open-with.tsx"
 import type {DocumentURL, OpenDocumentOptions} from "../../../dock/dock-api.ts"
 import Icon from "../../icons/icon.tsx"
@@ -131,6 +130,7 @@ export default function DocumentList(props: {
 	)
 }
 
+// todo pass down remove() and move()
 interface DocumentListItemProps {
 	url: DocumentURL
 	openDocument(url: DocumentURL, opts?: OpenDocumentOptions): void

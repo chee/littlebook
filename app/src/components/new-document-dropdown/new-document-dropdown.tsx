@@ -117,8 +117,8 @@ export default function NewDocumentMenu(props: {
 							}
 
 							if (coder) {
-								const content = await coder.fromFile(computerFile)
-								if (content.ok) {
+								const content = await coder.fromFile?.(computerFile)
+								if (content?.ok) {
 									props.create({
 										name:
 											computerFileHandle.name ??
@@ -127,7 +127,7 @@ export default function NewDocumentMenu(props: {
 										contentType: coder.contentType,
 										creator: coder.id,
 									})
-								} else {
+								} else if (content && !content.ok) {
 									console.error(content.err)
 									alert("failed to import file")
 								}

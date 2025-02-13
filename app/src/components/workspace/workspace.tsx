@@ -74,6 +74,7 @@ const Workspace: ParentComponent<{
 			dockAPI.openDocument(loadhash)
 		}
 	}
+
 	return (
 		<section class="workspace">
 			<Resizable sizes={props.sizes} onSizesChange={props.setSizes}>

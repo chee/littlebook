@@ -1,5 +1,5 @@
 import {type AutomergeUrl} from "@automerge/automerge-repo"
-import {createEffect, getOwner, runWithOwner, Show} from "solid-js"
+import {getOwner, runWithOwner, Show} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import "./document-list.css"
 import {createEntry} from "../../../repo/home.ts"
@@ -14,15 +14,12 @@ import type {Entry} from "@pointplace/types"
 export default function DocumentListWidget(props: {
 	url: AutomergeUrl | DocumentURL
 }) {
-	const [rootEntry, rootEntryHandle] = useDocument<Entry>(() => props.url)
+	const [rootEntry] = useDocument<Entry>(() => props.url)
 	const [root, rootHandle] = useDocument<{
 		files: AutomergeUrl[]
 	}>(() => rootEntry()?.url)
 	const owner = getOwner()
 	const dockAPI = useDockAPI()
-	createEffect(() => {
-		console.log({...root()})
-	})
 
 	const contentTypes = useContentTypeRegistry()
 
