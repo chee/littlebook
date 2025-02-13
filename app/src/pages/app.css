@@ -167,7 +167,7 @@ ctx */
 .dock-watermark {
 	height: 100%;
 	width: 100%;
-	background: linear-gradient(
+	/* background: linear-gradient(
 		to bottom right,
 		orange,
 		yellow,
@@ -181,5 +181,6 @@ ctx */
 		var(--blue-crayola),
 		var(--carribean-current),
 		var(--chili)
-	);
+	); */
+	background: #e9d6ec;
 }

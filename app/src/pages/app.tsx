@@ -1,4 +1,4 @@
-import {createSignal, getOwner, runWithOwner} from "solid-js"
+import {createSignal, onCleanup} from "solid-js"
 import "./app.css"
 import {type ContextValue} from "corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
@@ -13,7 +13,9 @@ import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import {useEditorRegistry} from "../registries/editor-registry.ts"
 import markdownPreview from "../editors/markdown-preview.tsx"
 import automergeDocEditor from "../editors/automerge-doc-editor.tsx"
-
+import milkdown from "@pointplace/milkdown"
+import Modmask from "../lib/modmask.ts"
+import {createKeybinding} from "solid-hotkeys"
 export default function App() {
 	const [resizableContext, setResizableContext] = createSignal<ContextValue>()
 
@@ -29,9 +31,11 @@ export default function App() {
 	)
 	*/
 
+	// todo use plugin registry
 	editorRegistry.register(codemirror)
 	editorRegistry.register(markdownPreview)
 	editorRegistry.register(automergeDocEditor)
+	editorRegistry.register(milkdown)
 
 	const defaultSizes = [0.2, 0.8]
 
@@ -63,6 +67,16 @@ export default function App() {
 			resizableContext()?.collapse(0, "following")
 		}
 	}
+
+	createKeybinding("command+backslash", toggleLeftSidebar)
+
+	function onkeydown(event: KeyboardEvent) {
+		const modmask = new Modmask(event)
+		if (modmask.only.meta && event.key == "\\") toggleLeftSidebar()
+	}
+
+	window.addEventListener("keydown", onkeydown)
+	onCleanup(() => window.removeEventListener("keydown", onkeydown))
 
 	const [lastLeftSidebarExpandedSize, setLastLeftSidebarExpandedSize] =
 		createSignal(defaultSizes[0])
