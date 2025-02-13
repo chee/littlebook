@@ -4,6 +4,7 @@ import {FileMenu} from "./filemenu.js"
 import * as v from "valibot"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 
+// todo pass a `adoptStylesheet` or `addCSS(string)`
 // todo pass a `callCommand`
 export interface EditorAPI<Shape> {
 	handle: DocHandle<Shape>
