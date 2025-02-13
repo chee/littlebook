@@ -4,6 +4,7 @@ import rehypeStarryNight from "rehype-starry-night"
 import rehypeReact from "rehype-react"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
+import gfm from "remark-gfm"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
 import {MarkdownShape, type Editor} from "@pointplace/types"
@@ -11,6 +12,7 @@ import type {StandardSchemaV1} from "@standard-schema/spec"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 
 const markdown = await unified()
+	.use(gfm)
 	.use(remarkParse)
 	.use(remarkRehype)
 	.use(rehypeStarryNight)
@@ -25,8 +27,8 @@ const markdown = await unified()
 type Markdown = StandardSchemaV1.InferOutput<typeof MarkdownShape>
 
 export default {
-	displayName: "markdown preview",
-	id: "markdown-preview",
+	displayName: "github preview",
+	id: "markdown-github-preview",
 	contentTypes: ["public.markdown"],
 	render(props) {
 		// eslint-disable-next-line solid/reactivity
