@@ -58,7 +58,7 @@ const [homeEntryURL, setHomeEntryURL] = makePersisted(
 						}).url,
 					],
 				},
-			})
+			}).url
 	),
 	{
 		storage: localStorage,
@@ -82,7 +82,7 @@ export function createEntry<T>(opts: {
 		type: "file",
 		name: opts.name,
 		contentType: opts.contentType,
-		icon: opts.icon,
+		icon: opts.icon ?? "",
 		url: repo.create(opts.content).url,
 	})
 }
