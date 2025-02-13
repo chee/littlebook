@@ -9,20 +9,23 @@ import {
 } from "@codemirror/language"
 import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
-import {Editor, type EditorAPI, type FileMenu} from "@pointplace/types"
+import {
+	CodeShape,
+	Editor,
+	type EditorAPI,
+	type FileMenu,
+	type TextShape,
+} from "@pointplace/types"
 import * as v from "valibot"
 import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/automerge-repo"
+import type {DocHandleChangePayload} from "@automerge/automerge-repo/slim"
 
 export const id = "codemirror"
 export const displayName = "codemirror"
 
 export const contentTypes = ["public.text", "public.code"]
 
-const schema = v.object({
-	text: v.string(),
-	language: v.optional(v.string()),
-	storedURL: v.optional(v.custom<AutomergeUrl>(isValidAutomergeUrl)),
-})
+const schema = CodeShape
 
 type CodemirrorFile = v.InferOutput<typeof schema>
 
@@ -155,14 +158,12 @@ export function render(
 
 	onlang()
 
-	props.handle.on("change", change => {
-		console.log(change.patches)
+	function onchange(change: DocHandleChangePayload<CodeShape>) {
 		if (
 			change.patches.some(patch => {
 				return patch.path[0] == "language"
 			})
 		) {
-			console.log("language changed")
 			onlang()
 		}
 		const doc = change.patchInfo.after
@@ -176,10 +177,12 @@ export function render(
 				props.updateName("untitled")
 			}
 		}
-	})
+	}
+
+	props.handle.on("change", onchange)
 
 	props.onCleanup(() => {
-		props.handle.off("change", onlang)
+		props.handle.off("change", onchange)
 		view.destroy()
 	})
 
