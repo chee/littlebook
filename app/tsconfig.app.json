@@ -30,9 +30,9 @@
 	},
 	"include": [
 		"src",
-		"../schemas/src/coder.ts",
-		"../schemas/src/editor.ts",
-		"../schemas/src/publisher.ts",
-		"../schemas/src/viewer.ts"
+		"../types/src/coder.ts",
+		"../types/src/editor.ts",
+		"../types/src/publisher.ts",
+		"../types/src/viewer.ts"
 	]
 }

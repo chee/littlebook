@@ -5,7 +5,7 @@ import {makePersisted} from "@solid-primitives/storage"
 import PageHeader from "../components/page-header/page-header.tsx"
 import Icon from "../components/icons/icon.tsx"
 import FileViewer from "../components/editor/editor.tsx"
-import {Dock, DockProvider, type DockAPI} from "../dock/dock.tsx"
+import {Dock, DockProvider} from "../dock/dock.tsx"
 import DockTab from "../dock/dock-tab.tsx"
 import Workspace from "../components/workspace/workspace.tsx"
 import * as codemirror from "@littlebook/text/codemirror-editor.ts"
@@ -14,8 +14,6 @@ import {useEditorRegistry} from "../registries/editor-registry.ts"
 import markdownPreview from "../editors/markdown-preview.tsx"
 import automergeDocEditor from "../editors/automerge-doc-editor.tsx"
 
-// todo maybe editors should be passed a `setMeta` function and a `meta` object
-// that they own. stored in the entry itself or in the user's home, perhaps
 export default function App() {
 	const [resizableContext, setResizableContext] = createSignal<ContextValue>()
 

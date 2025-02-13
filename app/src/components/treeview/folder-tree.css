@@ -1,0 +1,114 @@
+:root {
+	--folder-tree-indent-size: 1rem;
+	--folder-tree-expander-size: 24px;
+}
+
+.folder-tree {
+	header {
+		justify-content: space-between;
+		padding-left: calc(var(--folder-tree-indent));
+	}
+
+	> header .folder-tree-folder-name {
+		font-weight: 700;
+	}
+
+	button {
+		padding: 0;
+	}
+}
+
+.folder-tree-folder-name {
+	font-weight: 600;
+	letter-spacing: -0.5px;
+}
+
+.folder-tree-file-name {
+	font-weight: 500;
+	letter-spacing: -0.5px;
+}
+
+.folder-tree-row {
+	&:hover,
+	&.menuing {
+		background-color: var(--color-hover-fill);
+		color: var(--color-hover-line);
+	}
+
+	&.current {
+		background-color: var(--color-current-fill);
+		color: var(--color-current-line);
+	}
+}
+
+.folder-tree header,
+.folder-tree-file {
+	cursor: pointer;
+	display: flex;
+	padding-inline: var(--space-xs);
+	padding-block: 0.5ex;
+}
+
+.folder-tree-folder-name,
+.folder-tree-file-name {
+	/* &::before {
+	// 	content: "";
+	// 	display: block;
+	// 	position: absolute;
+	// 	// translate: -1em;
+	// 	left: 2em;
+	// 	top: 0;
+	// 	width: 1px;
+	// 	height: 4em;
+	// 	background: black;
+	// }*/
+	display: inline-block;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 100%;
+	text-align: left;
+}
+
+.folder-tree ul {
+	position: relative;
+	list-style: none;
+}
+
+.folder-tree-item-name {
+	display: flex;
+	align-items: center;
+}
+.folder-tree-item-name__icon {
+	display: block;
+	width: var(--folder-tree-indent-size);
+	height: var(--folder-tree-indent-size);
+	font-size: var(--folder-tree-indent-size);
+}
+
+.folder-tree-folder
+	> .folder-tree-row
+	.folder-tree-item-name
+	.folder-tree-item-name__icon {
+	margin-left: 2px;
+}
+
+.folder-tree-item-name__name {
+	margin-left: 4px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.folder-tree-expander {
+	height: var(--folder-tree-expander-size);
+	width: calc(var(--folder-tree-expander-size) + 4px);
+	&::before {
+		display: block;
+	}
+	&[aria-pressed="true"]::before {
+		content: "▼";
+	}
+	&[aria-pressed="false"]::before {
+		content: "▶︎";
+	}
+}

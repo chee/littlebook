@@ -1,28 +1,25 @@
-import {type Repo} from "@automerge/automerge-repo"
+import {type AutomergeUrl, type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
 import {
 	StoredCoder,
-	inferCoder,
 	TextShape,
 	CodeShape,
 	MarkdownShape,
-	Coder,
-} from "@pointplace/schemas"
-import type {StandardSchemaV1} from "@standard-schema/spec"
-import {useContentTypeRegistry} from "./content-type-registry.ts"
+	type Coder,
+} from "@pointplace/types"
+import type {FolderShape} from "./content-type-registry.ts"
 
 export class CoderRegistry extends Registry<StoredCoder, Coder> {
 	constructor({repo}: {repo: Repo}) {
 		super({
 			repo,
-			schema: Coder,
 			storedSchema: StoredCoder,
 			type: "coder",
 		})
 
 		for (const coder of defaultCoders) {
-			this.register(coder)
+			this.register(coder as Coder<unknown>)
 		}
 	}
 
@@ -59,115 +56,136 @@ export class CoderRegistry extends Registry<StoredCoder, Coder> {
 	}
 }
 
-const text = (
-	inferCoder(TextShape)["~standard"].validate({
-		id: "text",
-		displayName: "plain text",
-		contentType: "public.text",
-		mimeTypes: ["text/plain"],
-		fromBytes(bytes: Uint8Array) {
-			try {
-				return {ok: true, val: {text: new TextDecoder().decode(bytes)}}
-			} catch (error) {
-				return {ok: false, err: error as Error}
-			}
-		},
-		toBytes(content: {text: string}) {
-			try {
-				return {ok: true, val: new TextEncoder().encode(content.text)}
-			} catch (error) {
-				return {ok: false, err: error as Error}
-			}
-		},
-		async fromFile(file) {
-			const bytes = new Uint8Array(await file.arrayBuffer())
-			return this.fromBytes(bytes)
-		},
-		new() {
-			return {text: ""}
-		},
-	} satisfies Coder<typeof TextShape>) as StandardSchemaV1.SuccessResult<
-		Coder<typeof TextShape>
-	>
-).value
+const folder: Coder<FolderShape> = {
+	id: "folder",
+	displayName: "folder",
+	contentType: "public.folder",
+	fromBytes() {
+		return {
+			ok: false,
+			err: new Error("we don't think about folders as bytes"),
+		}
+	},
+	toBytes() {
+		return {
+			ok: false,
+			err: new Error("we don't think about folders as bytes"),
+		}
+	},
+	new() {
+		return {
+			files: [] as AutomergeUrl[],
+		}
+	},
+}
 
-const code = (
-	inferCoder(CodeShape)["~standard"].validate({
-		id: "code",
-		displayName: "computer code",
-		contentType: "public.code",
-		fromBytes(bytes: Uint8Array) {
-			return text.fromBytes(bytes)
-		},
-		toBytes(value: {text: string}) {
-			return text.toBytes(value)
-		},
-		async fromFile(file) {
-			const bytes = new Uint8Array(await file.arrayBuffer())
-			const content = await this.fromBytes(bytes)
+const text: Coder<TextShape> = {
+	id: "text",
+	displayName: "plain text",
+	contentType: "public.text",
+	fromBytes(bytes: Uint8Array) {
+		try {
+			return {ok: true, val: {text: new TextDecoder().decode(bytes)}}
+		} catch (error) {
+			return {ok: false, err: error as Error}
+		}
+	},
+	toBytes(content: {text: string}) {
+		try {
+			return {ok: true, val: new TextEncoder().encode(content.text)}
+		} catch (error) {
+			return {ok: false, err: error as Error}
+		}
+	},
+	// todo maybe fromFile and new should return [file, entry]
+	async fromFile(file) {
+		const bytes = new Uint8Array(await file.arrayBuffer())
+		return this.fromBytes(bytes)
+	},
+	new() {
+		return {text: ""}
+	},
+}
 
-			if (!content.ok) {
-				return content
-			}
-			console.log(file.type)
+const code: Coder<CodeShape> = {
+	id: "code",
+	displayName: "computer code",
+	contentType: "public.code",
+	fromBytes(bytes: Uint8Array) {
+		return text.fromBytes(bytes)
+	},
+	toBytes(value: {text: string}) {
+		return text.toBytes(value)
+	},
+	async fromFile(file) {
+		const bytes = new Uint8Array(await file.arrayBuffer())
+		// this await is on purpose
+		const content = await this.fromBytes(bytes)
 
+		if (!content.ok) {
+			return content
+		}
+
+		return {
+			ok: true,
+			val: {
+				text: content.val.text,
+				language: file.type.slice(file.type.indexOf("/") + 1),
+			},
+		}
+	},
+	new() {
+		return {
+			text: `function hello() {\n\treturn "world"\n}`,
+			language: "javascript",
+		}
+	},
+}
+
+const markdown: Coder<MarkdownShape> = {
+	id: "markdown",
+	displayName: "markdown",
+	contentType: "public.markdown",
+	filePatterns: ["*.md", "*.markdown"],
+	mimeTypes: ["text/markdown"],
+	fromBytes(bytes: Uint8Array) {
+		try {
 			return {
 				ok: true,
 				val: {
-					text: content.val.text,
-					language: file.type.slice(file.type.indexOf("/") + 1),
-				},
-			}
-		},
-		new() {
-			return {
-				text: `function hello() {\n\treturn "world"\n}`,
-				language: "javascript",
-			}
-		},
-	} satisfies Coder<typeof CodeShape>) as StandardSchemaV1.SuccessResult<
-		Coder<typeof CodeShape>
-	>
-).value
-
-const markdown = (
-	inferCoder(MarkdownShape)["~standard"].validate({
-		id: "markdown",
-		displayName: "markdown",
-		contentType: "public.markdown",
-		filePatterns: ["*.md", "*.markdown"],
-		mimeTypes: ["text/markdown"],
-		fromBytes(bytes: Uint8Array) {
-			return text.fromBytes(bytes)
-		},
-		toBytes(value: {text: string}) {
-			return text.toBytes(value)
-		},
-		async fromFile(file) {
-			const bytes = new Uint8Array(await file.arrayBuffer())
-			const content = await this.fromBytes(bytes)
-
-			if (!content.ok) {
-				return content
-			}
-
-			return {
-				ok: true,
-				val: {
-					text: content.val.text,
+					text: new TextDecoder().decode(bytes),
 					language: "markdown",
 				},
 			}
-		},
-		new() {
-			return {text: "", language: "markdown"}
-		},
-	} satisfies Coder<typeof CodeShape>) as StandardSchemaV1.SuccessResult<
-		Coder<typeof CodeShape>
-	>
-).value
+		} catch (error) {
+			return {ok: false, err: error as Error}
+		}
+	},
+	toBytes(value: {text: string}) {
+		return text.toBytes(value)
+	},
+	async fromFile(file) {
+		const bytes = new Uint8Array(await file.arrayBuffer())
+		const content = await this.fromBytes(bytes)
 
-const defaultCoders = [text, code, markdown]
+		if (!content.ok) {
+			return content
+		}
+
+		return {
+			ok: true,
+			val: {
+				text: content.val.text,
+				language: "markdown",
+			},
+		}
+	},
+	new() {
+		return {text: "", language: "markdown"}
+	},
+}
+
+const defaultCoders = [text, code, markdown, folder]
 
 export const CoderRegistryContext = createContext<CoderRegistry>()
 

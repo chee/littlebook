@@ -31,7 +31,7 @@
 	"license": "AGPL-3.0+",
 	"dependencies": {
 		"@codemirror/lang-json": "^6.0.1",
-		"@pointplace/schemas": "workspace:^",
+		"@pointplace/types": "workspace:^",
 		"@tanstack/solid-table": "^8.20.5",
 		"@uiw/codemirror-theme-dracula": "^4.23.0",
 		"@uiw/codemirror-theme-github": "^4.23.0",

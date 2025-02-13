@@ -1,16 +1,16 @@
 import {Show, For, createMemo} from "solid-js"
 import {ContextMenu} from "@kobalte/core"
 import Icon from "../components/icons/icon.tsx"
-import type {DocumentURL} from "./dock-api.ts"
+import type {DocumentURL, OpenDocumentOptions} from "./dock-api.ts"
 import {useEditorRegistry} from "../registries/editor-registry.ts"
 import {useDocument} from "solid-automerge"
 import {parseDocumentURL} from "./dock.tsx"
-import type {Entry} from "@pointplace/schemas"
+import type {Entry} from "@pointplace/types"
 
 export default function OpenWithContextMenu(props: {
 	url: DocumentURL
 	currentEditorID?: string
-	openDocument: (url: DocumentURL) => void
+	openDocument: (url: DocumentURL, opts: OpenDocumentOptions) => void
 }) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
@@ -35,7 +35,12 @@ export default function OpenWithContextMenu(props: {
 									onSelect={() => {
 										const url = new URL(entryHandle()!.url)
 										url.searchParams.set("editor", choice.id)
-										props.openDocument(url.toString() as DocumentURL)
+										props.openDocument(
+											url.toString() as DocumentURL,
+											{
+												side: "right",
+											}
+										)
 									}}
 									disabled={choice.id == props.currentEditorID}
 									class="pop-menu__item">

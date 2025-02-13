@@ -6,7 +6,7 @@ import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
-import {MarkdownShape, type Editor} from "@pointplace/schemas"
+import {MarkdownShape, type Editor} from "@pointplace/types"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 

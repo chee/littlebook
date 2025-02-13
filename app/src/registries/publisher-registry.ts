@@ -1,19 +1,17 @@
 import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
-import {err, ok, type Result} from "true-myth/result"
 import type {ContentTypeRegistry} from "./content-type-registry.ts"
-import {Automerge} from "@automerge/automerge-repo/slim"
+import {Automerge, type AutomergeUrl} from "@automerge/automerge-repo/slim"
 import {
 	Editor,
-	Publisher,
+	type Publisher,
 	StoredPublisher,
 	type Entry,
 	type StoredEditor,
-} from "@pointplace/schemas"
+} from "@pointplace/types"
 import repo from "../repo/create.ts"
-import type {Home} from "../repo/home.ts"
-import homeURL from "../repo/home.ts"
+import {useHome, type Home} from "../repo/home.ts"
 
 export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 	private contentTypeRegistry: ContentTypeRegistry
@@ -29,7 +27,6 @@ export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 			repo,
 			type: "publisher",
 			storedSchema: StoredPublisher,
-			schema: Publisher,
 		})
 		this.contentTypeRegistry = contentTypeRegistry
 		this.register(compileToEditor)
@@ -37,7 +34,7 @@ export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 	}
 
 	*publishers(entry: Entry) {
-		const seen = new Set<Publisher>()
+		const seen = new Set<Publisher<unknown>>()
 		for (const publisher of Object.values(this.records)) {
 			if (publisher.contentTypes.includes(entry.contentType)) {
 				seen.add(publisher)
@@ -46,12 +43,12 @@ export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 		}
 
 		const entryType = this.contentTypeRegistry.get(entry.contentType)
-		if (entryType.isOk && entryType.value.conformsTo) {
+		if (entryType && entryType.conformsTo) {
 			for (const publisher of Object.values(this.records)) {
 				if (
 					Array.isArray(publisher.contentTypes) &&
 					publisher.contentTypes.some(type =>
-						entryType.value.conformsTo?.includes(type)
+						entryType.conformsTo?.includes(type)
 					) &&
 					!seen.has(publisher)
 				) {
@@ -70,13 +67,6 @@ export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 			}
 		}
 	}
-
-	get(id: string): Result<Publisher, Error> {
-		const publisher = this.records[id]
-		return publisher
-			? ok(publisher)
-			: err(new Error(`publisher not found: ${id}`))
-	}
 }
 
 export const PublisherRegistryContext = createContext<PublisherRegistry>()
@@ -89,7 +79,7 @@ export function usePublisherRegistry() {
 	return value
 }
 
-const exportAutomerge: Publisher = {
+const exportAutomerge: Publisher<unknown> = {
 	id: "export-automerge",
 	displayName: "Automerge File",
 	contentTypes: "*",
@@ -103,7 +93,11 @@ const exportAutomerge: Publisher = {
 	},
 }
 
-const compileToEditor: Publisher = {
+const compileToEditor: Publisher<{
+	text: string
+	language: "javascript"
+	storedURL?: AutomergeUrl
+}> = {
 	id: "compile-to-editor",
 	displayName: "Compile to Editor",
 	contentTypes: ["public.code"],
@@ -123,11 +117,13 @@ const compileToEditor: Publisher = {
 				}))
 			})
 			.then(async result => {
-				const parsed = await Editor["~standard"].validate(result.mod)
-				if (parsed.issues) {
-					console.error(parsed.issues)
-					throw new Error("document doesn't look like an editor")
-				}
+				// const parsed = await inferEditor(z.unknown())["~standard"].validate(
+				// 	result.mod
+				// )
+				// if (parsed.issues) {
+				// 	console.error(parsed.issues)
+				// 	throw new Error("document doesn't look like an editor")
+				// }
 				const editor = {...(result.mod as StoredEditor)}
 				delete (editor as Partial<Editor<unknown>>).render
 				editor.bytes = result.bytes
@@ -140,8 +136,8 @@ const compileToEditor: Publisher = {
 							handle.change(doc => {
 								doc.bytes = editor.bytes
 							})
-							const homeHandle = await repo.findClassic<Home>(homeURL())
-							homeHandle.change(home => {
+							const [_home, changeHome] = useHome()
+							changeHome(home => {
 								if (![...home.editors].includes(handle.url)) {
 									home.editors.push(handle.url)
 								}
@@ -153,8 +149,9 @@ const compileToEditor: Publisher = {
 				handle.change(file => {
 					file.storedURL = url
 				})
-				const homeHandle = await repo.findClassic<Home>(homeURL())
-				homeHandle.change(home => {
+				const [_home, changeHome] = useHome()
+
+				changeHome(home => {
 					if (![...home.editors].includes(handle.url)) {
 						home.editors.push(handle.url)
 					}

@@ -1,10 +1,8 @@
 import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
-import {err, ok, type Result} from "true-myth/result"
 import {Registry} from "./registry.ts"
 import {type ContentTypeRegistry} from "./content-type-registry.ts"
-import {Editor, StoredEditor, type Entry} from "@pointplace/schemas"
-import type {StandardSchemaV1} from "@standard-schema/spec"
+import {type Editor, StoredEditor, type Entry} from "@pointplace/types"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class EditorRegistry extends Registry<StoredEditor, Editor<any>> {
@@ -20,7 +18,6 @@ export class EditorRegistry extends Registry<StoredEditor, Editor<any>> {
 		super({
 			repo,
 			storedSchema: StoredEditor,
-			schema: Editor as StandardSchemaV1<Editor<unknown>>,
 			type: "editor",
 		})
 		this.#contentTypeRegistry = contentTypeRegistry
@@ -46,12 +43,12 @@ export class EditorRegistry extends Registry<StoredEditor, Editor<any>> {
 
 		const entryType = this.#contentTypeRegistry.get(entry.contentType)
 
-		if (entryType.isOk && entryType.value.conformsTo) {
+		if (entryType && entryType.conformsTo) {
 			for (const editor of Object.values(this.records)) {
 				if (typeof editor.contentTypes == "string") continue
 				if (
 					editor.contentTypes.some(type =>
-						entryType.value.conformsTo?.includes(type)
+						entryType.conformsTo?.includes(type)
 					) &&
 					!seen.has(editor)
 				) {
@@ -69,9 +66,8 @@ export class EditorRegistry extends Registry<StoredEditor, Editor<any>> {
 		}
 	}
 
-	get<T>(id: string): Result<Editor<T>, Error> {
-		const editor = this.records[id]
-		return editor ? ok(editor) : err(new Error(`editor not found: ${id}`))
+	get<T>(id: string): Editor<T> | undefined {
+		return this.records[id] as Editor<T>
 	}
 }
 

@@ -1,30 +1,17 @@
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
-import {EditorView, lineNumbers, keymap} from "@codemirror/view"
+import {EditorView, lineNumbers} from "@codemirror/view"
 import {Compartment} from "@codemirror/state"
 import {minimalSetup} from "codemirror"
 import {
 	LanguageDescription,
 	indentUnit,
-	language,
 	type LanguageSupport,
 } from "@codemirror/language"
 import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
-import {
-	automergeURL,
-	Editor,
-	type EditorAPI,
-	type Entry,
-	type FileMenuItem,
-	type StoredEditor,
-} from "@pointplace/schemas"
+import {Editor, type EditorAPI, type FileMenu} from "@pointplace/types"
 import * as v from "valibot"
-import {
-	isValidAutomergeUrl,
-	type AutomergeUrl,
-	type DocHandle,
-	type Repo,
-} from "@automerge/automerge-repo"
+import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/automerge-repo"
 
 export const id = "codemirror"
 export const displayName = "codemirror"
@@ -84,7 +71,6 @@ export function render(
 			lineNumbersCompartment.of([]),
 			EditorView.lineWrapping,
 			automergeSyncPlugin({
-				// @ts-expect-error until Automerge 2.0
 				handle: props.handle,
 				path,
 			}),
@@ -217,17 +203,24 @@ export function getFileMenu() {
 						{label: "json", value: "json"},
 					],
 					value(opts) {
-						return (opts.file as CodemirrorFile).language ?? ""
+						return opts.file.language ?? ""
 					},
 					action(opts) {
 						opts.fileHandle.change(file => {
-							;(file as CodemirrorFile).language = opts.value
+							file.language = opts.value
 						})
 					},
 				},
 			],
 		},
-	] satisfies FileMenuItem[]
+	] satisfies FileMenu<CodemirrorFile>
 }
 
-export default {render}
+export default {
+	render,
+	getFileMenu,
+	id,
+	contentTypes,
+	schema,
+	displayName,
+} satisfies Editor<CodemirrorFile>

@@ -1,188 +1,234 @@
-import {type AutomergeUrl, type DocHandle} from "@automerge/automerge-repo"
-import {For, getOwner, runWithOwner, Show} from "solid-js"
-import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
-import repo from "../../../repo/create.ts"
+import {
+	createSignal,
+	For,
+	getOwner,
+	Match,
+	runWithOwner,
+	Show,
+	Switch,
+} from "solid-js"
 import "./document-list.css"
 import {useDocument} from "solid-automerge"
-import {useHome} from "../../../repo/home.ts"
-import {parseDocumentURL, useDockAPI} from "../../../dock/dock.tsx"
+import {useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {useContentTypeRegistry} from "../../../registries/content-type-registry.ts"
 import OpenWithContextMenu from "../../../dock/open-with.tsx"
-import type {DocumentURL} from "../../../dock/dock-api.ts"
+import type {DocumentURL, OpenDocumentOptions} from "../../../dock/dock-api.ts"
 import Icon from "../../icons/icon.tsx"
-import type {Entry} from "@pointplace/schemas"
+import type {Entry} from "@pointplace/types"
+import {Button} from "@kobalte/core/button"
+import type {AutomergeUrl} from "@automerge/automerge-repo"
 
-// todo this should use a generic DocumentList, wrapped with special behaviours
-// and user can pin a folder to the sidebar as a DocumentList
-export default function HomeWidget() {
-	const [home, changeHome] = useHome()
+export function andRemove(url: DocumentURL) {
+	return (doc: {files: AutomergeUrl[]}) => {
+		const files = Array.from(doc.files)
+		const index = files.indexOf(url)
+		if (index > -1) {
+			files.splice(index, 1)
+		}
+	}
+}
 
+// todo update via updateText?
+export function andRename(name: string) {
+	return (doc: {name: string}) => {
+		doc.name = name
+	}
+}
+
+/* //todo
+ * we want a context menu here
+ * you should be able to:
+ *	 - create a new file (or folder)
+ *	 - import a file
+ *	 - open
+ *	 - open to the side
+ *	 - open with
+ *	 - rename
+ *	 - transform (convert to a new file)
+ *	 - save to disk
+ *	 	- as Raw JSON
+ *	 	- as Automerge Document
+ *	 - publish (using Publisher)
+ *	 - export (using Exporter)
+ *   - add to home?
+ */
+
+// todo add drag+drop
+export default function DocumentList(props: {
+	remove(url: DocumentURL): void
+	urls: (AutomergeUrl | DocumentURL)[]
+	depth: number
+	openDocument(url: DocumentURL, opts?: OpenDocumentOptions): void
+}) {
 	const owner = getOwner()
 	const dockAPI = useDockAPI()
 
-	const contentTypes = useContentTypeRegistry()
-	const openDocument = (url: DocumentURL) =>
-		runWithOwner(owner, () => dockAPI.openDocument(url))
+	return (
+		<ul class="document-list" data-depth={props.depth} role="group">
+			<For each={props.urls}>
+				{url => {
+					const [entry, entryHandle] = useDocument<Entry>(url)
+					const [file] = useDocument<unknown>(() => entry()?.url)
+					const pressed = () => dockAPI.isPressed(url)
+					const openDocument = (
+						url: DocumentURL,
+						opts?: OpenDocumentOptions
+					) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
+					function rename(name: string | null) {
+						if (!name) return
+						entryHandle()?.change(andRename(name))
+					}
+
+					return (
+						<li role="treeitem">
+							<ContextMenu>
+								<ContextMenu.Trigger>
+									<Show when={entry() && file()} fallback="">
+										<DocumentListItem
+											depth={props.depth}
+											url={url as DocumentURL}
+											openDocument={openDocument}
+											pressed={pressed()}
+											isFolder={"files" in file()!}
+											rename={rename}
+										/>
+									</Show>
+								</ContextMenu.Trigger>
+								<ContextMenu.Portal>
+									<ContextMenu.Content class="pop-menu__content">
+										<ContextMenu.Item
+											class="pop-menu__item"
+											onSelect={() => {
+												rename(
+													window.prompt(
+														"rename to:",
+														entry()!.name
+													)
+												)
+											}}>
+											rename
+										</ContextMenu.Item>
+										<ContextMenu.Item
+											class="pop-menu__item"
+											onSelect={() => {
+												props.remove(url as DocumentURL)
+											}}>
+											remove
+										</ContextMenu.Item>
+										<OpenWithContextMenu
+											url={url as DocumentURL}
+											openDocument={openDocument}
+										/>
+									</ContextMenu.Content>
+								</ContextMenu.Portal>
+							</ContextMenu>
+						</li>
+					)
+				}}
+			</For>
+		</ul>
+	)
+}
+
+interface DocumentListItemProps {
+	url: DocumentURL
+	openDocument(url: DocumentURL, opts?: OpenDocumentOptions): void
+	pressed: "true" | "false" | "mixed"
+	isFolder: boolean
+	rename(url: DocumentURL, name: string): void
+	depth: number
+}
+
+// todo expand parent when active
+export function DocumentListItem(props: DocumentListItemProps) {
+	return (
+		<Switch>
+			<Match when={props.isFolder}>
+				<DocumentListFolder {...props} />
+			</Match>
+			<Match when={!props.isFolder}>
+				<DocumentListFile {...props} />
+			</Match>
+		</Switch>
+	)
+}
+
+export function DocumentListFile(props: DocumentListItemProps) {
+	const [entry] = useDocument<Entry>(() => props.url)
 
 	return (
-		<div
-			class="sidebar-widget"
-			ondragover={event => {
-				event.preventDefault()
-				console.log(event.dataTransfer?.getData("text/plain"))
-				console.log(event.dataTransfer?.files)
-			}}
-			ondrop={event => {
-				event.preventDefault()
-				if (!event.dataTransfer) return
-				event.dataTransfer.dropEffect = "link"
-				console.log(event.dataTransfer.getData("text/plain"))
-				console.log(event.dataTransfer, event)
-			}}>
-			<header class="sidebar-widget__header">
-				<span>{home()?.name}</span>
-				<div class="sidebar-widget__header-actions">
-					<NewDocumentMenu
-						create={({name, content, contentType}) => {
-							const handle: DocHandle<unknown> = repo.create({
-								type: "file",
-								name,
-								contentType: contentType,
-								icon:
-									contentTypes.get(contentType).unwrapOr({icon: ""})
-										?.icon ?? "",
-								url: repo.create(content).url,
-							} satisfies Entry)
+		<Button
+			class="pop-menu__trigger document-list__button"
+			onclick={() => props.openDocument(props.url)}
+			aria-pressed={props.pressed}>
+			<span class="document-list-item__expander" />
+			<span class="document-list-item__icon">
+				<div
+					style={{
+						"padding-inline-start": props.depth
+							? `calc(${props.depth * 1}ex)`
+							: "",
+					}}
+				/>
+				<Icon icon={entry()?.icon || "solar:document-bold"} />
+			</span>
+			<span class="document-list-item__name">
+				{entry()!.name ?? props.url}
+			</span>
+		</Button>
+	)
+}
 
-							const url = handle.url as AutomergeUrl
-							runWithOwner(owner, () => {
-								dockAPI.openDocument(url)
-								changeHome(home => {
-									home.files.push(url)
-								})
-							})
+export function DocumentListFolder(props: DocumentListItemProps) {
+	const [expanded, setExpanded] = createSignal(false)
+	const toggle = () => setExpanded(expanded => !expanded)
+	const [entry] = useDocument<Entry>(() => props.url)
+	const [folder, folderHandle] = useDocument<{files: AutomergeUrl[]}>(
+		() => entry()?.url
+	)
+
+	return (
+		<>
+			<Button
+				class="pop-menu__trigger document-list__button"
+				onclick={toggle}
+				aria-pressed={props.pressed}>
+				<span class="document-list-item__expander">
+					<Switch>
+						<Match when={expanded()}>
+							<Icon name="alt-arrow-down-bold" />
+						</Match>
+						<Match when={!expanded()}>
+							<Icon name="alt-arrow-right-bold" />
+						</Match>
+					</Switch>
+				</span>
+				<span class="document-list-item__icon">
+					<div
+						style={{
+							"padding-inline-start": props.depth
+								? `calc(${props.depth * 1}ex)`
+								: "",
 						}}
 					/>
+					<Icon icon={entry()?.icon || "solar:folder-bold"} />
+				</span>
+
+				<span class="document-list-item__name">
+					{entry()!.name ?? props.url}
+				</span>
+			</Button>
+			<Show when={folder()}>
+				<div role="group" hidden={!expanded()}>
+					<DocumentList
+						remove={url => folderHandle()!.change(andRemove(url))}
+						urls={folder()!.files as DocumentURL[]}
+						depth={props.depth + 1}
+						openDocument={props.openDocument}
+					/>
 				</div>
-			</header>
-			<div class="sidebar-widget__content">
-				<ul class="document-list">
-					<For each={home()?.files}>
-						{url => {
-							const [doc, handle] = useDocument<Entry>(url)
-							const pressed = () => {
-								if (!dockAPI || !dockAPI.activePanelID) return "false"
-								// move parseDocumentURL features into the api
-								return parseDocumentURL(dockAPI.activePanelID).url ==
-									url
-									? "true"
-									: dockAPI?.panelIDs?.includes(url)
-										? "mixed"
-										: "false"
-							}
-
-							{
-								/* todo
-								 * we want a context menu here
-								 * you should be able to:
-								 *	 - create a new file (or folder)
-								 *	 - import a file
-								 *	 - open
-								 *	 - open to the side
-								 *	 - open with
-								 *	 - rename
-								 *	 - transform (convert to a new file)
-								 *	 - save to disk
-								 *	 	- as Raw JSON
-								 *	 	- as Automerge Document
-								 *	 - publish (using Publisher)
-								 *	 - export (using Exporter)
-								 *   - add to home?
-								 */
-							}
-
-							return (
-								<li style={{width: "100%"}}>
-									<ContextMenu>
-										<ContextMenu.Trigger
-											class="pop-menu__trigger document-list__button"
-											onclick={() =>
-												runWithOwner(owner, () =>
-													dockAPI.openDocument(url)
-												)
-											}
-											ondblclick={() => {
-												const name = window.prompt(
-													"rename to:",
-													doc()!.name
-												)
-												if (name) {
-													handle()?.change(doc => {
-														doc.name = name
-													})
-												}
-											}}
-											aria-pressed={pressed()}>
-											<Show when={doc()} fallback="">
-												<span class="document-list-item__icon">
-													<Icon
-														icon={
-															doc()?.icon ||
-															"solar:document-outline"
-														}
-													/>
-												</span>
-												<span class="document-list-item__name">
-													{doc()!.name ?? url}
-												</span>
-											</Show>
-										</ContextMenu.Trigger>
-										<ContextMenu.Portal>
-											<ContextMenu.Content class="pop-menu__content">
-												<ContextMenu.Item
-													class="pop-menu__item"
-													onSelect={() => {
-														const name = window.prompt(
-															"rename to:",
-															doc()!.name
-														)
-														if (name) {
-															handle()?.change(doc => {
-																doc.name = name
-															})
-														}
-													}}>
-													rename
-												</ContextMenu.Item>
-												<ContextMenu.Item
-													class="pop-menu__item"
-													onSelect={() => {
-														const files = Array.from(
-															home()?.files || []
-														)
-														const index = files.indexOf(url)
-														if (index != -1) {
-															changeHome(home => {
-																home.files.splice(index, 1)
-															})
-														}
-													}}>
-													remove
-												</ContextMenu.Item>
-												<OpenWithContextMenu
-													url={url as DocumentURL}
-													openDocument={openDocument}
-												/>
-											</ContextMenu.Content>
-										</ContextMenu.Portal>
-									</ContextMenu>
-								</li>
-							)
-						}}
-					</For>
-				</ul>
-			</div>
-		</div>
+			</Show>
+		</>
 	)
 }

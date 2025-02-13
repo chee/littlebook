@@ -20,9 +20,8 @@ import {usePerfectEditor} from "./usePerfectEditor.tsx"
 import clsx from "clsx"
 import {useContentTypeRegistry} from "../../registries/content-type-registry.ts"
 import {createStore} from "solid-js/store"
-import type {Entry} from "@pointplace/schemas"
+import type {Entry} from "@pointplace/types"
 import repo from "../../repo/create.ts"
-import {updateFileMenu} from "./filemenu.tsx"
 
 const log = window.log.extend("file-viewer")
 
@@ -34,11 +33,7 @@ export default function FileViewer(props: {
 	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url, {repo})
 	const editor = usePerfectEditor(() => props.url)
 
-	// todo this is `unknown` IRL
-	const [file, fileHandle] = useDocument<{text: string; language?: string}>(
-		() => entry()?.url,
-		{repo}
-	)
+	const [file, fileHandle] = useDocument(() => entry()?.url, {repo})
 
 	/* 	/// todo this doesn't belong here
 	if (entry()?.contentType == "public.text") {
@@ -75,39 +70,17 @@ export default function FileViewer(props: {
 	// 	return file()?.text
 	// })
 
-	const Editor = () =>
-		// todo no
-		editor()?.unwrapOr({
-			render() {
-				return <div />
-			},
-			id: "",
-			contentTypes: [],
-			displayName: "",
-		})
-
-	const [statusItems, updateStatusItems] = createStore([])
-
-	createEffect(() => {
-		log("editor update", Editor()?.id)
-		log("entry url update", entry()?.url)
-	})
+	const [statusItems, updateStatusItems] = createStore([] as string[])
 
 	const contentTypeName = () => {
-		const result = useContentTypeRegistry().get(entry()!.contentType)
-		if (result.isOk && result.value.displayName) {
-			return result.value.displayName
-		} else {
-			return entry()!.contentType
-		}
+		const name = entry()?.contentType
+		return name && useContentTypeRegistry().get(name)?.displayName
 	}
 
 	return (
 		<Suspense>
 			<Show
-				when={
-					entry() && file() && editor() && editor().isOk && fileHandle()
-				}
+				when={entry() && file() && editor() && fileHandle()}
 				fallback={
 					<EditorFallback
 						entry={entry()!}
@@ -144,23 +117,23 @@ export default function FileViewer(props: {
 					}}>
 					<article class="file-viewer__content">
 						<Dynamic
-							component={Editor().render}
-							handle={fileHandle()}
+							component={editor()!.render}
+							handle={fileHandle()!}
 							updateName={(name: string) => {
 								log("setting name", name)
 								entryHandle()?.change(entry => (entry.name = name))
 							}}
 							updateStatusItems={updateStatusItems}
-							updateFileMenu={updateFileMenu}
 							onMount={(fn: () => void) => {
 								onMount(fn)
 							}}
 							onCleanup={(fn: () => void) => {
 								onCleanup(fn)
 							}}
-							registerKeybinding={(key: string) => {}}
-							isActive={() => props.isActive}
-							repo={repo}
+							registerKeybinding={(_key: string) => {
+								return () => {}
+							}}
+							isActive={() => !!props.isActive}
 						/>
 					</article>
 					<footer
@@ -169,7 +142,7 @@ export default function FileViewer(props: {
 							props.isActive && "file-viewer-status-bar--active"
 						)}>
 						<span class="file-viewer-status-bar__editor-name">
-							{Editor().displayName}
+							{editor()?.displayName}
 						</span>
 						<span class="file-viewer-status-bar__content-type">
 							{contentTypeName()}

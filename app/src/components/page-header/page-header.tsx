@@ -3,7 +3,7 @@ import "./page-header.css"
 import Icon from "../icons/icon.tsx"
 import {Button} from "@kobalte/core/button"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
-import homeURL from "../../repo/home.ts"
+import {homeEntryURL} from "../../repo/home.ts"
 
 /*
 // todo
@@ -59,7 +59,7 @@ export default function PageHeader(props: {
 							<DropdownMenu.Item
 								class="pop-menu__item"
 								onSelect={() => {
-									navigator.clipboard.writeText(homeURL())
+									navigator.clipboard.writeText(homeEntryURL())
 								}}>
 								copy home url
 							</DropdownMenu.Item>
@@ -68,9 +68,9 @@ export default function PageHeader(props: {
 								onSelect={() => {
 									const home = window.prompt(
 										"paste home URL",
-										homeURL()
+										homeEntryURL()
 									)
-									if (home && home != homeURL()) {
+									if (home && home != homeEntryURL()) {
 										localStorage.setItem("home", home)
 										localStorage.removeItem("layout")
 										window.location.reload()

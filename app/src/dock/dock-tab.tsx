@@ -15,14 +15,12 @@ import {
 import {useHome} from "../repo/home.ts"
 import {parseDocumentURL, useDockAPI} from "./dock.tsx"
 import {createShortcut} from "@solid-primitives/keyboard"
-import {Editor} from "../../../schemas/src/editor.ts"
 import type {DocumentURL} from "./dock-api.ts"
 import {useDocument} from "solid-automerge"
 import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
-import type {Ok} from "true-myth/result"
 import {Tooltip} from "@kobalte/core/tooltip"
 import OpenWithContextMenu from "./open-with.tsx"
-import type {Entry} from "@pointplace/schemas"
+import type {Entry} from "@pointplace/types"
 import {FileContextMenu} from "../components/editor/filemenu.tsx"
 import {usePublisherRegistry} from "../registries/publisher-registry.ts"
 
@@ -72,36 +70,24 @@ export default function DockTab(props: {url: DocumentURL}) {
 
 	const [file, fileHandle] = useDocument<unknown>(() => entry()?.url)
 
-	const editorDisplayName = () =>
-		editor().isOk
-			? (editor() as Ok<Editor<unknown>, Error>).value.displayName
-			: undefined
+	const editorDisplayName = () => editor()?.displayName
 
-	const editorID = () =>
-		editor().isOk
-			? (editor() as Ok<Editor<unknown>, Error>).value.id
-			: undefined
+	const editorID = () => editor()?.id
 
 	const owner = getOwner()
-	const openDocument = (url: DocumentURL) =>
-		runWithOwner(owner, () => dockAPI.openDocument(url))
+	const openDocument = (
+		url: DocumentURL,
+		opts?: {side?: string; component?: string}
+	) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
 
-	const fileMenu = () => {
-		const ed = editor()
-		if (ed.isOk) {
-			if (ed.value.getFileMenu) {
-				return ed.value.getFileMenu()
-			}
-		}
-	}
+	const fileMenu = () => editor()?.getFileMenu?.()
 
 	const publisherRegistry = usePublisherRegistry()
 
 	const publishers = () => {
-		const entrY = entry()
-		if (entrY) {
+		if (entry()) {
 			return Object.groupBy(
-				publisherRegistry.publishers(entrY),
+				publisherRegistry.publishers(entry()!),
 				x => x.category ?? "other"
 			)
 		}
@@ -256,7 +242,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 						<OpenWithContextMenu
 							url={props.url}
 							currentEditorID={editorID()}
-							openDocument={url => openDocument(url)}
+							openDocument={(url, opts) => openDocument(url, opts)}
 						/>
 						<Show when={entry() && file() && fileMenu()?.length}>
 							<ContextMenu.Separator class="pop-menu__separator" />

@@ -6,6 +6,8 @@ import {
 import type {StandardSchemaV1} from "@standard-schema/spec"
 import * as v from "valibot"
 
+export type MaybePromise<T> = T | Promise<T>
+
 export function promise<T extends v.GenericSchema>(val: T) {
 	return v.pipeAsync(v.promise(), v.awaitAsync(), val)
 }

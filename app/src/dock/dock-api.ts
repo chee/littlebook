@@ -13,8 +13,12 @@ import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
 
 export type DocumentURL = AutomergeUrl & {type: "document"}
 
+export interface OpenDocumentOptions {
+	component?: string
+	side?: string
+}
+
 export function createDockAPI(dockviewAPI: DockviewApi) {
-	window.dockViewAPI = dockviewAPI
 	const owner = getOwner()!
 	function loadLayout(layout: SerializedDockview): Result<Unit, Error> {
 		try {
@@ -25,27 +29,38 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		}
 	}
 	const [dockAPI, updateAPI] = createStore({
-		openDocument(id: DocumentURL | AutomergeUrl, component = "document") {
+		openDocument(
+			url: DocumentURL | AutomergeUrl,
+			opts?: OpenDocumentOptions
+		) {
+			const component = opts?.component ?? "document"
 			runWithOwner(getOwner() ?? owner, () => {
-				const docinfo = parseDocumentURL(id as DocumentURL)
+				const docinfo = parseDocumentURL(url as DocumentURL)
 				if (!docinfo.editor) {
-					const perfectEditor = usePerfectEditor(() => id as DocumentURL)()
-					if (perfectEditor.isOk) {
-						docinfo.editor = perfectEditor.value.id
-						id = renderDocumentURL(docinfo)
+					const perfectEditor = usePerfectEditor(
+						() => url as DocumentURL
+					)()
+					if (perfectEditor) {
+						docinfo.editor = perfectEditor.id
+						url = renderDocumentURL(docinfo)
 					}
 				}
 
-				const existing = dockviewAPI.getPanel(id)
+				const existing = dockviewAPI.getPanel(url)
 
 				if (existing) {
 					existing.api.setActive()
 				} else {
 					dockviewAPI.addPanel({
-						id,
+						id: url,
 						component,
 						tabComponent: component,
 						renderer: "always",
+						position: opts?.side
+							? {
+									direction: opts.side,
+								}
+							: undefined,
 					})
 				}
 			})
@@ -90,6 +105,15 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		panelIDs: runWithOwner(getOwner() ?? owner, () =>
 			dockviewAPI.panels.map(p => p.id)
 		)!,
+		// todo this is very specific.
+		isPressed(url: DocumentURL | AutomergeUrl) {
+			if (!dockAPI.activePanelID) return "false"
+			return parseDocumentURL(dockAPI.activePanelID).url == url
+				? "true"
+				: dockAPI.panelIDs.includes(url)
+					? "mixed"
+					: "false"
+		},
 	})
 
 	const disposers: DockviewIDisposable[] = []

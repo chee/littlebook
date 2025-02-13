@@ -13,7 +13,10 @@
 		"dev": "pnpm w"
 	},
 	"dependencies": {
+		"@ark-ui/solid": "^4.10.1",
 		"@standard-schema/spec": "^1.0.0",
+		"@types/random": "^3.0.1",
+		"random": "^5.1.1",
 		"valibot": "1.0.0-beta.15",
 		"zod": "^3.24.1"
 	},

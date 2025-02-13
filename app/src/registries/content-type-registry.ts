@@ -1,28 +1,27 @@
-import {type Repo} from "@automerge/automerge-repo"
+import {
+	isValidAutomergeUrl,
+	type AutomergeUrl,
+	type Repo,
+} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
-import {err, ok, type Result} from "true-myth/result"
 import {Registry} from "./registry.ts"
 import {
-	CodeContentType,
 	CodeShape,
-	ContentType,
-	MarkdownContentType,
+	type ContentType,
 	MarkdownShape,
 	StoredContentType,
-	TextContentType,
 	TextShape,
-} from "@pointplace/schemas"
-import type {StandardSchemaV1} from "@standard-schema/spec"
+} from "@pointplace/types"
+import {z} from "zod"
 
 export class ContentTypeRegistry extends Registry<
 	StoredContentType,
-	ContentType
+	ContentType<unknown>
 > {
 	constructor({repo}: {repo: Repo}) {
 		super({
 			repo,
 			storedSchema: StoredContentType,
-			schema: ContentType,
 			type: "content-type",
 		})
 		for (const type of KnownContentTypes) {
@@ -30,7 +29,7 @@ export class ContentTypeRegistry extends Registry<
 		}
 	}
 
-	*typesConformingTo(conformsTo: string): Generator<ContentType> {
+	*typesConformingTo(conformsTo: string): Generator<ContentType<unknown>> {
 		for (const type of Object.values(this.records)) {
 			if (type.conformsTo?.includes(conformsTo)) {
 				yield type
@@ -41,38 +40,39 @@ export class ContentTypeRegistry extends Registry<
 			}
 		}
 	}
-
-	get(id: string): Result<ContentType, Error> {
-		const type = this.records[id]
-		return type ? ok(type) : err(new Error(`content type not found: ${id}`))
-	}
 }
 
-export const text = (
-	TextContentType["~standard"].validate({
-		id: "public.text",
-		displayName: "plain text",
-		schema: TextShape,
-	}) as StandardSchemaV1.SuccessResult<ContentType<typeof TextContentType>>
-).value
+export const FolderShape = z.object({
+	files: z.custom<AutomergeUrl>(isValidAutomergeUrl),
+})
 
-export const code = (
-	CodeContentType["~standard"].validate({
-		id: "public.code",
-		displayName: "computer code",
-		conformsTo: ["public.text"],
-		schema: CodeShape,
-	}) as StandardSchemaV1.SuccessResult<ContentType<typeof CodeContentType>>
-).value
+export type FolderShape = z.infer<typeof FolderShape>
 
-export const markdown = (
-	MarkdownContentType["~standard"].validate({
-		id: "public.markdown",
-		displayName: "markdown",
-		conformsTo: ["public.text", "public.code"],
-		schema: MarkdownShape,
-	}) as StandardSchemaV1.SuccessResult<ContentType<typeof MarkdownContentType>>
-).value
+export const folder = {
+	id: "public.folder",
+	displayName: "folder",
+	schema: FolderShape,
+} satisfies ContentType<FolderShape>
+
+export const text = {
+	id: "public.text",
+	displayName: "plain text",
+	schema: TextShape,
+} satisfies ContentType<TextShape>
+
+export const code = {
+	id: "public.code",
+	displayName: "computer code",
+	conformsTo: ["public.text"],
+	schema: CodeShape,
+} satisfies ContentType<CodeShape>
+
+export const markdown = {
+	id: "public.markdown",
+	displayName: "markdown",
+	conformsTo: ["public.text", "public.code"],
+	schema: MarkdownShape,
+} satisfies ContentType<MarkdownShape>
 
 export const KnownContentTypes = [text, code, markdown]
 

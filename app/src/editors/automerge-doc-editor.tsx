@@ -1,4 +1,4 @@
-import type {Editor} from "@pointplace/schemas"
+import type {Editor} from "@pointplace/types"
 import {createDocumentProjection} from "solid-automerge"
 import {
 	createEffect,
@@ -129,7 +129,6 @@ function AutomergeEditor(props: {
 	) as HTMLElement
 }
 
-// todo ‼️ automerge doc editor
 const AutomergeDocEditor = {
 	displayName: "automerge doc editor",
 	id: "automerge-doc-editor",

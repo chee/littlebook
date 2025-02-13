@@ -1,9 +1,13 @@
-import type {AutomergeUrl, DocHandle} from "@automerge/automerge-repo"
+import type {AutomergeUrl} from "@automerge/automerge-repo"
 import repo from "./create.ts"
-import homeURL, {type Home} from "./home.ts"
+import {type Home, useHome} from "./home.ts"
+import {createRoot} from "solid-js"
 const api = {
 	get home() {
-		return repo.findWithProgress<Home>(homeURL()).handle
+		return createRoot(() => {
+			const [_h, _hh, _hhh, entry] = useHome()
+			return repo.findWithProgress<Home>(entry()!.url).handle
+		})
 	},
 	get current() {
 		return repo.findWithProgress(location.hash.slice(1) as AutomergeUrl)

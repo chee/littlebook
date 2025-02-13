@@ -1,12 +1,13 @@
 import {createContext, useContext} from "solid-js"
 import type {CoderRegistry} from "../registries/coder-registry.ts"
-import type {Coder} from "../../../schemas/src/coder.ts"
+import type {Coder} from "../../../types/src/coder.ts"
 import type {EditorRegistry} from "../registries/editor-registry.ts"
-import type {Editor} from "../../../schemas/src/editor.ts"
+import type {Editor} from "../../../types/src/editor.ts"
 import type {ContentTypeRegistry} from "../registries/content-type-registry.ts"
 import type {PublisherRegistry} from "../registries/publisher-registry.ts"
-import type {ContentType} from "../registries/content-type/content-type-schema.ts"
-import type {Publisher} from "../../../schemas/src/publisher.ts"
+import type {Publisher} from "../../../types/src/publisher.ts"
+import type {ContentType} from "@pointplace/types"
+const log = window.log.extend("plugin-api")
 
 export default class PluginAPI {
 	#editorRegistry: EditorRegistry
@@ -26,22 +27,22 @@ export default class PluginAPI {
 		this.#publisherRegistry = options.publisherRegistry
 	}
 
-	registerEditor(editor: Editor) {
+	registerEditor<T>(editor: Editor<T>) {
 		this.#editorRegistry.register(editor)
 		log("editor registered", editor.id)
 	}
 
-	registerCoder(coder: Coder) {
+	registerCoder<T>(coder: Coder<T>) {
 		this.#coderRegistry.register(coder)
 		log("coder registered", coder.id)
 	}
 
-	registerPublisher(publisher: Publisher) {
+	registerPublisher<T>(publisher: Publisher<T>) {
 		this.#publisherRegistry.register(publisher)
 		log("publisher registered", publisher.id)
 	}
 
-	registerContentType(contentType: ContentType) {
+	registerContentType<T>(contentType: ContentType<T>) {
 		this.#contentTypeRegistry.register(contentType)
 		log("content type registered", contentType.id)
 	}

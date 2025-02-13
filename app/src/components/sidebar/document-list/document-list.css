@@ -3,6 +3,9 @@
 	flex-direction: column;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	width: 100%;
+	font-size: 0.9rem;
+	font-weight: 500;
 }
 
 .document-list__button {
@@ -13,13 +16,29 @@
 	cursor: default;
 	user-select: none;
 	display: flex;
-	gap: 1ex;
+	gap: 0.5ex;
 
 	&[aria-pressed="true"] {
 		background: var(--carribean-current);
 		color: white;
 	}
-	/* &[aria-pressed="mixed"] { */
-	/* color: var(--carribean-current); */
-	/* } */
+}
+
+.document-list-item__name {
+	max-width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-align: center;
+	display: block;
+}
+
+.document-list-item__expander {
+	height: 1em;
+	width: 1em;
+}
+
+.document-list [role="treeitem"]:last-of-type .document-list__button {
+	border-end-start-radius: calc(var(--sidebar-widget-radius) - 1px);
+	border-end-end-radius: calc(var(--sidebar-widget-radius) - 1px);
 }

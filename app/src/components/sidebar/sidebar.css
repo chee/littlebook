@@ -29,10 +29,8 @@
 	font-size: 1.4em;
 	padding: var(--sidebar-widget-padding);
 	padding-block: 0.5rem;
-	/* border-bottom: 1px solid */
-	/* color-mix(in srgb, var(--sidebar-widget-fill), var(--sidebar-fill) 50%); */
 	display: flex;
-	place-content: space-between;
+	gap: 1ex;
 	place-items: center;
 }
 
@@ -41,6 +39,7 @@
 }
 
 .sidebar-widget__header-actions {
+	margin-left: auto;
 	> * {
 		display: flex;
 	}

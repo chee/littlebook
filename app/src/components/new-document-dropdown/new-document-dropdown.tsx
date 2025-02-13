@@ -3,7 +3,7 @@ import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import "./new-document-dropdown.css"
 import Icon from "../icons/icon.tsx"
 import {useCoderRegistry} from "../../registries/coder-registry.ts"
-import type {Coder} from "../../../../schemas/src/coder.ts"
+import type {Coder} from "../../../../types/src/coder.ts"
 
 export default function NewDocumentMenu(props: {
 	create(opts: {

@@ -9,39 +9,48 @@ import {err, ok, type Result} from "true-myth/result"
 import {Task} from "true-myth/task"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 import type Unit from "true-myth/unit"
+import {z} from "zod"
 const log = window.log.extend("registries")
 
-export function importFromAutomerge<T extends StandardSchemaV1>(
-	doc: {bytes: Uint8Array},
-	schema: T
-): Task<StandardSchemaV1.InferInput<T>, Error> {
+export function importFromAutomerge<T>(doc: {
+	id: string
+	bytes: Uint8Array
+}): Task<T, Error> {
 	return new Task(async (yay, boo) => {
 		const blob = new Blob([doc.bytes], {type: "application/javascript"})
 		const blobURL = URL.createObjectURL(blob)
 		const module = await import(/* @vite-ignore */ blobURL)
-		const starFromExport = await schema["~standard"].validate(module)
-		if (!starFromExport.issues) return yay(starFromExport.value)
-		const defaultExport = await schema["~standard"].validate(module.default)
-		if (!defaultExport.issues) return yay(defaultExport.value)
+		if (module.id == doc.id) {
+			return yay(module as T)
+		}
+		// const starFromExport = await schema["~standard"].validate(module)
+		// if (!starFromExport.issues) return yay(starFromExport.value)
+		// const defaultExport = await schema["~standard"].validate(module.default)
+		// if (!defaultExport.issues) return yay(defaultExport.value)
+		if (module.default.id == doc.id) {
+			return yay(module.default as T)
+		}
 		return boo(
 			new Error(
-				`document doesn't look like a ${schema}.\n${starFromExport.issues}\n${defaultExport.issues}`
+				// `document doesn't look like a
+				// ${schema}.\n${starFromExport.issues}\n${defaultExport.issues}`
+				`document doesn't look like the thing it's meant to be`
 			)
 		)
 	})
 }
 
 export abstract class Registry<
-	Stored extends {id: string; bytes: Uint8Array},
-	Shape extends {id: string},
+	StoredType extends {id: string; bytes: Uint8Array},
+	ValueType extends {id: string},
 > {
 	#repo: Repo
 	#owner: Owner
-	#storedSchema: StandardSchemaV1<Stored>
-	#schema: StandardSchemaV1<Shape>
-	records: Record<string, Shape>
+	#storedSchema: StandardSchemaV1<StoredType>
 
-	#updateRecords: SetStoreFunction<Record<string, Shape>>
+	records: Record<string, ValueType>
+
+	#updateRecords: SetStoreFunction<Record<string, ValueType>>
 
 	#type = ""
 
@@ -58,12 +67,10 @@ export abstract class Registry<
 	constructor({
 		repo,
 		storedSchema,
-		schema,
 		type = "",
 	}: {
 		repo: Repo
-		storedSchema: StandardSchemaV1<Stored>
-		schema: StandardSchemaV1<Shape>
+		storedSchema: StandardSchemaV1<StoredType>
 		type: string
 	}) {
 		this.#type = type
@@ -75,7 +82,6 @@ export abstract class Registry<
 			)
 		}
 		this.#storedSchema = storedSchema
-		this.#schema = schema
 
 		repo.on("document", this.#documentListener)
 		onCleanup(() => {
@@ -83,7 +89,9 @@ export abstract class Registry<
 		})
 
 		// using records to describe the individual items managed by this registry
-		const [records, updateRecords] = createStore<Record<string, Shape>>({})
+		const [records, updateRecords] = createStore<Record<string, ValueType>>(
+			{}
+		)
 		// eslint-disable-next-line solid/reactivity
 		this.records = records
 		this.#updateRecords = updateRecords
@@ -113,12 +121,12 @@ export abstract class Registry<
 		})()
 	}
 
-	#changeListener = (payload: DocHandleChangePayload<Stored>) => {
+	#changeListener = (payload: DocHandleChangePayload<StoredType>) => {
 		return this.#import(payload.patchInfo.after)
 	}
 
-	#import = (doc: Stored) => {
-		return importFromAutomerge(doc, this.#schema)
+	#import = (doc: StoredType) => {
+		return importFromAutomerge<ValueType>(doc)
 			.map(bundle => {
 				if (this.records[bundle.id]) {
 					console.warn(
@@ -132,18 +140,22 @@ export abstract class Registry<
 			})
 	}
 
-	async register(unknown: Shape): Promise<Result<Unit, Error>> {
-		const record = await this.#schema["~standard"].validate(unknown)
-		if (record.issues) {
-			console.error(
-				`failed to register${this.nameWithPrefixSpace}`,
-				record.issues
-			)
-			return err(new Error(record.issues.join("\n")))
-		} else {
-			this.#updateRecords(record.value.id, record.value)
-			return ok()
-		}
+	register(unknown: ValueType) {
+		// const record = await this.#schema["~standard"].validate(unknown)
+		// if (record.issues) {
+		// 	console.error(
+		// 		`failed to register${this.nameWithPrefixSpace}`,
+		// 		record.issues
+		// 	)
+		// 	return err(new Error(record.issues.join("\n")))
+		// } else {
+		this.#updateRecords(unknown.id, {...unknown})
+		// return ok()
+		// }
+	}
+
+	get<T extends ValueType>(id: string): ValueType | undefined {
+		return this.records[id] as T | undefined
 	}
 
 	deconstructor() {

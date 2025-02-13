@@ -60,3 +60,12 @@
 	padding: 0.5rem;
 	border-radius: 16px;
 }
+
+.dock-tab__name {
+	max-width: 8em;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	text-align: center;
+	display: block;
+}

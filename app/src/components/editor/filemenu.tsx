@@ -6,7 +6,7 @@ import type {
 	FileMenuChoice,
 	FileMenuItem,
 	FileMenuSubMenu,
-} from "@pointplace/schemas"
+} from "@pointplace/types"
 import {createRoot, For, Match, Switch, type Accessor} from "solid-js"
 import {createStore} from "solid-js/store"
 import Icon from "../icons/icon.tsx"

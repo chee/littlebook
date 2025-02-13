@@ -1,10 +1,12 @@
-import HomeWidget from "./document-list/document-list.tsx"
 import "./sidebar.css"
+import {homeEntryURL} from "../../repo/home.ts"
+import DocumentListWidget from "./document-list/document-list-widget.tsx"
 
 export default function LeftSidebar() {
+	// todo add pinned directories
 	return (
 		<aside class="sidebar sidebar--left">
-			<HomeWidget />
+			<DocumentListWidget url={homeEntryURL()} />
 		</aside>
 	)
 }
