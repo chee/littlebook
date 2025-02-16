@@ -1,21 +1,26 @@
 import {Show, For, createMemo} from "solid-js"
 import {ContextMenu} from "@kobalte/core"
 import Icon from "../components/icons/icon.tsx"
-import type {DocumentURL, OpenDocumentOptions} from "./dock-api.ts"
-import {useEditorRegistry} from "../registries/editor-registry.ts"
+import type {OpenDocumentOptions} from "./dock-api.ts"
+import {useViewRegistry} from "../registries/view-registry.ts"
 import {useDocument} from "solid-automerge"
-import {parseDocumentURL} from "./dock.tsx"
-import type {Entry} from "@pointplace/types"
+import {
+	parseDocumentURL,
+	renderDocumentURL,
+	type AutomergeURL,
+	type DocumentURL,
+	type Entry,
+} from "@pointplace/types"
 
 export default function OpenWithContextMenu(props: {
-	url: DocumentURL
+	url: AutomergeURL
 	currentEditorID?: string
 	openDocument: (url: DocumentURL, opts: OpenDocumentOptions) => void
 }) {
-	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
+	const docinfo = createMemo(() => parseDocumentURL(props.url))
 	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
-	const editorRegistry = useEditorRegistry()
-	const editors = () => [...(editorRegistry.editors(entry()!) ?? [])]
+	const editorRegistry = useViewRegistry()
+	const editors = () => [...(editorRegistry.views(entry()!) ?? [])]
 
 	return (
 		<Show when={editors().length > 1}>
@@ -33,14 +38,13 @@ export default function OpenWithContextMenu(props: {
 							{choice => (
 								<ContextMenu.Item
 									onSelect={() => {
-										const url = new URL(entryHandle()!.url)
-										url.searchParams.set("editor", choice.id)
-										props.openDocument(
-											url.toString() as DocumentURL,
-											{
-												side: "right",
-											}
-										)
+										const url = renderDocumentURL({
+											url: entryHandle()!.url,
+											editor: choice.id,
+										})
+										props.openDocument(url, {
+											side: "right",
+										})
 									}}
 									disabled={choice.id == props.currentEditorID}
 									class="pop-menu__item">

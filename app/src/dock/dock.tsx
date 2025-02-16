@@ -9,12 +9,11 @@ import {
 	Show,
 	splitProps,
 	createRoot,
-	getOwner,
 } from "solid-js"
 import "./dock.css"
-import {createDockAPI, type DocumentURL} from "./dock-api.ts"
-import type {AutomergeUrl} from "@automerge/automerge-repo"
+import {createDockAPI} from "./dock-api.ts"
 import {Dynamic} from "solid-js/web"
+import type {DocumentURL} from "@pointplace/types"
 
 export interface DockComponentProps {
 	// the id of the file to open
@@ -25,29 +24,6 @@ export interface DockComponentProps {
 export interface DockHeaderActionProps {
 	groupID: string
 	dockAPI: DockAPI
-}
-
-type ParsedDocumentURL = Record<string, string> & {
-	url: AutomergeUrl
-	editor?: string
-}
-
-export function parseDocumentURL(url: DocumentURL): ParsedDocumentURL {
-	const u = new URL(url)
-	const base = u.protocol + u.pathname
-	return {
-		...Object.fromEntries(u.searchParams.entries()),
-		url: base as AutomergeUrl,
-	}
-}
-
-export function renderDocumentURL(docinfo: ParsedDocumentURL): DocumentURL {
-	const u = new URL(docinfo.url)
-	for (const [key, value] of Object.entries(docinfo)) {
-		if (key === "url") continue
-		u.searchParams.set(key, value)
-	}
-	return u.toString() as DocumentURL
 }
 
 function createDockContext(dockOptions: {

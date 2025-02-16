@@ -25,10 +25,7 @@ if (import.meta.env.DEV) {
 
 const root = document.getElementById("root")!
 
-import {
-	EditorRegistry,
-	EditorRegistryContext,
-} from "./registries/editor-registry.ts"
+import {ViewRegistry, ViewRegistryContext} from "./registries/view-registry.ts"
 
 import {
 	ContentTypeRegistry,
@@ -36,24 +33,21 @@ import {
 } from "./registries/content-type-registry.ts"
 
 import {
-	CoderRegistry,
-	CoderRegistryContext,
-} from "./registries/coder-registry.ts"
+	SourceRegistry,
+	SourceRegistryContext,
+} from "./registries/source-registry.ts"
 
 import repo from "./repo/create.ts"
 import {RepoContext} from "solid-automerge"
 import {createRoot} from "solid-js"
-import {
-	PublisherRegistry,
-	PublisherRegistryContext,
-} from "./registries/publisher-registry.ts"
+import {SinkRegistry, SinkRegistryContext} from "./registries/sink-registry.ts"
 import PluginAPI, {PluginAPIContext} from "./plugins/plugin-api.ts"
 
 createRoot(() => {
 	const contentTypeRegistry = new ContentTypeRegistry({repo})
-	const coderRegistry = new CoderRegistry({repo})
-	const editorRegistry = new EditorRegistry({repo, contentTypeRegistry})
-	const publisherRegistry = new PublisherRegistry({repo, contentTypeRegistry})
+	const coderRegistry = new SourceRegistry({repo})
+	const editorRegistry = new ViewRegistry({repo, contentTypeRegistry})
+	const publisherRegistry = new SinkRegistry({repo, contentTypeRegistry})
 	const pluginAPI = new PluginAPI({
 		editorRegistry,
 		coderRegistry,
@@ -64,17 +58,17 @@ createRoot(() => {
 	render(
 		() => (
 			<ContentTypeRegistryContext.Provider value={contentTypeRegistry}>
-				<CoderRegistryContext.Provider value={coderRegistry}>
-					<EditorRegistryContext.Provider value={editorRegistry}>
-						<PublisherRegistryContext.Provider value={publisherRegistry}>
+				<SourceRegistryContext.Provider value={coderRegistry}>
+					<ViewRegistryContext.Provider value={editorRegistry}>
+						<SinkRegistryContext.Provider value={publisherRegistry}>
 							<RepoContext.Provider value={repo}>
 								<PluginAPIContext.Provider value={pluginAPI}>
 									<App />
 								</PluginAPIContext.Provider>
 							</RepoContext.Provider>
-						</PublisherRegistryContext.Provider>
-					</EditorRegistryContext.Provider>
-				</CoderRegistryContext.Provider>
+						</SinkRegistryContext.Provider>
+					</ViewRegistryContext.Provider>
+				</SourceRegistryContext.Provider>
 			</ContentTypeRegistryContext.Provider>
 		),
 		root

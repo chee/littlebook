@@ -1,4 +1,10 @@
-import {createResource, createSignal, onCleanup, onMount} from "solid-js"
+import {
+	createResource,
+	createSignal,
+	onCleanup,
+	onMount,
+	untrack,
+} from "solid-js"
 import githubMarkdownCSS from "github-markdown-css/github-markdown.css?raw"
 import rehypeStarryNight from "rehype-starry-night"
 import rehypeReact from "rehype-react"
@@ -7,7 +13,7 @@ import remarkRehype from "remark-rehype"
 import gfm from "remark-gfm"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
-import {MarkdownShape, type Editor} from "@pointplace/types"
+import {MarkdownShape, type Editor, type ReadOnlyView} from "@pointplace/types"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 
@@ -27,22 +33,15 @@ const markdown = await unified()
 type Markdown = StandardSchemaV1.InferOutput<typeof MarkdownShape>
 
 export default {
+	category: "readonly",
 	displayName: "github preview",
-	id: "markdown-github-preview",
+	id: "github-markdown-preview",
 	contentTypes: ["public.markdown"],
 	render(props) {
 		// eslint-disable-next-line solid/reactivity
-		const [text, settext] = createSignal(props.handle.doc().text)
-		function update(payload: DocHandleChangePayload<Markdown>) {
-			settext(payload.patchInfo.after.text)
-		}
-
-		onMount(() => {
-			props.handle.on("change", update)
-		})
-		onCleanup(() => {
-			props.handle.off("change", update)
-		})
+		const [text, updateText] = createSignal(props.doc().text)
+		// eslint-disable-next-line solid/reactivity
+		props.onChange(() => updateText(props.doc().text))
 
 		const [html] = createResource(
 			text,
@@ -63,4 +62,4 @@ export default {
 			</div>
 		) as HTMLElement
 	},
-} satisfies Editor<Markdown>
+} satisfies ReadOnlyView<Markdown>

@@ -13,53 +13,26 @@ import {
 	type Accessor,
 } from "solid-js"
 import {useHome} from "../repo/home.ts"
-import {parseDocumentURL, useDockAPI} from "./dock.tsx"
-import {createShortcut} from "@solid-primitives/keyboard"
-import type {DocumentURL} from "./dock-api.ts"
+import {useDockAPI} from "./dock.tsx"
 import {useDocument} from "solid-automerge"
-import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
+import {usePerfectView} from "../components/file-viewer/usePerfectView.tsx"
 import {Tooltip} from "@kobalte/core/tooltip"
 import OpenWithContextMenu from "./open-with.tsx"
-import type {Entry} from "@pointplace/types"
-import {FileContextMenu} from "../components/editor/filemenu.tsx"
-import {usePublisherRegistry} from "../registries/publisher-registry.ts"
-
-const keynames = {
-	CMD: "Meta",
-	SUPER: "Meta",
-	COMMAND: "Meta",
-
-	ctrl: "Control",
-	control: "Control",
-
-	alt: "Alt",
-	option: "Alt",
-
-	shift: "Shift",
-}
-
-export function createKeybinding(
-	keybinding: string,
-	action: () => void,
-	options: Parameters<typeof createShortcut>[2] = {}
-) {
-	const keys = keybinding
-		.toUpperCase()
-		.split("+")
-		.map(
-			key =>
-				keynames[key as keyof typeof keynames] ??
-				key.toLocaleLowerCase().replace(/^(.)/, "$1".toUpperCase())
-		)
-	createShortcut(keys, action, options)
-}
+import {
+	asAutomergeURL,
+	parseDocumentURL,
+	type DocumentURL,
+	type Entry,
+} from "@pointplace/types"
+import {FileContextMenu} from "../components/file-viewer/filemenu.tsx"
+import {useSinkRegistry} from "../registries/sink-registry.ts"
 
 export default function DockTab(props: {url: DocumentURL}) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const dockAPI = useDockAPI()
 	const [entry] = useDocument<Entry>(() => docinfo().url)
 
-	const editor = usePerfectEditor(() => props.url)
+	const editor = usePerfectView(() => props.url)
 	const [home, changeHome] = useHome()
 	let tabElement!: HTMLDivElement
 
@@ -82,12 +55,12 @@ export default function DockTab(props: {url: DocumentURL}) {
 
 	const fileMenu = () => editor()?.getFileMenu?.()
 
-	const publisherRegistry = usePublisherRegistry()
+	const publisherRegistry = useSinkRegistry()
 
 	const publishers = () => {
 		if (entry()) {
 			return Object.groupBy(
-				publisherRegistry.publishers(entry()!),
+				publisherRegistry.sinks(entry()!),
 				x => x.category ?? "other"
 			)
 		}
@@ -144,8 +117,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 							class="pop-menu__item"
 							onSelect={() => {
 								for (const id of dockAPI.panelIDs) {
-									if (id != props.url)
-										dockAPI.closePanel(id as AutomergeUrl)
+									if (id != props.url) dockAPI.closePanel(id)
 								}
 							}}>
 							close other tabs
@@ -232,7 +204,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 							</ContextMenu.Item>
 						</Show>
 						<OpenWithContextMenu
-							url={props.url}
+							url={asAutomergeURL(props.url)}
 							currentEditorID={editorID()}
 							openDocument={(url, opts) => openDocument(url, opts)}
 						/>

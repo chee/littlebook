@@ -1,3 +1,8 @@
+# todo
+
+- seeds
+- crons
+
 ## data structure options
 
 1. external content
@@ -97,8 +102,5 @@
 ## questions:
 
 - ARE FOLDERS SPECIAL???????????????????
-
-## todo
-
-- seeding
--
+   - ANSWER: sort of
+      - they are a regular contentType and shape, unspecial

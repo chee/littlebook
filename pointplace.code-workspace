@@ -9,8 +9,16 @@
 			"path": "plugins/codemirror",
 		},
 		{
+			"name": "🔌 milkdown",
+			"path": "plugins/milkdown",
+		},
+		{
 			"name": "🔌 tldraw",
 			"path": "plugins/tldraw",
+		},
+		{
+			"name": "📚 solid-hotkeys",
+			"path": "libraries/solid-hotkeys",
 		},
 		{
 			"name": "🤖 types",
@@ -22,7 +30,7 @@
 		},
 	],
 	"settings": {
-		"workbench.colorTheme": "Dracula Theme",
+		"workbench.colorTheme": "Gruvbox Dark Hard",
 		"editor.quickSuggestions": {
 			"strings": "on",
 		},

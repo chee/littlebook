@@ -1,4 +1,3 @@
-import {type AutomergeUrl} from "@automerge/automerge-repo"
 import type {
 	DockviewApi,
 	DockviewIDisposable,
@@ -8,10 +7,14 @@ import {getOwner, onCleanup, runWithOwner} from "solid-js"
 import {createStore} from "solid-js/store"
 import Result, {err, ok} from "true-myth/result"
 import type Unit from "true-myth/unit"
-import {parseDocumentURL, renderDocumentURL} from "./dock.tsx"
-import {usePerfectEditor} from "../components/editor/usePerfectEditor.tsx"
-
-export type DocumentURL = AutomergeUrl & {type: "document"}
+import {usePerfectView} from "../components/file-viewer/usePerfectView.tsx"
+import {
+	asAutomergeURL,
+	parseDocumentURL,
+	renderDocumentURL,
+	type AutomergeURLOrDocumentURL,
+	type DocumentURL,
+} from "@pointplace/types"
 
 export interface OpenDocumentOptions {
 	component?: string
@@ -29,17 +32,12 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		}
 	}
 	const [dockAPI, updateAPI] = createStore({
-		openDocument(
-			url: DocumentURL | AutomergeUrl,
-			opts?: OpenDocumentOptions
-		) {
+		openDocument(url: AutomergeURLOrDocumentURL, opts?: OpenDocumentOptions) {
 			const component = opts?.component ?? "document"
 			runWithOwner(getOwner() ?? owner, () => {
 				const docinfo = parseDocumentURL(url as DocumentURL)
 				if (!docinfo.editor) {
-					const perfectEditor = usePerfectEditor(
-						() => url as DocumentURL
-					)()
+					const perfectEditor = usePerfectView(() => url as DocumentURL)()
 					if (perfectEditor) {
 						docinfo.editor = perfectEditor.id
 						url = renderDocumentURL(docinfo)
@@ -85,7 +83,7 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 				onCleanup(() => disposer.dispose())
 			})
 		},
-		closePanel(id: AutomergeUrl) {
+		closePanel(id: DocumentURL) {
 			runWithOwner(getOwner() ?? owner, () => {
 				dockviewAPI.getPanel(id)?.api.close()
 			})
@@ -103,14 +101,14 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 			() => dockviewAPI.activePanel?.id as DocumentURL | undefined
 		),
 		panelIDs: runWithOwner(getOwner() ?? owner, () =>
-			dockviewAPI.panels.map(p => p.id)
+			dockviewAPI.panels.map(p => p.id as DocumentURL)
 		)!,
 		// todo this is very specific.
-		isPressed(url: DocumentURL | AutomergeUrl) {
+		isPressed(url: AutomergeURLOrDocumentURL) {
 			if (!dockAPI.activePanelID) return "false"
-			return parseDocumentURL(dockAPI.activePanelID).url == url
+			return asAutomergeURL(dockAPI.activePanelID) == url
 				? "true"
-				: dockAPI.panelIDs.includes(url)
+				: dockAPI.panelIDs.includes(url as DocumentURL)
 					? "mixed"
 					: "false"
 		},
@@ -128,7 +126,7 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		dockviewAPI.onDidLayoutChange(() => {
 			updateAPI(
 				"panelIDs",
-				dockviewAPI.panels.map(p => p.id)
+				dockviewAPI.panels.map(p => p.id as DocumentURL)
 			)
 		})
 	)

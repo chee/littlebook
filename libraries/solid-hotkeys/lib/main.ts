@@ -3,6 +3,7 @@ import {onCleanup} from "solid-js"
 const keymap = {
 	cmd: "command",
 	super: "command",
+	meta: "command",
 	ctrl: "control",
 	alt: "option",
 
@@ -43,26 +44,32 @@ interface Options {
 	 * trigger on keyup?
 	 * @default false
 	 */
-	keyup?: boolean
+	keyup?(): boolean
 	/**
 	 * trigger on keydown?
 	 * @default true
 	 */
-	keydown?: boolean
+	keydown?(): boolean
 	/**
 	 * prevent browser default?
 	 * @default true
 	 */
-	preventDefault?: boolean
+	preventDefault?(): boolean
 }
 
 // todo delegate to context?
+/**
+ * @param keybinding the hotkey to bind e.g. command+backslash
+ * @param action
+ * @param options
+ * @returns disposer
+ */
 export function createKeybinding(
 	keybinding: string,
-	action: () => void,
+	action: (...args: any[]) => void,
 	options?: Options
 ) {
-	const shouldTriggerOnKeyup = options?.keyup ?? false
+	const shouldTriggerOnKeyup = options?.keyup?.() ?? false
 	const shouldTriggerOnKeydown = options?.keydown ?? true
 	const shouldPreventDefault = options?.preventDefault ?? true
 	const binding = parse(keybinding)
@@ -94,6 +101,10 @@ export function createKeybinding(
 	onCleanup(() => window.removeEventListener("keydown", onkeydown))
 	window.addEventListener("keyup", onkeyup)
 	onCleanup(() => window.removeEventListener("keyup", onkeyup))
+	return () => {
+		window.removeEventListener("keydown", onkeydown)
+		window.removeEventListener("keyup", onkeyup)
+	}
 }
 
 function parse(keybinding: string) {

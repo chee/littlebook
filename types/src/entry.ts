@@ -1,21 +1,18 @@
-import {automergeURL} from "./util.js"
-import * as v from "valibot"
+import type {AutomergeURL} from "./document.js"
 
-export const Entry = v.object({
+export interface Entry {
 	/**
 	 * an entry that describes and points to a file
 	 */
-	type: v.literal("file"),
-	// the file's name
-	name: v.string(),
-	// a solar icon name or a URL or a dataURI or an automerge url to bytes doc
-	icon: v.optional(v.string()),
-	// the file's contentType
-	contentType: v.string(),
-	contentTypeURL: v.optional(automergeURL),
+	type: "entry"
+	/** the file's name */
+	name: string
+	/**  a solar icon name or a URL or a dataURI or an automerge url to bytes doc */
+	icon?: string
+	/** the file's contentType*/
+	contentType: string
+	contentTypeURL?: string
 
-	// a ref to the file
-	url: automergeURL,
-})
-
-export type Entry = v.InferOutput<typeof Entry>
+	/* ref to file content */
+	url: AutomergeURL
+}

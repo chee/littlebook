@@ -1,25 +1,25 @@
 import {createContext, useContext} from "solid-js"
-import type {CoderRegistry} from "../registries/coder-registry.ts"
-import type {Coder} from "../../../types/src/coder.ts"
-import type {EditorRegistry} from "../registries/editor-registry.ts"
-import type {Editor} from "../../../types/src/editor.ts"
+import type {SourceRegistry} from "../registries/source-registry.ts"
+import type {Coder} from "@pointplace/types/src/source.ts"
+import type {ViewRegistry} from "../registries/view-registry.ts"
+import type {Editor} from "@pointplace/types/src/view.ts"
 import type {ContentTypeRegistry} from "../registries/content-type-registry.ts"
-import type {PublisherRegistry} from "../registries/publisher-registry.ts"
-import type {Publisher} from "../../../types/src/publisher.ts"
+import type {SinkRegistry} from "../registries/sink-registry.ts"
+import type {Publisher} from "@pointplace/types/src/sink.ts"
 import type {ContentType} from "@pointplace/types"
 const log = window.log.extend("plugin-api")
 
 export default class PluginAPI {
-	#editorRegistry: EditorRegistry
-	#coderRegistry: CoderRegistry
+	#editorRegistry: ViewRegistry
+	#coderRegistry: SourceRegistry
 	#contentTypeRegistry: ContentTypeRegistry
-	#publisherRegistry: PublisherRegistry
+	#publisherRegistry: SinkRegistry
 
 	constructor(options: {
-		editorRegistry: EditorRegistry
-		coderRegistry: CoderRegistry
+		editorRegistry: ViewRegistry
+		coderRegistry: SourceRegistry
 		contentTypeRegistry: ContentTypeRegistry
-		publisherRegistry: PublisherRegistry
+		publisherRegistry: SinkRegistry
 	}) {
 		this.#editorRegistry = options.editorRegistry
 		this.#coderRegistry = options.coderRegistry

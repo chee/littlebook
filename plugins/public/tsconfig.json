@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"outDir": ".",
+		"allowImportingTsExtensions": true,
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"noEmit": true,
+		"checkJs": true,
+		"strict": true,
+		"allowJs": true,
+		"resolveJsonModule": true,
+
+		"jsx": "react-jsx",
+
+		"skipLibCheck": true
+	},
+
+	"files": ["codemirror-editor.ts"]
+}

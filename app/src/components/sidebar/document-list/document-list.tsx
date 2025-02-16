@@ -12,14 +12,20 @@ import {useDocument} from "solid-automerge"
 import {useDockAPI} from "../../../dock/dock.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import OpenWithContextMenu from "../../../dock/open-with.tsx"
-import type {DocumentURL, OpenDocumentOptions} from "../../../dock/dock-api.ts"
+import type {OpenDocumentOptions} from "../../../dock/dock-api.ts"
 import Icon from "../../icons/icon.tsx"
-import type {Entry} from "@pointplace/types"
+import {
+	asAutomergeURL,
+	asDocumentURL,
+	type AutomergeURL,
+	type DocumentURL,
+	type Entry,
+} from "@pointplace/types"
 import {Button} from "@kobalte/core/button"
 import type {AutomergeUrl} from "@automerge/automerge-repo"
 
-export function andRemove(url: DocumentURL) {
-	return (doc: {files: AutomergeUrl[]}) => {
+export function andRemove(url: AutomergeURL) {
+	return (doc: {files: AutomergeURL[]}) => {
 		const files = Array.from(doc.files)
 		const index = files.indexOf(url)
 		if (index > -1) {
@@ -38,12 +44,12 @@ export function andRename(name: string) {
 /* //todo
  * we want a context menu here
  * you should be able to:
- *	 - create a new file (or folder)
+ *	 - ✅ create a new file (or folder)
  *	 - import a file
  *	 - open
- *	 - open to the side
- *	 - open with
- *	 - rename
+ *	 - ✅ open to the side
+ *	 - ✅ open with
+ *	 - ✅ rename
  *	 - transform (convert to a new file)
  *	 - save to disk
  *	 	- as Raw JSON
@@ -55,8 +61,8 @@ export function andRename(name: string) {
 
 // todo add drag+drop
 export default function DocumentList(props: {
-	remove(url: DocumentURL): void
-	urls: (AutomergeUrl | DocumentURL)[]
+	remove(url: AutomergeURL): void
+	urls: AutomergeURL[]
 	depth: number
 	openDocument(url: DocumentURL, opts?: OpenDocumentOptions): void
 }) {
@@ -67,8 +73,12 @@ export default function DocumentList(props: {
 		<ul class="document-list" data-depth={props.depth} role="group">
 			<For each={props.urls}>
 				{url => {
-					const [entry, entryHandle] = useDocument<Entry>(url)
-					const [file] = useDocument<unknown>(() => entry()?.url)
+					const [entry, entryHandle] = useDocument<Entry>(
+						asAutomergeURL(url)
+					)
+					const [file] = useDocument<unknown>(
+						() => entry() && asAutomergeURL(entry()!.url)
+					)
 					const pressed = () => dockAPI.isPressed(url)
 					const openDocument = (
 						url: DocumentURL,
@@ -86,7 +96,7 @@ export default function DocumentList(props: {
 									<Show when={entry() && file()} fallback="">
 										<DocumentListItem
 											depth={props.depth}
-											url={url as DocumentURL}
+											url={url}
 											openDocument={openDocument}
 											pressed={pressed()}
 											isFolder={"files" in file()!}
@@ -111,12 +121,12 @@ export default function DocumentList(props: {
 										<ContextMenu.Item
 											class="pop-menu__item"
 											onSelect={() => {
-												props.remove(url as DocumentURL)
+												props.remove(url)
 											}}>
 											remove
 										</ContextMenu.Item>
 										<OpenWithContextMenu
-											url={url as DocumentURL}
+											url={url}
 											openDocument={openDocument}
 										/>
 									</ContextMenu.Content>
@@ -132,11 +142,11 @@ export default function DocumentList(props: {
 
 // todo pass down remove() and move()
 interface DocumentListItemProps {
-	url: DocumentURL
+	url: AutomergeURL
 	openDocument(url: DocumentURL, opts?: OpenDocumentOptions): void
 	pressed: "true" | "false" | "mixed"
 	isFolder: boolean
-	rename(url: DocumentURL, name: string): void
+	rename(url: AutomergeURL, name: string): void
 	depth: number
 }
 
@@ -160,7 +170,7 @@ export function DocumentListFile(props: DocumentListItemProps) {
 	return (
 		<Button
 			class="pop-menu__trigger document-list__button"
-			onclick={() => props.openDocument(props.url)}
+			onclick={() => props.openDocument(asDocumentURL(props.url))}
 			aria-pressed={props.pressed}>
 			<span class="document-list-item__expander" />
 			<span class="document-list-item__icon">
@@ -223,7 +233,7 @@ export function DocumentListFolder(props: DocumentListItemProps) {
 				<div role="group" hidden={!expanded()}>
 					<DocumentList
 						remove={url => folderHandle()!.change(andRemove(url))}
-						urls={folder()!.files as DocumentURL[]}
+						urls={folder()!.files}
 						depth={props.depth + 1}
 						openDocument={props.openDocument}
 					/>

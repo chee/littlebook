@@ -11,11 +11,13 @@ import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
 import {
 	CodeShape,
-	Editor,
+	View,
 	type EditorAPI,
 	type FileMenu,
+	type TextShape,
 } from "@pointplace/types"
 import * as v from "valibot"
+import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/automerge-repo"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo/slim"
 
 export const id = "codemirror"
@@ -217,14 +219,11 @@ export function getFileMenu() {
 	] satisfies FileMenu<CodemirrorFile>
 }
 
-export const category = "editor"
-
 export default {
-	category,
 	render,
 	getFileMenu,
 	id,
 	contentTypes,
 	schema,
 	displayName,
-} satisfies Editor<CodemirrorFile>
+} satisfies View<CodemirrorFile>

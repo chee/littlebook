@@ -6,13 +6,6 @@ import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import {homeEntryURL} from "../../repo/home.ts"
 
 /*
-// todo
-add a button for adding new
-	- editors
-	- importers
-	- publishers
-	- etc
-
 add a button in the top right for
 	- ✅ copying your home URL
 	- ✅ swapping your home URL

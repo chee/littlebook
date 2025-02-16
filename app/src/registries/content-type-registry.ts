@@ -1,28 +1,23 @@
-import {
-	isValidAutomergeUrl,
-	type AutomergeUrl,
-	type Repo,
-} from "@automerge/automerge-repo"
+import {isValidAutomergeUrl, type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
 import {
+	type AutomergeURL,
 	CodeShape,
 	type ContentType,
 	MarkdownShape,
-	StoredContentType,
 	TextShape,
 } from "@pointplace/types"
 import {z} from "zod"
 
 export class ContentTypeRegistry extends Registry<
-	StoredContentType,
+	"content-type",
 	ContentType<unknown>
 > {
 	constructor({repo}: {repo: Repo}) {
 		super({
 			repo,
-			storedSchema: StoredContentType,
-			type: "content-type",
+			typename: "content-type",
 		})
 		for (const type of KnownContentTypes) {
 			this.register(type)
@@ -43,7 +38,7 @@ export class ContentTypeRegistry extends Registry<
 }
 
 export const FolderShape = z.object({
-	files: z.custom<AutomergeUrl>(isValidAutomergeUrl),
+	files: z.custom<AutomergeURL>(url => isValidAutomergeUrl(url)).array(),
 })
 
 export type FolderShape = z.infer<typeof FolderShape>

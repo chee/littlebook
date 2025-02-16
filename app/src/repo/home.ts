@@ -7,14 +7,10 @@ import {automergeURL, type ContentType, type Entry} from "@pointplace/types"
 import * as v from "valibot"
 
 export const Home = v.object({
-	type: v.literal("home"),
 	name: v.string(),
-	importers: v.array(automergeURL),
-	publishers: v.array(automergeURL),
-	editors: v.array(automergeURL),
-	treeviewers: v.array(automergeURL),
-	tabviewers: v.array(automergeURL),
-	viewers: v.array(automergeURL),
+	sinks: v.array(automergeURL),
+	sources: v.array(automergeURL),
+	views: v.array(automergeURL),
 	files: v.array(automergeURL),
 	associations: v.record(automergeURL, v.string()),
 })
@@ -22,8 +18,8 @@ export const Home = v.object({
 export type Home = v.InferOutput<typeof Home>
 
 export const HomeContentType: ContentType<Home> = {
-	displayName: "home",
 	id: "public.home",
+	displayName: "home",
 	schema: Home,
 	conformsTo: ["public.folder"],
 	icon: "ghost-smile-bold",
@@ -34,20 +30,18 @@ const forceString = (string: string) =>
 
 const [homeEntryURL, setHomeEntryURL] = makePersisted(
 	// eslint-disable-next-line solid/reactivity
-	createSignal(
+	createSignal<AutomergeUrl>(
 		forceString(localStorage.getItem("home")!) ??
-			createEntry({
+			repo.create({
+				type: "entry",
 				name: "home",
 				contentType: "public.home",
 				icon: "ghost-smile-bold",
-				content: {
-					importers: [],
-					publishers: [],
-					editors: [],
-					treeviewers: [],
-					tabviewers: [],
-					viewers: [],
-					associations: {},
+				url: repo.create({
+					name: "home",
+					sinks: [],
+					sources: [],
+					views: [],
 					files: [
 						createEntry({
 							name: "my manifesto.txt",
@@ -57,8 +51,9 @@ const [homeEntryURL, setHomeEntryURL] = makePersisted(
 							},
 						}).url,
 					],
-				},
-			}).url
+					associations: {},
+				} satisfies Home).url,
+			} satisfies Entry).url
 	),
 	{
 		storage: localStorage,
@@ -79,7 +74,7 @@ export function createEntry<T>(opts: {
 	icon?: string
 }) {
 	return repo.create<Entry>({
-		type: "file",
+		type: "entry",
 		name: opts.name,
 		contentType: opts.contentType,
 		icon: opts.icon ?? "",

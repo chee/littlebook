@@ -1,4 +1,4 @@
-import {Editor, MarkdownShape} from "@pointplace/types"
+import {View, MarkdownShape} from "@pointplace/types"
 // import crepe "@milkdown/crepe/theme/frame.css";
 // import { Crepe } from '@milkdown/crepe';
 // import crepeCSS from "@milkdown/crepe/theme/common/style.css?raw";
@@ -72,4 +72,4 @@ export default {
 
 		return (<div ref={ref} />) as HTMLDivElement
 	},
-} satisfies Editor<MarkdownShape>
+} satisfies View<MarkdownShape>

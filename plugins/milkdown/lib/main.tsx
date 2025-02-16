@@ -1,4 +1,4 @@
-import {Editor, MarkdownShape} from "@pointplace/types"
+import {View, MarkdownShape} from "@pointplace/types"
 import {Crepe} from "@milkdown/crepe"
 import {updateText} from "@automerge/automerge-repo"
 import {defaultValueCtx} from "@milkdown/kit/core"
@@ -67,4 +67,4 @@ export default {
 
 		return (<div ref={ref} />) as HTMLDivElement
 	},
-} satisfies Editor<MarkdownShape>
+} satisfies View<MarkdownShape>

@@ -24,13 +24,14 @@ import {createRoot} from "react-dom/client"
 
 import {Box, createTLStore, useEditor} from "@tldraw/editor"
 import {parseTldrawJsonFile, Tldraw} from "tldraw"
-import type {
-	ChangeFn,
-	ChangeOptions,
-	Doc,
-	InsertPatch,
-	PutPatch,
-	SpliceTextPatch,
+import {
+	deleteAt,
+	type ChangeFn,
+	type ChangeOptions,
+	type Doc,
+	type InsertPatch,
+	type PutPatch,
+	type SpliceTextPatch,
 } from "@automerge/automerge/next"
 
 import type {HistoryEntry, TLRecord, RecordId, Editor} from "tldraw"
@@ -109,7 +110,7 @@ function TldrawInner(props: {handle: DocHandle<TldrawFile>}) {
 				}
 				for (let [id, _rm] of Object.entries(removed)) {
 					for (let [index, rec] of doc.records.entries()) {
-						if (rec.id == id) doc.records.deleteAt(index)
+						if (rec.id == id) deleteAt(doc.records, index)
 					}
 				}
 			})

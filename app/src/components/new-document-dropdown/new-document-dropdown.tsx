@@ -2,8 +2,8 @@ import {For} from "solid-js"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import "./new-document-dropdown.css"
 import Icon from "../icons/icon.tsx"
-import {useCoderRegistry} from "../../registries/coder-registry.ts"
-import type {Coder} from "../../../../types/src/coder.ts"
+import {useSourceRegistry} from "../../registries/source-registry.ts"
+import type {Coder} from "@pointplace/types/src/source.ts"
 
 export default function NewDocumentMenu(props: {
 	create(opts: {
@@ -13,7 +13,7 @@ export default function NewDocumentMenu(props: {
 		creator: string
 	}): void
 }) {
-	const coders = useCoderRegistry()
+	const coders = useSourceRegistry()
 
 	return (
 		<DropdownMenu>

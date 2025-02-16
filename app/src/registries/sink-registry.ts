@@ -1,19 +1,41 @@
 import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
-import {Registry} from "./registry.ts"
+import {Registry, type Stored} from "./registry.ts"
 import type {ContentTypeRegistry} from "./content-type-registry.ts"
 import {Automerge, type AutomergeUrl} from "@automerge/automerge-repo/slim"
 import {
-	Editor,
-	type Publisher,
-	StoredPublisher,
 	type Entry,
-	type StoredEditor,
+	type FileSink,
+	type Sink,
+	type TransmuteSink,
+	type VoidSink,
 } from "@pointplace/types"
 import repo from "../repo/create.ts"
-import {useHome, type Home} from "../repo/home.ts"
+import {useHome} from "../repo/home.ts"
 
-export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
+export class SinkRegistry extends Registry<"sink", Sink> {
+	static async runFileSink(sink: FileSink<unknown>, entry: Entry) {
+		const handle = await repo.find(entry.url)
+		const file = await sink.publish({handle, entry})
+		const a = document.createElement("a")
+		a.download = file.name
+		a.href = URL.createObjectURL(file)
+		a.click()
+	}
+
+	static async runTransmuteSink(sink: TransmuteSink<unknown>, entry: Entry) {
+		return repo.create(
+			sink.publish({handle: await repo.find(entry.url), entry})
+		)
+	}
+
+	static async runVoidSink(sink: VoidSink<unknown>, entry: Entry) {
+		return sink.publish({handle: await repo.find(entry.url), entry})
+	}
+	runFileSink = SinkRegistry.runFileSink
+	runTransmuteSink = SinkRegistry.runTransmuteSink
+	runVoidSink = SinkRegistry.runVoidSink
+
 	private contentTypeRegistry: ContentTypeRegistry
 
 	constructor({
@@ -25,16 +47,15 @@ export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 	}) {
 		super({
 			repo,
-			type: "publisher",
-			storedSchema: StoredPublisher,
+			typename: "sink",
 		})
 		this.contentTypeRegistry = contentTypeRegistry
 		this.register(compileToEditor)
-		this.register(exportAutomerge)
+		this.register(automergeFileSink)
 	}
 
-	*publishers(entry: Entry) {
-		const seen = new Set<Publisher<unknown>>()
+	*sinks(entry: Entry) {
+		const seen = new Set<Sink>()
 		for (const publisher of Object.values(this.records)) {
 			if (publisher.contentTypes.includes(entry.contentType)) {
 				seen.add(publisher)
@@ -58,88 +79,80 @@ export class PublisherRegistry extends Registry<StoredPublisher, Publisher> {
 			}
 		}
 
-		for (const publisher of Object.values(this.records)) {
-			if (publisher.contentTypes === "*") {
-				if (!seen.has(publisher)) {
-					seen.add(publisher)
-					yield publisher
+		for (const sink of Object.values(this.records)) {
+			if (sink.contentTypes === "*") {
+				if (!seen.has(sink)) {
+					seen.add(sink)
+					yield sink
 				}
 			}
 		}
 	}
 }
 
-export const PublisherRegistryContext = createContext<PublisherRegistry>()
+export const SinkRegistryContext = createContext<SinkRegistry>()
 
-export function usePublisherRegistry() {
-	const value = useContext(PublisherRegistryContext)
+export function useSinkRegistry() {
+	const value = useContext(SinkRegistryContext)
 	if (!value) {
 		throw new Error("this needs to be used within a PublisherRegistryContext")
 	}
 	return value
 }
 
-const exportAutomerge: Publisher<unknown> = {
-	id: "export-automerge",
-	displayName: "Automerge File",
+const automergeFileSink: FileSink<unknown> = {
+	category: "file",
+	id: "automerge-file-sink",
+	displayName: "automerge file",
 	contentTypes: "*",
-	category: "export",
-	publish: async ({handle, entry}) => {
-		const doc = handle.doc()
-		const a = document.createElement("a")
-		a.download = `${entry.name}.automerge`
-		a.href = URL.createObjectURL(new Blob([Automerge.save(doc)]))
-		a.click()
+	async publish({handle, entry}) {
+		return new File([Automerge.save(handle.doc())], `${entry.name}.automerge`)
 	},
 }
 
-const compileToEditor: Publisher<{
+const compileToEditor: VoidSink<{
 	text: string
 	language: "javascript"
 	storedURL?: AutomergeUrl
 }> = {
 	id: "compile-to-editor",
-	displayName: "Compile to Editor",
+	category: "void",
+	displayName: "compile to editor",
 	contentTypes: ["public.code"],
-	category: "reïmport",
-	publish: async ({handle, entry}) => {
+	publish: async ({handle}) => {
 		const file = handle.doc()
 		return compile(file.text)
-			.then(code => {
+			.then(async code => {
 				const bytes = new TextEncoder().encode(code)
 				const blob = new Blob([bytes], {
 					type: "application/javascript",
 				})
 				const blobURL = URL.createObjectURL(blob)
-				return import(/* @vite-ignore */ blobURL).then(mod => ({
+				const mod = await import(/* @vite-ignore */ blobURL)
+				return {
 					bytes,
 					mod,
-				}))
+				}
 			})
 			.then(async result => {
-				// const parsed = await inferEditor(z.unknown())["~standard"].validate(
-				// 	result.mod
-				// )
-				// if (parsed.issues) {
-				// 	console.error(parsed.issues)
-				// 	throw new Error("document doesn't look like an editor")
-				// }
-				const editor = {...(result.mod as StoredEditor)}
-				delete (editor as Partial<Editor<unknown>>).render
-				editor.bytes = result.bytes
-				editor.type = "editor"
+				const editor = {
+					id: result.mod.id,
+					type: "view",
+					category: "editor",
+					bytes: result.bytes,
+				} satisfies Stored<"view">
 
 				if (file.storedURL) {
 					return repo
-						.find<StoredEditor>(file.storedURL)
+						.find<Stored<"view">>(file.storedURL)
 						.then(async handle => {
 							handle.change(doc => {
 								doc.bytes = editor.bytes
 							})
 							const [_home, changeHome] = useHome()
 							changeHome(home => {
-								if (![...home.editors].includes(handle.url)) {
-									home.editors.push(handle.url)
+								if (![...home.views].includes(handle.url)) {
+									home.views.push(handle.url)
 								}
 							})
 						})
@@ -152,8 +165,8 @@ const compileToEditor: Publisher<{
 				const [_home, changeHome] = useHome()
 
 				changeHome(home => {
-					if (![...home.editors].includes(handle.url)) {
-						home.editors.push(handle.url)
+					if (![...home.views].includes(handle.url)) {
+						home.views.push(handle.url)
 					}
 				})
 			})

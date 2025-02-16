@@ -1,17 +1,12 @@
-import {type AutomergeUrl, type DocHandle} from "@automerge/automerge-repo"
-import {For, getOwner, runWithOwner, Show} from "solid-js"
+import {type AutomergeUrl} from "@automerge/automerge-repo"
+import {getOwner, runWithOwner} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
-import repo from "../../../repo/create.ts"
 import "./document-list.css"
-import {useDocument} from "solid-automerge"
-import {useHome} from "../../../repo/home.ts"
-import {parseDocumentURL, useDockAPI} from "../../../dock/dock.tsx"
-import {ContextMenu} from "@kobalte/core/context-menu"
+import {createEntry, useHome} from "../../../repo/home.ts"
+import {useDockAPI} from "../../../dock/dock.tsx"
 import {useContentTypeRegistry} from "../../../registries/content-type-registry.ts"
-import OpenWithContextMenu from "../../../dock/open-with.tsx"
-import type {DocumentURL} from "../../../dock/dock-api.ts"
 import Icon from "../../icons/icon.tsx"
-import type {Entry} from "@pointplace/types"
+import type {AutomergeURLOrDocumentURL} from "@pointplace/types"
 import DocumentList, {andRemove} from "./document-list.tsx"
 
 // todo this should use a generic DocumentList, wrapped with special behaviours
@@ -24,7 +19,7 @@ export default function HomeWidget() {
 
 	const contentTypes = useContentTypeRegistry()
 	const openDocument = (
-		url: DocumentURL,
+		url: AutomergeURLOrDocumentURL,
 		opts?: {side?: string; component?: string}
 	) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
 
@@ -49,14 +44,12 @@ export default function HomeWidget() {
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
 						create={({name, content, contentType}) => {
-							const handle: DocHandle<unknown> = repo.create({
-								type: "file",
+							const handle = createEntry({
 								name,
-								contentType: contentType,
+								contentType,
 								icon: contentTypes.get(contentType)?.icon ?? "",
-								url: repo.create(content).url,
-							} satisfies Entry)
-
+								content,
+							})
 							const url = handle.url as AutomergeUrl
 							runWithOwner(owner, () => {
 								dockAPI.openDocument(url)

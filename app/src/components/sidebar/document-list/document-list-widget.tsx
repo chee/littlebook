@@ -1,22 +1,18 @@
-import {type AutomergeUrl} from "@automerge/automerge-repo"
 import {getOwner, runWithOwner, Show} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import "./document-list.css"
 import {createEntry} from "../../../repo/home.ts"
 import {useDockAPI} from "../../../dock/dock.tsx"
 import {useContentTypeRegistry} from "../../../registries/content-type-registry.ts"
-import type {DocumentURL} from "../../../dock/dock-api.ts"
 import Icon from "../../icons/icon.tsx"
 import DocumentList, {andRemove} from "./document-list.tsx"
 import {useDocument} from "solid-automerge"
-import type {Entry} from "@pointplace/types"
+import type {AutomergeURL, Entry} from "@pointplace/types"
 
-export default function DocumentListWidget(props: {
-	url: AutomergeUrl | DocumentURL
-}) {
+export default function DocumentListWidget(props: {url: AutomergeURL}) {
 	const [rootEntry] = useDocument<Entry>(() => props.url)
 	const [root, rootHandle] = useDocument<{
-		files: AutomergeUrl[]
+		files: AutomergeURL[]
 	}>(() => rootEntry()?.url)
 	const owner = getOwner()
 	const dockAPI = useDockAPI()
@@ -24,7 +20,7 @@ export default function DocumentListWidget(props: {
 	const contentTypes = useContentTypeRegistry()
 
 	const openDocument = (
-		url: DocumentURL | AutomergeUrl,
+		url: AutomergeURL,
 		opts?: {side?: string; component?: string}
 	) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
 
@@ -56,7 +52,7 @@ export default function DocumentListWidget(props: {
 								icon,
 								content,
 							})
-							const url = handle.url as AutomergeUrl
+							const url = handle.url
 							openDocument(url)
 							runWithOwner(owner, () => dockAPI.openDocument(url))
 							rootHandle()?.change(root => {

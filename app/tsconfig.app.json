@@ -30,9 +30,9 @@
 	},
 	"include": [
 		"src",
-		"../types/src/coder.ts",
-		"../types/src/editor.ts",
-		"../types/src/publisher.ts",
+		"../types/src/source.ts",
+		"../types/src/view.ts",
+		"../types/src/sink.ts",
 		"../types/src/viewer.ts"
 	]
 }

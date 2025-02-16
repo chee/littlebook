@@ -4,22 +4,22 @@ import {type ContextValue} from "corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
 import PageHeader from "../components/page-header/page-header.tsx"
 import Icon from "../components/icons/icon.tsx"
-import FileViewer from "../components/editor/editor.tsx"
+import FileViewer from "../components/file-viewer/file-viewer.tsx"
 import {Dock, DockProvider} from "../dock/dock.tsx"
 import DockTab from "../dock/dock-tab.tsx"
 import Workspace from "../components/workspace/workspace.tsx"
-import * as codemirror from "@littlebook/text/codemirror-editor.ts"
+import codemirror from "@littlebook/text/codemirror-editor.ts"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
-import {useEditorRegistry} from "../registries/editor-registry.ts"
-import markdownPreview from "../editors/markdown-preview.tsx"
-import automergeDocEditor from "../editors/automerge-doc-editor.tsx"
+import {useViewRegistry} from "../registries/view-registry.ts"
+import githubMarkdownPreview from "../views/github-markdown-preview.tsx"
+import automergeDocEditor from "../views/editors/automerge-doc-editor.tsx"
 import milkdown from "@pointplace/milkdown"
 import Modmask from "../lib/modmask.ts"
 import {createKeybinding} from "solid-hotkeys"
 export default function App() {
 	const [resizableContext, setResizableContext] = createSignal<ContextValue>()
 
-	const editorRegistry = useEditorRegistry()
+	const editorRegistry = useViewRegistry()
 
 	/* 	editorRegistry.register(
 		{
@@ -33,7 +33,7 @@ export default function App() {
 
 	// todo use plugin registry
 	editorRegistry.register(codemirror)
-	editorRegistry.register(markdownPreview)
+	editorRegistry.register(githubMarkdownPreview)
 	editorRegistry.register(automergeDocEditor)
 	editorRegistry.register(milkdown)
 

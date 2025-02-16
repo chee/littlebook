@@ -23,7 +23,8 @@
 		"vite": "^6.0.1"
 	},
 	"dependencies": {
-		"@solid-primitives/keyboard": "^1.3.0"
+		"@solid-primitives/keyboard": "^1.3.0",
+		"@solid-primitives/utils": "^6.3.0"
 	},
 	"peerDependencies": {
 		"solid-js": "^1.9.4"

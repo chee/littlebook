@@ -1,7 +1,6 @@
 import type {Editor} from "@pointplace/types"
 import {createDocumentProjection} from "solid-automerge"
 import {
-	createEffect,
 	For,
 	getOwner,
 	mapArray,
@@ -13,11 +12,7 @@ import {
 import "./automerge-doc-editor.css"
 import {updateText, type DocHandle} from "@automerge/automerge-repo"
 import {createStore, reconcile} from "solid-js/store"
-import {
-	createSolidTable,
-	flexRender,
-	getCoreRowModel,
-} from "@tanstack/solid-table"
+import {createSolidTable, getCoreRowModel} from "@tanstack/solid-table"
 
 function StringEditor(props: {value: string; change: (value: string) => void}) {
 	return (
@@ -128,15 +123,14 @@ function AutomergeEditor(props: {
 }
 
 const AutomergeDocEditor = {
+	category: "editor",
 	displayName: "automerge doc editor",
 	id: "automerge-doc-editor",
 	contentTypes: "*",
 	render(props) {
 		const doc = createDocumentProjection(() => props.handle)
 		return (
-			<div>
-				<AutomergeEditor json={doc()!} handle={props.handle} path={[]} />
-			</div>
+			<AutomergeEditor json={doc()!} handle={props.handle} path={[]} />
 		) as HTMLElement
 	},
 } satisfies Editor<object>

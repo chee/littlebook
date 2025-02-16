@@ -1,5 +1,7 @@
 .automerge-editor {
 	font-family: monospace;
+	background: var(--sunglow);
+	height: 100%;
 }
 
 .automerge-editor {
@@ -44,10 +46,6 @@
 	}
 	input,
 	textarea {
-		.automerge-editor__row--string & {
-			background-color: #bfe;
-		}
-
 		padding: 0.5em;
 		display: block;
 		&:focus-within {
