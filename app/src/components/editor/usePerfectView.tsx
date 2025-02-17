@@ -1,6 +1,6 @@
 import {createMemo} from "solid-js"
 import {useViewRegistry} from "../../registries/view-registry.ts"
-import type {EditorView} from "@pointplace/types/src/view.ts"
+import type {Editor} from "@pointplace/types/src/view.ts"
 import {useHome} from "../../repo/home.ts"
 import {useDocument} from "solid-automerge"
 import {
@@ -19,7 +19,7 @@ export function usePerfectView<Shape = unknown>(
 	const [entry] = useDocument<Entry>(() => docinfo().url)
 	const editorRegistry = useViewRegistry()
 	const editors = () => entry() && editorRegistry.views(entry()!)
-	const editor = (): EditorView<Shape> | undefined => {
+	const editor = (): Editor<Shape> | undefined => {
 		const url = docinfo().url
 		const associations = home()?.associations
 		const association = associations?.[url]
@@ -27,7 +27,7 @@ export function usePerfectView<Shape = unknown>(
 		const chosenID = docinfo().editor
 		const chosen = chosenID && editorRegistry.get(chosenID)
 		const associated = association && editorRegistry.get(association)
-		return (chosen || associated || firstEditor) as EditorView<Shape>
+		return (chosen || associated || firstEditor) as Editor<Shape>
 	}
 	return editor
 }

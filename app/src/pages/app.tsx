@@ -13,7 +13,6 @@ import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import {useViewRegistry} from "../registries/view-registry.ts"
 import githubMarkdownPreview from "../views/github-markdown-preview.tsx"
 import automergeDocEditor from "../views/editors/automerge-doc-editor.tsx"
-import milkdown from "@pointplace/milkdown"
 import Modmask from "../lib/modmask.ts"
 import {createKeybinding} from "solid-hotkeys"
 export default function App() {
@@ -35,7 +34,7 @@ export default function App() {
 	editorRegistry.register(codemirror)
 	editorRegistry.register(githubMarkdownPreview)
 	editorRegistry.register(automergeDocEditor)
-	editorRegistry.register(milkdown)
+	// editorRegistry.register(milkdown)
 
 	const defaultSizes = [0.2, 0.8]
 

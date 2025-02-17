@@ -2,6 +2,9 @@ import {DocHandle} from "@automerge/automerge-repo"
 import {FileMenu} from "./file-menu.js"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 
+// todo should all these have, like, a `when()`?
+// that takes a doc and returns true if they can handle it?
+// what about that instead of `contentTypes`?
 interface ViewBase<Shape> {
 	id: string
 	displayName: string
