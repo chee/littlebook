@@ -30,7 +30,6 @@ import {
 import repo from "../../repo/create.ts"
 import {updateText, type DocHandle} from "@automerge/automerge-repo"
 import {createKeybinding} from "solid-hotkeys"
-import {file} from "valibot"
 
 const log = window.log.extend("file-viewer")
 
@@ -141,9 +140,6 @@ function EditorViewWrapper<T>(props: {
 	updateStatusItems: SetStoreFunction<string[]>
 	isActive: boolean
 }) {
-	createEffect(() => {
-		console.log(props.editor.render)
-	})
 	return (
 		<Dynamic
 			component={props.editor.render}

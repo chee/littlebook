@@ -50,9 +50,9 @@ createRoot(() => {
 	const publisherRegistry = new SinkRegistry({repo, contentTypeRegistry})
 	const pluginAPI = new PluginAPI({
 		editorRegistry,
-		coderRegistry,
+		sourceRegistry: coderRegistry,
 		contentTypeRegistry,
-		publisherRegistry,
+		sinkRegistry: publisherRegistry,
 	})
 
 	render(

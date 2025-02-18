@@ -38,7 +38,9 @@ export default function DockTab(props: {url: DocumentURL}) {
 
 	createEffect(() => {
 		if (!dockAPI) return
-		if (dockAPI.activePanelID == props.url) tabElement.scrollIntoView()
+		if (dockAPI.activePanelID == props.url) {
+			tabElement.scrollIntoView()
+		}
 	})
 
 	const [file, fileHandle] = useDocument<unknown>(() => entry()?.url)

@@ -1,4 +1,4 @@
-import type {Entry} from "../../documents/entry.ts"
+import type {Entry} from "@pointplace/types"
 import "./fallback.css"
 
 export default function EditorFallback(props: {

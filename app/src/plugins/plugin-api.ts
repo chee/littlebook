@@ -1,30 +1,28 @@
 import {createContext, useContext} from "solid-js"
 import type {SourceRegistry} from "../registries/source-registry.ts"
-import type {Coder} from "@pointplace/types/src/source.ts"
 import type {ViewRegistry} from "../registries/view-registry.ts"
 import type {Editor} from "@pointplace/types/src/view.ts"
 import type {ContentTypeRegistry} from "../registries/content-type-registry.ts"
 import type {SinkRegistry} from "../registries/sink-registry.ts"
-import type {Publisher} from "@pointplace/types/src/sink.ts"
-import type {ContentType} from "@pointplace/types"
+import type {ContentType, Sink, Source} from "@pointplace/types"
 const log = window.log.extend("plugin-api")
 
 export default class PluginAPI {
 	#editorRegistry: ViewRegistry
-	#coderRegistry: SourceRegistry
+	#sourceRegistry: SourceRegistry
 	#contentTypeRegistry: ContentTypeRegistry
-	#publisherRegistry: SinkRegistry
+	#sinkRegistry: SinkRegistry
 
 	constructor(options: {
 		editorRegistry: ViewRegistry
-		coderRegistry: SourceRegistry
+		sourceRegistry: SourceRegistry
 		contentTypeRegistry: ContentTypeRegistry
-		publisherRegistry: SinkRegistry
+		sinkRegistry: SinkRegistry
 	}) {
 		this.#editorRegistry = options.editorRegistry
-		this.#coderRegistry = options.coderRegistry
+		this.#sourceRegistry = options.sourceRegistry
 		this.#contentTypeRegistry = options.contentTypeRegistry
-		this.#publisherRegistry = options.publisherRegistry
+		this.#sinkRegistry = options.sinkRegistry
 	}
 
 	registerEditor<T>(editor: Editor<T>) {
@@ -32,14 +30,14 @@ export default class PluginAPI {
 		log("editor registered", editor.id)
 	}
 
-	registerCoder<T>(coder: Coder<T>) {
-		this.#coderRegistry.register(coder)
-		log("coder registered", coder.id)
+	registerSource<T>(source: Source<T>) {
+		this.#sourceRegistry.register(source)
+		log("source registered", source.id)
 	}
 
-	registerPublisher<T>(publisher: Publisher<T>) {
-		this.#publisherRegistry.register(publisher)
-		log("publisher registered", publisher.id)
+	registerSink<T>(sink: Sink<T>) {
+		this.#sinkRegistry.register(sink)
+		log("sink registered", sink.id)
 	}
 
 	registerContentType<T>(contentType: ContentType<T>) {

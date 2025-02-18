@@ -9,7 +9,7 @@ import {
 	type Entry,
 } from "@pointplace/types"
 
-// todo usePerfectIcon that starts with entry, then editor, then contenttype,
+// todo usePerfectIcon that starts with entry, then editor, then contentType,
 // then defaults to a document icon
 export function usePerfectView<Shape = unknown>(
 	url: () => AutomergeURLOrDocumentURL
