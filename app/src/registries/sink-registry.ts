@@ -1,9 +1,13 @@
 import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
 import {Registry, type Stored} from "./registry.ts"
-import type {ContentTypeRegistry} from "./content-type-registry.ts"
-import {Automerge, type AutomergeUrl} from "@automerge/automerge-repo/slim"
 import {
+	Automerge,
+	isValidAutomergeUrl,
+	type AutomergeUrl,
+} from "@automerge/automerge-repo/slim"
+import {
+	AutomergeURL,
 	type Entry,
 	type FileSink,
 	type Sink,
@@ -12,6 +16,7 @@ import {
 } from "@pointplace/types"
 import repo from "../repo/create.ts"
 import {useHome} from "../repo/home.ts"
+import * as v from "valibot"
 
 export class SinkRegistry extends Registry<"sink", Sink> {
 	static async runFileSink(sink: FileSink<unknown>, entry: Entry) {
@@ -36,55 +41,31 @@ export class SinkRegistry extends Registry<"sink", Sink> {
 	runTransmuteSink = SinkRegistry.runTransmuteSink
 	runVoidSink = SinkRegistry.runVoidSink
 
-	private contentTypeRegistry: ContentTypeRegistry
-
-	constructor({
-		repo,
-		contentTypeRegistry,
-	}: {
-		repo: Repo
-		contentTypeRegistry: ContentTypeRegistry
-	}) {
+	constructor({repo}: {repo: Repo}) {
 		super({
 			repo,
 			typename: "sink",
 		})
-		this.contentTypeRegistry = contentTypeRegistry
+
 		this.register(compileToEditor)
 		this.register(automergeFileSink)
 	}
 
-	*sinks(entry: Entry) {
-		const seen = new Set<Sink>()
-		for (const publisher of Object.values(this.records)) {
-			if (publisher.contentTypes.includes(entry.contentType)) {
-				seen.add(publisher)
-				yield publisher
-			}
-		}
-
-		const entryType = this.contentTypeRegistry.get(entry.contentType)
-		if (entryType && entryType.conformsTo) {
-			for (const publisher of Object.values(this.records)) {
-				if (
-					Array.isArray(publisher.contentTypes) &&
-					publisher.contentTypes.some(type =>
-						entryType.conformsTo?.includes(type)
-					) &&
-					!seen.has(publisher)
-				) {
-					seen.add(publisher)
-					yield publisher
-				}
-			}
-		}
-
+	*sinks(file: unknown) {
 		for (const sink of Object.values(this.records)) {
-			if (sink.contentTypes === "*") {
-				if (!seen.has(sink)) {
-					seen.add(sink)
-					yield sink
-				}
+			if (!sink.schema) {
+				console.warn("view has no schema", sink)
+				continue
+			}
+			const result = sink.schema["~standard"].validate(file)
+			if (result instanceof Promise) {
+				console.warn("schemas cannot be async")
+				continue
+			}
+			if (result.issues) {
+				continue
+			} else {
+				yield sink
 			}
 		}
 	}
@@ -104,12 +85,13 @@ const automergeFileSink: FileSink<unknown> = {
 	category: "file",
 	id: "automerge-file-sink",
 	displayName: "automerge file",
-	contentTypes: "*",
+	schema: v.record(v.string(), v.any()),
 	async publish({handle, entry}) {
 		return new File([Automerge.save(handle.doc())], `${entry.name}.automerge`)
 	},
 }
 
+// todo move to plugin
 const compileToEditor: VoidSink<{
 	text: string
 	language: "javascript"
@@ -118,8 +100,12 @@ const compileToEditor: VoidSink<{
 	id: "compile-to-editor",
 	category: "void",
 	displayName: "compile to editor",
-	contentTypes: ["public.code"],
-	publish: async ({handle}) => {
+	schema: v.object({
+		text: v.string(),
+		language: v.literal("javascript"),
+		storedURL: v.optional(v.custom<AutomergeURL>(isValidAutomergeUrl)),
+	}),
+	async publish({handle}) {
 		const file = handle.doc()
 		return compile(file.text)
 			.then(async code => {

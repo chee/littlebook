@@ -1,25 +1,12 @@
 import {type Repo} from "@automerge/automerge-repo"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
-import {type ContentTypeRegistry} from "./content-type-registry.ts"
-import {type View, type Entry} from "@pointplace/types"
+import {type View} from "@pointplace/types"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class ViewRegistry extends Registry<"view", View<any>> {
-	#contentTypeRegistry: ContentTypeRegistry
-
-	constructor({
-		repo,
-		contentTypeRegistry,
-	}: {
-		repo: Repo
-		contentTypeRegistry: ContentTypeRegistry
-	}) {
-		super({
-			repo,
-			typename: "view",
-		})
-		this.#contentTypeRegistry = contentTypeRegistry
+	constructor({repo}: {repo: Repo}) {
+		super({repo, typename: "view"})
 	}
 
 	/*
@@ -29,37 +16,20 @@ export class ViewRegistry extends Registry<"view", View<any>> {
 	 * 3. browser: repo.find(url).change(doc => doc.bytes = Uint8Array.fromBase64(`⌘+v`))<RET>
 	 */
 
-	// this yields in three steps to allow for more specific matches to be yielded first
-	*views(entry: Entry) {
-		const seen = new Set<View<unknown>>()
+	*views(file: unknown) {
 		for (const view of Object.values(this.records)) {
-			if (typeof view.contentTypes == "string") continue
-			if (view.contentTypes.includes(entry.contentType)) {
-				seen.add(view)
-				yield view
+			if (!view.schema) {
+				console.warn("view has no schema", view)
+				continue
 			}
-		}
-
-		const entryType = this.#contentTypeRegistry.get(entry.contentType)
-
-		if (entryType && entryType.conformsTo) {
-			for (const view of Object.values(this.records)) {
-				if (typeof view.contentTypes == "string") continue
-				if (
-					view.contentTypes.some(type =>
-						entryType.conformsTo?.includes(type)
-					) &&
-					!seen.has(view)
-				) {
-					seen.add(view)
-					yield view
-				}
+			const result = view.schema["~standard"].validate(file)
+			if (result instanceof Promise) {
+				console.warn("schemas cannot be async")
+				continue
 			}
-		}
-
-		for (const view of Object.values(this.records)) {
-			if (view.contentTypes == "*" && !seen.has(view)) {
-				seen.add(view)
+			if (result.issues) {
+				continue
+			} else {
 				yield view
 			}
 		}

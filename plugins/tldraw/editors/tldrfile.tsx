@@ -8,7 +8,6 @@
 
 export const id = "tldraw/.tldr"
 export const name = "Tldraw Canvas Editor"
-export const contentTypes = [".tldr"]
 
 import {
 	useCallback,

@@ -23,7 +23,6 @@ export const coders = [
 		id: "tldraw.tldr",
 		displayName: "Tldrfile",
 		mimeTypes: ["application/json"],
-		contentType: "tldraw/.tldr",
 		decode(bytes: Uint8Array) {
 			const schema = createTLSchema()
 			try {

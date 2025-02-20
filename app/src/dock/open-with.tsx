@@ -19,11 +19,12 @@ export default function OpenWithContextMenu(props: {
 }) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url))
 	const [entry, entryHandle] = useDocument<Entry>(() => docinfo().url)
-	const editorRegistry = useViewRegistry()
-	const editors = () => [...(editorRegistry.views(entry()!) ?? [])]
+	const [file] = useDocument(() => entry()?.url)
+	const viewRegistry = useViewRegistry()
+	const views = () => [...(viewRegistry.views(file()!) ?? [])]
 
 	return (
-		<Show when={editors().length > 1}>
+		<Show when={views().length > 1}>
 			<ContextMenu.Sub overlap gutter={-10}>
 				<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
 					open with
@@ -34,7 +35,7 @@ export default function OpenWithContextMenu(props: {
 
 				<ContextMenu.Portal>
 					<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
-						<For each={editors()}>
+						<For each={views()}>
 							{choice => (
 								<ContextMenu.Item
 									onSelect={() => {

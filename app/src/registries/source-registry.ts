@@ -10,7 +10,7 @@ import {
 	type VoidSource,
 	type AutomergeURL,
 } from "@pointplace/types"
-import type {FolderShape} from "./content-type-registry.ts"
+import * as v from "valibot"
 
 // todo a unified registry
 export class SourceRegistry extends Registry<"source", Source> {
@@ -26,17 +26,24 @@ export class SourceRegistry extends Registry<"source", Source> {
 	}
 }
 
+export const FolderShape = v.object({
+	files: v.array(v.string()),
+})
+
+export type FolderShape = v.InferOutput<typeof FolderShape>
+
 // todo move all of these to the base plugin
 const newFolder: VoidSource<FolderShape> = {
 	id: "new-folder",
 	category: "new",
 	displayName: "folder",
-	contentType: "public.folder",
-	create(help) {
-		return {
-			[help.nameKey]: "new folder",
-			files: [] as AutomergeURL[],
-		}
+	new() {
+		return [
+			{
+				files: [] as AutomergeURL[],
+			},
+			{name: "new folder"},
+		]
 	},
 }
 
@@ -44,9 +51,8 @@ const newText: VoidSource<TextShape> = {
 	id: "new-text",
 	category: "new",
 	displayName: "plain text",
-	contentType: "public.text",
-	create() {
-		return {text: ""}
+	new() {
+		return [{text: ""}]
 	},
 }
 
@@ -54,13 +60,17 @@ const importText: FilesystemSource<TextShape> = {
 	id: "new-text",
 	category: "filesystem",
 	displayName: "plain text",
-	contentType: "public.text",
-	async import(file, help) {
+	patterns: ["*.txt", "*.text"],
+	mimes: ["text/plain", "text/*"],
+	async import(file) {
 		const text = await file.text()
-		return {
-			[help.nameKey]: file.name,
-			text,
-		}
+		console.log(file.type)
+		return [
+			{
+				text,
+			},
+			{name: file.name},
+		]
 	},
 }
 
@@ -68,24 +78,8 @@ const newCode: VoidSource<CodeShape> = {
 	id: "new-code",
 	category: "new",
 	displayName: "computer code",
-	contentType: "public.code",
-	create() {
-		return {text: "", language: ""}
-	},
-}
-
-const importCode: FilesystemSource<CodeShape> = {
-	id: "import-code",
-	category: "filesystem",
-	displayName: "computer code",
-	contentType: "public.code",
-	async import(file, help) {
-		const text = await file.text()
-		return {
-			[help.nameKey]: file.name,
-			text,
-			language: file?.type?.slice(file.type?.indexOf("/") + 1) || "",
-		}
+	new() {
+		return [{text: "", language: ""}]
 	},
 }
 
@@ -93,9 +87,8 @@ const newMarkdown: VoidSource<MarkdownShape> = {
 	id: "new-markdown",
 	category: "new",
 	displayName: "markdown",
-	contentType: "public.markdown",
-	create() {
-		return {text: "", language: "markdown"}
+	new() {
+		return [{text: "", language: "markdown"}]
 	},
 }
 
@@ -103,14 +96,17 @@ const importMarkdown: FilesystemSource<MarkdownShape> = {
 	id: "import-markdown",
 	category: "filesystem",
 	displayName: "markdown",
-	contentType: "public.markdown",
-	async import(file, help) {
+	mimes: ["text/markdown", "text/x-markdown"],
+	patterns: ["*.md", "*.markdown", "*.mdown", "*.markdn"],
+	async import(file) {
 		const text = await file.text()
-		return {
-			[help.nameKey]: file.name,
-			text,
-			language: "markdown",
-		}
+		return [
+			{
+				text,
+				language: "markdown",
+			},
+			{name: file.name},
+		]
 	},
 }
 
@@ -119,7 +115,6 @@ const knownSources = [
 	newText,
 	newFolder,
 	newMarkdown,
-	importCode,
 	importText,
 	importMarkdown,
 ]

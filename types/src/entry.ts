@@ -9,10 +9,6 @@ export interface Entry {
 	name: string
 	/**  a solar icon name or a URL or a dataURI or an automerge url to bytes doc */
 	icon?: string
-	/** the file's contentType*/
-	contentType: string
-	contentTypeURL?: string
-
 	/* ref to file content */
 	url: AutomergeURL
 }

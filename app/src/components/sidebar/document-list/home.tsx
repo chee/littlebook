@@ -4,20 +4,16 @@ import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.t
 import "./document-list.css"
 import {createEntry, useHome} from "../../../repo/home.ts"
 import {useDockAPI} from "../../../dock/dock.tsx"
-import {useContentTypeRegistry} from "../../../registries/content-type-registry.ts"
 import Icon from "../../icons/icon.tsx"
 import type {AutomergeURLOrDocumentURL} from "@pointplace/types"
 import DocumentList, {andRemove} from "./document-list.tsx"
 
-// todo this should use a generic DocumentList, wrapped with special behaviours
-// and user can pin a folder to the sidebar as a DocumentList
 export default function HomeWidget() {
 	const [home, changeHome] = useHome()
 
 	const owner = getOwner()
 	const dockAPI = useDockAPI()
 
-	const contentTypes = useContentTypeRegistry()
 	const openDocument = (
 		url: AutomergeURLOrDocumentURL,
 		opts?: {side?: string; component?: string}
@@ -43,13 +39,8 @@ export default function HomeWidget() {
 				<span>{home()?.name}</span>
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
-						create={({name, content, contentType}) => {
-							const handle = createEntry({
-								name,
-								contentType,
-								icon: contentTypes.get(contentType)?.icon ?? "",
-								content,
-							})
+						create={({name, content}) => {
+							const handle = createEntry({name, content})
 							const url = handle.url as AutomergeUrl
 							runWithOwner(owner, () => {
 								dockAPI.openDocument(url)

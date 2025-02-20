@@ -9,7 +9,7 @@ import {
 	type Entry,
 } from "@pointplace/types"
 
-// todo usePerfectIcon that starts with entry, then editor, then contenttype,
+// todo usePerfectIcon that starts with entry, then editor,
 // then defaults to a document icon
 export function usePerfectView<Shape = unknown>(
 	url: () => AutomergeURLOrDocumentURL
@@ -18,7 +18,8 @@ export function usePerfectView<Shape = unknown>(
 	const [home] = useHome()
 	const [entry] = useDocument<Entry>(() => docinfo().url)
 	const viewRegistry = useViewRegistry()
-	const views = () => entry() && viewRegistry.views(entry()!)
+	const [file] = useDocument<Shape>(() => entry()?.url)
+	const views = () => file() && viewRegistry.views(file()!)
 	const view = (): View<Shape> | undefined => {
 		const url = docinfo().url
 		const associations = home()?.associations

@@ -1,31 +1,24 @@
 import type {StandardSchemaV1} from "@standard-schema/spec"
 import {type MaybePromise} from "./util.js"
 
-const nameKey = Symbol("name")
-
-type MaybeNamedShape<Shape> = Shape & {[nameKey]?: string}
+type MaybeNamedShape<Shape> = [shape: Shape] | [shape: Shape, {name: string}]
 
 interface SourceBase<Shape = unknown> {
 	id: string
 	displayName: string
-	contentType: string
 	category: string
-	schema?: StandardSchemaV1<Shape>
 }
 
 export interface VoidSource<Shape = unknown> extends SourceBase {
 	category: "new"
-	create(help: {nameKey: typeof nameKey}): MaybePromise<MaybeNamedShape<Shape>>
+	"new"(): MaybePromise<MaybeNamedShape<Shape>>
 }
 
 export interface FilesystemSource<Shape = unknown> extends SourceBase {
 	category: "filesystem"
-	import(
-		file: File,
-		help: {nameKey: typeof nameKey}
-	): MaybePromise<MaybeNamedShape<Shape>>
-	filePatterns?: string[]
-	mimeTypes?: string[]
+	import(file: File): MaybePromise<MaybeNamedShape<Shape>>
+	patterns?: string[]
+	mimes?: string[]
 }
 
 // export interface NetworkSource<Shape> extends SourceBase {

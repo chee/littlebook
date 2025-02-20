@@ -10,10 +10,10 @@ export default function EditorFallback(props: {
 	return (
 		<div class="editor-fallback">
 			<p>
-				sorry, i can't display this
-				<code>{" " + props.entry?.contentType}</code>...
+				sorry, i can't display this file
+				<code>{" " + props.entry.name}</code>...
 			</p>
-			{!props.view && <p>because there's no Editor</p>}
+			{!props.view && <p>because there's no Editor that can open it</p>}
 			{!props.fileHandle && <p>because i didn't find the file</p>}
 			<br />
 			<p>debug info:</p>

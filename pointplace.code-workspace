@@ -30,7 +30,7 @@
 		},
 	],
 	"settings": {
-		"workbench.colorTheme": "Gruvbox Dark Hard",
+		"workbench.colorTheme": "Tinacious Design",
 		"editor.quickSuggestions": {
 			"strings": "on",
 		},

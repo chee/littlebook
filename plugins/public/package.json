@@ -5,21 +5,6 @@
 	"type": "module",
 	"main": "output/text.js",
 	"styles": "output/text.css",
-	"littlebook": {
-		"editors": [
-			{
-				"todo": "this stuff is outdated",
-				"element": "codemirror-text",
-				"displayName": "Codemirror",
-				"contentTypes": [
-					"public.plain-text",
-					"public.python-script",
-					"net.daringfireball.markdown",
-					"com.netscape.javascript-source"
-				]
-			}
-		]
-	},
 	"scripts": {
 		"mk": "NODE_ENV=production node mk",
 		"build": "NODE_ENV=production node mk",

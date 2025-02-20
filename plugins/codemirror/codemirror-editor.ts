@@ -15,20 +15,10 @@ import {
 	type EditorAPI,
 	type FileMenu,
 } from "@pointplace/types"
-import * as v from "valibot"
-import type {DocHandleChangePayload} from "@automerge/automerge-repo/slim"
+import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 
-export const id = "codemirror"
-export const displayName = "codemirror"
-
-export const contentTypes = ["public.text", "public.code"]
-
-const schema = CodeShape
-
-type CodemirrorFile = v.InferOutput<typeof schema>
-
-export function render(
-	props: EditorAPI<CodemirrorFile> & {
+function render(
+	props: EditorAPI<CodeShape> & {
 		path?: (string | number)[]
 	}
 ) {
@@ -214,7 +204,7 @@ export function getFileMenu() {
 				},
 			],
 		},
-	] satisfies FileMenu<CodemirrorFile>
+	] satisfies FileMenu<CodeShape>
 }
 
 export const category = "editor"
@@ -223,8 +213,7 @@ export default {
 	category,
 	render,
 	getFileMenu,
-	id,
-	contentTypes,
-	schema,
-	displayName,
-} satisfies Editor<CodemirrorFile>
+	id: "codemirror",
+	displayName: "codemirror",
+	schema: CodeShape,
+} satisfies Editor<CodeShape>

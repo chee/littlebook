@@ -13,9 +13,8 @@ import remarkRehype from "remark-rehype"
 import gfm from "remark-gfm"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
-import {MarkdownShape, type Editor, type ReadOnlyView} from "@pointplace/types"
+import {MarkdownShape, type ReadOnlyView} from "@pointplace/types"
 import type {StandardSchemaV1} from "@standard-schema/spec"
-import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 
 const markdown = await unified()
 	.use(gfm)
@@ -30,13 +29,11 @@ const markdown = await unified()
 		stylePropertyNameCase: "css",
 	})
 
-type Markdown = StandardSchemaV1.InferOutput<typeof MarkdownShape>
-
 export default {
 	category: "readonly",
 	displayName: "github preview",
 	id: "github-markdown-preview",
-	contentTypes: ["public.markdown"],
+	schema: MarkdownShape,
 	render(props) {
 		// eslint-disable-next-line solid/reactivity
 		const [text, updateText] = createSignal(props.doc().text)
@@ -62,4 +59,4 @@ export default {
 			</div>
 		) as HTMLElement
 	},
-} satisfies ReadOnlyView<Markdown>
+} satisfies ReadOnlyView<MarkdownShape>

@@ -9,7 +9,6 @@ export default {
 	id: "milkdown-crepe",
 	displayName: "crepe",
 	schema: MarkdownShape,
-	contentTypes: ["public.markdown"],
 	category: "editor",
 	render(api) {
 		let ref!: HTMLDivElement

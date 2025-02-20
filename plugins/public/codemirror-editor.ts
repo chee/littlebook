@@ -9,21 +9,12 @@ import {
 } from "@codemirror/language"
 import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
-import {
-	CodeShape,
-	View,
-	type EditorAPI,
-	type FileMenu,
-	type TextShape,
-} from "@pointplace/types"
+import {CodeShape, View, type EditorAPI, type FileMenu} from "@pointplace/types"
 import * as v from "valibot"
-import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/automerge-repo"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo/slim"
 
 export const id = "codemirror"
 export const displayName = "codemirror"
-
-export const contentTypes = ["public.text", "public.code"]
 
 const schema = CodeShape
 
@@ -223,7 +214,7 @@ export default {
 	render,
 	getFileMenu,
 	id,
-	contentTypes,
+
 	schema,
 	displayName,
 } satisfies View<CodemirrorFile>

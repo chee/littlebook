@@ -3,17 +3,11 @@ import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import "./new-document-dropdown.css"
 import Icon from "../icons/icon.tsx"
 import {useSourceRegistry} from "../../registries/source-registry.ts"
-import type {Coder} from "@pointplace/types/src/source.ts"
 
 export default function NewDocumentMenu(props: {
-	create(opts: {
-		name: string
-		contentType: string
-		content: unknown
-		creator: string
-	}): void
+	create(opts: {name: string; content: unknown; creator: string}): void
 }) {
-	const coders = useSourceRegistry()
+	const sources = useSourceRegistry()
 
 	return (
 		<DropdownMenu>
@@ -33,20 +27,25 @@ export default function NewDocumentMenu(props: {
 						</DropdownMenu.SubTrigger>
 						<DropdownMenu.Portal>
 							<DropdownMenu.SubContent class="pop-menu__sub-content">
-								<For each={Object.entries(coders.records)}>
-									{([id, coder]) => {
+								<For each={Object.entries(sources.records)}>
+									{([id, source]) => {
+										if (source.category !== "new") return
 										return (
 											<DropdownMenu.Item
 												class="pop-menu__item"
-												onSelect={() =>
+												// eslint-disable-next-line solid/reactivity
+												onSelect={async () => {
+													const [content, info] =
+														await source.new()
 													props.create({
-														name: `new ${coder.displayName} file`,
-														content: coder.new(),
-														contentType: coder.contentType,
+														name:
+															info?.name ??
+															`new ${source.displayName}`,
+														content,
 														creator: id,
 													})
-												}>
-												{coder.displayName}
+												}}>
+												{source.displayName}
 											</DropdownMenu.Item>
 										)
 									}}
@@ -60,6 +59,7 @@ export default function NewDocumentMenu(props: {
 						// eslint-disable-next-line solid/reactivity
 						onSelect={async () => {
 							// todo move this somewhere sensible
+							// todo make this make sense
 							const fsa = await import("file-system-access")
 							const [computerFileHandle] = await fsa.showOpenFilePicker({
 								_preferPolyfill: false,
@@ -67,12 +67,13 @@ export default function NewDocumentMenu(props: {
 							})
 							const computerFile = await computerFileHandle.getFile()
 
-							const relevantCoders = Array.from(
-								coders.forMIMEType(computerFile.type) ||
-									coders.forFilename(computerFile.name)
-							)
+							// [Symbol
+							// const relevantCoders = Array.from(
+							// sources.forMIMEType(computerFile.type) ||
+							// sources.forFilename(computerFile.name)
+							// )
 
-							let coder: Coder | undefined
+							// let coder: Coder | undefined
 
 							if (relevantCoders.length == 0) {
 								const importAsText = prompt(
@@ -83,7 +84,7 @@ export default function NewDocumentMenu(props: {
 									importAsText.toLowerCase().trim().slice(0, 2) !==
 										"no"
 								) {
-									coder = coders.records["code"]!
+									coder = sources.records["code"]!
 								}
 							} else if (relevantCoders.length == 1) {
 								coder = relevantCoders[0]
@@ -124,7 +125,6 @@ export default function NewDocumentMenu(props: {
 											computerFileHandle.name ??
 											`${coder.displayName} file`,
 										content: content.val,
-										contentType: coder.contentType,
 										creator: coder.id,
 									})
 								} else if (content && !content.ok) {

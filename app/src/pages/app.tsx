@@ -20,21 +20,10 @@ export default function App() {
 
 	const editorRegistry = useViewRegistry()
 
-	/* 	editorRegistry.register(
-		{
-			displayName: "Tldraw",
-			id: "tldraw",
-			contentTypes: ["tldraw"],
-		},
-		tldraw
-	)
-	*/
-
 	// todo use plugin registry
 	editorRegistry.register(codemirror)
 	editorRegistry.register(githubMarkdownPreview)
 	editorRegistry.register(automergeDocEditor)
-	// editorRegistry.register(milkdown)
 
 	const defaultSizes = [0.2, 0.8]
 

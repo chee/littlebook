@@ -28,11 +28,6 @@ const root = document.getElementById("root")!
 import {ViewRegistry, ViewRegistryContext} from "./registries/view-registry.ts"
 
 import {
-	ContentTypeRegistry,
-	ContentTypeRegistryContext,
-} from "./registries/content-type-registry.ts"
-
-import {
 	SourceRegistry,
 	SourceRegistryContext,
 } from "./registries/source-registry.ts"
@@ -44,32 +39,28 @@ import {SinkRegistry, SinkRegistryContext} from "./registries/sink-registry.ts"
 import PluginAPI, {PluginAPIContext} from "./plugins/plugin-api.ts"
 
 createRoot(() => {
-	const contentTypeRegistry = new ContentTypeRegistry({repo})
 	const coderRegistry = new SourceRegistry({repo})
-	const editorRegistry = new ViewRegistry({repo, contentTypeRegistry})
-	const publisherRegistry = new SinkRegistry({repo, contentTypeRegistry})
+	const editorRegistry = new ViewRegistry({repo})
+	const publisherRegistry = new SinkRegistry({repo})
 	const pluginAPI = new PluginAPI({
 		editorRegistry,
 		sourceRegistry: coderRegistry,
-		contentTypeRegistry,
 		sinkRegistry: publisherRegistry,
 	})
 
 	render(
 		() => (
-			<ContentTypeRegistryContext.Provider value={contentTypeRegistry}>
-				<SourceRegistryContext.Provider value={coderRegistry}>
-					<ViewRegistryContext.Provider value={editorRegistry}>
-						<SinkRegistryContext.Provider value={publisherRegistry}>
-							<RepoContext.Provider value={repo}>
-								<PluginAPIContext.Provider value={pluginAPI}>
-									<App />
-								</PluginAPIContext.Provider>
-							</RepoContext.Provider>
-						</SinkRegistryContext.Provider>
-					</ViewRegistryContext.Provider>
-				</SourceRegistryContext.Provider>
-			</ContentTypeRegistryContext.Provider>
+			<SourceRegistryContext.Provider value={coderRegistry}>
+				<ViewRegistryContext.Provider value={editorRegistry}>
+					<SinkRegistryContext.Provider value={publisherRegistry}>
+						<RepoContext.Provider value={repo}>
+							<PluginAPIContext.Provider value={pluginAPI}>
+								<App />
+							</PluginAPIContext.Provider>
+						</RepoContext.Provider>
+					</SinkRegistryContext.Provider>
+				</ViewRegistryContext.Provider>
+			</SourceRegistryContext.Provider>
 		),
 		root
 	)

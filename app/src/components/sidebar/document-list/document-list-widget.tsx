@@ -3,11 +3,14 @@ import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.t
 import "./document-list.css"
 import {createEntry} from "../../../repo/home.ts"
 import {useDockAPI} from "../../../dock/dock.tsx"
-import {useContentTypeRegistry} from "../../../registries/content-type-registry.ts"
 import Icon from "../../icons/icon.tsx"
 import DocumentList, {andRemove} from "./document-list.tsx"
 import {useDocument} from "solid-automerge"
-import type {AutomergeURL, Entry} from "@pointplace/types"
+import type {
+	AutomergeURL,
+	AutomergeURLOrDocumentURL,
+	Entry,
+} from "@pointplace/types"
 
 export default function DocumentListWidget(props: {url: AutomergeURL}) {
 	const [rootEntry] = useDocument<Entry>(() => props.url)
@@ -17,10 +20,8 @@ export default function DocumentListWidget(props: {url: AutomergeURL}) {
 	const owner = getOwner()
 	const dockAPI = useDockAPI()
 
-	const contentTypes = useContentTypeRegistry()
-
 	const openDocument = (
-		url: AutomergeURL,
+		url: AutomergeURLOrDocumentURL,
 		opts?: {side?: string; component?: string}
 	) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
 
@@ -44,14 +45,8 @@ export default function DocumentListWidget(props: {url: AutomergeURL}) {
 				<span>{rootEntry()?.name}</span>
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
-						create={({name, content, contentType}) => {
-							const icon = contentTypes.get(contentType)?.icon
-							const handle = createEntry({
-								name,
-								contentType,
-								icon,
-								content,
-							})
+						create={({name, content}) => {
+							const handle = createEntry({name, content})
 							const url = handle.url
 							openDocument(url)
 							runWithOwner(owner, () => dockAPI.openDocument(url))

@@ -13,6 +13,7 @@ import "./automerge-doc-editor.css"
 import {updateText, type DocHandle} from "@automerge/automerge-repo"
 import {createStore, reconcile} from "solid-js/store"
 import {createSolidTable, getCoreRowModel} from "@tanstack/solid-table"
+import {any, record, string} from "valibot"
 
 function StringEditor(props: {value: string; change: (value: string) => void}) {
 	return (
@@ -126,7 +127,7 @@ const AutomergeDocEditor = {
 	category: "editor",
 	displayName: "automerge doc editor",
 	id: "automerge-doc-editor",
-	contentTypes: "*",
+	schema: record(string(), any()),
 	render(props) {
 		const doc = createDocumentProjection(() => props.handle)
 		return (

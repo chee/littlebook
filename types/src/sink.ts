@@ -12,8 +12,7 @@ interface SinkBase<Shape> {
 	id: string
 	displayName: string
 	category: string
-	contentTypes: string[] | "*"
-	schema?: StandardSchemaV1<Shape>
+	schema: StandardSchemaV1<Shape>
 }
 
 export interface FileSink<Shape = unknown> extends SinkBase<Shape> {

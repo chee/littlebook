@@ -1,6 +1,6 @@
 import Icon from "../components/icons/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
-import type {AutomergeUrl, Doc} from "@automerge/automerge-repo"
+import type {Doc} from "@automerge/automerge-repo"
 import {Button} from "@kobalte/core/button"
 import {
 	createEffect,
@@ -60,9 +60,9 @@ export default function DockTab(props: {url: DocumentURL}) {
 	const publisherRegistry = useSinkRegistry()
 
 	const publishers = () => {
-		if (entry()) {
+		if (file()) {
 			return Object.groupBy(
-				publisherRegistry.sinks(entry()!),
+				publisherRegistry.sinks(file()!),
 				x => x.category ?? "other"
 			)
 		}

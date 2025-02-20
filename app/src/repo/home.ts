@@ -3,7 +3,7 @@ import repo from "./create.ts"
 import {createSignal, untrack} from "solid-js"
 import {type AutomergeUrl, type ChangeFn} from "@automerge/automerge-repo"
 import {useDocument} from "solid-automerge"
-import {automergeURL, type ContentType, type Entry} from "@pointplace/types"
+import {automergeURL, type Entry} from "@pointplace/types"
 import * as v from "valibot"
 
 export const Home = v.object({
@@ -17,14 +17,6 @@ export const Home = v.object({
 
 export type Home = v.InferOutput<typeof Home>
 
-export const HomeContentType: ContentType<Home> = {
-	id: "public.home",
-	displayName: "home",
-	schema: Home,
-	conformsTo: ["public.folder"],
-	icon: "ghost-smile-bold",
-}
-
 const forceString = (string: string) =>
 	(string?.[0] == `"` ? JSON.parse(string) : string) as AutomergeUrl
 
@@ -35,7 +27,6 @@ const [homeEntryURL, setHomeEntryURL] = makePersisted(
 			repo.create({
 				type: "entry",
 				name: "home",
-				contentType: "public.home",
 				icon: "ghost-smile-bold",
 				url: repo.create({
 					name: "home",
@@ -45,7 +36,6 @@ const [homeEntryURL, setHomeEntryURL] = makePersisted(
 					files: [
 						createEntry({
 							name: "my manifesto.txt",
-							contentType: "public.text",
 							content: {
 								text: "hello world",
 							},
@@ -69,14 +59,12 @@ const [homeEntryURL, setHomeEntryURL] = makePersisted(
 
 export function createEntry<T>(opts: {
 	name: string
-	contentType: string
 	content: T
 	icon?: string
 }) {
 	return repo.create<Entry>({
 		type: "entry",
 		name: opts.name,
-		contentType: opts.contentType,
 		icon: opts.icon ?? "",
 		url: repo.create(opts.content).url,
 	})

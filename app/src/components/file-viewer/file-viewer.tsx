@@ -18,7 +18,6 @@ import {Dynamic} from "solid-js/web"
 import {useDocument} from "solid-automerge"
 import {usePerfectView} from "./usePerfectView.tsx"
 import clsx from "clsx"
-import {useContentTypeRegistry} from "../../registries/content-type-registry.ts"
 import {createStore, type SetStoreFunction} from "solid-js/store"
 import {
 	parseDocumentURL,
@@ -45,11 +44,6 @@ export default function FileViewer(props: {
 
 	const [statusItems, updateStatusItems] = createStore([] as string[])
 
-	const contentTypeName = () => {
-		const name = entry()?.contentType
-		return name && useContentTypeRegistry().get(name)?.displayName
-	}
-
 	return (
 		<Suspense>
 			<Show
@@ -65,7 +59,6 @@ export default function FileViewer(props: {
 				<ErrorBoundary
 					fallback={(error, reset) => {
 						createEffect(again => {
-							console.error(error)
 							if (view() && again) {
 								reset()
 							}
@@ -121,10 +114,6 @@ export default function FileViewer(props: {
 						<span class="file-viewer-status-bar__editor-name">
 							{view()?.displayName}
 						</span>
-						<span class="file-viewer-status-bar__content-type">
-							{contentTypeName()}
-						</span>
-
 						<For each={statusItems}>{item => <span>{item}</span>}</For>
 					</footer>
 				</ErrorBoundary>
