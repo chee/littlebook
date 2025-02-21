@@ -23,7 +23,7 @@ export interface ReadOnlyView<Shape = unknown> extends ViewBase<Shape> {
 
 interface ViewAPIBase<Shape> {
 	updateStatusItems(items: string[]): void
-	registerKeybinding(keybinding: string, action: () => {}): void
+	registerKeybinding(keybinding: string, action: () => void): void
 	isActive(): boolean
 	onCleanup(cleanup: () => void): void
 	onMount(mount: () => void): void

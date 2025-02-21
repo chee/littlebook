@@ -7,8 +7,9 @@
 		"lib": ["ES2024", "DOM", "DOM.Iterable"],
 		"skipLibCheck": true,
 		"declaration": true,
-
-		/* Bundler mode */
+		"paths": {
+			":/*": ["./src/*"]
+		},
 		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
 		"isolatedModules": true,
@@ -16,15 +17,11 @@
 		"noEmit": true,
 		"jsx": "preserve",
 		"jsxImportSource": "solid-js",
-
-		/* Linting */
 		"strict": true,
-		// "noUnusedLocals": true,
-		// "noUnusedParameters": true,
-		// "noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true,
-
-		/* effect */
 		// "exactOptionalPropertyTypes": true,
 		"typeRoots": ["./node_modules/@types", "./src/types"]
 	},

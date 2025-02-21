@@ -3,6 +3,7 @@ import * as esbuild from "esbuild"
 /** @type {esbuild.BuildOptions} */
 export default {
 	entryPoints: ["entry.ts"],
+	splitting: true,
 	treeShaking: true,
 	logLevel: "info",
 	bundle: true,

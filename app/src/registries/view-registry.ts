@@ -6,7 +6,7 @@ import {type View} from "@pointplace/types"
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class ViewRegistry extends Registry<"view", View<any>> {
 	constructor({repo}: {repo: Repo}) {
-		super({repo, typename: "view"})
+		super({repo, doctype: "view"})
 	}
 
 	/*

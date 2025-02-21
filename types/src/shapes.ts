@@ -19,3 +19,17 @@ export const MarkdownShape = v.object({
 	editorURL: v.optional(automergeURL),
 })
 export type MarkdownShape = v.InferOutput<typeof MarkdownShape>
+
+export const JavaScriptEditorShape = v.object({
+	text: v.string(),
+	language: v.literal("javascript"),
+	url: v.optional(automergeURL),
+})
+
+export type JavaScriptEditorShape = v.InferOutput<typeof JavaScriptEditorShape>
+
+export const FolderShape = v.object({
+	files: v.array(v.string()),
+})
+
+export type FolderShape = v.InferOutput<typeof FolderShape>

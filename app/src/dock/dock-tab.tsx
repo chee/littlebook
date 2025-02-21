@@ -159,7 +159,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 										return (
 											<ContextMenu.Sub overlap gutter={-10}>
 												<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
-													{category}
+													publish to {category}
 													<div class="pop-menu__item-right-slot">
 														<Icon name="alt-arrow-right-linear" />
 													</div>

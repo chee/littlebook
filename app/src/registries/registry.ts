@@ -2,8 +2,10 @@ import {
 	type DocumentPayload,
 	type Repo,
 	type DocHandleChangePayload,
+	type DocHandle,
 } from "@automerge/automerge-repo"
-import {getOwner, onCleanup, type Owner} from "solid-js"
+import type {AutomergeURL} from "@pointplace/types"
+import {getOwner, onCleanup} from "solid-js"
 import {createStore, type SetStoreFunction} from "solid-js/store"
 import {Task} from "true-myth/task"
 const log = window.log.extend("registries")
@@ -36,93 +38,71 @@ export function importFromAutomerge<Typename extends string, T>(
 }
 
 export abstract class Registry<
-	Typename extends string,
+	Doctype extends string,
 	ValueType extends {id: string},
 > {
-	#repo: Repo
-	#owner: Owner
+	protected repo: Repo
 
 	records: Record<string, ValueType>
 
-	#updateRecords: SetStoreFunction<Record<string, ValueType>>
+	protected updateRecords: SetStoreFunction<Record<string, ValueType>>
 
-	#typename = ""
+	protected type = ""
 
-	get nameWithSpace() {
-		if (this.#typename) return this.#typename + " "
-		else return ""
-	}
+	constructor({repo, doctype}: {repo: Repo; doctype: Doctype}) {
+		this.type = doctype
+		this.repo = repo
 
-	get nameWithPrefixSpace() {
-		if (this.#typename) return " " + this.#typename
-		else return ""
-	}
-
-	constructor({repo, typename}: {repo: Repo; typename: Typename}) {
-		this.#typename = typename
-		this.#repo = repo
-		this.#owner = getOwner()!
-		if (!this.#owner) {
+		if (!getOwner()!) {
 			throw new Error(
-				`${this.nameWithSpace}registry must be created in a reactive context`
+				`${this.type} registry must be created in a reactive context`
 			)
 		}
-
-		repo.on("document", this.#documentListener)
-		onCleanup(() => {
-			this.deconstructor()
-		})
-
 		// using records to describe the individual items managed by this registry
 		const [records, updateRecords] = createStore<Record<string, ValueType>>(
 			{}
 		)
 		// eslint-disable-next-line solid/reactivity
 		this.records = records
-		this.#updateRecords = updateRecords
+		this.updateRecords = updateRecords
 	}
 
-	#documentListener = (payload: DocumentPayload) => {
-		const {handle} = payload
-		const doc = handle.doc()
-		if (!doc) return
-		return (async () => {
-			if (doc.type != this.#typename) return
-			if (!doc.bytes) return
-			handle.on("change", this.#changeListener)
-			return this.#import(doc as Stored<Typename>)
-		})()
+	private changeListener = (
+		payload: DocHandleChangePayload<Stored<Doctype>>
+	) => {
+		return this.import(payload.patchInfo.after)
 	}
 
-	#changeListener = (payload: DocHandleChangePayload<Stored<Typename>>) => {
-		return this.#import(payload.patchInfo.after)
-	}
-
-	#import = (doc: Stored<Typename>) => {
-		return importFromAutomerge<Typename, ValueType>(doc)
+	private import = (doc: Stored<Doctype>) => {
+		return importFromAutomerge<Doctype, ValueType>(doc)
 			.map(bundle => {
-				if (this.records[bundle.id]) {
-					console.warn(
-						`overwriting${this.nameWithPrefixSpace}: [${bundle.id}]`
-					)
-				}
 				this.register(bundle)
 			})
 			.mapRejected(err => {
-				console.error(`failed to import ${this.nameWithSpace}document`, err)
+				console.error(`failed to import ${this.type} document`, err)
 			})
 	}
 
+	async maybe(url: AutomergeURL) {
+		const handle = await this.repo.find<Stored<Doctype>>(url)
+		const doc = handle.doc()
+		if (doc.type != this.type) return
+		if (!doc.bytes) return
+		handle.on("change", this.changeListener)
+		onCleanup(() => handle.off("change", this.changeListener))
+		return this.import(doc as Stored<Doctype>)
+	}
+
 	register(bundle: ValueType) {
-		log(`registering ${this.nameWithSpace}document: [${bundle.id}]`)
-		this.#updateRecords(bundle.id, {...bundle})
+		if (this.records[bundle.id]) {
+			log(`overwriting ${this.type}: [${bundle.id}]`)
+		} else {
+			log(`registering ${this.type} document: [${bundle.id}]`)
+		}
+		this.updateRecords(bundle.id, {...bundle})
 	}
 
 	get<T extends ValueType>(id: string): ValueType | undefined {
 		return this.records[id] as T | undefined
-	}
-
-	deconstructor() {
-		this.#repo.off("document", this.#documentListener)
 	}
 }

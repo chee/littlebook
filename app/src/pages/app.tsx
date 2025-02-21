@@ -1,4 +1,4 @@
-import {createSignal, onCleanup} from "solid-js"
+import {createEffect, createSignal, onCleanup} from "solid-js"
 import "./app.css"
 import {type ContextValue} from "corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
@@ -8,22 +8,37 @@ import FileViewer from "../components/file-viewer/file-viewer.tsx"
 import {Dock, DockProvider} from "../dock/dock.tsx"
 import DockTab from "../dock/dock-tab.tsx"
 import Workspace from "../components/workspace/workspace.tsx"
-import codemirror from "@littlebook/text/codemirror-editor.ts"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
-import {useViewRegistry} from "../registries/view-registry.ts"
-import githubMarkdownPreview from "../views/github-markdown-preview.tsx"
-import automergeDocEditor from "../views/editors/automerge-doc-editor.tsx"
 import Modmask from "../lib/modmask.ts"
 import {createKeybinding} from "solid-hotkeys"
+import {usePluginAPI} from ":/plugins/plugin-api.ts"
+import activateBasePlugin from ":/plugins/base/base-plugin.ts"
+import {useHome} from ":/repo/home.ts"
+import {useViewRegistry} from ":/registries/view-registry.ts"
+import {useSinkRegistry} from ":/registries/sink-registry.ts"
+import {useSourceRegistry} from ":/registries/source-registry.ts"
+
 export default function App() {
 	const [resizableContext, setResizableContext] = createSignal<ContextValue>()
+	const pluginAPI = usePluginAPI()
+	activateBasePlugin(pluginAPI)
 
-	const editorRegistry = useViewRegistry()
+	const [home] = useHome()
+	const sourceRegistry = useSourceRegistry()
+	const sinkRegistry = useSinkRegistry()
+	const viewRegistry = useViewRegistry()
 
-	// todo use plugin registry
-	editorRegistry.register(codemirror)
-	editorRegistry.register(githubMarkdownPreview)
-	editorRegistry.register(automergeDocEditor)
+	createEffect(() => {
+		for (const sinkURL of home()?.sinks ?? []) {
+			sinkRegistry.maybe(sinkURL)
+		}
+		for (const sourceURL of home()?.sources ?? []) {
+			sourceRegistry.maybe(sourceURL)
+		}
+		for (const viewURL of home()?.views ?? []) {
+			viewRegistry.maybe(viewURL)
+		}
+	})
 
 	const defaultSizes = [0.2, 0.8]
 

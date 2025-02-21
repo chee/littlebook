@@ -18,14 +18,14 @@ importers:
         specifier: 2.2.8
         version: 2.2.8
       '@automerge/automerge-repo':
-        specifier: 2.0.0-alpha.22
-        version: 2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)
+        specifier: 2.0.0-alpha.23
+        version: 2.0.0-alpha.23
       '@automerge/automerge-repo-network-websocket':
-        specifier: 2.0.0-alpha.22
-        version: 2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)
+        specifier: 2.0.0-alpha.23
+        version: 2.0.0-alpha.23
       '@automerge/automerge-repo-storage-indexeddb':
-        specifier: 2.0.0-alpha.22
-        version: 2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)
+        specifier: 2.0.0-alpha.23
+        version: 2.0.0-alpha.23
       '@iconify-icon/solid':
         specifier: ^2.3.0
         version: 2.3.0(solid-js@1.9.4)
@@ -38,15 +38,15 @@ importers:
       '@kobalte/core':
         specifier: ^0.13.7
         version: 0.13.7(solid-js@1.9.4)
-      '@littlebook/text':
-        specifier: workspace:^
-        version: link:../plugins/public
       '@littlebook/tldraw':
         specifier: workspace:^
         version: link:../plugins/tldraw
       '@onsetsoftware/automerge-patcher':
         specifier: ^0.14.0
         version: 0.14.0(@automerge/automerge@2.2.8)
+      '@pointplace/codemirror':
+        specifier: workspace:^
+        version: link:../plugins/codemirror
       '@pointplace/milkdown':
         specifier: workspace:^
         version: link:../plugins/milkdown
@@ -161,6 +161,9 @@ importers:
       neverthrow:
         specifier: ^8.1.1
         version: 8.1.1
+      radashi:
+        specifier: ^12.3.4
+        version: 12.3.4
       random:
         specifier: ^5.1.1
         version: 5.1.1
@@ -187,7 +190,7 @@ importers:
         version: 11.1.1
       solid-automerge:
         specifier: 1.0.0-beta.5
-        version: 1.0.0-beta.5(@automerge/automerge-repo@2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3))(solid-js@1.9.4)
+        version: 1.0.0-beta.5(@automerge/automerge-repo@2.0.0-alpha.23)(solid-js@1.9.4)
       solid-devtools:
         specifier: ^0.33.0
         version: 0.33.0(solid-js@1.9.4)(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2))
@@ -261,6 +264,9 @@ importers:
       vite-plugin-wasm:
         specifier: ^3.4.1
         version: 3.4.1(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2))
+      vite-tsconfig-paths:
+        specifier: ^5.1.4
+        version: 5.1.4(typescript@5.6.3)(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2))
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -286,27 +292,84 @@ importers:
 
   plugins/codemirror:
     dependencies:
+      '@codemirror/lang-cpp':
+        specifier: ^6.0.2
+        version: 6.0.2
+      '@codemirror/lang-css':
+        specifier: ^6.3.1
+        version: 6.3.1
+      '@codemirror/lang-go':
+        specifier: ^6.0.1
+        version: 6.0.1
+      '@codemirror/lang-html':
+        specifier: ^6.4.9
+        version: 6.4.9
+      '@codemirror/lang-java':
+        specifier: ^6.0.1
+        version: 6.0.1
+      '@codemirror/lang-javascript':
+        specifier: ^6.2.2
+        version: 6.2.2
       '@codemirror/lang-json':
         specifier: ^6.0.1
         version: 6.0.1
+      '@codemirror/lang-less':
+        specifier: ^6.0.2
+        version: 6.0.2
+      '@codemirror/lang-lezer':
+        specifier: ^6.0.1
+        version: 6.0.1
+      '@codemirror/lang-liquid':
+        specifier: ^6.2.2
+        version: 6.2.2
+      '@codemirror/lang-markdown':
+        specifier: ^6.2.5
+        version: 6.3.2
+      '@codemirror/lang-php':
+        specifier: ^6.0.1
+        version: 6.0.1
+      '@codemirror/lang-python':
+        specifier: ^6.1.6
+        version: 6.1.7
+      '@codemirror/lang-rust':
+        specifier: ^6.0.1
+        version: 6.0.1
+      '@codemirror/lang-sass':
+        specifier: ^6.0.2
+        version: 6.0.2
+      '@codemirror/lang-sql':
+        specifier: ^6.8.0
+        version: 6.8.0
+      '@codemirror/lang-vue':
+        specifier: ^0.1.3
+        version: 0.1.3
+      '@codemirror/lang-wast':
+        specifier: ^6.0.2
+        version: 6.0.2
+      '@codemirror/lang-xml':
+        specifier: ^6.1.0
+        version: 6.1.0
+      '@codemirror/lang-yaml':
+        specifier: ^6.1.2
+        version: 6.1.2
+      '@codemirror/language':
+        specifier: ^6.10.2
+        version: 6.10.8
+      '@codemirror/state':
+        specifier: ^6.4.1
+        version: 6.5.1
+      '@codemirror/view':
+        specifier: ^6.28.2
+        version: 6.36.2
       '@pointplace/types':
         specifier: workspace:^
         version: link:../../types
-      '@tanstack/solid-table':
-        specifier: ^8.20.5
-        version: 8.20.5(solid-js@1.9.4)
       '@uiw/codemirror-theme-dracula':
         specifier: ^4.23.0
         version: 4.23.7(@codemirror/language@6.10.8)(@codemirror/state@6.5.1)(@codemirror/view@6.36.2)
       '@uiw/codemirror-theme-github':
         specifier: ^4.23.0
         version: 4.23.7(@codemirror/language@6.10.8)(@codemirror/state@6.5.1)(@codemirror/view@6.36.2)
-      esbuild-wasm:
-        specifier: ^0.24.2
-        version: 0.24.2
-      valibot:
-        specifier: 1.0.0-beta.15
-        version: 1.0.0-beta.15(typescript@5.7.3)
     devDependencies:
       '@automerge/automerge':
         specifier: ^2.2.4
@@ -317,27 +380,6 @@ importers:
       '@automerge/automerge-repo':
         specifier: 2.0.0-alpha.22
         version: 2.0.0-alpha.22(@types/node@20.17.14)(typescript@5.7.3)
-      '@codemirror/lang-html':
-        specifier: ^6.4.9
-        version: 6.4.9
-      '@codemirror/lang-javascript':
-        specifier: ^6.2.2
-        version: 6.2.2
-      '@codemirror/lang-markdown':
-        specifier: ^6.2.5
-        version: 6.3.2
-      '@codemirror/lang-python':
-        specifier: ^6.1.6
-        version: 6.1.7
-      '@codemirror/language':
-        specifier: ^6.10.2
-        version: 6.10.8
-      '@codemirror/state':
-        specifier: ^6.4.1
-        version: 6.5.1
-      '@codemirror/view':
-        specifier: ^6.28.2
-        version: 6.36.2
       '@pointplace/app':
         specifier: workspace:^
         version: link:../../app
@@ -709,11 +751,11 @@ packages:
   '@automerge/automerge-codemirror@0.0.12':
     resolution: {integrity: sha512-P57OpYLJsbfzZtW6RA/daQtE/EoDKvH04AuE8/XRoBIYWu14XB8z6Bn0aMF4zfmkVocuXqWFcMvKaTXkv2yMPA==}
 
-  '@automerge/automerge-repo-network-websocket@2.0.0-alpha.22':
-    resolution: {integrity: sha512-yn78IFSR79osO98ypH1FYVjv4e+anMweVVpvJE/S5AtqBICyzBb+fjm2vlLih3+J+03QCt+U2J0CpsIG1qpf9Q==}
+  '@automerge/automerge-repo-network-websocket@2.0.0-alpha.23':
+    resolution: {integrity: sha512-vW/M+6xf7c2vuEXAWiBIa3l42y33k8iS7eMW+WdeV0ZtaR9rFdIFjVht5z7sGk07lEvi/2iuI2j/RNk/N40Oyg==}
 
-  '@automerge/automerge-repo-storage-indexeddb@2.0.0-alpha.22':
-    resolution: {integrity: sha512-2xRc4xx/iHZo/EPkbtEEImBKvZHhiC+yEy4JKBYc13VnxkLPbzpcT5/jL+NrdcMrEBMt3OzumVZtARYWhL4u0A==}
+  '@automerge/automerge-repo-storage-indexeddb@2.0.0-alpha.23':
+    resolution: {integrity: sha512-4iyOioOvXzugCx8gneGpcAOpMX8dTmnsOuS5OX1McaA9sIMB+yAwcDOlPNiA/AT0YVTcimJlQlDXEZoNRhBilg==}
 
   '@automerge/automerge-repo@2.0.0-alpha.22':
     resolution: {integrity: sha512-OtvqNPEsL3iLNV3mFANKVXMjSTjZwHQ4b52MphQhIursUkJglxf251wy6Y6b10uY5GJks/abNIz8KUXasRPwxw==}
@@ -884,6 +926,9 @@ packages:
 
   '@codemirror/lang-less@6.0.2':
     resolution: {integrity: sha512-EYdQTG22V+KUUk8Qq582g7FMnCZeEHsyuOJisHRft/mQ+ZSZ2w51NupvDUHiqtsOy7It5cHLPGfHQLpMh9bqpQ==}
+
+  '@codemirror/lang-lezer@6.0.1':
+    resolution: {integrity: sha512-WHwjI7OqKFBEfkunohweqA5B/jIlxaZso6Nl3weVckz8EafYbPZldQEKSDb4QQ9H9BUkle4PVELP4sftKoA0uQ==}
 
   '@codemirror/lang-liquid@6.2.2':
     resolution: {integrity: sha512-7Dm841fk37+JQW6j2rI1/uGkJyESrjzyhiIkaLjbbR0U6aFFQvMrJn35WxQreRMADMhzkyVkZM4467OR7GR8nQ==}
@@ -1738,6 +1783,9 @@ packages:
 
   '@lezer/json@1.0.3':
     resolution: {integrity: sha512-BP9KzdF9Y35PDpv04r0VeSTKDeox5vVr3efE7eBbx3r4s3oNLfunchejZhjArmeieBH+nVOpgIiBJpEAv8ilqQ==}
+
+  '@lezer/lezer@1.1.2':
+    resolution: {integrity: sha512-O8yw3CxPhzYHB1hvwbdozjnAslhhR8A5BH7vfEMof0xk3p+/DFDfZkA9Tde6J+88WgtwaHy4Sy6ThZSkaI0Evw==}
 
   '@lezer/lr@1.4.2':
     resolution: {integrity: sha512-pu0K1jCIdnQ12aWNaAVU5bzi7Bd1w54J3ECgANPmYLtQKP0HBj2cE/5coBD66MT10xbtIuUr7tg0Shbsvk0mDA==}
@@ -4282,6 +4330,9 @@ packages:
     resolution: {integrity: sha512-s3Fq41ZVh7vbbe2PN3nrW7yC7U7MFVc5c98/iTl9c2GawNMKx/J648KQRW6WKkuU8GIbbh2IXfIRQjOZnXcTnw==}
     engines: {node: '>=18'}
 
+  globrex@0.1.2:
+    resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
+
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
@@ -5227,6 +5278,10 @@ packages:
   queue-tick@1.0.1:
     resolution: {integrity: sha512-kJt5qhMxoszgU/62PLP1CJytzd2NKetjSRnyuj31fDd3Rlcz3fzlFdFLD1SItunPwyqEOkca6GbV612BWfaBag==}
 
+  radashi@12.3.4:
+    resolution: {integrity: sha512-EC+EhNBJItMLo/D3GR87raHf7W1hkbHUT7Y3Y7/3O+cwMOulRfuZ3g+EU0KT9eikaj8vwLA4ia+bdaXkBGuT4Q==}
+    engines: {node: '>=16.0.0'}
+
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
 
@@ -5734,6 +5789,16 @@ packages:
       '@swc/wasm':
         optional: true
 
+  tsconfck@3.1.5:
+    resolution: {integrity: sha512-CLDfGgUp7XPswWnezWwsCRxNmgQjhYq3VXHM0/XIRxhVrKw0M1if9agzryh1QS3nxjCROvV+xWxoJO1YctzzWg==}
+    engines: {node: ^18 || >=20}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   tslib@1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
 
@@ -6008,6 +6073,14 @@ packages:
     resolution: {integrity: sha512-ja3nSo2UCkVeitltJGkS3pfQHAanHv/DqGatdI39ja6McgABlpsZ5hVgl6wuR8Qx5etY3T5qgDQhOWzc5RReZA==}
     peerDependencies:
       vite: ^2 || ^3 || ^4 || ^5 || ^6
+
+  vite-tsconfig-paths@5.1.4:
+    resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
+    peerDependencies:
+      vite: '*'
+    peerDependenciesMeta:
+      vite:
+        optional: true
 
   vite@6.0.7:
     resolution: {integrity: sha512-RDt8r/7qx9940f8FcOIAH9PTViRrghKaK2K1jY3RaAURrEUbm9Du1mJ72G+jlhtG3WwodnfzY8ORQZbBavZEAQ==}
@@ -6387,32 +6460,24 @@ snapshots:
       '@codemirror/view': 6.36.2
       codemirror: 6.0.1
 
-  '@automerge/automerge-repo-network-websocket@2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)':
+  '@automerge/automerge-repo-network-websocket@2.0.0-alpha.23':
     dependencies:
-      '@automerge/automerge-repo': 2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)
+      '@automerge/automerge-repo': 2.0.0-alpha.23
       cbor-x: 1.6.0
       debug: 4.4.0(supports-color@9.4.0)
       eventemitter3: 5.0.1
       isomorphic-ws: 5.0.0(ws@8.18.0)
       ws: 8.18.0
     transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
       - bufferutil
       - supports-color
-      - typescript
       - utf-8-validate
 
-  '@automerge/automerge-repo-storage-indexeddb@2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)':
+  '@automerge/automerge-repo-storage-indexeddb@2.0.0-alpha.23':
     dependencies:
-      '@automerge/automerge-repo': 2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)
+      '@automerge/automerge-repo': 2.0.0-alpha.23
     transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
       - supports-color
-      - typescript
 
   '@automerge/automerge-repo@2.0.0-alpha.22(@types/node@20.17.14)(typescript@5.7.3)':
     dependencies:
@@ -6726,6 +6791,13 @@ snapshots:
       '@lezer/common': 1.2.3
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
+
+  '@codemirror/lang-lezer@6.0.1':
+    dependencies:
+      '@codemirror/language': 6.10.8
+      '@codemirror/state': 6.5.1
+      '@lezer/common': 1.2.3
+      '@lezer/lezer': 1.1.2
 
   '@codemirror/lang-liquid@6.2.2':
     dependencies:
@@ -7463,6 +7535,11 @@ snapshots:
   '@lezer/json@1.0.3':
     dependencies:
       '@lezer/common': 1.2.3
+      '@lezer/highlight': 1.2.1
+      '@lezer/lr': 1.4.2
+
+  '@lezer/lezer@1.1.2':
+    dependencies:
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
 
@@ -10426,6 +10503,8 @@ snapshots:
       slash: 5.1.0
       unicorn-magic: 0.1.0
 
+  globrex@0.1.2: {}
+
   graceful-fs@4.2.11: {}
 
   graphemer@1.4.0: {}
@@ -11672,6 +11751,8 @@ snapshots:
 
   queue-tick@1.0.1: {}
 
+  radashi@12.3.4: {}
+
   radix3@1.1.2: {}
 
   random@5.1.1: {}
@@ -12002,9 +12083,9 @@ snapshots:
 
   smob@1.5.0: {}
 
-  solid-automerge@1.0.0-beta.5(@automerge/automerge-repo@2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3))(solid-js@1.9.4):
+  solid-automerge@1.0.0-beta.5(@automerge/automerge-repo@2.0.0-alpha.23)(solid-js@1.9.4):
     dependencies:
-      '@automerge/automerge-repo': 2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)
+      '@automerge/automerge-repo': 2.0.0-alpha.23
       '@solid-primitives/utils': 6.3.0(solid-js@1.9.4)
       cabbages: 0.2.4
       solid-js: 1.9.4
@@ -12332,6 +12413,10 @@ snapshots:
       typescript: 5.7.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+
+  tsconfck@3.1.5(typescript@5.6.3):
+    optionalDependencies:
+      typescript: 5.6.3
 
   tslib@1.14.1: {}
 
@@ -12700,6 +12785,17 @@ snapshots:
   vite-plugin-wasm@3.4.1(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)):
     dependencies:
       vite: 6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)
+
+  vite-tsconfig-paths@5.1.4(typescript@5.6.3)(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)):
+    dependencies:
+      debug: 4.4.0(supports-color@9.4.0)
+      globrex: 0.1.2
+      tsconfck: 3.1.5(typescript@5.6.3)
+    optionalDependencies:
+      vite: 6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2):
     dependencies:

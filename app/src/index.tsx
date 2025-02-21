@@ -39,28 +39,29 @@ import {SinkRegistry, SinkRegistryContext} from "./registries/sink-registry.ts"
 import PluginAPI, {PluginAPIContext} from "./plugins/plugin-api.ts"
 
 createRoot(() => {
-	const coderRegistry = new SourceRegistry({repo})
-	const editorRegistry = new ViewRegistry({repo})
-	const publisherRegistry = new SinkRegistry({repo})
+	const sinkRegistry = new SinkRegistry({repo})
+	const sourceRegistry = new SourceRegistry({repo})
+	const viewRegistry = new ViewRegistry({repo})
 	const pluginAPI = new PluginAPI({
-		editorRegistry,
-		sourceRegistry: coderRegistry,
-		sinkRegistry: publisherRegistry,
+		viewRegistry,
+		sourceRegistry,
+		sinkRegistry,
 	})
+	window.pluginAPI = pluginAPI
 
 	render(
 		() => (
-			<SourceRegistryContext.Provider value={coderRegistry}>
-				<ViewRegistryContext.Provider value={editorRegistry}>
-					<SinkRegistryContext.Provider value={publisherRegistry}>
+			<SinkRegistryContext.Provider value={sinkRegistry}>
+				<SourceRegistryContext.Provider value={sourceRegistry}>
+					<ViewRegistryContext.Provider value={viewRegistry}>
 						<RepoContext.Provider value={repo}>
 							<PluginAPIContext.Provider value={pluginAPI}>
 								<App />
 							</PluginAPIContext.Provider>
 						</RepoContext.Provider>
-					</SinkRegistryContext.Provider>
-				</ViewRegistryContext.Provider>
-			</SourceRegistryContext.Provider>
+					</ViewRegistryContext.Provider>
+				</SourceRegistryContext.Provider>
+			</SinkRegistryContext.Provider>
 		),
 		root
 	)

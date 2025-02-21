@@ -7,32 +7,32 @@ import type {Sink, Source} from "@pointplace/types"
 const log = window.log.extend("plugin-api")
 
 export default class PluginAPI {
-	#editorRegistry: ViewRegistry
-	#sourceRegistry: SourceRegistry
-	#sinkRegistry: SinkRegistry
+	private viewRegistry: ViewRegistry
+	private sourceRegistry: SourceRegistry
+	private sinkRegistry: SinkRegistry
 
 	constructor(options: {
-		editorRegistry: ViewRegistry
+		viewRegistry: ViewRegistry
 		sourceRegistry: SourceRegistry
 		sinkRegistry: SinkRegistry
 	}) {
-		this.#editorRegistry = options.editorRegistry
-		this.#sourceRegistry = options.sourceRegistry
-		this.#sinkRegistry = options.sinkRegistry
+		this.viewRegistry = options.viewRegistry
+		this.sourceRegistry = options.sourceRegistry
+		this.sinkRegistry = options.sinkRegistry
 	}
 
-	registerEditor<T>(editor: Editor<T>) {
-		this.#editorRegistry.register(editor)
-		log("editor registered", editor.id)
+	registerView<T>(editor: Editor<T>) {
+		this.viewRegistry.register(editor)
+		log("view registered", editor.id)
 	}
 
 	registerSource<T>(source: Source<T>) {
-		this.#sourceRegistry.register(source)
+		this.sourceRegistry.register(source)
 		log("source registered", source.id)
 	}
 
 	registerSink<T>(sink: Sink<T>) {
-		this.#sinkRegistry.register(sink)
+		this.sinkRegistry.register(sink)
 		log("sink registered", sink.id)
 	}
 }

@@ -8,11 +8,9 @@ import {
 	type ParentComponent,
 	type Setter,
 } from "solid-js"
-import {isValidAutomergeUrl} from "@automerge/automerge-repo"
 import type {SerializedDockview} from "dockview-core"
-import {useHome} from "../../repo/home.ts"
-import repo from "../../repo/create.ts"
 import {useDockAPI} from "../../dock/dock.tsx"
+import {asDocumentURL, isValidDocumentURL} from "@pointplace/types"
 
 const Workspace: ParentComponent<{
 	sizes: number[]
@@ -22,20 +20,12 @@ const Workspace: ParentComponent<{
 }> = props => {
 	const dockAPI = useDockAPI()
 
-	const [home] = useHome()
-
-	createEffect(() => {
-		for (const editor of home()?.editors ?? []) {
-			// kick off the editorRegistry knowing about these
-			repo.findClassic(editor)
-		}
-	})
 	const owner = getOwner()
 
 	function onhash() {
 		const hash = location.hash.slice(1)
-		if (isValidAutomergeUrl(hash)) {
-			if (dockAPI.activePanelID !== hash) {
+		if (isValidDocumentURL(hash)) {
+			if (dockAPI.activePanelID !== asDocumentURL(hash)) {
 				runWithOwner(owner, () => dockAPI.openDocument(hash))
 			}
 		}
@@ -69,7 +59,7 @@ const Workspace: ParentComponent<{
 		}
 	}
 
-	if (isValidAutomergeUrl(loadhash)) {
+	if (isValidDocumentURL(loadhash)) {
 		if (dockAPI.activePanelID !== loadhash) {
 			dockAPI.openDocument(loadhash)
 		}

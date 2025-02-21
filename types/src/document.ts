@@ -9,26 +9,37 @@ type ParsedDocumentURL = Record<string, string> & {
 	editor?: string
 }
 
+export const isValidAutomergeURL = isValidAutomergeUrl
+
 export function asAutomergeURL(url: AutomergeURLOrDocumentURL): AutomergeURL {
-	if (isValidAutomergeUrl(url)) {
+	if (isValidAutomergeURL(url)) {
 		return url
 	}
 	const docinfo = parseDocumentURL(url)
-	if (isValidAutomergeUrl(docinfo.url)) {
+	if (isValidAutomergeURL(docinfo.url)) {
 		return docinfo.url
 	}
 	throw new Error(`invalid documentURL: ${url}`)
 }
 
 export function asDocumentURL(url: AutomergeURLOrDocumentURL): DocumentURL {
-	if (isValidAutomergeUrl(url)) {
+	if (isValidAutomergeURL(url)) {
 		return url as unknown as DocumentURL
 	}
 	const docinfo = parseDocumentURL(url)
-	if (isValidAutomergeUrl(docinfo.url)) {
+	if (isValidAutomergeURL(docinfo.url)) {
 		return docinfo.url as unknown as DocumentURL
 	}
 	throw new Error(`invalid documentURL: ${url}`)
+}
+
+export function isValidDocumentURL(url: string): url is DocumentURL {
+	return (
+		isValidAutomergeURL(url) ||
+		(typeof url == "string" &&
+			url.startsWith("automerge:") &&
+			isValidAutomergeURL(parseDocumentURL(url as DocumentURL).url))
+	)
 }
 
 export function parseDocumentURL(
