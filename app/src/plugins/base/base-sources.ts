@@ -6,17 +6,17 @@ import type {
 	MarkdownShape,
 	PluginAPI,
 	TextShape,
-	VoidSource,
+	CreateSource,
 } from "@pointplace/types"
 
-const newFolder: VoidSource<FolderShape> = {
+const newFolder: CreateSource<FolderShape> = {
 	id: "new-folder",
 	category: "new",
 	displayName: "folder",
 	new: () => [{files: [] as AutomergeURL[]}, {name: "new folder"}],
 }
 
-const newText: VoidSource<TextShape> = {
+const newText: CreateSource<TextShape> = {
 	id: "new-text",
 	category: "new",
 	displayName: "plain text",
@@ -40,14 +40,14 @@ const importText: FilesystemSource<TextShape> = {
 	},
 }
 
-const newCode: VoidSource<CodeShape> = {
+const newCode: CreateSource<CodeShape> = {
 	id: "new-code",
 	category: "new",
 	displayName: "computer code",
 	new: () => [{text: "", language: ""}],
 }
 
-const newMarkdown: VoidSource<MarkdownShape> = {
+const newMarkdown: CreateSource<MarkdownShape> = {
 	id: "new-markdown",
 	category: "new",
 	displayName: "markdown",

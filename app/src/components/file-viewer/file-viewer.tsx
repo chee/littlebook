@@ -24,9 +24,9 @@ import {createStore, type SetStoreFunction} from "solid-js/store"
 import {
 	parseDocumentURL,
 	type AutomergeURLOrDocumentURL,
-	type Editor,
+	type FileEditor,
 	type Entry,
-	type ReadOnlyView,
+	type FileViewer,
 } from "@pointplace/types"
 import repo from "../../repo/create.ts"
 import {updateText, type DocHandle} from "@automerge/automerge-repo"
@@ -96,7 +96,7 @@ export default function FileViewer(props: {
 							<Match when={view()?.category === "editor"}>
 								<article class="file-viewer__content file-viewer__content--editor">
 									<EditorViewWrapper
-										editor={view()! as Editor<unknown>}
+										editor={view()! as FileEditor<unknown>}
 										fileHandle={fileHandle()!}
 										entryHandle={entryHandle()!}
 										updateStatusItems={updateStatusItems}
@@ -107,7 +107,7 @@ export default function FileViewer(props: {
 							<Match when={view()?.category === "readonly"}>
 								<article class="file-viewer__content file-viewer__content--readonly">
 									<ReadOnlyViewWrapper
-										view={view() as ReadOnlyView<unknown>}
+										view={view() as FileViewer<unknown>}
 										fileHandle={fileHandle()!}
 										isActive={!!props.isActive}
 										updateStatusItems={updateStatusItems}
@@ -134,13 +134,13 @@ export default function FileViewer(props: {
 }
 
 function EditorViewWrapper<T>(props: {
-	editor: Editor<T>
+	editor: FileEditor<T>
 	fileHandle: DocHandle<T>
 	entryHandle: DocHandle<Entry>
 	updateStatusItems: SetStoreFunction<string[]>
 	isActive: boolean
 }) {
-	return (
+	const dom = (
 		<Dynamic
 			component={props.editor.render}
 			handle={props.fileHandle}
@@ -161,10 +161,33 @@ function EditorViewWrapper<T>(props: {
 			isActive={() => !!props.isActive}
 		/>
 	)
+
+	const sinks = useSinkRegistry()
+
+	function onsink(event: CustomEvent<string>) {
+		const sink = sinks.get(event.detail)
+		if (sink) {
+			sinks.run(sink, props.entryHandle.doc())
+		} else {
+			console.log("no such sink", event.detail)
+		}
+	}
+
+	createEffect(() => {
+		if (typeof dom == "function") {
+			const el = (dom as () => HTMLElement)()
+			el.addEventListener("run-sink", onsink)
+			onCleanup(() => {
+				el.removeEventListener("run-sink", onsink)
+			})
+		} else if (dom instanceof HTMLElement) {
+		}
+	})
+	return dom
 }
 
 function ReadOnlyViewWrapper<T>(props: {
-	view: ReadOnlyView<T>
+	view: FileViewer<T>
 	fileHandle: DocHandle<T>
 	isActive: boolean
 	updateStatusItems: SetStoreFunction<string[]>

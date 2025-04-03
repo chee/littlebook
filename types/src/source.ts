@@ -1,15 +1,14 @@
-import type {StandardSchemaV1} from "@standard-schema/spec"
 import {type MaybePromise} from "./util.js"
 
 type MaybeNamedShape<Shape> = [shape: Shape] | [shape: Shape, {name: string}]
 
-interface SourceBase<Shape = unknown> {
+interface SourceBase {
 	id: string
 	displayName: string
 	category: string
 }
 
-export interface VoidSource<Shape = unknown> extends SourceBase {
+export interface CreateSource<Shape = unknown> extends SourceBase {
 	category: "new"
 	"new"(): MaybePromise<MaybeNamedShape<Shape>>
 }
@@ -27,6 +26,6 @@ export interface FilesystemSource<Shape = unknown> extends SourceBase {
 // }
 
 export type Source<Shape = unknown> =
-	| VoidSource<Shape>
+	| CreateSource<Shape>
 	| FilesystemSource<Shape>
 // | NetworkSource<Shape>

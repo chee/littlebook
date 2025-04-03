@@ -2,26 +2,32 @@ import {DocHandle} from "@automerge/automerge-repo"
 import {FileMenu} from "./file-menu.js"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 
-interface ViewBase<Shape> {
+interface ViewBase<API> {
 	id: string
 	displayName: string
-	schema: StandardSchemaV1<Shape>
 	category: string
+	render(api: API): HTMLElement
 }
 
-export interface Editor<Shape = unknown> extends ViewBase<Shape> {
+interface FileViewBase<Shape, API> extends ViewBase<API> {
+	schema: StandardSchemaV1<Shape>
+	getFileMenu?(): FileMenu<Shape>
+}
+
+export interface StandaloneViewAPI extends ViewAPIBase {}
+export interface StandaloneView extends ViewBase<StandaloneViewAPI> {}
+
+export interface FileEditor<Shape = unknown>
+	extends FileViewBase<Shape, FileEditorAPI<Shape>> {
 	category: "editor"
-	getFileMenu?: () => FileMenu<Shape>
-	render: (api: EditorAPI<Shape>) => HTMLElement
 }
 
-export interface ReadOnlyView<Shape = unknown> extends ViewBase<Shape> {
+export interface FileViewer<Shape = unknown>
+	extends FileViewBase<Shape, FileViewerAPI<Shape>> {
 	category: "readonly"
-	getFileMenu?: () => FileMenu<Shape>
-	render: (api: ReadOnlyViewAPI<Shape>) => HTMLElement
 }
 
-interface ViewAPIBase<Shape> {
+interface ViewAPIBase {
 	updateStatusItems(items: string[]): void
 	registerKeybinding(keybinding: string, action: () => void): void
 	isActive(): boolean
@@ -29,19 +35,22 @@ interface ViewAPIBase<Shape> {
 	onMount(mount: () => void): void
 }
 
-export interface ReadOnlyViewAPI<Shape> extends ViewAPIBase<Shape> {
+export interface FileViewerAPI<Shape> extends ViewAPIBase {
 	doc(): Shape
 	onChange(fn: () => {}): void
 }
-
-export type View<Shape = unknown> = Editor<Shape> | ReadOnlyView<Shape>
 
 // todo pass a `adoptStylesheet` or `addCSS(string)`
 // todo pass a `callCommand`
 // todo maybe an `updateIndex` for search
 // but maybe that's the content-type's job or maybe a
 // Indexer is another thing
-export interface EditorAPI<Shape> extends ViewAPIBase<Shape> {
+export interface FileEditorAPI<Shape> extends ViewAPIBase {
 	handle: DocHandle<Shape>
 	updateName(name: string): void
 }
+
+export type View<Shape = unknown> =
+	| FileEditor<Shape>
+	| FileViewer<Shape>
+	| StandaloneView

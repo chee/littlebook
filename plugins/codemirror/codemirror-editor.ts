@@ -11,15 +11,15 @@ import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
 import {
 	CodeShape,
-	Editor,
-	type EditorAPI,
+	FileEditor,
+	type FileEditorAPI,
 	type FileMenu,
 } from "@pointplace/types"
 import type {DocHandleChangePayload} from "@automerge/automerge-repo"
 import {register} from "module"
 
 function render(
-	props: EditorAPI<CodeShape> & {
+	props: FileEditorAPI<CodeShape> & {
 		path?: (string | number)[]
 	}
 ) {
@@ -346,4 +346,4 @@ export default {
 	render,
 	getFileMenu,
 	schema: CodeShape,
-} satisfies Editor<CodeShape>
+} satisfies FileEditor<CodeShape>

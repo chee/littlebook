@@ -1,7 +1,10 @@
 # todo
 
-- seeds
-- crons
+- [ ] seeds
+- [ ] crons
+- [ ] consider dropping `displayName` in favour of only having `id`
+- [ ] add a command palette
+- [ ] consider renaming back to `littlebook`?
 
 ## data structure options
 

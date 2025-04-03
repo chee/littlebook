@@ -29,7 +29,7 @@
 		"src",
 		"../types/src/source.ts",
 		"../types/src/view.ts",
-		"../types/src/sink.ts",
+		"../types/src/command.ts",
 		"../types/src/viewer.ts"
 	]
 }

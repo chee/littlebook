@@ -1,4 +1,4 @@
-import type {Editor} from "@pointplace/types"
+import type {FileEditor} from "@pointplace/types"
 import {createDocumentProjection} from "solid-automerge"
 import {
 	For,
@@ -134,5 +134,5 @@ const AutomergeDocEditor = {
 			<AutomergeEditor json={doc()!} handle={props.handle} path={[]} />
 		) as HTMLElement
 	},
-} satisfies Editor<object>
+} satisfies FileEditor<object>
 export default AutomergeDocEditor

@@ -8,7 +8,7 @@ import {all} from "@wooorm/starry-night"
 import gfm from "remark-gfm"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
-import {MarkdownShape, type ReadOnlyView} from "@pointplace/types"
+import {MarkdownShape, type FileViewer} from "@pointplace/types"
 
 const markdown = await unified()
 	.use(gfm)
@@ -53,4 +53,4 @@ export default {
 			</div>
 		) as HTMLElement
 	},
-} satisfies ReadOnlyView<MarkdownShape>
+} satisfies FileViewer<MarkdownShape>

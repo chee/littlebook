@@ -1,7 +1,7 @@
 import {createContext, useContext} from "solid-js"
 import type {SourceRegistry} from "../registries/source-registry.ts"
 import type {ViewRegistry} from "../registries/view-registry.ts"
-import type {Editor} from "@pointplace/types/src/view.ts"
+import type {FileEditor} from "@pointplace/types/src/view.ts"
 import type {SinkRegistry} from "../registries/sink-registry.ts"
 import type {Sink, Source} from "@pointplace/types"
 const log = window.log.extend("plugin-api")
@@ -21,7 +21,7 @@ export default class PluginAPI {
 		this.sinkRegistry = options.sinkRegistry
 	}
 
-	registerView<T>(editor: Editor<T>) {
+	registerView<T>(editor: FileEditor<T>) {
 		this.viewRegistry.register(editor)
 		log("view registered", editor.id)
 	}
