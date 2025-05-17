@@ -1,4 +1,4 @@
-import {DocHandle} from "@automerge/automerge-repo"
+import {DocHandle} from "@automerge/vanillajs"
 import {FileMenu} from "./file-menu.js"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 

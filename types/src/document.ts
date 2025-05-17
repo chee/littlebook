@@ -1,7 +1,7 @@
-import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/automerge-repo"
+import {isValidAutomergeUrl, type AutomergeUrl} from "@automerge/vanillajs"
 
 export type AutomergeURL = AutomergeUrl
-export type DocumentURL = string & {__pointplacedoc: true}
+export type DocumentURL = string & {__littlebookdoc: true}
 export type AutomergeURLOrDocumentURL = DocumentURL | AutomergeURL
 
 type ParsedDocumentURL = Record<string, string> & {
@@ -43,7 +43,7 @@ export function isValidDocumentURL(url: string): url is DocumentURL {
 }
 
 export function parseDocumentURL(
-	url: AutomergeURLOrDocumentURL
+	url: AutomergeURLOrDocumentURL,
 ): ParsedDocumentURL {
 	const u = new URL(url)
 	const base = u.protocol + u.pathname

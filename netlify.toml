@@ -1,0 +1,19 @@
+"$schema" = "https://schemastore.netlify.app/netlify-toml.json?"
+
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+
+[build]
+command = "pnpm run build"
+publish = "output"
+
+[dev]
+port = 1234
+targetPort = 1232
+command = "pnpm run dev"
+autoLaunch = false
+framework = "vite"

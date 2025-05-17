@@ -19,7 +19,7 @@ export default defineConfig({
 		minify: false,
 		rollupOptions: {
 			// todo faq
-			external: ["@pointplace/types", "@automerge/automerge-repo"],
+			external: ["@littlebook/types", "@automerge/automerge-repo"],
 		},
 	},
 })

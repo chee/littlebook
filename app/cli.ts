@@ -1,15 +1,19 @@
 import WebSocket from "ws"
-import {Repo, type AutomergeUrl} from "@automerge/automerge-repo"
-import {BrowserWebSocketClientAdapter} from "@automerge/automerge-repo-network-websocket"
+import {
+	Repo,
+	WebSocketClientAdapter,
+	type AutomergeUrl,
+} from "@automerge/vanillajs"
 
+// @ts-expect-error this is on purpose
 globalThis.WebSocket = WebSocket
 
 const repo = new Repo({
-	network: [new BrowserWebSocketClientAdapter("wss://galaxy.observer/")],
+	network: [new WebSocketClientAdapter("wss://galaxy.observer/")],
 })
 
 const home = await repo.find(
-	"automerge:PkMLhgt3mDAao6MeFycx7hNRF4o" as AutomergeUrl
+	"automerge:PkMLhgt3mDAao6MeFycx7hNRF4o" as AutomergeUrl,
 )
 
 import REPL from "repl"

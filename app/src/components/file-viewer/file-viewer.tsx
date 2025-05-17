@@ -27,9 +27,9 @@ import {
 	type FileEditor,
 	type Entry,
 	type FileViewer,
-} from "@pointplace/types"
+} from "@littlebook/types"
 import repo from "../../repo/create.ts"
-import {updateText, type DocHandle} from "@automerge/automerge-repo"
+import {updateText, type DocHandle} from "@automerge/vanillajs"
 import {createKeybinding} from "solid-hotkeys"
 import {useSinkRegistry} from ":/registries/sink-registry.ts"
 
@@ -119,7 +119,7 @@ export default function FileViewer(props: {
 						<footer
 							class={clsx(
 								"file-viewer-status-bar",
-								props.isActive && "file-viewer-status-bar--active"
+								props.isActive && "file-viewer-status-bar--active",
 							)}>
 							<span class="file-viewer-status-bar__editor-name">
 								{view()?.displayName}

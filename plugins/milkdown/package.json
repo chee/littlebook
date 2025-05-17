@@ -1,5 +1,5 @@
 {
-	"name": "@pointplace/milkdown",
+	"name": "@littlebook/milkdown",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
@@ -15,8 +15,7 @@
 		"w": "vite build --watch"
 	},
 	"devDependencies": {
-		"@automerge/automerge-repo": "2.0.0-alpha.23",
-		"@pointplace/types": "workspace:^",
+		"@littlebook/types": "workspace:^",
 		"solid-js": "^1.9.4",
 		"typescript": "~5.7.2",
 		"vite": "^6.0.1",
@@ -25,6 +24,7 @@
 	},
 	"dependencies": {
 		"@automerge/prosemirror": "0.0.13",
+		"@automerge/vanillajs": "^2.0.0",
 		"@milkdown/crepe": "^7.6.2",
 		"@milkdown/kit": "^7.6.2",
 		"@milkdown/theme-nord": "^7.6.2",
@@ -32,8 +32,7 @@
 		"@uiw/codemirror-theme-github": "^4.23.0"
 	},
 	"peerDependencies": {
-		"@automerge/automerge-repo": "2.0.0-alpha.23",
-		"@pointplace/types": "workspace:^",
+		"@littlebook/types": "workspace:^",
 		"solid-js": "^1.9.4"
 	}
 }

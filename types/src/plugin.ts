@@ -8,12 +8,10 @@ export interface PluginAPI {
 	registerView<T>(view: View<T>): void
 
 	get activeView(): View | undefined
-
-	
 }
 
 declare global {
 	interface globalThis {
-		pointplace: PluginAPI
+		littlebook: PluginAPI
 	}
 }

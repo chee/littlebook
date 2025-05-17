@@ -14,7 +14,7 @@ import {
 	renderDocumentURL,
 	type AutomergeURLOrDocumentURL,
 	type DocumentURL,
-} from "@pointplace/types"
+} from "@littlebook/types"
 
 export interface OpenDocumentOptions {
 	component?: string
@@ -73,7 +73,7 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 				return err(
 					error instanceof Error
 						? error
-						: new Error("failed to load layout from localStorage")
+						: new Error("failed to load layout from localStorage"),
 				)
 			}
 		},
@@ -98,10 +98,10 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		},
 		activePanelID: runWithOwner(
 			getOwner() ?? owner,
-			() => dockviewAPI.activePanel?.id as DocumentURL | undefined
+			() => dockviewAPI.activePanel?.id as DocumentURL | undefined,
 		),
 		panelIDs: runWithOwner(getOwner() ?? owner, () =>
-			dockviewAPI.panels.map(p => p.id as DocumentURL)
+			dockviewAPI.panels.map(p => p.id as DocumentURL),
 		)!,
 		// todo this is very specific.
 		isPressed(url: AutomergeURLOrDocumentURL) {
@@ -119,16 +119,16 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 	disposers.push(
 		dockviewAPI.onDidActivePanelChange(panel => {
 			updateAPI("activePanelID", panel?.id)
-		})
+		}),
 	)
 
 	disposers.push(
 		dockviewAPI.onDidLayoutChange(() => {
 			updateAPI(
 				"panelIDs",
-				dockviewAPI.panels.map(p => p.id as DocumentURL)
+				dockviewAPI.panels.map(p => p.id as DocumentURL),
 			)
-		})
+		}),
 	)
 
 	onCleanup(() => {

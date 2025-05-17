@@ -1,7 +1,7 @@
-import {type Repo} from "@automerge/automerge-repo"
+import {type Repo} from "@automerge/vanillajs"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
-import {type View} from "@pointplace/types"
+import {type View} from "@littlebook/types"
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class ViewRegistry extends Registry<"view", View<any>> {

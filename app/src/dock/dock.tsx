@@ -13,7 +13,7 @@ import {
 import "./dock.css"
 import {createDockAPI} from "./dock-api.ts"
 import {Dynamic} from "solid-js/web"
-import type {DocumentURL} from "@pointplace/types"
+import type {DocumentURL} from "@littlebook/types"
 
 export interface DockComponentProps {
 	// the id of the file to open
@@ -171,7 +171,7 @@ export function useDockAPI() {
 
 	if (context === undefined) {
 		throw new Error(
-			"[dock]: `useDockAPI` must be used within a `Dock` component"
+			"[dock]: `useDockAPI` must be used within a `Dock` component",
 		)
 	}
 
@@ -185,7 +185,7 @@ export function useDockElement() {
 
 	if (context === undefined) {
 		throw new Error(
-			"[dock]: `useDockElement` must be used within a `Dock` component"
+			"[dock]: `useDockElement` must be used within a `Dock` component",
 		)
 	}
 
@@ -197,7 +197,7 @@ export function useDockviewAPI() {
 
 	if (context === undefined) {
 		throw new Error(
-			"[dock]: `useDockviewContext` must be used within a `Dock` component"
+			"[dock]: `useDockviewContext` must be used within a `Dock` component",
 		)
 	}
 

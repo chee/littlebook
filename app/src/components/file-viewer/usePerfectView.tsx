@@ -1,18 +1,18 @@
 import {createMemo} from "solid-js"
 import {useViewRegistry} from "../../registries/view-registry.ts"
-import type {View} from "@pointplace/types"
+import type {View} from "@littlebook/types"
 import {useHome} from "../../repo/home.ts"
 import {useDocument} from "solid-automerge"
 import {
 	parseDocumentURL,
 	type AutomergeURLOrDocumentURL,
 	type Entry,
-} from "@pointplace/types"
+} from "@littlebook/types"
 
 // todo usePerfectIcon that starts with entry, then editor,
 // then defaults to a document icon
 export function usePerfectView<Shape = unknown>(
-	url: () => AutomergeURLOrDocumentURL
+	url: () => AutomergeURLOrDocumentURL,
 ) {
 	const docinfo = createMemo(() => parseDocumentURL(url()))
 	const [home] = useHome()

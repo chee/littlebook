@@ -3,7 +3,7 @@
 
 # [[file:notebook/docfiles/editor/formatters.org::*.prettierrc.toml][.prettierrc.toml:1]]
 printWidth = 80
-trailingComma = "es5"
+# trailingComma = "es5"
 semi = false
 singleQuote = false
 useTabs = true

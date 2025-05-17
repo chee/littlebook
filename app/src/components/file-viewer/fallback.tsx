@@ -1,5 +1,5 @@
 import {Show} from "solid-js"
-import type {Entry} from "@pointplace/types"
+import type {Entry} from "@littlebook/types"
 import "./fallback.css"
 
 export default function FileViewerFallback(props: {

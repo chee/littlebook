@@ -1,11 +1,12 @@
-import {Automerge} from "@automerge/automerge-repo/slim"
+import * as Automerge from "@automerge/automerge"
+
 import {
 	FileSink,
 	JavaScriptEditorShape,
 	VoidSink,
 	type AutomergeURL,
 	type PluginAPI,
-} from "@pointplace/types"
+} from "@littlebook/types"
 import * as v from "valibot"
 import type {Stored} from ":/registries/registry.ts"
 import repo from ":/repo/create.ts"

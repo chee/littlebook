@@ -15,17 +15,14 @@ importers:
   app:
     dependencies:
       '@automerge/automerge':
-        specifier: 2.2.8
-        version: 2.2.8
+        specifier: 3.0.0-beta.0
+        version: 3.0.0-beta.0
       '@automerge/automerge-repo':
         specifier: 2.0.0-alpha.23
         version: 2.0.0-alpha.23
-      '@automerge/automerge-repo-network-websocket':
-        specifier: 2.0.0-alpha.23
-        version: 2.0.0-alpha.23
-      '@automerge/automerge-repo-storage-indexeddb':
-        specifier: 2.0.0-alpha.23
-        version: 2.0.0-alpha.23
+      '@automerge/vanillajs':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@iconify-icon/solid':
         specifier: ^2.3.0
         version: 2.3.0(solid-js@1.9.4)
@@ -38,19 +35,16 @@ importers:
       '@kobalte/core':
         specifier: ^0.13.7
         version: 0.13.7(solid-js@1.9.4)
+      '@littlebook/codemirror':
+        specifier: workspace:^
+        version: link:../plugins/codemirror
+      '@littlebook/milkdown':
+        specifier: workspace:^
+        version: link:../plugins/milkdown
       '@littlebook/tldraw':
         specifier: workspace:^
         version: link:../plugins/tldraw
-      '@onsetsoftware/automerge-patcher':
-        specifier: ^0.14.0
-        version: 0.14.0(@automerge/automerge@2.2.8)
-      '@pointplace/codemirror':
-        specifier: workspace:^
-        version: link:../plugins/codemirror
-      '@pointplace/milkdown':
-        specifier: workspace:^
-        version: link:../plugins/milkdown
-      '@pointplace/types':
+      '@littlebook/types':
         specifier: workspace:^
         version: link:../types
       '@sinclair/typebox':
@@ -189,8 +183,8 @@ importers:
         specifier: ^11.1.1
         version: 11.1.1
       solid-automerge:
-        specifier: 1.0.0-beta.5
-        version: 1.0.0-beta.5(@automerge/automerge-repo@2.0.0-alpha.23)(solid-js@1.9.4)
+        specifier: 1.0.1
+        version: 1.0.1(solid-js@1.9.4)
       solid-devtools:
         specifier: ^0.33.0
         version: 0.33.0(solid-js@1.9.4)(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2))
@@ -361,7 +355,7 @@ importers:
       '@codemirror/view':
         specifier: ^6.28.2
         version: 6.36.2
-      '@pointplace/types':
+      '@littlebook/types':
         specifier: workspace:^
         version: link:../../types
       '@uiw/codemirror-theme-dracula':
@@ -377,12 +371,6 @@ importers:
       '@automerge/automerge-codemirror':
         specifier: ^0.0.12
         version: 0.0.12
-      '@automerge/automerge-repo':
-        specifier: 2.0.0-alpha.22
-        version: 2.0.0-alpha.22(@types/node@20.17.14)(typescript@5.7.3)
-      '@pointplace/app':
-        specifier: workspace:^
-        version: link:../../app
       '@types/node':
         specifier: ^20.14.10
         version: 20.17.14
@@ -398,6 +386,9 @@ importers:
       '@automerge/prosemirror':
         specifier: 0.0.13
         version: 0.0.13
+      '@automerge/vanillajs':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@milkdown/crepe':
         specifier: ^7.6.2
         version: 7.6.2(element-internals-polyfill@0.1.55)
@@ -414,10 +405,7 @@ importers:
         specifier: ^4.23.0
         version: 4.23.7(@codemirror/language@6.10.8)(@codemirror/state@6.5.1)(@codemirror/view@6.36.2)
     devDependencies:
-      '@automerge/automerge-repo':
-        specifier: 2.0.0-alpha.23
-        version: 2.0.0-alpha.23
-      '@pointplace/types':
+      '@littlebook/types':
         specifier: workspace:^
         version: link:../../types
       solid-js:
@@ -435,73 +423,6 @@ importers:
       vite-plugin-solid:
         specifier: ^2.11.0
         version: 2.11.0(solid-js@1.9.4)(vite@6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2))
-
-  plugins/public:
-    dependencies:
-      '@codemirror/lang-json':
-        specifier: ^6.0.1
-        version: 6.0.1
-      '@pointplace/types':
-        specifier: workspace:^
-        version: link:../../types
-      '@tanstack/solid-table':
-        specifier: ^8.20.5
-        version: 8.20.5(solid-js@1.9.4)
-      '@uiw/codemirror-theme-dracula':
-        specifier: ^4.23.0
-        version: 4.23.7(@codemirror/language@6.10.8)(@codemirror/state@6.5.1)(@codemirror/view@6.36.2)
-      '@uiw/codemirror-theme-github':
-        specifier: ^4.23.0
-        version: 4.23.7(@codemirror/language@6.10.8)(@codemirror/state@6.5.1)(@codemirror/view@6.36.2)
-      esbuild-wasm:
-        specifier: ^0.24.2
-        version: 0.24.2
-      valibot:
-        specifier: 1.0.0-beta.15
-        version: 1.0.0-beta.15(typescript@5.7.3)
-    devDependencies:
-      '@automerge/automerge':
-        specifier: ^2.2.4
-        version: 2.2.8
-      '@automerge/automerge-codemirror':
-        specifier: ^0.0.12
-        version: 0.0.12
-      '@automerge/automerge-repo':
-        specifier: 2.0.0-alpha.22
-        version: 2.0.0-alpha.22(@types/node@20.17.14)(typescript@5.7.3)
-      '@codemirror/lang-html':
-        specifier: ^6.4.9
-        version: 6.4.9
-      '@codemirror/lang-javascript':
-        specifier: ^6.2.2
-        version: 6.2.2
-      '@codemirror/lang-markdown':
-        specifier: ^6.2.5
-        version: 6.3.2
-      '@codemirror/lang-python':
-        specifier: ^6.1.6
-        version: 6.1.7
-      '@codemirror/language':
-        specifier: ^6.10.2
-        version: 6.10.8
-      '@codemirror/state':
-        specifier: ^6.4.1
-        version: 6.5.1
-      '@codemirror/view':
-        specifier: ^6.28.2
-        version: 6.36.2
-      '@pointplace/app':
-        specifier: workspace:^
-        version: link:../../app
-      '@types/node':
-        specifier: ^20.14.10
-        version: 20.17.14
-      codemirror:
-        specifier: ^6.0.1
-        version: 6.0.1
-      esbuild:
-        specifier: ^0.21.5
-        version: 0.21.5
 
   plugins/tldraw:
     dependencies:
@@ -536,12 +457,15 @@ importers:
       '@automerge/automerge':
         specifier: 2.2.8
         version: 2.2.8
-      '@automerge/automerge-repo':
-        specifier: 2.0.0-alpha.22
-        version: 2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)
+      '@automerge/vanillajs':
+        specifier: 2.0.0
+        version: 2.0.0
       esbuild:
         specifier: ^0.21.5
         version: 0.21.5
+      esbuild-plugin-wasm:
+        specifier: ^1.1.0
+        version: 1.1.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -553,7 +477,7 @@ importers:
         version: 3.7.2(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       typescript:
         specifier: ^5.4.5
-        version: 5.6.3
+        version: 5.7.3
 
   types:
     dependencies:
@@ -567,9 +491,12 @@ importers:
         specifier: 1.0.0-beta.15
         version: 1.0.0-beta.15(typescript@5.7.3)
     devDependencies:
-      '@automerge/automerge-repo':
-        specifier: 2.0.0-alpha.22
-        version: 2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.7.3)
+      '@automerge/automerge':
+        specifier: 3.0.0-beta.0
+        version: 3.0.0-beta.0
+      '@automerge/vanillajs':
+        specifier: ^2.0.0
+        version: 2.0.0
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -751,14 +678,20 @@ packages:
   '@automerge/automerge-codemirror@0.0.12':
     resolution: {integrity: sha512-P57OpYLJsbfzZtW6RA/daQtE/EoDKvH04AuE8/XRoBIYWu14XB8z6Bn0aMF4zfmkVocuXqWFcMvKaTXkv2yMPA==}
 
-  '@automerge/automerge-repo-network-websocket@2.0.0-alpha.23':
-    resolution: {integrity: sha512-vW/M+6xf7c2vuEXAWiBIa3l42y33k8iS7eMW+WdeV0ZtaR9rFdIFjVht5z7sGk07lEvi/2iuI2j/RNk/N40Oyg==}
+  '@automerge/automerge-repo-network-broadcastchannel@2.0.0':
+    resolution: {integrity: sha512-jVgDiywmrMAtD77JFxH7ZyCiS8DT5t6C0Ya9G3v+UyRID+3sK8WJHr+LHKX/Tkim9y3mazpHE1Arknrmb/YIiA==}
 
-  '@automerge/automerge-repo-storage-indexeddb@2.0.0-alpha.23':
-    resolution: {integrity: sha512-4iyOioOvXzugCx8gneGpcAOpMX8dTmnsOuS5OX1McaA9sIMB+yAwcDOlPNiA/AT0YVTcimJlQlDXEZoNRhBilg==}
+  '@automerge/automerge-repo-network-messagechannel@2.0.0':
+    resolution: {integrity: sha512-KK5E/2v5Qfcjsgloqrwz9af/HDE12ItGEjSgM09QgodpwpVSVj/AxFu2jjIj9evsA2dpOw/AQbs/FfCmFS5cRQ==}
 
-  '@automerge/automerge-repo@2.0.0-alpha.22':
-    resolution: {integrity: sha512-OtvqNPEsL3iLNV3mFANKVXMjSTjZwHQ4b52MphQhIursUkJglxf251wy6Y6b10uY5GJks/abNIz8KUXasRPwxw==}
+  '@automerge/automerge-repo-network-websocket@2.0.0':
+    resolution: {integrity: sha512-Hd1FMMxezhlywzika5dgBsNN0ETZ4xjxVSCHuX2yI3vtdmDCOICBHKiY/t2ymnDPw+TKyBm0jXMQai2UVuSIMQ==}
+
+  '@automerge/automerge-repo-storage-indexeddb@2.0.0':
+    resolution: {integrity: sha512-Dka8WnVWWgK7+kSxwizrXGoUtvOPvFVJlGMpXAkvWC9z/9NEHKazkdjFkaMO+uiTGwp+w51xEeZ2gIqB3wgWoA==}
+
+  '@automerge/automerge-repo@2.0.0':
+    resolution: {integrity: sha512-c1VDrR6s8BE36m6xDcSC8f4ECccPcaK1E6q3vIlBHOEyyLvLQbFmlmFIZulaV//S0B0HW2lLSrK/2cFwQblQ+A==}
 
   '@automerge/automerge-repo@2.0.0-alpha.23':
     resolution: {integrity: sha512-clFswHeGemDUj4slUkZDM7grZAVn5bFq+/IHyboY/2kjYU9qdHwATZm8h/DPO+4ceGyNODS4b2qdNp4YlFlfEg==}
@@ -766,8 +699,14 @@ packages:
   '@automerge/automerge@2.2.8':
     resolution: {integrity: sha512-kP6Z9lIkNeIGe/jhF8SUQAgUMwVjtXCBL0eZEgQGCoWvPNTPcg8fnQco28XkYBrfkkuqiEUAbdHhJmSp0y79ug==}
 
+  '@automerge/automerge@3.0.0-beta.0':
+    resolution: {integrity: sha512-0z4nTAZGbMzoqhIvrrOr/BfY/mE02L4dzGnYok3QiUlLdTO1bXktaGkNR670qz1JAfzTjMI9o51oI74UHYZN+g==}
+
   '@automerge/prosemirror@0.0.13':
     resolution: {integrity: sha512-TmRw9M1AfONjwHpWlGLnr8BRTXbXVRJtDHsOEhDsQWoflsKoBJO/rf/SP4wjgi2jYrlgUwTRaOny1p0AF9o27Q==}
+
+  '@automerge/vanillajs@2.0.0':
+    resolution: {integrity: sha512-rC5EOwDDW9dfcuH5PY3AEtTIZzloMtPTsdat4qx9gPSdlWuHHjP7Y5SYHmee0yxPWlHGdNhoHaesi4HXF4LDyw==}
 
   '@babel/code-frame@7.26.2':
     resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
@@ -1036,10 +975,6 @@ packages:
     resolution: {integrity: sha512-Ox2kYyxy7NoXdKWdHeDEjZxClwzO4SKM8plAaVwmAJPxHMqA0rLOoAsa+hBDwRLpctf+ZRnAd/ykguuJidnaTA==}
     peerDependencies:
       solid-js: ^1.8
-
-  '@cspotcode/source-map-support@0.8.1':
-    resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
-    engines: {node: '>=12'}
 
   '@deno/shim-deno-test@0.5.0':
     resolution: {integrity: sha512-4nMhecpGlPi0cSzT67L+Tm+GOJqvuk8gqHBziqcUQOarnuIax1z96/gJHCSIz2Z0zhxE6Rzwb3IZXPtFh51j+w==}
@@ -1744,9 +1679,6 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@jridgewell/trace-mapping@0.3.9':
-    resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
-
   '@kobalte/core@0.13.7':
     resolution: {integrity: sha512-COhjWk1KnCkl3qMJDvdrOsvpTlJ9gMLdemkAn5SWfbPn/lxJYabejnNOk+b/ILGg7apzQycgbuo48qb8ppqsAg==}
     peerDependencies:
@@ -2005,11 +1937,6 @@ packages:
 
   '@nothing-but/utils@0.17.0':
     resolution: {integrity: sha512-TuCHcHLOqDL0SnaAxACfuRHBNRgNJcNn9X0GiH5H3YSDBVquCr3qEIG3FOQAuMyZCbu9w8nk2CHhOsn7IvhIwQ==}
-
-  '@onsetsoftware/automerge-patcher@0.14.0':
-    resolution: {integrity: sha512-WBH6GScVgmoqi12fC3SSkY13AKO+pQGMtbhKa83iiqH9HWbHVLRIV6Z2z0pwDr/2SJYv0ur5G7CGI1A30WhxIw==}
-    peerDependencies:
-      '@automerge/automerge': ^2.1.0
 
   '@parcel/watcher-android-arm64@2.5.0':
     resolution: {integrity: sha512-qlX4eS28bUcQCdribHkg/herLe+0A9RyYC+mm2PXpncit8z5b3nSqGVzMNR3CmtAOgRutiZ02eIJJgP/b1iEFQ==}
@@ -3215,18 +3142,6 @@ packages:
       '@iconify/json': '*'
       vite: '>=2'
 
-  '@tsconfig/node10@1.0.11':
-    resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
-
-  '@tsconfig/node12@1.0.11':
-    resolution: {integrity: sha512-cqefuRsh12pWyGsIoBKJA9luFu3mRxCA+ORZvA4ktLSzIuCUtWVxGIuXigEwO5/ywWFMZ2QEGKWvkZG1zDMTag==}
-
-  '@tsconfig/node14@1.0.3':
-    resolution: {integrity: sha512-ysT8mhdixWK6Hw3i1V2AeRqZ5WfXg1G43mqoYlM2nc6388Fq5jcXyr5mRsqViLx/GJYdoL0bfXD8nmF+Zn/Iow==}
-
-  '@tsconfig/node16@1.0.4':
-    resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
-
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
 
@@ -3470,10 +3385,6 @@ packages:
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  acorn-walk@8.3.4:
-    resolution: {integrity: sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==}
-    engines: {node: '>=0.4.0'}
-
   acorn@8.14.0:
     resolution: {integrity: sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==}
     engines: {node: '>=0.4.0'}
@@ -3548,9 +3459,6 @@ packages:
   archiver@7.0.1:
     resolution: {integrity: sha512-ZcbTaIqJOfCc03QwD468Unz/5Ir8ATtvAHsK+FdXbDIbGfihqh9mrvdcYunQzqn4HrvWWaFyaxJhGZagaJJpPQ==}
     engines: {node: '>= 14'}
-
-  arg@4.1.3:
-    resolution: {integrity: sha512-58S9QDqG0Xx27YwPSt9fJxivjYl432YCwfDMfZ+71RAqUrZef7LrKQZ3LHLOwCS4FLNBplP533Zx895SeOCHvA==}
 
   argparse@1.0.10:
     resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
@@ -3830,9 +3738,6 @@ packages:
     resolution: {integrity: sha512-piICUB6ei4IlTv1+653yq5+KoqfBYmj9bw6LqXoOneTMDXk5nM1qt12mFW1caG3LlJXEKW1Bp0WggEmIfQB34g==}
     engines: {node: '>= 14'}
 
-  create-require@1.1.1:
-    resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
-
   crelt@1.0.6:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
 
@@ -3951,10 +3856,6 @@ packages:
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
 
-  diff@4.0.2:
-    resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
-    engines: {node: '>=0.3.1'}
-
   dockview-core@3.0.2:
     resolution: {integrity: sha512-k1nSkn2bjTVEPfdq7+6ZfFywmyM5YhE4s0e0hzaJCW15guW7kKXksVu0JU2X8qsAAoIgtHBoZS+Nz3mYmaZd+g==}
 
@@ -4021,6 +3922,10 @@ packages:
 
   es-module-lexer@1.6.0:
     resolution: {integrity: sha512-qqnD1yMU6tk/jnaMosogGySTZP8YtUgAffA9nMN+E/rjxcfRQ6IEk7IiozUjgxKoFHBGjTLnrHB/YC45r/59EQ==}
+
+  esbuild-plugin-wasm@1.1.0:
+    resolution: {integrity: sha512-0bQ6+1tUbySSnxzn5jnXHMDvYnT0cN/Wd4Syk8g/sqAIJUg7buTIi22svS3Qz6ssx895NT+TgLPb33xi1OkZig==}
+    engines: {node: '>=0.10.0'}
 
   esbuild-wasm@0.24.2:
     resolution: {integrity: sha512-03/7Z1gD+ohDnScFztvI4XddTAbKVmMEzCvvkBpQdWKEXJ+73dTyeNrmdxP1Q0zpDMFjzUJwtK4rLjqwiHbzkw==}
@@ -4694,6 +4599,7 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -4733,9 +4639,6 @@ packages:
 
   magicast@0.3.5:
     resolution: {integrity: sha512-L0WhttDl+2BOsybvEOLK7fW3UA0OQ0IQ2d6Zl2x/a6vVRs3bAY0ECOSHHeL5jD+SbOpOCUEi0y1DgHEn9Qn1AQ==}
-
-  make-error@1.3.6:
-    resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==}
 
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
@@ -5015,6 +4918,7 @@ packages:
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
     engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
 
   node-fetch-native@1.6.4:
     resolution: {integrity: sha512-IhOigYzAKHd244OC0JIMIUrjzctirCmPkaIfhDeGcEETWof5zKYUW7e7MYvChGWh/4CJeXEgsRyGzuF334rOOQ==}
@@ -5544,10 +5448,9 @@ packages:
   smob@1.5.0:
     resolution: {integrity: sha512-g6T+p7QO8npa+/hNx9ohv1E5pVCmWrVCUzUXJyLdMmftX6ER0oiWY/w9knEonLpnOp6b6FenKnMfR8gqwWdwig==}
 
-  solid-automerge@1.0.0-beta.5:
-    resolution: {integrity: sha512-ZMLgNBhlrbMqQf1k8HKc2oLnFvhwZc9YUGka+tSJumjTUuHcpgMsuvvyAPKwEpnR735gstAgj1Skn+bzvnPLkQ==}
+  solid-automerge@1.0.1:
+    resolution: {integrity: sha512-kTr0SKlYhih4lVD4teVnH2f5BtZ+Eki7a442VHEnl+ckvb9Z8h3/HAGvqx1+6uZObQ0k0d0fAdYjh5O3UZmgQg==}
     peerDependencies:
-      '@automerge/automerge-repo': 2.0.0-alpha.22
       solid-js: ^1.9.4
 
   solid-devtools@0.33.0:
@@ -5723,9 +5626,6 @@ packages:
     resolution: {integrity: sha512-B71/4oyj61iNH0KeCamLuE2rmKuTO5byTOSVwECM5FA7TiAiAW+UqTKZ9ERueC4qvgSttUhdmq1mXC3kJqGX7A==}
     engines: {node: '>=12.22'}
 
-  tiny-typed-emitter@2.1.0:
-    resolution: {integrity: sha512-qVtvMxeXbVej0cQWKqVSSAHmKZEHAvxdF8HEUBFWts8h+xEo5m/lEiPakuyZ3BnCBjOD8i24kzNOiOLLgsSxhA==}
-
   tippy.js@6.3.7:
     resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
 
@@ -5774,20 +5674,6 @@ packages:
     engines: {node: '>=18.12'}
     peerDependencies:
       typescript: '>=4.8.4'
-
-  ts-node@10.9.2:
-    resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
 
   tsconfck@3.1.5:
     resolution: {integrity: sha512-CLDfGgUp7XPswWnezWwsCRxNmgQjhYq3VXHM0/XIRxhVrKw0M1if9agzryh1QS3nxjCROvV+xWxoJO1YctzzWg==}
@@ -6026,9 +5912,6 @@ packages:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
 
-  v8-compile-cache-lib@3.0.1:
-    resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
-
   valibot@1.0.0-beta.15:
     resolution: {integrity: sha512-BKy8XosZkDHWmYC+cJG74LBzP++Gfntwi33pP3D3RKztz2XV9jmFWnkOi21GoqARP8wAWARwhV6eTr1JcWzjGw==}
     peerDependencies:
@@ -6226,10 +6109,6 @@ packages:
   yargs@17.7.2:
     resolution: {integrity: sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w==}
     engines: {node: '>=12'}
-
-  yn@3.1.1:
-    resolution: {integrity: sha512-Ux4ygGWsu2c7isFWe8Yu1YluJmqVhxqK2cLXNQA5AcC3QfbGNpM7fu0Y8b/z16pXLnFxZYvWhd3fhBY9DLmC6Q==}
-    engines: {node: '>=6'}
 
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
@@ -6460,9 +6339,23 @@ snapshots:
       '@codemirror/view': 6.36.2
       codemirror: 6.0.1
 
-  '@automerge/automerge-repo-network-websocket@2.0.0-alpha.23':
+  '@automerge/automerge-repo-network-broadcastchannel@2.0.0':
     dependencies:
-      '@automerge/automerge-repo': 2.0.0-alpha.23
+      '@automerge/automerge-repo': 2.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@automerge/automerge-repo-network-messagechannel@2.0.0':
+    dependencies:
+      '@automerge/automerge-repo': 2.0.0
+      debug: 4.4.0(supports-color@9.4.0)
+      eventemitter3: 5.0.1
+    transitivePeerDependencies:
+      - supports-color
+
+  '@automerge/automerge-repo-network-websocket@2.0.0':
+    dependencies:
+      '@automerge/automerge-repo': 2.0.0
       cbor-x: 1.6.0
       debug: 4.4.0(supports-color@9.4.0)
       eventemitter3: 5.0.1
@@ -6473,13 +6366,13 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@automerge/automerge-repo-storage-indexeddb@2.0.0-alpha.23':
+  '@automerge/automerge-repo-storage-indexeddb@2.0.0':
     dependencies:
-      '@automerge/automerge-repo': 2.0.0-alpha.23
+      '@automerge/automerge-repo': 2.0.0
     transitivePeerDependencies:
       - supports-color
 
-  '@automerge/automerge-repo@2.0.0-alpha.22(@types/node@20.17.14)(typescript@5.7.3)':
+  '@automerge/automerge-repo@2.0.0':
     dependencies:
       '@automerge/automerge': 2.2.8
       bs58check: 3.0.1
@@ -6487,54 +6380,10 @@ snapshots:
       debug: 4.4.0(supports-color@9.4.0)
       eventemitter3: 5.0.1
       fast-sha256: 1.3.0
-      tiny-typed-emitter: 2.1.0
-      ts-node: 10.9.2(@types/node@20.17.14)(typescript@5.7.3)
       uuid: 9.0.1
       xstate: 5.19.2
     transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
       - supports-color
-      - typescript
-
-  '@automerge/automerge-repo@2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.6.3)':
-    dependencies:
-      '@automerge/automerge': 2.2.8
-      bs58check: 3.0.1
-      cbor-x: 1.6.0
-      debug: 4.4.0(supports-color@9.4.0)
-      eventemitter3: 5.0.1
-      fast-sha256: 1.3.0
-      tiny-typed-emitter: 2.1.0
-      ts-node: 10.9.2(@types/node@22.10.7)(typescript@5.6.3)
-      uuid: 9.0.1
-      xstate: 5.19.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - supports-color
-      - typescript
-
-  '@automerge/automerge-repo@2.0.0-alpha.22(@types/node@22.10.7)(typescript@5.7.3)':
-    dependencies:
-      '@automerge/automerge': 2.2.8
-      bs58check: 3.0.1
-      cbor-x: 1.6.0
-      debug: 4.4.0(supports-color@9.4.0)
-      eventemitter3: 5.0.1
-      fast-sha256: 1.3.0
-      tiny-typed-emitter: 2.1.0
-      ts-node: 10.9.2(@types/node@22.10.7)(typescript@5.7.3)
-      uuid: 9.0.1
-      xstate: 5.19.2
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - supports-color
-      - typescript
 
   '@automerge/automerge-repo@2.0.0-alpha.23':
     dependencies:
@@ -6553,6 +6402,8 @@ snapshots:
     dependencies:
       uuid: 9.0.1
 
+  '@automerge/automerge@3.0.0-beta.0': {}
+
   '@automerge/prosemirror@0.0.13':
     dependencies:
       '@automerge/automerge': 2.2.8
@@ -6565,6 +6416,18 @@ snapshots:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.10.2
       prosemirror-view: 1.38.0
+
+  '@automerge/vanillajs@2.0.0':
+    dependencies:
+      '@automerge/automerge-repo': 2.0.0
+      '@automerge/automerge-repo-network-broadcastchannel': 2.0.0
+      '@automerge/automerge-repo-network-messagechannel': 2.0.0
+      '@automerge/automerge-repo-network-websocket': 2.0.0
+      '@automerge/automerge-repo-storage-indexeddb': 2.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
 
   '@babel/code-frame@7.26.2':
     dependencies:
@@ -7025,10 +6888,6 @@ snapshots:
       '@floating-ui/dom': 1.6.13
       solid-js: 1.9.4
 
-  '@cspotcode/source-map-support@0.8.1':
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.9
-
   '@deno/shim-deno-test@0.5.0': {}
 
   '@deno/shim-deno@0.19.2':
@@ -7458,11 +7317,6 @@ snapshots:
   '@jridgewell/sourcemap-codec@1.5.0': {}
 
   '@jridgewell/trace-mapping@0.3.25':
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.0
-
-  '@jridgewell/trace-mapping@0.3.9':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
@@ -7960,11 +7814,6 @@ snapshots:
       fastq: 1.18.0
 
   '@nothing-but/utils@0.17.0': {}
-
-  '@onsetsoftware/automerge-patcher@0.14.0(@automerge/automerge@2.2.8)':
-    dependencies:
-      '@automerge/automerge': 2.2.8
-      is-plain-object: 5.0.0
 
   '@parcel/watcher-android-arm64@2.5.0':
     optional: true
@@ -9216,14 +9065,6 @@ snapshots:
       picocolors: 1.1.1
       vite: 6.0.7(@types/node@22.10.7)(jiti@2.4.2)(terser@5.37.0)(tsx@4.19.2)
 
-  '@tsconfig/node10@1.0.11': {}
-
-  '@tsconfig/node12@1.0.11': {}
-
-  '@tsconfig/node14@1.0.3': {}
-
-  '@tsconfig/node16@1.0.4': {}
-
   '@types/argparse@1.0.38': {}
 
   '@types/babel__core@7.20.5':
@@ -9312,6 +9153,7 @@ snapshots:
   '@types/node@22.10.7':
     dependencies:
       undici-types: 6.20.0
+    optional: true
 
   '@types/prop-types@15.7.14': {}
 
@@ -9570,10 +9412,6 @@ snapshots:
     dependencies:
       acorn: 8.14.0
 
-  acorn-walk@8.3.4:
-    dependencies:
-      acorn: 8.14.0
-
   acorn@8.14.0: {}
 
   agent-base@7.1.3: {}
@@ -9656,8 +9494,6 @@ snapshots:
       readdir-glob: 1.1.3
       tar-stream: 3.1.7
       zip-stream: 6.0.1
-
-  arg@4.1.3: {}
 
   argparse@1.0.10:
     dependencies:
@@ -9956,8 +9792,6 @@ snapshots:
       crc-32: 1.2.2
       readable-stream: 4.7.0
 
-  create-require@1.1.1: {}
-
   crelt@1.0.6: {}
 
   croner@9.0.0: {}
@@ -10035,8 +9869,6 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  diff@4.0.2: {}
-
   dockview-core@3.0.2: {}
 
   dom-serializer@2.0.0:
@@ -10090,6 +9922,8 @@ snapshots:
   entities@4.5.0: {}
 
   es-module-lexer@1.6.0: {}
+
+  esbuild-plugin-wasm@1.1.0: {}
 
   esbuild-wasm@0.24.2: {}
 
@@ -10901,8 +10735,6 @@ snapshots:
       '@babel/parser': 7.26.5
       '@babel/types': 7.26.5
       source-map-js: 1.2.1
-
-  make-error@1.3.6: {}
 
   markdown-table@3.0.4: {}
 
@@ -12083,9 +11915,8 @@ snapshots:
 
   smob@1.5.0: {}
 
-  solid-automerge@1.0.0-beta.5(@automerge/automerge-repo@2.0.0-alpha.23)(solid-js@1.9.4):
+  solid-automerge@1.0.1(solid-js@1.9.4):
     dependencies:
-      '@automerge/automerge-repo': 2.0.0-alpha.23
       '@solid-primitives/utils': 6.3.0(solid-js@1.9.4)
       cabbages: 0.2.4
       solid-js: 1.9.4
@@ -12285,8 +12116,6 @@ snapshots:
 
   throttle-debounce@5.0.2: {}
 
-  tiny-typed-emitter@2.1.0: {}
-
   tippy.js@6.3.7:
     dependencies:
       '@popperjs/core': 2.11.8
@@ -12360,60 +12189,6 @@ snapshots:
     dependencies:
       typescript: 5.6.3
 
-  ts-node@10.9.2(@types/node@20.17.14)(typescript@5.7.3):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.11
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 20.17.14
-      acorn: 8.14.0
-      acorn-walk: 8.3.4
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.7.3
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-
-  ts-node@10.9.2(@types/node@22.10.7)(typescript@5.6.3):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.11
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 22.10.7
-      acorn: 8.14.0
-      acorn-walk: 8.3.4
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.6.3
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-
-  ts-node@10.9.2(@types/node@22.10.7)(typescript@5.7.3):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.11
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 22.10.7
-      acorn: 8.14.0
-      acorn-walk: 8.3.4
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.7.3
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-
   tsconfck@3.1.5(typescript@5.6.3):
     optionalDependencies:
       typescript: 5.6.3
@@ -12473,7 +12248,8 @@ snapshots:
 
   undici-types@6.19.8: {}
 
-  undici-types@6.20.0: {}
+  undici-types@6.20.0:
+    optional: true
 
   unenv@1.10.0:
     dependencies:
@@ -12630,8 +12406,6 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   uuid@9.0.1: {}
-
-  v8-compile-cache-lib@3.0.1: {}
 
   valibot@1.0.0-beta.15(typescript@5.6.3):
     optionalDependencies:
@@ -12887,8 +12661,6 @@ snapshots:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
-
-  yn@3.1.1: {}
 
   yocto-queue@0.1.0: {}
 

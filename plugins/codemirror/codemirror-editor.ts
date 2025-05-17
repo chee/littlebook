@@ -14,14 +14,14 @@ import {
 	FileEditor,
 	type FileEditorAPI,
 	type FileMenu,
-} from "@pointplace/types"
-import type {DocHandleChangePayload} from "@automerge/automerge-repo"
+} from "@littlebook/types"
+import type {DocHandleChangePayload} from "@automerge/vanillajs"
 import {register} from "module"
 
 function render(
 	props: FileEditorAPI<CodeShape> & {
 		path?: (string | number)[]
-	}
+	},
 ) {
 	const path = props.path ?? ["text"]
 	const parent = document.createElement("div")
@@ -284,7 +284,7 @@ function render(
 					bubbles: true,
 					composed: true,
 					cancelable: true,
-				})
+				}),
 			)
 		}
 	})

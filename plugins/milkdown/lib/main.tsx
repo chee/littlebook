@@ -1,6 +1,6 @@
-import {View, MarkdownShape} from "@pointplace/types"
+import {View, MarkdownShape} from "@littlebook/types"
 import {Crepe} from "@milkdown/crepe"
-import {updateText} from "@automerge/automerge-repo"
+import {updateText} from "@automerge/vanillajs"
 import {defaultValueCtx} from "@milkdown/kit/core"
 import css from "./crepe.css?raw"
 import {githubLight} from "@uiw/codemirror-theme-github"

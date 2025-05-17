@@ -10,7 +10,7 @@ import type {
 	AutomergeURL,
 	AutomergeURLOrDocumentURL,
 	Entry,
-} from "@pointplace/types"
+} from "@littlebook/types"
 
 export default function DocumentListWidget(props: {url: AutomergeURL}) {
 	const [rootEntry] = useDocument<Entry>(() => props.url)
@@ -22,7 +22,7 @@ export default function DocumentListWidget(props: {url: AutomergeURL}) {
 
 	const openDocument = (
 		url: AutomergeURLOrDocumentURL,
-		opts?: {side?: string; component?: string}
+		opts?: {side?: string; component?: string},
 	) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
 
 	return (

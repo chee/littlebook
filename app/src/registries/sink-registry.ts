@@ -1,4 +1,4 @@
-import {type Repo} from "@automerge/automerge-repo"
+import {type Repo} from "@automerge/vanillajs"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
 import {
@@ -7,7 +7,7 @@ import {
 	type Sink,
 	type TransmuteSink,
 	type VoidSink,
-} from "@pointplace/types"
+} from "@littlebook/types"
 import repo from "../repo/create.ts"
 
 export class SinkRegistry extends Registry<"sink", Sink> {
@@ -65,7 +65,7 @@ async function runFileSink(sink: FileSink<unknown>, entry: Entry) {
 
 async function runTransmuteSink(sink: TransmuteSink<unknown>, entry: Entry) {
 	return repo.create(
-		sink.publish({handle: await repo.findClassic(entry.url), entry})
+		sink.publish({handle: await repo.findClassic(entry.url), entry}),
 	)
 }
 

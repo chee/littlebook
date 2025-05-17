@@ -1,4 +1,4 @@
-import type {PluginAPI} from "@pointplace/types"
+import type {PluginAPI} from "@littlebook/types"
 import codemirrorEditor from "./codemirror-editor.ts"
 
 export default function CodeMirrorPlugin(api: PluginAPI) {

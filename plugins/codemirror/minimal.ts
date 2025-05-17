@@ -1,7 +1,7 @@
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
 import {EditorView} from "@codemirror/view"
 import {minimalSetup} from "codemirror"
-import type {DocHandle} from "@automerge/automerge-repo"
+import type {DocHandle} from "@automerge/vanillajs"
 
 export default {
 	render(props: {

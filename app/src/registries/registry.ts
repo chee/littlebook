@@ -3,8 +3,8 @@ import {
 	type Repo,
 	type DocHandleChangePayload,
 	type DocHandle,
-} from "@automerge/automerge-repo"
-import type {AutomergeURL} from "@pointplace/types"
+} from "@automerge/vanillajs"
+import type {AutomergeURL} from "@littlebook/types"
 import {getOwner, onCleanup} from "solid-js"
 import {createStore, type SetStoreFunction} from "solid-js/store"
 import {Task} from "true-myth/task"
@@ -19,7 +19,7 @@ export interface Stored<Typename extends string> {
 }
 
 export function importFromAutomerge<Typename extends string, T>(
-	stored: Stored<Typename>
+	stored: Stored<Typename>,
 ): Task<T, Error> {
 	return new Task(async (yay, boo) => {
 		const blob = new Blob([stored.bytes], {type: "application/javascript"})
@@ -32,7 +32,7 @@ export function importFromAutomerge<Typename extends string, T>(
 			return yay(module.default as T)
 		}
 		return boo(
-			new Error(`document doesn't look like the thing it's meant to be`)
+			new Error(`document doesn't look like the thing it's meant to be`),
 		)
 	})
 }
@@ -55,12 +55,12 @@ export abstract class Registry<
 
 		if (!getOwner()!) {
 			throw new Error(
-				`${this.type} registry must be created in a reactive context`
+				`${this.type} registry must be created in a reactive context`,
 			)
 		}
 		// using records to describe the individual items managed by this registry
 		const [records, updateRecords] = createStore<Record<string, ValueType>>(
-			{}
+			{},
 		)
 		// eslint-disable-next-line solid/reactivity
 		this.records = records
@@ -68,7 +68,7 @@ export abstract class Registry<
 	}
 
 	private changeListener = (
-		payload: DocHandleChangePayload<Stored<Doctype>>
+		payload: DocHandleChangePayload<Stored<Doctype>>,
 	) => {
 		return this.import(payload.patchInfo.after)
 	}

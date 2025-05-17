@@ -1,9 +1,9 @@
 import {createContext, useContext} from "solid-js"
 import type {SourceRegistry} from "../registries/source-registry.ts"
 import type {ViewRegistry} from "../registries/view-registry.ts"
-import type {FileEditor} from "@pointplace/types/src/view.ts"
+import type {FileEditor} from "@littlebook/types/src/view.ts"
 import type {SinkRegistry} from "../registries/sink-registry.ts"
-import type {Sink, Source} from "@pointplace/types"
+import type {Sink, Source} from "@littlebook/types"
 const log = window.log.extend("plugin-api")
 
 export default class PluginAPI {
@@ -43,7 +43,7 @@ export function usePluginAPI() {
 	const context = useContext(PluginAPIContext)
 	if (!context) {
 		throw new Error(
-			"[plugin-api]: `usePluginAPI` must be used within a `PluginAPIProvider` component"
+			"[plugin-api]: `usePluginAPI` must be used within a `PluginAPIProvider` component",
 		)
 	}
 	return context

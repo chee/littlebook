@@ -1,4 +1,4 @@
-import {isValidAutomergeUrl} from "@automerge/automerge-repo"
+import {isValidAutomergeUrl} from "@automerge/vanillajs"
 import {z, type ZodTypeAny} from "zod"
 
 export function automergeURL() {

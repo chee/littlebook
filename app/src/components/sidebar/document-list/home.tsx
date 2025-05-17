@@ -1,11 +1,11 @@
-import {type AutomergeUrl} from "@automerge/automerge-repo"
+import {type AutomergeUrl} from "@automerge/vanillajs"
 import {getOwner, runWithOwner} from "solid-js"
 import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.tsx"
 import "./document-list.css"
 import {createEntry, useHome} from "../../../repo/home.ts"
 import {useDockAPI} from "../../../dock/dock.tsx"
 import Icon from "../../icons/icon.tsx"
-import type {AutomergeURLOrDocumentURL} from "@pointplace/types"
+import type {AutomergeURLOrDocumentURL} from "@littlebook/types"
 import DocumentList, {andRemove} from "./document-list.tsx"
 
 export default function HomeWidget() {
@@ -16,7 +16,7 @@ export default function HomeWidget() {
 
 	const openDocument = (
 		url: AutomergeURLOrDocumentURL,
-		opts?: {side?: string; component?: string}
+		opts?: {side?: string; component?: string},
 	) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
 
 	return (

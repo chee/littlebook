@@ -20,9 +20,9 @@ import {
 	type AutomergeURL,
 	type DocumentURL,
 	type Entry,
-} from "@pointplace/types"
+} from "@littlebook/types"
 import {Button} from "@kobalte/core/button"
-import type {AutomergeUrl} from "@automerge/automerge-repo"
+import type {AutomergeUrl} from "@automerge/vanillajs"
 
 export function andRemove(url: AutomergeURL) {
 	return (doc: {files: AutomergeURL[]}) => {
@@ -74,15 +74,15 @@ export default function DocumentList(props: {
 			<For each={props.urls}>
 				{url => {
 					const [entry, entryHandle] = useDocument<Entry>(
-						asAutomergeURL(url)
+						asAutomergeURL(url),
 					)
 					const [file] = useDocument<unknown>(
-						() => entry() && asAutomergeURL(entry()!.url)
+						() => entry() && asAutomergeURL(entry()!.url),
 					)
 					const pressed = () => dockAPI.isPressed(url)
 					const openDocument = (
 						url: DocumentURL,
-						opts?: OpenDocumentOptions
+						opts?: OpenDocumentOptions,
 					) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
 					function rename(name: string | null) {
 						if (!name) return
@@ -112,8 +112,8 @@ export default function DocumentList(props: {
 												rename(
 													window.prompt(
 														"rename to:",
-														entry()!.name
-													)
+														entry()!.name,
+													),
 												)
 											}}>
 											rename
@@ -195,7 +195,7 @@ export function DocumentListFolder(props: DocumentListItemProps) {
 	const toggle = () => setExpanded(expanded => !expanded)
 	const [entry] = useDocument<Entry>(() => props.url)
 	const [folder, folderHandle] = useDocument<{files: AutomergeUrl[]}>(
-		() => entry()?.url
+		() => entry()?.url,
 	)
 
 	return (

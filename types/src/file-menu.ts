@@ -1,5 +1,5 @@
 import {Entry} from "./entry.js"
-import {DocHandle, type Doc} from "@automerge/automerge-repo"
+import {DocHandle, type Doc} from "@automerge/vanillajs"
 
 export interface FileMenuAction<Shape> {
 	type: "action"

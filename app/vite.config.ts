@@ -5,7 +5,7 @@ import wasm from "vite-plugin-wasm"
 import paths from "vite-tsconfig-paths"
 
 export default defineConfig({
-	envPrefix: "pointplace",
+	envPrefix: "littlebook",
 	plugins: [
 		solid(),
 		devtools({autoname: true}),

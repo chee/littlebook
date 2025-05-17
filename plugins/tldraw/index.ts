@@ -3,11 +3,9 @@ import {
 	type TLRecord,
 	type StoreSnapshot,
 	parseTldrawJsonFile,
-	T,
 	createTLSchema,
 } from "tldraw"
 import * as tldrfile from "./editors/tldrfile.tsx"
-import {encode} from "@automerge/automerge-repo/helpers/cbor.js"
 import type {
 	OpenCanvas,
 	Dimensions,
@@ -101,7 +99,7 @@ export const coders = [
 export const editors = [tldrfile]
 
 export function snapshotToTldrFile(
-	snapshot: StoreSnapshot<TLRecord>
+	snapshot: StoreSnapshot<TLRecord>,
 ): TldrawFile {
 	return {
 		tldrawFileFormatVersion: 1,
@@ -113,7 +111,7 @@ export function snapshotToTldrFile(
 export function tldrFileToSnapshot(file: TldrawFile): StoreSnapshot<TLRecord> {
 	if (file.tldrawFileFormatVersion !== 1) {
 		console.warn(
-			`i only know about version 1 files. this file is ${file.tldrawFileFormatVersion}. i might make mistakes :(`
+			`i only know about version 1 files. this file is ${file.tldrawFileFormatVersion}. i might make mistakes :(`,
 		)
 	}
 	return {
@@ -122,7 +120,7 @@ export function tldrFileToSnapshot(file: TldrawFile): StoreSnapshot<TLRecord> {
 				store[record.id] = record
 				return store
 			},
-			{} as StoreSnapshot<TLRecord>["store"]
+			{} as StoreSnapshot<TLRecord>["store"],
 		),
 		schema: file.schema,
 	}

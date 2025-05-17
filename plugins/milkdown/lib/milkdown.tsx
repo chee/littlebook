@@ -1,4 +1,4 @@
-import {View, MarkdownShape} from "@pointplace/types"
+import {View, MarkdownShape} from "@littlebook/types"
 
 import {Editor as Milk, rootCtx, defaultValueCtx} from "@milkdown/kit/core"
 import {history} from "@milkdown/kit/plugin/history"
@@ -26,7 +26,7 @@ export default {
 			.milkdown {
 				padding: 1rem;
 			}
-		`
+		`,
 		)
 		try {
 			if (document.adoptedStyleSheets) {
@@ -49,7 +49,7 @@ export default {
 							api.handle.change(doc => {
 								updateText(doc, ["text"], markdown)
 							})
-						}
+						},
 					)
 				})
 				.use(history)

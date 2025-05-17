@@ -1,4 +1,4 @@
-import type {Doc, DocHandle} from "@automerge/automerge-repo"
+import type {Doc, DocHandle} from "@automerge/vanillajs"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import type {
 	Entry,
@@ -6,7 +6,7 @@ import type {
 	FileMenuChoice,
 	FileMenuItem,
 	FileMenuSubMenu,
-} from "@pointplace/types"
+} from "@littlebook/types"
 import {createRoot, For, Match, Switch, type Accessor} from "solid-js"
 import {createStore} from "solid-js/store"
 import Icon from "../icons/icon.tsx"

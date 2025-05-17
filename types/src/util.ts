@@ -1,4 +1,4 @@
-import {AutomergeUrl, isValidAutomergeUrl} from "@automerge/automerge-repo"
+import {AutomergeUrl, isValidAutomergeUrl} from "@automerge/vanillajs"
 import * as v from "valibot"
 
 export type MaybePromise<T> = T | Promise<T>

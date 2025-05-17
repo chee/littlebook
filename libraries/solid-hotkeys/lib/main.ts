@@ -21,13 +21,18 @@ const keymap = {
 	equals: "=",
 	equal: "=",
 	return: "enter",
+
+	up: "arrowup",
+	down: "arrowdown",
+	left: "arrowleft",
+	right: "arrowright",
 }
 
 enum mod {
-	shift = 1 << 1,
-	control = 1 << 2,
-	option = 1 << 3,
-	command = 1 << 4,
+	shift = 1,
+	control = 2,
+	option = 3,
+	command = 4,
 }
 
 function modshift(event: KeyboardEvent) {
@@ -64,10 +69,10 @@ interface Options {
  * @param options
  * @returns disposer
  */
-export function createKeybinding(
+export function useHotkeys(
 	keybinding: string,
-	action: (...args: any[]) => void,
-	options?: Options
+	action: (...args: unknown[]) => void,
+	options?: Options,
 ) {
 	const shouldTriggerOnKeyup = options?.keyup?.() ?? false
 	const shouldTriggerOnKeydown = options?.keydown ?? true
@@ -77,7 +82,8 @@ export function createKeybinding(
 	function onkeydown(event: KeyboardEvent) {
 		if (shouldTriggerOnKeydown) {
 			const bits = modshift(event)
-			if (bits == binding.mask && event.key == binding.key) {
+
+			if (bits == binding.mask && event.key.toLowerCase() == binding.key) {
 				if (shouldPreventDefault) {
 					event.preventDefault()
 				}
@@ -88,6 +94,7 @@ export function createKeybinding(
 	function onkeyup(event: KeyboardEvent) {
 		if (shouldTriggerOnKeyup) {
 			const bits = modshift(event)
+
 			if (bits == binding.mask && event.key == binding.key) {
 				if (shouldPreventDefault) {
 					event.preventDefault()
@@ -97,30 +104,30 @@ export function createKeybinding(
 		}
 	}
 
-	window.addEventListener("keydown", onkeydown)
-	onCleanup(() => window.removeEventListener("keydown", onkeydown))
-	window.addEventListener("keyup", onkeyup)
-	onCleanup(() => window.removeEventListener("keyup", onkeyup))
+	self.addEventListener("keydown", onkeydown)
+	onCleanup(() => self.removeEventListener("keydown", onkeydown))
+	self.addEventListener("keyup", onkeyup)
+	onCleanup(() => self.removeEventListener("keyup", onkeyup))
 	return () => {
-		window.removeEventListener("keydown", onkeydown)
-		window.removeEventListener("keyup", onkeyup)
+		self.removeEventListener("keydown", onkeydown)
+		self.removeEventListener("keyup", onkeyup)
 	}
 }
 
 function parse(keybinding: string) {
-	const parts = [
-		...new Set(
-			keybinding.split("+").map(part => {
-				part = part.trim().replace(/^(digit|arrow|key|numpad)/, "")
-				return keymap[part as keyof typeof keymap] ?? part
-			})
-		),
-	]
-	let key = parts.pop()!.toLowerCase()
+	const parts = keybinding.split("+").map(part => {
+		part = part.trim().replace(/^(digit|arrow|key|numpad)/, "")
+		return keymap[part as keyof typeof keymap] ?? part
+	})
+
+	const key = parts.pop()!.toLowerCase()
+
 	const mask = parts.reduce(
-		(bits, part) => bits | mod[part as keyof typeof mod],
-		0
+		(bits, part) => bits | (1 << mod[part as keyof typeof mod]),
+		0,
 	)
 
 	return {key, mask}
 }
+
+export const createKeybinding = useHotkeys

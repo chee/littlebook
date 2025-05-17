@@ -7,7 +7,7 @@ import type {
 	PluginAPI,
 	TextShape,
 	CreateSource,
-} from "@pointplace/types"
+} from "@littlebook/types"
 
 const newFolder: CreateSource<FolderShape> = {
 	id: "new-folder",

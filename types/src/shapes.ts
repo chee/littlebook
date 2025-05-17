@@ -1,5 +1,5 @@
 // todo either this file doesn't belong here, or more things do. maybe this is
-// better the @pointplace/plugin-api or something
+// better the @littlebook/plugin-api or something
 import * as v from "valibot"
 import {automergeURL} from "./util.js"
 

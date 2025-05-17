@@ -10,7 +10,7 @@ import {
 	type AutomergeURL,
 	type DocumentURL,
 	type Entry,
-} from "@pointplace/types"
+} from "@littlebook/types"
 
 export default function OpenWithContextMenu(props: {
 	url: AutomergeURL

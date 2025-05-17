@@ -1,11 +1,13 @@
-import {BrowserWebSocketClientAdapter} from "@automerge/automerge-repo-network-websocket"
-import {IndexedDBStorageAdapter} from "@automerge/automerge-repo-storage-indexeddb"
-import * as Automerge from "@automerge/automerge-repo"
+import {
+	WebSocketClientAdapter,
+	IndexedDBStorageAdapter,
+} from "@automerge/vanillajs"
+import * as Automerge from "@automerge/vanillajs"
 
 export async function createAutomergeRepo() {
 	const repo = new Automerge.Repo({
-		network: [new BrowserWebSocketClientAdapter("wss://galaxy.observer/")],
-		storage: new IndexedDBStorageAdapter("pointplace"),
+		network: [new WebSocketClientAdapter("wss://galaxy.observer/")],
+		storage: new IndexedDBStorageAdapter("littlebook"),
 		enableRemoteHeadsGossiping: true,
 	})
 	await repo.networkSubsystem.whenReady()

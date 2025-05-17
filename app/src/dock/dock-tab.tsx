@@ -1,6 +1,6 @@
 import Icon from "../components/icons/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
-import type {Doc} from "@automerge/automerge-repo"
+import type {Doc} from "@automerge/vanillajs"
 import {Button} from "@kobalte/core/button"
 import {
 	createEffect,
@@ -23,7 +23,7 @@ import {
 	parseDocumentURL,
 	type DocumentURL,
 	type Entry,
-} from "@pointplace/types"
+} from "@littlebook/types"
 import {FileContextMenu} from "../components/file-viewer/filemenu.tsx"
 import {useSinkRegistry} from "../registries/sink-registry.ts"
 
@@ -52,7 +52,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 	const owner = getOwner()
 	const openDocument = (
 		url: DocumentURL,
-		opts?: {side?: string; component?: string}
+		opts?: {side?: string; component?: string},
 	) => runWithOwner(owner, () => dockAPI.openDocument(url, opts))
 
 	const fileMenu = () => editor()?.getFileMenu?.()
@@ -63,7 +63,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 		if (file()) {
 			return Object.groupBy(
 				publisherRegistry.sinks(file()!),
-				x => x.category ?? "other"
+				x => x.category ?? "other",
 			)
 		}
 		return {}

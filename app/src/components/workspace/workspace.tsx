@@ -10,7 +10,7 @@ import {
 } from "solid-js"
 import type {SerializedDockview} from "dockview-core"
 import {useDockAPI} from "../../dock/dock.tsx"
-import {asDocumentURL, isValidDocumentURL} from "@pointplace/types"
+import {asDocumentURL, isValidDocumentURL} from "@littlebook/types"
 
 const Workspace: ParentComponent<{
 	sizes: number[]

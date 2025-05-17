@@ -36,7 +36,7 @@ export default function PageHeader(props: {
 				</Button>
 				<div class="page-header-logo">
 					<span class="page-header-logo__icon">◉</span>
-					pointplace
+					littlebook
 				</div>
 			</section>
 			<section class="page-header__section" />
@@ -61,7 +61,7 @@ export default function PageHeader(props: {
 								onSelect={() => {
 									const home = window.prompt(
 										"paste home URL",
-										homeEntryURL()
+										homeEntryURL(),
 									)
 									if (home && home != homeEntryURL()) {
 										localStorage.setItem("home", home)

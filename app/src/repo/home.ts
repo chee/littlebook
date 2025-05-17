@@ -1,9 +1,9 @@
 import {makePersisted} from "@solid-primitives/storage"
 import repo from "./create.ts"
 import {createSignal, untrack} from "solid-js"
-import {type AutomergeUrl, type ChangeFn} from "@automerge/automerge-repo"
+import {type AutomergeUrl, type ChangeFn} from "@automerge/vanillajs"
 import {useDocument} from "solid-automerge"
-import {automergeURL, type Entry} from "@pointplace/types"
+import {automergeURL, type Entry} from "@littlebook/types"
 import * as v from "valibot"
 
 export const Home = v.object({
@@ -43,7 +43,7 @@ const [homeEntryURL, setHomeEntryURL] = makePersisted(
 					],
 					associations: {},
 				} satisfies Home).url,
-			} satisfies Entry).url
+			} satisfies Entry).url,
 	),
 	{
 		storage: localStorage,
@@ -54,7 +54,7 @@ const [homeEntryURL, setHomeEntryURL] = makePersisted(
 		deserialize(string) {
 			return forceString(string as AutomergeUrl)
 		},
-	}
+	},
 )
 
 export function createEntry<T>(opts: {

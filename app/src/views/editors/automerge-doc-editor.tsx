@@ -1,4 +1,4 @@
-import type {FileEditor} from "@pointplace/types"
+import type {FileEditor} from "@littlebook/types"
 import {createDocumentProjection} from "solid-automerge"
 import {
 	For,
@@ -10,7 +10,7 @@ import {
 	Switch,
 } from "solid-js"
 import "./automerge-doc-editor.css"
-import {updateText, type DocHandle} from "@automerge/automerge-repo"
+import {updateText, type DocHandle} from "@automerge/vanillajs"
 import {createStore, reconcile} from "solid-js/store"
 import {createSolidTable, getCoreRowModel} from "@tanstack/solid-table"
 import {any, record, string} from "valibot"
@@ -31,8 +31,8 @@ function AutomergeEditor(props: {
 	const [entries, updateEntries] = createStore(
 		mapArray(
 			() => Object.entries(props.json),
-			item => ({key: item[0], value: item[1]})
-		)()
+			item => ({key: item[0], value: item[1]}),
+		)(),
 	)
 	const table = createSolidTable({
 		columns: [{accessorKey: "key"}, {accessorKey: "value"}],
@@ -46,8 +46,8 @@ function AutomergeEditor(props: {
 	props.handle.on("change", function lol() {
 		updateEntries(
 			reconcile(
-				Object.entries(props.json).map(([key, value]) => ({key, value}))
-			)
+				Object.entries(props.json).map(([key, value]) => ({key, value})),
+			),
 		)
 		runWithOwner(owner, () => {
 			onCleanup(() => {
@@ -93,7 +93,7 @@ function AutomergeEditor(props: {
 											change={value => {
 												props.handle.change(doc => {
 													const path = props.path?.concat(
-														key()
+														key(),
 													) ?? [key]
 													updateText(doc, path, value)
 												})

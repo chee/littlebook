@@ -1,12 +1,11 @@
 {
-	"name": "@pointplace/codemirror",
+	"name": "@littlebook/codemirror",
 	"description": "a littlebook providing a text editor",
 	"version": "1.0.0",
 	"type": "module",
 	"main": "entry.ts",
 	"scripts": {
 		"mk": "NODE_ENV=production node mk",
-		"build": "NODE_ENV=production node mk",
 		"w": "node mk/w",
 		"dev": "NODE_ENV=development node mk/w",
 		"test": "echo \"Error: no test specified\" && exit 1"
@@ -38,20 +37,15 @@
 		"@codemirror/language": "^6.10.2",
 		"@codemirror/state": "^6.4.1",
 		"@codemirror/view": "^6.28.2",
-		"@pointplace/types": "workspace:^",
+		"@littlebook/types": "workspace:^",
 		"@uiw/codemirror-theme-dracula": "^4.23.0",
 		"@uiw/codemirror-theme-github": "^4.23.0"
 	},
 	"devDependencies": {
 		"@automerge/automerge": "^2.2.4",
 		"@automerge/automerge-codemirror": "^0.0.12",
-		"@automerge/automerge-repo": "2.0.0-alpha.22",
-		"@pointplace/app": "workspace:^",
 		"@types/node": "^20.14.10",
 		"codemirror": "^6.0.1",
 		"esbuild": "^0.21.5"
-	},
-	"peerDependencies": {
-		"@automerge/automerge-repo": "2.0.0-alpha.22"
 	}
 }

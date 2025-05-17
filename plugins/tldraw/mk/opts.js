@@ -1,4 +1,5 @@
 import * as esbuild from "esbuild"
+import {wasmLoader} from "esbuild-plugin-wasm"
 
 console.log(globalThis.process.env.NODE_ENV)
 
@@ -12,12 +13,15 @@ export default {
 	format: "esm",
 	outdir: "output",
 	target: ["safari17", "firefox127"],
+	treeShaking: true,
 	loader: {
-		".svg": "dataurl",
+		// ".svg": "dataurl",
 		".css": "text",
-		".png": "dataurl",
-		".json": "dataurl",
-		".woff": "dataurl",
-		".woff2": "dataurl",
+		// ".png": "dataurl",
+		// ".json": "dataurl",
+		// ".woff": "dataurl",
+		// ".woff2": "dataurl",
 	},
+	plugins: [wasmLoader()],
+	external: ["@automerge/automerge", "@automerge/vanillajs"],
 }
