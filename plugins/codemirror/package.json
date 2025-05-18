@@ -3,7 +3,7 @@
 	"description": "a littlebook providing a text editor",
 	"version": "1.0.0",
 	"type": "module",
-	"main": "index.ts",
+	"main": "entry.ts",
 	"scripts": {
 		"mk": "NODE_ENV=production deno --allow-env --allow-read --allow-run mk/index.ts",
 		"w": "deno --allow-env --allow-read --allow-run mk/w.ts",
