@@ -9,7 +9,7 @@ status = 200
 
 [build]
 command = "deno upgrade && deno task mkall"
-publish = "output"
+publish = "app/output"
 
 [dev]
 port = 1111
