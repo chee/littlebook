@@ -16,7 +16,6 @@ import {
 	type FileMenu,
 } from "@littlebook/types"
 import type {DocHandleChangePayload} from "@automerge/vanillajs"
-import {register} from "module"
 
 function render(
 	props: FileEditorAPI<CodeShape> & {

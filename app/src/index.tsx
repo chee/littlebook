@@ -8,6 +8,7 @@ import "./styles/animations.css"
 import {render} from "solid-js/web"
 import App from "./pages/app.tsx"
 import {attachDevtoolsOverlay} from "@solid-devtools/overlay"
+import "solid-devtools/setup"
 import registerServiceWorker from "./register-service-worker.ts"
 import "./repo/api.ts"
 
@@ -63,6 +64,6 @@ createRoot(() => {
 				</SourceRegistryContext.Provider>
 			</SinkRegistryContext.Provider>
 		),
-		root
+		root,
 	)
 })

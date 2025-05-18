@@ -23,6 +23,6 @@ export default defineConfig({
 		target: ["firefox127", "safari17"],
 	},
 	server: {
-		port: 1111,
+		port: 1110,
 	},
 })

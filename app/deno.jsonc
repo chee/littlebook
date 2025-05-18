@@ -1,0 +1,17 @@
+{
+	"imports": {
+		":/": "./src/",
+	},
+	"compilerOptions": {
+		"lib": [
+			"dom",
+			"dom.iterable",
+			"dom.asynciterable",
+			"deno.ns",
+			"deno.unstable",
+		],
+		"jsx": "react-jsx",
+		"jsxImportSource": "solid-js",
+		"strict": true,
+	},
+}

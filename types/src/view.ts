@@ -1,5 +1,5 @@
-import {DocHandle} from "@automerge/vanillajs"
-import {FileMenu} from "./file-menu.js"
+import type {DocHandle} from "@automerge/vanillajs"
+import type {FileMenu} from "./file-menu.ts"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 
 interface ViewBase<API> {

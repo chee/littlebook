@@ -1,4 +1,4 @@
-import Resizable, {type ContextValue} from "corvu/resizable"
+import Resizable, {type ContextValue} from "@corvu/resizable"
 import LeftSidebar from "../sidebar/left-sidebar.tsx"
 import {
 	createEffect,

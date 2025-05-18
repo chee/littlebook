@@ -1,0 +1,32 @@
+{
+	"name": "@littlebook/types",
+	"version": "1.0.0",
+	"main": "src/index.ts",
+	"author": "chee",
+	"license": "MIT",
+	"type": "module",
+	"imports": {
+		"@standard-schema/spec": "npm:@standard-schema/spec@^1.0.0",
+		"random": "npm:random@^5.1.1",
+		"valibot": "npm:valibot@1.0.0-beta.15",
+		"@automerge/automerge": "npm:@automerge/automerge@3.0.0-beta.0",
+		"@automerge/vanillajs": "npm:@automerge/vanillajs@^2.0.0",
+	},
+	"exports": {
+		".": "./src/index.ts",
+		"./command": "./src/command.ts",
+		"./document": "./src/document.ts",
+		"./entry": "./src/entry.ts",
+		"./file-menu": "./src/file-menu.ts",
+		"./plugin": "./src/plugin.ts",
+		"./shapes": "./src/shapes.ts",
+		"./source": "./src/source.ts",
+		"./util": "./src/util.ts",
+		"./view": "./src/view.ts",
+	},
+	"compilerOptions": {
+		"lib": ["ES2024", "DOM", "DOM.Iterable"],
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+	},
+}

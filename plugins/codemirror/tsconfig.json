@@ -10,11 +10,9 @@
 		"strict": true,
 		"allowJs": true,
 		"resolveJsonModule": true,
-
 		"jsx": "react-jsx",
-
 		"skipLibCheck": true
 	},
 
-	"files": ["codemirror-editor.ts"]
+	"files": ["codemirror-editor.ts", "entry.ts"]
 }

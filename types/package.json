@@ -1,29 +1,5 @@
 {
 	"name": "@littlebook/types",
 	"version": "1.0.0",
-	"description": "",
-	"main": "src/index.ts",
-	"author": "chee",
-	"license": "MIT",
-	"type": "module",
-	"scripts": {
-		"mk": "tsc",
-		"w": "tsc -w",
-		"build": "pnpm mk",
-		"dev": "pnpm w"
-	},
-	"dependencies": {
-		"@standard-schema/spec": "^1.0.0",
-		"random": "^5.1.1",
-		"valibot": "1.0.0-beta.15"
-	},
-	"devDependencies": {
-		"@automerge/automerge": "3.0.0-beta.0",
-		"@automerge/vanillajs": "^2.0.0",
-		"typescript": "^5.7.3"
-	},
-	"peerDependencies": {
-		"@automerge/automerge": "3.0.0-beta.0",
-		"@automerge/vanillajs": "^2.0.0"
-	}
+	"main": "src/index.ts"
 }

@@ -1,6 +1,6 @@
 import {createEffect, createSignal, onCleanup} from "solid-js"
 import "./app.css"
-import {type ContextValue} from "corvu/resizable"
+import {type ContextValue} from "@corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
 import PageHeader from "../components/page-header/page-header.tsx"
 import Icon from "../components/icons/icon.tsx"
@@ -47,7 +47,7 @@ export default function App() {
 		createSignal<number[]>(defaultSizes),
 		{
 			name: "workspace-layout",
-		}
+		},
 	)
 
 	if (!sizes().length || sizes().every(n => n <= 0)) {

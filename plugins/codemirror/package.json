@@ -3,17 +3,19 @@
 	"description": "a littlebook providing a text editor",
 	"version": "1.0.0",
 	"type": "module",
-	"main": "entry.ts",
+	"main": "index.ts",
 	"scripts": {
-		"mk": "NODE_ENV=production node mk",
-		"w": "node mk/w",
-		"dev": "NODE_ENV=development node mk/w",
+		"mk": "NODE_ENV=production deno --allow-env --allow-read --allow-run mk/index.ts",
+		"w": "deno --allow-env --allow-read --allow-run mk/w.ts",
+		"dev": "NODE_ENV=development deno --allow-env --allow-read --allow-run mk/w.ts",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
 	"author": "chee",
 	"license": "AGPL-3.0+",
 	"dependencies": {
+		"@automerge/automerge": "3.0.0-beta.0",
+		"@automerge/vanillajs": "^2.0.0",
 		"@codemirror/lang-cpp": "^6.0.2",
 		"@codemirror/lang-css": "^6.3.1",
 		"@codemirror/lang-go": "^6.0.1",
@@ -42,10 +44,10 @@
 		"@uiw/codemirror-theme-github": "^4.23.0"
 	},
 	"devDependencies": {
-		"@automerge/automerge": "^2.2.4",
 		"@automerge/automerge-codemirror": "^0.0.12",
 		"@types/node": "^20.14.10",
 		"codemirror": "^6.0.1",
-		"esbuild": "^0.21.5"
+		"esbuild": "^0.21.5",
+		"esbuild-plugin-wasm": "^1.1.0"
 	}
 }

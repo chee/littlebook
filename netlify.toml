@@ -8,12 +8,12 @@ status = 200
 
 
 [build]
-command = "pnpm run build"
+command = "deno upgrade && deno task mkall"
 publish = "output"
 
 [dev]
-port = 1234
-targetPort = 1232
-command = "pnpm run dev"
+port = 1111
+targetPort = 1110
+command = "deno task dev"
 autoLaunch = false
 framework = "vite"
