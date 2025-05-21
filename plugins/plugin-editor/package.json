@@ -27,6 +27,7 @@
 		"@typescript/ata": "^0.9.7",
 		"@typescript/vfs": "^1.6.1",
 		"@valtown/codemirror-ts": "3.0.0-10",
+		"automerge-monaco": "^0.0.4",
 		"codemirror": "^6.0.1",
 		"codemirror-copilot": "^0.0.7",
 		"comlink": "^4.4.2",
