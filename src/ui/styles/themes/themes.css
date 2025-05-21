@@ -1,0 +1,22 @@
+[theme="dark"] {
+	--page-fill: var(--black);
+	--page-line: var(--white);
+	--sidebar-fill: #333;
+	--primary: var(--mynt);
+}
+
+[theme="zaina"] {
+	--sidebar-fill: rgb(163, 151, 255);
+	--primary: rgb(127, 114, 227);
+}
+
+[theme="sky"] {
+	--sidebar-fill: rgb(173, 216, 230);
+	--primary: rgb(135, 206, 235);
+	--primary-dark: rgb(70, 130, 180);
+	--primary-light: rgb(135, 206, 250);
+	--page-fill: rgb(240, 248, 255);
+	--page-line: rgb(0, 0, 139);
+	--sidebar-section-fill: rgb(173, 216, 230);
+	--sidebar-section-line: rgb(0, 0, 139);
+}

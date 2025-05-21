@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"moduleResolution": "bundler",
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.serviceworker.tsbuildinfo",
+		"target": "ESNext",
+		"useDefineForClassFields": true,
+		"module": "ESNext",
+		"lib": ["ESNext", "DOM", "WebWorker"],
+		"skipLibCheck": true,
+		"typeRoots": ["node_modules/@serviceworker-types"]
+	},
+	"include": ["src/core/serviceworker.ts"]
+}

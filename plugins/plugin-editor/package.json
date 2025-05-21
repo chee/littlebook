@@ -1,0 +1,43 @@
+{
+	"name": "@littlebook/plugin-editor",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "",
+	"main": "entry.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.11.0",
+	"dependencies": {
+		"@automerge/automerge-codemirror": "^0.1.0",
+		"@codemirror/autocomplete": "^6.18.6",
+		"@codemirror/commands": "^6.8.1",
+		"@codemirror/highlight": "^0.19.8",
+		"@codemirror/lang-javascript": "^6.2.4",
+		"@codemirror/language": "^6.11.0",
+		"@codemirror/lint": "^6.8.5",
+		"@codemirror/view": "^6.36.8",
+		"@codingame/monaco-vscode-api": "^17.1.1",
+		"@codingame/monaco-vscode-configuration-service-override": "^17.1.1",
+		"@deno/graph": "^0.29.0",
+		"@lezer/highlight": "^1.2.1",
+		"@typescript/ata": "^0.9.7",
+		"@typescript/vfs": "^1.6.1",
+		"@valtown/codemirror-ts": "3.0.0-10",
+		"codemirror": "^6.0.1",
+		"codemirror-copilot": "^0.0.7",
+		"comlink": "^4.4.2",
+		"lz-string": "^1.5.0",
+		"monaco-editor": "^0.52.2",
+		"monaco-editor-workers": "^0.45.0",
+		"solid-monaco": "^0.3.0",
+		"typescript": "^5.8.3",
+		"vscode": "npm:@codingame/monaco-vscode-extension-api@^17.1.1"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.100.0"
+	}
+}

@@ -1,0 +1,139 @@
+:root {
+	--dark-blue: oklch(0.43 0.24 263.74 / 1);
+	--dark-blue-dark: oklch(from var(--dark-blue) calc(l * 0.8) c h);
+	--dark-blue-light: oklch(from var(--dark-blue) calc(l * 1.2) c h);
+
+	--f-blue: oklch(0.57 0.23 262.55 / 1);
+	--f-blue-dark: oklch(from var(--f-blue) calc(l * 0.8) c h);
+	--f-blue-light: oklch(from var(--f-blue) calc(l * 1.2) c h);
+	--cherries-fill: oklch(0.95 0.02 5.09 / 1);
+	--cherries-line: oklch(0.56 0.2 10.02 / 1);
+
+	--purple-heart: oklch(0.38 0.17 324.56 / 1);
+	--purple-heart-dark: oklch(from var(--purple-heart) calc(l * 0.8) c h);
+	--purple-heart-light: oklch(from var(--purple-heart) calc(l * 1.2) c h);
+	--pizzazz: oklch(0.67 0.29 340.37 / 1);
+	--pizzazz-dark: oklch(from var(--pizzazz) calc(l * 0.8) c h);
+	--pizzazz-light: oklch(from var(--pizzazz) calc(l * 1.2) c h);
+	--desaturated-purple: oklch(0.4 0.09 311.2 / 1);
+	--desaturated-purple-dark: oklch(
+		from var(--desaturated-purple) calc(l * 0.8) c h
+	);
+	--desaturated-purple-light: oklch(
+		from var(--desaturated-purple) calc(l * 1.2) c h
+	);
+
+	--russian-violet: oklch(0.25 0.09 295.24 / 1);
+	--russian-violet-dark: oklch(from var(--russian-violet) calc(l * 0.8) c h);
+	--russian-violet-light: oklch(from var(--russian-violet) calc(l * 1.2) c h);
+	--melon: oklch(0.83 0.08 27.4 / 1);
+	--melon-dark: oklch(from var(--melon) calc(l * 0.8) c h);
+	--melon-light: oklch(from var(--melon) calc(l * 1.2) c h);
+
+	--flax: lch(89.6% 52.46 98.6);
+	--flax-dark: oklch(from var(--flax) calc(l * 0.8) c h);
+	--flax-light: oklch(from var(--flax) calc(l * 1.2) c h);
+	--jonquil: lch(84.94% 85.77 88.57);
+	--jonquil-dark: oklch(from var(--jonquil) calc(l * 0.8) c h);
+	--jonquil-light: oklch(from var(--jonquil) calc(l * 1.2) c h);
+	--viridian: lch(47.01% 29.78 155.67);
+	--viridian-dark: oklch(from var(--viridian) calc(l * 0.8) c h);
+	--viridian-light: oklch(from var(--viridian) calc(l * 1.2) c h);
+	--chili: lch(48.22% 92.51 39.7);
+	--chili-dark: oklch(from var(--chili) calc(l * 0.8) c h);
+	--chili-light: oklch(from var(--chili) calc(l * 1.2) c h);
+	--ombe: lch(35.59% 54.06 13.65);
+	--ombe-dark: oklch(from var(--ombe) calc(l * 0.8) c h);
+	--ombe-light: oklch(from var(--ombe) calc(l * 1.2) c h);
+
+	--sky: oklch(0.79 0.14 226.17 / 1);
+	--sky-dark: oklch(from var(--sky) calc(l * 0.8) c h);
+	--sky-light: oklch(from var(--sky) calc(l * 1.2) c h);
+	--terracotta: oklch(0.74 0.16 22.65 / 1);
+	--terracotta-dark: oklch(from var(--terracotta) calc(l * 0.8) c h);
+	--terracotta-light: oklch(from var(--terracotta) calc(l * 1.2) c h);
+	--red: oklch(0.65 1.2402 19.02);
+	--red-dark: oklch(from var(--red) calc(l * 0.8) c h);
+	--red-light: oklch(from var(--red) calc(l * 1.2) c h);
+	--mynt: oklch(0.88 0.17 167.51 / 1);
+	--mynt-dark: oklch(from var(--mynt) calc(l * 0.8) c h);
+	--mynt-light: oklch(from var(--mynt) calc(l * 1.2) c h);
+	--sunglow: oklch(0.86 0.16 87.44 / 1);
+	--sunglow-dark: oklch(from var(--sunglow) calc(l * 0.8) c h);
+	--sunglow-light: oklch(from var(--sunglow) calc(l * 1.2) c h);
+	--blue-crayola: oklch(0.52 0.2689 263.27);
+	--blue-crayola-dark: oklch(from var(--blue-crayola) calc(l * 0.8) c h);
+	--blue-crayola-light: oklch(from var(--blue-crayola) calc(l * 1.2) c h);
+	--mosque: oklch(0.77 0.2143 148.08);
+	--mosque-dark: oklch(from var(--mosque) calc(l * 0.8) c h);
+	--mosque-light: oklch(from var(--mosque) calc(l * 1.2) c h);
+
+	--carribean-current: oklch(0.47 0.07 196.43 / 1);
+	--carribean-current-dark: oklch(
+		from var(--carribean-current) calc(l * 0.8) c h
+	);
+	--carribean-current-light: oklch(
+		from var(--carribean-current) calc(l * 1.2) c h
+	);
+
+	--brown: oklch(from #5e3023);
+	--brown-dark: oklch(from var(--brown) calc(l * 0.8) c h);
+	--brown-light: oklch(from var(--brown) calc(l * 1.2) c h);
+
+	--white: oklch(1 0 0 / 1);
+	--white-dark: oklch(from var(--white) calc(l * 0.8) c h);
+	--white-light: oklch(from var(--white) calc(l * 1.2) c h);
+	--black: oklch(0 0 0 / 1);
+	--black-dark: oklch(from var(--black) calc(l * 0.8) c h);
+	--black-light: oklch(from var(--black) calc(l * 1.2) c h);
+
+	--primary: var(--carribean-current-light);
+	--primary-dark: oklch(from var(--primary) calc(l * 0.6) calc(c * 7) h);
+	--primary-light: oklch(from var(--primary) calc(l * 1.2) c h);
+
+	--link: var(--blue-crayola);
+	--link-dark: oklch(from var(--link) calc(l * 0.8) c h);
+	--link-light: oklch(from var(--link) calc(l * 1.2) c h);
+
+	--info: var(--sky);
+	--info-dark: oklch(from var(--info) calc(l * 0.8) c h);
+	--info-light: oklch(from var(--info) calc(l * 1.2) c h);
+
+	--success: var(--mosque);
+	--success-dark: oklch(from var(--success) calc(l * 0.8) c h);
+	--success-light: oklch(from var(--success) calc(l * 1.2) c h);
+
+	--warning: var(--sunglow);
+	--warning-dark: oklch(from var(--warning) calc(l * 0.8) c h);
+	--warning-light: oklch(from var(--warning) calc(l * 1.2) c h);
+
+	--danger: #ad2e24;
+	--danger-dark: oklch(from var(--danger) calc(l * 0.8) c h);
+	--danger-light: oklch(from var(--danger) calc(l * 1.2) c h);
+
+	--text: var(--black);
+	--text-dark: oklch(from var(--text) calc(l * 0.8) c h);
+	--text-light: oklch(from var(--text) calc(l * 1.2) c h);
+	--text-very-light: #333;
+
+	--line: var(--text);
+	--line-dark: oklch(from var(--line) calc(l * 0.8) c h);
+	--line-light: oklch(from var(--line) calc(l * 1.2) c h);
+
+	--page: var(--white);
+	--page-dark: oklch(from var(--page) calc(l * 0.7) c h);
+	--page-dirk-gently: oklch(from var(--page) calc(l * 0.9) c h);
+	--page-offset: oklch(from var(--page) calc(l * 0.98) c h);
+	--page-light: oklch(from var(--page) calc(l * 1.2) c h);
+
+	--caret-color: #5cdbce;
+
+	--selected-fill: color-mix(in oklab, var(--primary), transparent 20%);
+
+	--fill: var(--page);
+	--fill-dark: oklch(from var(--fill) calc(l * 0.8) c h);
+	--fill-light: oklch(from var(--fill) calc(l * 1.2) c h);
+	--line-fill: var(--line);
+	--line-fill-dark: oklch(from var(--line-fill) calc(l * 0.8) c h);
+	--line-fill-light: oklch(from var(--line-fill) calc(l * 1.2) c h);
+}

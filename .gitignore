@@ -1,3 +1,6 @@
 node_modules
 output/
 .vscode/
+# Local Netlify folder
+.netlify
+dev-dist/

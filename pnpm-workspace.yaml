@@ -1,6 +1,3 @@
 packages:
-  - app
-  - libraries/*
+  - .
   - plugins/*
-  - types
-  - tools/*

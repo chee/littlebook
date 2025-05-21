@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-CA">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Littlebook</title>
+
+	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1">
+
+	<meta name="twitter:title" content="Littlebook">
+	<meta property="og:title" content="Littlebook">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<!--sunglow-->
+	<meta name="theme-color" content="#fdca40">
+	<link rel="shortcut icon" type="image/png" href="/favicon.png">
+
+	<link rel="stylesheet" href="./src/ui/styles/global.css" />
+	<link rel="mask-icon" href="/maskable.png" color="#000000">
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+
+	<meta name="description" content="the everything app">
+	<meta name="twitter:description" content="the everything app">
+	<meta property="og:description" content="the everything app">
+
+	<meta name="twitter:image" content="/opengraph.png">
+	<meta property="og:image" content="/opengraph.png">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta property="og:type" content="website">
+
+	<style>
+		#app:empty {
+			overflow: hidden;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: white;
+
+			&::before {
+				content: "📓 littlebook";
+				color: white;
+				font-weight: 500;
+				line-height: 3em;
+				padding-left: 3em;
+				display: block;
+				position: absolute;
+				top: 0;
+				width: 100vw;
+				height: 3em;
+				background: black;
+
+			}
+
+			&::after {
+				content: "";
+				display: block;
+				position: absolute;
+				top: 3em;
+				bottom: 0;
+				left: 0;
+				width: 20vw;
+				height: 100vh;
+				background: #fdca40;
+				border-right: 1px solid black;
+			}
+		}
+	</style>
+
+</head>
+
+<body>
+	<div id="app"></div>
+	<script type="module" src="/src/ui/routes.tsx">
+	</script>
+</body>

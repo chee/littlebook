@@ -9,13 +9,13 @@ import {
 } from "@codemirror/language"
 import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
-import {
-	CodeShape,
-	FileEditor,
-	type FileEditorAPI,
-	type FileMenu,
-} from "@littlebook/types"
+
 import type {DocHandleChangePayload} from "@automerge/vanillajs"
+import type {FileMenu} from ":/domain/file/file-menu.ts"
+import {CodeShape} from ":/plugins/base/shapes/shapes.ts"
+import type {FileEditor, FileEditorAPI} from ":/domain/view/view.ts"
+// import type {FileEditorAPI, FileEditor, FileMenu} from "+types+"
+// todo these default shapes should be provided another way
 
 function render(
 	props: FileEditorAPI<CodeShape> & {
@@ -28,7 +28,7 @@ function render(
 	const languageCompartment = new Compartment()
 	const lineNumbersCompartment = new Compartment()
 	const theme = new Compartment()
-	const darkmatch = window.matchMedia("(prefers-color-scheme: dark)")
+	const darkmatch = self.matchMedia("(prefers-color-scheme: dark)")
 	const getSchemeTheme = () => {
 		return darkmatch.matches ? dracula : github
 	}
@@ -48,7 +48,9 @@ function render(
 		} else {
 			document.adoptedStyleSheets = [style]
 		}
-	} catch {}
+	} catch {
+		/* is ok */
+	}
 
 	const file = props.handle.doc()
 
@@ -69,7 +71,7 @@ function render(
 		],
 	})
 
-	const onschemechange = (event: MediaQueryListEvent) => {
+	const onschemechange = (_event: MediaQueryListEvent) => {
 		view.dispatch({
 			effects: theme.reconfigure(getSchemeTheme()),
 		})
@@ -91,6 +93,8 @@ function render(
 		java: () => import("@codemirror/lang-java").then(mod => mod.java()),
 		javascript: () =>
 			import("@codemirror/lang-javascript").then(mod => mod.javascript()),
+		typescript: () =>
+			import("@codemirror/lang-javascript").then(mod => mod.javascript()),
 		json: () => import("@codemirror/lang-json").then(mod => mod.json()),
 		less: () => import("@codemirror/lang-less").then(mod => mod.less()),
 		lezer: () => import("@codemirror/lang-lezer").then(mod => mod.lezer()),
@@ -107,6 +111,7 @@ function render(
 		markdown: () =>
 			import("@codemirror/lang-markdown")
 				.then(mod => mod.markdown)
+				// deno-lint-ignore require-await
 				.then(async markdown => {
 					return markdown({
 						addKeymap: true,
@@ -139,8 +144,14 @@ function render(
 							}),
 							LanguageDescription.of({
 								name: "javascript",
-								alias: ["js", "jsx", "ts", "tsx", "typescript"],
-								filename: /\.[jt]sx?$/,
+								alias: ["js", "jsx"],
+								filename: /\.jsx?$/,
+								load: languages.javascript,
+							}),
+							LanguageDescription.of({
+								name: "typescript",
+								alias: ["ts", "tsx", "typescript"],
+								// filename: /\.tsx?$/,
 								load: languages.javascript,
 							}),
 							LanguageDescription.of({
@@ -256,7 +267,7 @@ function render(
 		// todo shouldn't this be something... else? it's not an editor's job,
 		// it's a new kind of THING not a sink, source or view... some kind of
 		// file-specific addon that boots when _any_ view opens a file what would
-		// that be? what would it called?
+		// that be? what would it called? a (monitor)?
 		if (doc.language == "markdown") {
 			const firstLine = doc.text.slice(0, doc.text.indexOf("\n"))
 			const title = firstLine.slice(2).trim()
@@ -276,7 +287,7 @@ function render(
 	})
 
 	parent.addEventListener("keyup", () => {
-		if (file?.url) {
+		if (file?.editorURL) {
 			parent.dispatchEvent(
 				new CustomEvent("run-sink", {
 					detail: "compile-to-editor",
@@ -318,6 +329,7 @@ export function getFileMenu() {
 						{label: "rust", value: "rust"},
 						{label: "sass", value: "sass"},
 						{label: "scss", value: "scss"},
+						{label: "typescript", value: "typescript"},
 						{label: "sql", value: "sql"},
 						{label: "vue", value: "vue"},
 						{label: "wast", value: "wat"},
@@ -329,7 +341,7 @@ export function getFileMenu() {
 					},
 					action(opts) {
 						opts.fileHandle.change(file => {
-							file.language = opts.value
+							;(file as {language: string}).language = opts.value
 						})
 					},
 				},
@@ -344,5 +356,6 @@ export default {
 	category: "editor",
 	render,
 	getFileMenu,
+	// todo
 	schema: CodeShape,
 } satisfies FileEditor<CodeShape>

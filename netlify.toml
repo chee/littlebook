@@ -8,12 +8,6 @@ status = 200
 
 
 [build]
-command = "deno upgrade && deno task mkall"
-publish = "app/output"
+command = "pnpm mk"
+publish = "output"
 
-[dev]
-port = 1111
-targetPort = 1110
-command = "deno task dev"
-autoLaunch = false
-framework = "vite"

@@ -1,0 +1,13 @@
+diff --git a/dist/amToCodemirror.js b/dist/amToCodemirror.js
+index 88adff8f8cc059e694757cecc2e8613f42556343..87de0218a94e76c0dd0de6e68d76ed3d01c019ea 100644
+--- a/dist/amToCodemirror.js
++++ b/dist/amToCodemirror.js
+@@ -40,7 +40,7 @@ function handleInsert(target, patch) {
+     if (index == null) {
+         return [];
+     }
+-    const text = patch.values.map(v => (v ? v.toString() : "")).join("");
++    const text = patch.values.map(v => (typeof v == "string" ? v : "\ufffc")).join("");
+     return [{ from: index, to: index, insert: text }];
+ }
+ function handleSplice(target, patch) {

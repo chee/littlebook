@@ -1,0 +1,13 @@
+@import url("./base/base.css");
+@import url("./components/components.css");
+
+* {
+	overscroll-behavior: none;
+}
+
+code,
+kbd,
+samp,
+output {
+	font-family: var(--family-mono);
+}

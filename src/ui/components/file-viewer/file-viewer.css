@@ -1,0 +1,75 @@
+:root {
+	--file-viewer-fill: var(--dock-fill);
+	--file-viewer-line: var(--dock-line);
+	--file-viewer-status-bar__font-size: 12px;
+	--file-viewer-status-bar__height: 30px;
+
+	--file-viewer-status-bar-fill: color-mix(
+		in srgb,
+		var(--file-viewer-fill),
+		var(--file-viewer-line) 2%
+	);
+	--file-viewer-status-bar-border-line: color-mix(
+		in srgb,
+		var(--file-viewer-fill),
+		var(--file-viewer-line) 10%
+	);
+
+	--file-viewer-status-item-fill--inactive: color-mix(
+		in srgb,
+		var(--file-viewer-fill),
+		var(--file-viewer-line) 5%
+	);
+	--file-viewer-status-item-line--inactive: color-mix(
+		in srgb,
+		var(--file-viewer-fill),
+		var(--file-viewer-line) 40%
+	);
+	--file-viewer-status-item-border-line--inactive: transparent;
+
+	--file-viewer-status-item-fill--active: var(--russian-violet);
+	--file-viewer-status-item-line--active: white;
+	--file-viewer-status-item-border-line--active: transparent;
+}
+
+.file-viewer {
+	height: 100%;
+	overflow: scroll;
+	background: var(--file-viewer-fill);
+	color: var(--file-viewer-line);
+}
+
+.file-viewer__content {
+	height: calc(100% - var(--file-viewer-status-bar__height));
+	width: 100%;
+	overflow: scroll;
+}
+
+.file-viewer-status-bar {
+	--item-fill: var(--file-viewer-status-item-fill--inactive);
+	--item-line: var(--file-viewer-status-item-line--inactive);
+	--item-border-line: var(--file-viewer-status-item-border-line--inactive);
+	height: var(--file-viewer-status-bar__height);
+	font-size: var(--file-viewer-status-bar__font-size);
+	display: flex;
+	align-items: center;
+	padding-inline: 8px;
+	gap: 8px;
+	border-top: 1px solid var(--file-viewer-status-bar-border-line);
+	background: var(--file-viewer-status-bar-fill);
+
+	> * {
+		background: var(--item-fill);
+		color: var(--item-line);
+		padding: 1px 4px;
+		border-radius: 2px;
+		border: 1px solid var(--item-border-line);
+		user-select: none;
+	}
+}
+
+.file-viewer-status-bar--active {
+	--item-fill: var(--file-viewer-status-item-fill--active);
+	--item-line: var(--file-viewer-status-item-line--active);
+	--item-border-line: var(--file-viewer-status-item-border-line--active);
+}

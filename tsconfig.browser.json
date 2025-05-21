@@ -1,0 +1,39 @@
+{
+	"compilerOptions": {
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.browser.tsbuildinfo",
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"moduleDetection": "force",
+		"useDefineForClassFields": true,
+		"allowSyntheticDefaultImports": true,
+		"allowImportingTsExtensions": true,
+		"jsx": "preserve",
+		"jsxImportSource": "solid-js",
+		"noEmit": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noUncheckedSideEffectImports": true,
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"paths": {
+			":/*": ["./src/*"],
+			"+types+": ["./types.d.ts"]
+		}
+	},
+	"include": ["src", "plugins"],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"build",
+		"out-tsc",
+		"out-tsc-esm",
+		"out-tsc-cjs",
+		"out-tsc-umd",
+		"out-tsc-esm-browser",
+		"out-tsc-cjs-browser",
+		"plugins/*/node_modules"
+	]
+}

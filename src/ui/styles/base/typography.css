@@ -1,0 +1,19 @@
+:root {
+	--family-sans: "Jost*", "Jost", system-ui, -apple-system, sans-serif;
+	--family-mono:
+		"Iosevka Rabbits", "JetBrains Mono", "Consolas", "Fira Code", "Monaco",
+		"Courier New", monospace;
+	--family-mono:
+		"Consolas", "Fira Code", "JetBrains Mono", "Iosevka Rabbits", "Menlo",
+		monospace;
+
+	--font-size: 1rem;
+	--font-size-1: calc(var(--font-size) * 3);
+	--font-size-2: calc(var(--font-size) * 2.5);
+	--font-size-3: calc(var(--font-size) * 2);
+	--font-size-4: calc(var(--font-size) * 1.5);
+	--font-size-5: calc(var(--font-size) * 1.24);
+	--font-size-6: calc(var(--font-size) * 1);
+	--font-size-7: calc(var(--font-size) * 0.76);
+	--font-size-8: calc(var(--font-size) * 0.5);
+}

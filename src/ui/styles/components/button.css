@@ -1,0 +1,84 @@
+.button {
+	--fill: var(--page);
+	--border-color: color-mix(in oklab, var(--page), var(--text) 10%);
+	--text-color: color-mix(in oklab, var(--page), var(--text) 70%);
+	background: var(--fill);
+	color: var(--text-color);
+	font-family: var(--family-sans);
+	font-size: 0.96rem;
+	text-decoration: none;
+	border: 1px solid var(--border-color);
+	padding-inline: 0.5rem;
+	padding-block: 0.25rem;
+	box-shadow: 1px 1px 0px var(--border-color);
+	position: relative;
+	user-select: none;
+	touch-action: manipulation;
+	border-radius: 2px;
+	white-space: nowrap;
+	display: flex;
+	min-height: 2rem;
+	align-items: center;
+	justify-content: center;
+	transition: border-color 0.1s ease-out, color 0.1s ease-out,
+		background-color 0.1s ease-out;
+	&.ghost {
+		--fill: transparent;
+		--border-color: transparent;
+		--text-color: color-mix(in oklab, var(--text), transparent 50%);
+		box-shadow: none;
+	}
+	&:hover {
+		--border-color: var(--text);
+		--text-color: var(--text);
+		box-shadow: 1px 1px 0px var(--border-color), 2px 2px 0px var(--border-color);
+		top: -1px;
+		left: -1px;
+	}
+	&.hard {
+		--border-color: var(--text);
+		--text-color: var(--text);
+	}
+	&:active {
+		box-shadow: 0px 0px 0px 0px;
+		top: 2px;
+		left: 2px;
+		border-left-width: 2px;
+		border-top-width: 2px;
+	}
+	&.primary {
+		--fill: var(--primary);
+		--border-color: var(--primary-dark);
+		color: black;
+	}
+	&.info {
+		--fill: var(--info);
+		--border-color: var(--info-dark);
+		color: black;
+	}
+	&.success {
+		--fill: var(--success);
+		--border-color: var(--success-dark);
+		color: black;
+	}
+	&.warning {
+		--fill: var(--warning);
+		--border-color: var(--warning-dark);
+		color: var(--text);
+	}
+	&.danger {
+		--fill: var(--danger-light);
+		--border-color: var(--danger-dark);
+		color: white;
+	}
+	&.subtle.danger {
+		--fill: var(--page);
+		--border-color: var(--text);
+		color: var(--text);
+		&:hover {
+			--fill: var(--danger-light);
+			--border-color: var(--danger-dark);
+			color: white;
+		}
+	}
+}

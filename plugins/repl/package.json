@@ -1,0 +1,21 @@
+{
+	"name": "@littlebook/repl",
+	"version": "1.0.0",
+	"type": "module",
+	"description": "",
+	"main": "entry.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.11.0",
+	"dependencies": {
+		"@bigmistqke/repl": "^0.2.3",
+		"@monaco-editor/loader": "^1.5.0",
+		"automerge-monaco": "^0.0.4",
+		"monaco-editor-auto-typings": "^0.4.6",
+		"typescript": "^5.8.3"
+	}
+}
