@@ -26,8 +26,9 @@ export default defineConfig({
 			srcDir: "src/core",
 			filename: "serviceworker.ts",
 			devOptions: {
-				enabled: true,
-				type: "module",
+				// enabled: true,
+				enabled: false,
+				// type: "classic",
 			},
 			manifest: {
 				name: "littlebook",
@@ -35,8 +36,12 @@ export default defineConfig({
 				description: "",
 				theme_color: "#00FDBC",
 			},
+			workbox: {
+				maximumFileSizeToCacheInBytes: 5000 * 1024 * 1024,
+			},
 			injectManifest: {
 				maximumFileSizeToCacheInBytes: 5000 * 1024 * 1024,
+				rollupFormat: "iife",
 			},
 		}),
 	],
