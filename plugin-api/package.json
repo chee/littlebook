@@ -1,0 +1,23 @@
+{
+	"name": "@littlebook/plugin-api",
+	"type": "module",
+	"version": "1.0.0",
+	"description": "",
+	"main": "plugin-api.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.11.0",
+	"dependencies": {
+		"@automerge/vanillajs": "^2.0.0",
+		"@standard-schema/spec": "^1.0.0",
+		"@types/debug": "^4.1.12",
+		"debug": "^4.4.1",
+		"solid-js": "^1.9.7",
+		"true-myth": "^9.0.1",
+		"valibot": "^1.1.0"
+	}
+}

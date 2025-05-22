@@ -1,13 +1,13 @@
 import {createMemo} from "solid-js"
 import {useDocument} from "solid-automerge"
-import {useViewRegistry} from "../../../registries/view-registry.ts"
-import type {View} from ":/domain/view/view.ts"
 import type {FileEntry, FileEntryURL} from ":/docs/file-entry-doc.ts"
 import {useUserDocContext} from ":/domain/user/user.ts"
 import {
 	parseDocumentURL,
 	type AutomergeURLOrDocumentURL,
 } from ":/core/sync/url.ts"
+import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
+import type {View} from "@littlebook/plugin-api/types/view.ts"
 
 // todo usePerfectIcon that starts with entry, then editor,
 // then defaults to a document icon

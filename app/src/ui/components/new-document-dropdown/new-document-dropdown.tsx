@@ -2,7 +2,7 @@ import {For} from "solid-js"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import "./new-document-dropdown.css"
 import Icon from "../icons/icon.tsx"
-import {useSourceRegistry} from ":/registries/source-registry.ts"
+import {useSourceRegistry} from "@littlebook/plugin-api/registries/source-registry.ts"
 
 export default function NewDocumentMenu(props: {
 	create(opts: {name: string; content: unknown; creator: string}): void

@@ -24,6 +24,7 @@
 		"@codingame/monaco-vscode-configuration-service-override": "^17.1.1",
 		"@deno/graph": "^0.29.0",
 		"@lezer/highlight": "^1.2.1",
+		"@littlebook/plugin-api": "workspace:~",
 		"@typescript/ata": "^0.9.7",
 		"@typescript/vfs": "^1.6.1",
 		"@valtown/codemirror-ts": "3.0.0-10",
@@ -36,6 +37,7 @@
 		"monaco-editor-workers": "^0.45.0",
 		"solid-monaco": "^0.3.0",
 		"typescript": "^5.8.3",
+		"valibot": "^1.1.0",
 		"vscode": "npm:@codingame/monaco-vscode-extension-api@^17.1.1"
 	},
 	"devDependencies": {

@@ -11,16 +11,19 @@ import {dracula} from "@uiw/codemirror-theme-dracula"
 import {githubLight as github} from "@uiw/codemirror-theme-github"
 
 import type {DocHandleChangePayload} from "@automerge/vanillajs"
-import type {FileMenu} from ":/domain/file/file-menu.ts"
-import {CodeShape} from ":/plugins/base/shapes/shapes.ts"
-import type {FileEditor, FileEditorAPI} from ":/domain/view/view.ts"
+import type {
+	FileEditor,
+	FileEditorAPI,
+} from "@littlebook/plugin-api/types/view.ts"
+import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import type {FileMenu} from "@littlebook/plugin-api/types/file-menu.ts"
 // import type {FileEditorAPI, FileEditor, FileMenu} from "+types+"
 // todo these default shapes should be provided another way
 
 function render(
 	props: FileEditorAPI<CodeShape> & {
 		path?: (string | number)[]
-	},
+	}
 ) {
 	const path = props.path ?? ["text"]
 	const parent = document.createElement("div")
@@ -287,16 +290,16 @@ function render(
 	})
 
 	parent.addEventListener("keyup", () => {
-		if (file?.editorURL) {
-			parent.dispatchEvent(
-				new CustomEvent("run-sink", {
-					detail: "compile-to-editor",
-					bubbles: true,
-					composed: true,
-					cancelable: true,
-				}),
-			)
-		}
+		// if (file?.editorURL) {
+		// 	parent.dispatchEvent(
+		// 		new CustomEvent("run-sink", {
+		// 			detail: "compile-to-editor",
+		// 			bubbles: true,
+		// 			composed: true,
+		// 			cancelable: true,
+		// 		})
+		// 	)
+		// }
 	})
 
 	return parent

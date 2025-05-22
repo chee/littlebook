@@ -9,8 +9,8 @@ import {
 	type AutomergeURL,
 	type DocumentURL,
 } from ":/core/sync/url.ts"
-import {useViewRegistry} from ":/registries/view-registry.ts"
 import type {FileEntry} from ":/docs/file-entry-doc.ts"
+import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
 
 export default function OpenWithContextMenu(props: {
 	url: AutomergeURL

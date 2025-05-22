@@ -1,7 +1,10 @@
 import {curl} from "../core/sync/automerge.ts"
 import type {AutomergeURL} from "../core/sync/url.ts"
-import type {AutomergeMapValue} from "+types+"
 
+import type {AutomergeValue} from "@automerge/automerge"
+export type AutomergeMapValue = {
+	[key: string]: AutomergeValue
+}
 export type FileEntryURL = AutomergeURL & {type: "entry"}
 export type FileContentURL = AutomergeURL & {type: "content"}
 
@@ -36,5 +39,3 @@ export function createFileEntry(
 ): FileEntryURL {
 	return curl(createFileEntryDoc(entry))
 }
-
-window.createFileEntry = createFileEntry

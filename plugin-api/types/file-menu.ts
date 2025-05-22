@@ -1,4 +1,4 @@
-import type {FileEntry} from "../../docs/file-entry-doc.ts"
+// import type {FileEntry} from "../../app/src/docs/file-entry-doc.ts"
 import type {DocHandle, Doc} from "@automerge/vanillajs"
 
 export interface FileMenuAction<FileShape = unknown> {
@@ -6,7 +6,7 @@ export interface FileMenuAction<FileShape = unknown> {
 	label: string
 	keybinding?: string
 	action: (args: {fileHandle: DocHandle<FileShape>}) => void
-	when?: (args: {entry: FileEntry; file: Doc<FileShape>}) => boolean
+	// when?: (args: {entry: FileEntry; file: Doc<FileShape>}) => boolean
 }
 
 export interface FileMenuChoice<FileShape = unknown> {
@@ -19,7 +19,7 @@ export interface FileMenuChoice<FileShape = unknown> {
 export interface FileMenuSubMenu<FileShape = unknown> {
 	type: "sub"
 	label: string
-	when?: (args: {entry: FileEntry; file: Doc<FileShape>}) => boolean
+	// when?: (args: {entry: FileEntry; file: Doc<FileShape>}) => boolean
 	sub: FileMenuItem<FileShape>[]
 }
 

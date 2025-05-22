@@ -1,9 +1,9 @@
 import "./plugin-editor.css"
-import type {CreateSource} from ":/domain/source/source.ts"
-import type PluginAPI from ":/plugins/plugin-api.ts"
 import type {PluginShape} from "./shapes.ts"
 import activeMonacoPluginEditor from "./monaco/entry.ts"
 import activeCodeMirrorPluginEditor from "./cm/entry.ts"
+import type {CreateSource} from "@littlebook/plugin-api/types/source.ts"
+import type PluginAPI from "@littlebook/plugin-api"
 
 const createPlugin: CreateSource<PluginShape> = {
 	id: "create-plugin",

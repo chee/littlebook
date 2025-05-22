@@ -1,8 +1,5 @@
-import type {MaybePromise} from "+types+"
-import type {AutomergeURL} from "../../core/sync/url.ts"
-export type SourceURL = AutomergeURL & {type: "source"}
-
 type MaybeNamedShape<Shape> = [shape: Shape] | [shape: Shape, {name: string}]
+export type MaybePromise<T> = T | Promise<T>
 
 interface SourceBase {
 	id: string

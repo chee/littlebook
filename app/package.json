@@ -45,6 +45,7 @@
 		"@iconify-icon/solid": "^3.0.0",
 		"@kobalte/core": "^0.13.9",
 		"@littlebook/codemirror": "workspace:^",
+		"@littlebook/plugin-api": "workspace:~",
 		"@littlebook/plugin-editor": "workspace:^",
 		"@littlebook/prosemirror": "workspace:^",
 		"@littlebook/repl": "workspace:^",

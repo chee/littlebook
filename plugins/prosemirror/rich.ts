@@ -1,10 +1,10 @@
-import type {FileEditor} from ":/domain/view/view.ts"
-import {TextShape} from ":/plugins/base/shapes/shapes.ts"
 import {init} from "@automerge/prosemirror"
 import {EditorView} from "prosemirror-view"
 import {EditorState} from "prosemirror-state"
 import {exampleSetup} from "prosemirror-example-setup"
 import "prosemirror-menu/style/menu.css"
+import type {TextShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import type {FileEditor} from "@littlebook/plugin-api/types/view.ts"
 
 export default {
 	id: "rich",

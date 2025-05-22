@@ -18,5 +18,10 @@
 		"patchedDependencies": {
 			"@automerge/automerge-codemirror": "patches/@automerge__automerge-codemirror.patch"
 		}
-	}
+	},
+	"workspaces": [
+		"plugins/*",
+		"plugin-api/",
+		"app"
+	]
 }

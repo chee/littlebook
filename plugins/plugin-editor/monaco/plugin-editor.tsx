@@ -1,9 +1,8 @@
 import automonaco from "automerge-monaco"
-import type {FileEditor} from ":/domain/view/view.ts"
 import * as monaco from "monaco-editor"
-import * as v from "valibot"
-import lite from "./themes/lite.ts"
 import {PluginShape} from "../shapes.ts"
+import type {FileEditor} from "@littlebook/plugin-api/types/view.ts"
+import lite from "./themes/lite.ts"
 
 export type WorkerLoader = () => Worker
 const workerLoaders: Partial<Record<string, WorkerLoader>> = {
@@ -11,49 +10,49 @@ const workerLoaders: Partial<Record<string, WorkerLoader>> = {
 		new Worker(
 			new URL(
 				"monaco-editor/esm/vs/editor/editor.worker.js",
-				import.meta.url,
+				import.meta.url
 			),
-			{type: "module"},
+			{type: "module"}
 		),
 	editorWorkerService: () =>
 		new Worker(
 			new URL(
 				"monaco-editor/esm/vs/editor/editor.worker.js",
-				import.meta.url,
+				import.meta.url
 			),
-			{type: "module"},
+			{type: "module"}
 		),
 	typescript: () =>
 		new Worker(
 			new URL(
 				"monaco-editor/esm/vs/language/typescript/ts.worker.js",
-				import.meta.url,
+				import.meta.url
 			),
-			{type: "module"},
+			{type: "module"}
 		),
 	css: () =>
 		new Worker(
 			new URL(
 				"monaco-editor/esm/vs/language/css/css.worker.js",
-				import.meta.url,
+				import.meta.url
 			),
-			{type: "module"},
+			{type: "module"}
 		),
 	html: () =>
 		new Worker(
 			new URL(
 				"monaco-editor/esm/vs/language/html/html.worker.js",
-				import.meta.url,
+				import.meta.url
 			),
-			{type: "module"},
+			{type: "module"}
 		),
 	json: () =>
 		new Worker(
 			new URL(
 				"monaco-editor/esm/vs/language/json/json.worker.js",
-				import.meta.url,
+				import.meta.url
 			),
-			{type: "module"},
+			{type: "module"}
 		),
 }
 
@@ -93,7 +92,7 @@ export default {
 		const model = monaco.editor.createModel(
 			props.handle.doc().text,
 			"typescript",
-			monaco.Uri.parse(props.handle.url + ".tsx"),
+			monaco.Uri.parse(props.handle.url + ".tsx")
 		)
 		const editor = monaco.editor.create(div, {
 			model,

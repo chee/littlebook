@@ -1,7 +1,10 @@
-import type {FileEditor, FileEditorAPI} from ":/domain/view/view.ts"
-import {CodeShape} from ":/plugins/base/shapes/shapes.ts"
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
 import {EditorView} from "@codemirror/view"
+import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import type {
+	FileEditor,
+	FileEditorAPI,
+} from "@littlebook/plugin-api/types/view.ts"
 import {minimalSetup} from "codemirror"
 // import {CodeSchema, FileEditor, type FileEditorAPI} from "+types+"
 

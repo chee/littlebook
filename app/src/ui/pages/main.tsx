@@ -3,10 +3,8 @@ import {createEffect, createSignal, onCleanup} from "solid-js"
 import {type ContextValue} from "@corvu/resizable"
 import {makePersisted} from "@solid-primitives/storage"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
-import {usePluginAPI} from ":/plugins/plugin-api.ts"
 import activateBasePlugin from ":/plugins/base/base-plugin.ts"
-import {useViewRegistry} from ":/registries/view-registry.ts"
-import {useSourceRegistry} from ":/registries/source-registry.ts"
+
 import {useUserDocContext} from ":/domain/user/user.ts"
 import PageHeader from ":/ui/components/page-header/page-header.tsx"
 import {useHotkeys} from ":/ui/lib/useHotkeys.ts"
@@ -16,6 +14,9 @@ import FileViewer from ":/ui/components/file-viewer/file-viewer.tsx"
 import DockTab from ":/ui/dock/dock-tab.tsx"
 import Icon from ":/ui/components/icons/icon.tsx"
 import Workspace from ":/ui/components/workspace/workspace.tsx"
+import {usePluginAPI} from "@littlebook/plugin-api"
+import {useSourceRegistry} from "@littlebook/plugin-api/registries/source-registry.ts"
+import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
 
 export default function Main() {
 	const [resizableContext, setResizableContext] = createSignal<ContextValue>()
@@ -24,13 +25,9 @@ export default function Main() {
 
 	const user = useUserDocContext()
 	const sourceRegistry = useSourceRegistry()
-	// const sinkRegistry = useSinkRegistry()
 	const viewRegistry = useViewRegistry()
 
 	createEffect(() => {
-		// for (const sinkURL of home()?.sinks ?? []) {
-		// 	sinkRegistry.maybe(sinkURL)
-		// }
 		for (const sourceURL of user()?.sources ?? []) {
 			sourceRegistry.maybe(sourceURL)
 		}

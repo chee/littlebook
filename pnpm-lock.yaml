@@ -14,7 +14,9 @@ patchedDependencies:
 
 importers:
 
-  .:
+  .: {}
+
+  app:
     dependencies:
       '@automerge/automerge':
         specifier: 3.0.0-beta.0
@@ -42,19 +44,22 @@ importers:
         version: 0.13.9(solid-js@1.9.7)
       '@littlebook/codemirror':
         specifier: workspace:^
-        version: link:plugins/codemirror
+        version: link:../plugins/codemirror
+      '@littlebook/plugin-api':
+        specifier: workspace:~
+        version: link:../plugin-api
       '@littlebook/plugin-editor':
         specifier: workspace:^
-        version: link:plugins/plugin-editor
+        version: link:../plugins/plugin-editor
       '@littlebook/prosemirror':
         specifier: workspace:^
-        version: link:plugins/prosemirror
+        version: link:../plugins/prosemirror
       '@littlebook/repl':
         specifier: workspace:^
-        version: link:plugins/repl
+        version: link:../plugins/repl
       '@littlebook/tldraw':
         specifier: workspace:^
-        version: link:plugins/tldraw
+        version: link:../plugins/tldraw
       '@solid-primitives/storage':
         specifier: ^4.3.2
         version: 4.3.2(solid-js@1.9.7)
@@ -207,6 +212,30 @@ importers:
         specifier: ^7.3.0
         version: 7.3.0
 
+  plugin-api:
+    dependencies:
+      '@automerge/vanillajs':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@standard-schema/spec':
+        specifier: ^1.0.0
+        version: 1.0.0
+      '@types/debug':
+        specifier: ^4.1.12
+        version: 4.1.12
+      debug:
+        specifier: ^4.4.1
+        version: 4.4.1
+      solid-js:
+        specifier: ^1.9.7
+        version: 1.9.7
+      true-myth:
+        specifier: ^9.0.1
+        version: 9.0.1
+      valibot:
+        specifier: ^1.1.0
+        version: 1.1.0(typescript@5.8.3)
+
   plugins/codemirror:
     dependencies:
       '@automerge/automerge':
@@ -287,6 +316,9 @@ importers:
       '@codemirror/view':
         specifier: ^6.28.2
         version: 6.36.8
+      '@littlebook/plugin-api':
+        specifier: workspace:~
+        version: link:../../plugin-api
       '@uiw/codemirror-theme-dracula':
         specifier: ^4.23.0
         version: 4.23.12(@codemirror/language@6.11.0)(@codemirror/state@6.5.2)(@codemirror/view@6.36.8)
@@ -339,6 +371,9 @@ importers:
       '@lezer/highlight':
         specifier: ^1.2.1
         version: 1.2.1
+      '@littlebook/plugin-api':
+        specifier: workspace:~
+        version: link:../../plugin-api
       '@typescript/ata':
         specifier: ^0.9.7
         version: 0.9.7(typescript@5.8.3)
@@ -350,7 +385,7 @@ importers:
         version: 3.0.0-10(@codemirror/autocomplete@6.18.6)(@codemirror/lint@6.8.5)(@codemirror/state@6.5.2)(@codemirror/view@6.36.8)
       automerge-monaco:
         specifier: ^0.0.4
-        version: 0.0.4(@automerge/automerge-repo@2.0.0)(@types/node@22.15.21)(monaco-editor@0.52.2)(rollup@2.79.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(terser@5.39.2))
+        version: 0.0.4(@automerge/automerge-repo@2.0.0)(@types/node@22.15.21)(monaco-editor@0.52.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(terser@5.39.2))
       codemirror:
         specifier: ^6.0.1
         version: 6.0.1
@@ -375,6 +410,9 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
+      valibot:
+        specifier: ^1.1.0
+        version: 1.1.0(typescript@5.8.3)
       vscode:
         specifier: npm:@codingame/monaco-vscode-extension-api@^17.1.1
         version: '@codingame/monaco-vscode-extension-api@17.1.1'
@@ -391,6 +429,9 @@ importers:
       '@automerge/prosemirror':
         specifier: ^0.0.13
         version: 0.0.13
+      '@littlebook/plugin-api':
+        specifier: workspace:~
+        version: link:../../plugin-api
       codemirror:
         specifier: ^6.0.1
         version: 6.0.1
@@ -424,7 +465,7 @@ importers:
         version: 1.5.0
       automerge-monaco:
         specifier: ^0.0.4
-        version: 0.0.4(@automerge/automerge-repo@2.0.0)(@types/node@22.15.21)(monaco-editor@0.52.2)(rollup@2.79.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(terser@5.39.2))
+        version: 0.0.4(@automerge/automerge-repo@2.0.0)(@types/node@22.15.21)(monaco-editor@0.52.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(terser@5.39.2))
       monaco-editor-auto-typings:
         specifier: ^0.4.6
         version: 0.4.6(monaco-editor@0.52.2)
@@ -10250,7 +10291,7 @@ snapshots:
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 22.15.21
+      '@types/node': 20.17.50
     optional: true
 
   '@typescript-eslint/eslint-plugin@8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)(typescript@5.8.3)':
@@ -10688,7 +10729,7 @@ snapshots:
 
   at-least-node@1.0.0: {}
 
-  automerge-monaco@0.0.4(@automerge/automerge-repo@2.0.0)(@types/node@22.15.21)(monaco-editor@0.52.2)(rollup@2.79.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(terser@5.39.2)):
+  automerge-monaco@0.0.4(@automerge/automerge-repo@2.0.0)(@types/node@22.15.21)(monaco-editor@0.52.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.21)(terser@5.39.2)):
     dependencies:
       '@automerge/automerge-repo': 2.0.0
       monaco-editor: 0.52.2

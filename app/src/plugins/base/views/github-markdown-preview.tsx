@@ -8,8 +8,8 @@ import {all} from "@wooorm/starry-night"
 import gfm from "remark-gfm"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
-import {MarkdownShape} from "../shapes/shapes.ts"
-import type {FileViewer} from "../../../domain/view/view.ts"
+import type {FileViewer} from "@littlebook/plugin-api/types/view.ts"
+import {MarkdownShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 
 const markdown = await unified()
 	.use(gfm)

@@ -8,20 +8,16 @@
 		"useDefineForClassFields": true,
 		"allowSyntheticDefaultImports": true,
 		"allowImportingTsExtensions": true,
-		"jsx": "preserve",
-		"jsxImportSource": "solid-js",
-		"noEmit": true,
+		"declaration": true,
+		"emitDeclarationOnly": true,
 		"isolatedModules": true,
 		"skipLibCheck": true,
 		"strict": true,
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noUncheckedSideEffectImports": true,
-		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"paths": {
-			":/*": ["./src/*"],
-			"+types+": ["./types.d.ts"]
-		}
+		"outDir": "_dts",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"]
 	},
-	"include": ["src"]
+	"include": ["plugin-api.ts", "registries", "shapes", "types"]
 }

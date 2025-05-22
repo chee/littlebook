@@ -1,10 +1,13 @@
-import {type Repo, type DocHandleChangePayload} from "@automerge/vanillajs"
+import {
+	type Repo,
+	type DocHandleChangePayload,
+	type AutomergeUrl,
+} from "@automerge/vanillajs"
 import {getOwner, onCleanup} from "solid-js"
 import {createStore, type SetStoreFunction} from "solid-js/store"
 import {Task} from "true-myth/task"
-import type {AutomergeURL} from "../core/sync/url.ts"
-import debug from ":/core/debug.ts"
-const log = debug.extend("registries")
+import debug from "debug"
+const log = debug("littlebook:registries")
 
 export interface Stored<Typename extends string> {
 	id: string
@@ -15,7 +18,7 @@ export interface Stored<Typename extends string> {
 }
 
 export function importFromAutomerge<Typename extends string, T>(
-	stored: Stored<Typename>,
+	stored: Stored<Typename>
 ): Task<T, Error> {
 	return new Task(async (yay, boo) => {
 		const blob = new Blob([stored.bytes], {type: "application/javascript"})
@@ -28,14 +31,14 @@ export function importFromAutomerge<Typename extends string, T>(
 			return yay(module.default as T)
 		}
 		return boo(
-			new Error(`document doesn't look like the thing it's meant to be`),
+			new Error(`document doesn't look like the thing it's meant to be`)
 		)
 	})
 }
 
 export abstract class Registry<
 	Doctype extends string,
-	ValueType extends {id: string},
+	ValueType extends {id: string}
 > {
 	protected repo: Repo
 
@@ -51,12 +54,12 @@ export abstract class Registry<
 
 		if (!getOwner()!) {
 			throw new Error(
-				`${this.type} registry must be created in a reactive context`,
+				`${this.type} registry must be created in a reactive context`
 			)
 		}
 		// using records to describe the individual items managed by this registry
 		const [records, updateRecords] = createStore<Record<string, ValueType>>(
-			{},
+			{}
 		)
 		// eslint-disable-next-line solid/reactivity
 		this.records = records
@@ -64,7 +67,7 @@ export abstract class Registry<
 	}
 
 	private changeListener = (
-		payload: DocHandleChangePayload<Stored<Doctype>>,
+		payload: DocHandleChangePayload<Stored<Doctype>>
 	) => {
 		return this.import(payload.patchInfo.after)
 	}
@@ -79,7 +82,7 @@ export abstract class Registry<
 			})
 	}
 
-	async maybe(url: AutomergeURL) {
+	async maybe(url: AutomergeUrl) {
 		const handle = await this.repo.find<Stored<Doctype>>(url)
 		const doc = handle.doc()
 		if (doc.type != this.type) return

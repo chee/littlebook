@@ -47,7 +47,7 @@ export default defineConfig({
 	build: {
 		outDir: "output",
 		emptyOutDir: true,
-		// sourcemap: true,
+		sourcemap: true,
 		minify: false,
 		target: ["firefox127", "safari17", "esnext"],
 	},

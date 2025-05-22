@@ -1,7 +1,7 @@
 import {type Repo} from "@automerge/vanillajs"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
-import type {View} from "../plugins/views/view.ts"
+import type {View} from "../types/view.ts"
 
 // deno-lint-ignore no-explicit-any
 export class ViewRegistry extends Registry<"view", View<any>> {

@@ -1,7 +1,7 @@
 import {type Repo} from "@automerge/vanillajs"
 import {createContext, useContext} from "solid-js"
 import {Registry} from "./registry.ts"
-import type {Source} from "../domain/source/source.ts"
+import type {Source} from "../types/source.ts"
 
 export class SourceRegistry extends Registry<"source", Source> {
 	constructor({repo}: {repo: Repo}) {

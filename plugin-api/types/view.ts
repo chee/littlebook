@@ -1,8 +1,6 @@
 import type {DocHandle} from "@automerge/vanillajs"
-import type {FileMenu} from "../../domain/file/file-menu.ts"
+import type {FileMenu} from "./file-menu.ts"
 import type {StandardSchemaV1} from "@standard-schema/spec"
-import type {AutomergeURL} from "../../core/sync/url.ts"
-export type ViewURL = AutomergeURL & {type: "view"}
 
 interface ViewBase<API> {
 	id: string

@@ -2,15 +2,17 @@
 import {createEffect, type JSXElement} from "solid-js"
 import defaultRepo from ":/core/sync/automerge.ts"
 import {UserDocContext, useUserDoc} from ":/domain/user/user.ts"
-
+import {useNavigate} from "@solidjs/router"
+import {useUserId} from ":/domain/user/user-id.ts"
+import {
+	ViewRegistry,
+	ViewRegistryContext,
+} from "@littlebook/plugin-api/registries/view-registry.ts"
 import {
 	SourceRegistry,
 	SourceRegistryContext,
-} from ":/registries/source-registry.ts"
-import {ViewRegistry, ViewRegistryContext} from ":/registries/view-registry.ts"
-import PluginAPI, {PluginAPIContext} from ":/plugins/plugin-api.ts"
-import {useNavigate} from "@solidjs/router"
-import {useUserId} from ":/domain/user/user-id.ts"
+} from "@littlebook/plugin-api/registries/source-registry.ts"
+import PluginAPI, {PluginAPIContext} from "@littlebook/plugin-api"
 
 export default function LoggedInLayout(props: {children?: JSXElement}) {
 	const nav = useNavigate()
