@@ -1,0 +1,28 @@
+{
+	"name": "@littlebook/mkplugin",
+	"private": true,
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"main": "build.js",
+	"bin": {
+		"mkplugin": "./mkplugin.sh"
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.11.0",
+	"dependencies": {
+		"@chialab/esbuild-plugin-meta-url": "^0.18.2",
+		"@codingame/esbuild-import-meta-url-plugin": "^1.0.3",
+		"@types/node": "^20.17.50",
+		"arg": "^5.0.2",
+		"esbuild-plugin-wasm": "^1.1.0",
+		"vite": "^6.3.5",
+		"vite-plugin-lib-inject-css": "^2.2.2",
+		"vite-plugin-wasm": "^3.4.1"
+	}
+}

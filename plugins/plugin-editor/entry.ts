@@ -1,6 +1,6 @@
 import "./plugin-editor.css"
 import type {PluginShape} from "./shapes.ts"
-import activeMonacoPluginEditor from "./monaco/entry.ts"
+// import activeMonacoPluginEditor from "./monaco/entry.ts"
 import activeCodeMirrorPluginEditor from "./cm/entry.ts"
 import type {CreateSource} from "@littlebook/plugin-api/types/source.ts"
 import type PluginAPI from "@littlebook/plugin-api"
@@ -16,6 +16,6 @@ const createPlugin: CreateSource<PluginShape> = {
 
 export default function activatePluginEditor(api: PluginAPI) {
 	api.registerSource(createPlugin)
-	activeMonacoPluginEditor(api)
+	// activeMonacoPluginEditor(api)
 	activeCodeMirrorPluginEditor(api)
 }

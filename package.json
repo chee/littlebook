@@ -3,9 +3,10 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "pnpm -r dev",
+		"dev": "pnpm -r --parallel dev",
 		"mk": "pnpm -r mk",
-		"test": "pnpm -r test"
+		"test": "pnpm -r test",
+		"preview": "pnpm -r preview"
 	},
 	"keywords": [],
 	"author": "",
@@ -23,5 +24,8 @@
 		"plugins/*",
 		"plugin-api/",
 		"app"
-	]
+	],
+	"dependencies": {
+		"esbuild": "^0.25.4"
+	}
 }

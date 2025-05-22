@@ -11,6 +11,7 @@ import {minimalSetup} from "codemirror"
 function render(props: FileEditorAPI<CodeShape>) {
 	const editor = new EditorView({
 		doc: props.handle.doc()?.text,
+
 		extensions: [
 			minimalSetup,
 			automergeSyncPlugin({

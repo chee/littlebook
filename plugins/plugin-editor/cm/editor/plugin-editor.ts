@@ -12,8 +12,6 @@ import {
 } from "@valtown/codemirror-ts"
 import {automergeSyncPlugin} from "@automerge/automerge-codemirror"
 
-import type {FileEditor} from ":/domain/view/view.ts"
-
 import {type WorkerShape} from "@valtown/codemirror-ts/worker"
 import * as Comlink from "comlink"
 import {PluginShape} from "../../shapes.ts"
@@ -21,6 +19,7 @@ import {lycheeHighlightStyle} from "./theme.ts"
 import {syntaxHighlighting} from "@codemirror/language"
 import {minimalSetup} from "codemirror"
 import {indentWithTab, emacsStyleKeymap} from "@codemirror/commands"
+import type {FileEditor} from "@littlebook/plugin-api/types/view.ts"
 
 const innerWorker = new Worker(new URL("./worker.ts", import.meta.url), {
 	type: "module",

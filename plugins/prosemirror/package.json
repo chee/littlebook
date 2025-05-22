@@ -4,6 +4,9 @@
 	"version": "1.0.0",
 	"type": "module",
 	"main": "entry.ts",
+	"scripts": {
+		"dev": "mkplugin -w"
+	},
 	"keywords": [],
 	"author": "chee",
 	"license": "AGPL-3.0+",
@@ -19,6 +22,7 @@
 		"prosemirror-view": "^1.39.3"
 	},
 	"devDependencies": {
+		"@littlebook/mkplugin": "workspace:~",
 		"@types/node": "^20.14.10"
 	}
 }

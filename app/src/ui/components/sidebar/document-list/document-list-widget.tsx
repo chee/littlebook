@@ -3,20 +3,18 @@ import NewDocumentMenu from "../../new-document-dropdown/new-document-dropdown.t
 import "./document-list.css"
 import {useDockAPI} from "../../../dock/dock.tsx"
 import Icon from "../../icons/icon.tsx"
-import DocumentList, {andRemove} from "./document-list.tsx"
-import {useDocument} from "solid-automerge"
-import type {AutomergeURL, AutomergeURLOrDocumentURL} from ":/core/sync/url.ts"
-import {createFileEntry, type FileEntry} from ":/docs/file-entry-doc.ts"
-import type {AreaURL} from ":/docs/area-doc.ts"
+import DocumentList from "./document-list.tsx"
+import type {AutomergeURLOrDocumentURL} from ":/core/sync/url.ts"
+import {createFileEntry, type FileEntryURL} from ":/docs/file-entry-doc.ts"
+import type {AreaDoc} from ":/docs/area-doc.ts"
 
 // todo obviously this should not be passed a URL
 // the UI shouldn't know about automerge
-export default function DocumentListWidget(props: {url: AreaURL | undefined}) {
-	// todo useFile obviously
-	const [rootEntry] = useDocument<FileEntry>(() => props.url)
-	const [root, rootHandle] = useDocument<{
-		files: AutomergeURL[]
-	}>(() => rootEntry()?.url)
+// todo should be passed a rich _Area_, not an AreaDoc
+export default function DocumentListWidget(props: {
+	area: AreaDoc
+	createFile(template: Parameters<typeof createFileEntry>[0]): FileEntryURL
+}) {
 	const owner = getOwner()
 	const dockAPI = useDockAPI()
 
@@ -27,6 +25,7 @@ export default function DocumentListWidget(props: {url: AreaURL | undefined}) {
 
 	return (
 		<div
+			data-area={props.area.name}
 			class="sidebar-widget"
 			ondragover={event => {
 				event.preventDefault()
@@ -41,28 +40,26 @@ export default function DocumentListWidget(props: {url: AreaURL | undefined}) {
 				console.log(event.dataTransfer, event)
 			}}>
 			<header class="sidebar-widget__header">
-				<Icon name={rootEntry()?.icon || ""} />
-				<span>{rootEntry()?.name}</span>
+				<Icon name={props.area.icon || ""} />
+				<span>{props.area.name}</span>
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
 						create={({name, content}) => {
-							const url = createFileEntry({name, content})
-							openDocument(url)
-							runWithOwner(owner, () => dockAPI.openDocument(url))
-							rootHandle()?.change(root => {
-								root.files.push(url)
-							})
+							openDocument(props.createFile({name, content}))
 						}}
 					/>
 				</div>
 			</header>
 			<div class="sidebar-widget__content">
-				<Show when={root()?.files} fallback="">
+				<Show when={props.area.files} fallback="">
 					<div role="tree">
+						{/* todo this should take rich reactive File objects */}
 						<DocumentList
-							urls={root()!.files}
+							urls={props.area.files}
 							depth={0}
-							remove={url => rootHandle()?.change(andRemove(url))}
+							remove={url => {
+								/* todo */
+							}}
 							openDocument={openDocument}
 						/>
 					</div>

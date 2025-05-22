@@ -4,7 +4,7 @@ import devtools from "solid-devtools/vite"
 import wasm from "vite-plugin-wasm"
 import {VitePWA} from "vite-plugin-pwa"
 import autoprefixer from "autoprefixer"
-// import netlify from "@netlify/vite-plugin"
+import netlify from "@netlify/vite-plugin"
 import paths from "vite-tsconfig-paths"
 
 export default defineConfig({
@@ -13,7 +13,7 @@ export default defineConfig({
 		paths({
 			configNames: ["tsconfig.browser.json"],
 		}),
-		// netlify(),
+		netlify(),
 		solid(),
 		devtools({
 			autoname: true,
@@ -26,9 +26,9 @@ export default defineConfig({
 			srcDir: "src/core",
 			filename: "serviceworker.ts",
 			devOptions: {
-				// enabled: true,
-				enabled: false,
-				// type: "classic",
+				enabled: true,
+				// enabled: false,
+				type: "classic",
 			},
 			manifest: {
 				name: "littlebook",

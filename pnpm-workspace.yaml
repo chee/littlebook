@@ -2,3 +2,4 @@ packages:
   - app/
   - plugin-api/
   - plugins/*
+  - tools/*

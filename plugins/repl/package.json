@@ -3,8 +3,10 @@
 	"version": "1.0.0",
 	"type": "module",
 	"description": "",
-	"main": "entry.ts",
-	"scripts": {
+	"main": "output/entry.js",
+	"_scripts": {
+		"mk": "mkplugin",
+		"dev": "mkplugin -w",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
@@ -17,5 +19,8 @@
 		"automerge-monaco": "^0.0.4",
 		"monaco-editor-auto-typings": "^0.4.6",
 		"typescript": "^5.8.3"
+	},
+	"devDependencies": {
+		"@littlebook/mkplugin": "workspace:~"
 	}
 }
