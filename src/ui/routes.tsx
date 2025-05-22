@@ -17,5 +17,5 @@ render(
 			</Route>
 		</Router>
 	),
-	document.body!,
+	document.querySelector("#app")!,
 )

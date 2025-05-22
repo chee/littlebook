@@ -1,5 +1,5 @@
-import {Button} from "@kobalte/core/button"
 import "./intro.css"
+import {Button} from "@kobalte/core/button"
 import {useNavigate} from "@solidjs/router"
 import {createEffect} from "solid-js"
 import {useUserId} from ":/domain/user/user-id.ts"

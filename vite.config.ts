@@ -4,9 +4,8 @@ import devtools from "solid-devtools/vite"
 import wasm from "vite-plugin-wasm"
 import {VitePWA} from "vite-plugin-pwa"
 import autoprefixer from "autoprefixer"
-import netlify from "@netlify/vite-plugin"
+// import netlify from "@netlify/vite-plugin"
 import paths from "vite-tsconfig-paths"
-import importMetaUrlPlugin from "@codingame/esbuild-import-meta-url-plugin"
 
 export default defineConfig({
 	envPrefix: "LITTLEBOOK_",
@@ -14,7 +13,7 @@ export default defineConfig({
 		paths({
 			configNames: ["tsconfig.browser.json"],
 		}),
-		netlify(),
+		// netlify(),
 		solid(),
 		devtools({
 			autoname: true,
@@ -59,10 +58,5 @@ export default defineConfig({
 	},
 	server: {
 		port: 1111,
-	},
-	optimizeDeps: {
-		esbuildOptions: {
-			// plugins: [importMetaUrlPlugin],
-		},
 	},
 })
