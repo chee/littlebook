@@ -9,5 +9,5 @@ status = 200
 
 [build]
 command = "pnpm mk"
-publish = "output"
+publish = "app/output"
 
