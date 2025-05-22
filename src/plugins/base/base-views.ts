@@ -1,19 +1,19 @@
 import automergeDocEditor from ":/plugins/base/views/editors/automerge-doc-editor.tsx"
 import githubMarkdownPreview from ":/plugins/base/views/github-markdown-preview.tsx"
 import PluginAPI from ":/plugins/plugin-api.ts"
-import activateCodemirror from "@littlebook/codemirror"
-import activateProsemirror from "@littlebook/prosemirror"
-import activePluginEditor from "@littlebook/plugin-editor"
-import activateRepl from "@littlebook/repl"
+// import activateCodemirror from "@littlebook/codemirror"
+// import activateProsemirror from "@littlebook/prosemirror"
+// import activePluginEditor from "@littlebook/plugin-editor"
+// import activateRepl from "@littlebook/repl"
 import * as v from "valibot"
 import {createEffect} from "solid-js"
 
 export default function registerBaseViews(api: PluginAPI) {
 	// todo export plugins from these instead
-	activateCodemirror(api)
-	activateProsemirror(api)
-	activePluginEditor(api)
-	activateRepl(api)
+	// activateCodemirror(api)
+	// activateProsemirror(api)
+	// activePluginEditor(api)
+	// activateRepl(api)
 	api.registerView(githubMarkdownPreview)
 	api.registerView(automergeDocEditor)
 

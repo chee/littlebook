@@ -60,19 +60,19 @@ function addToHome(url: AutomergeURL) {
 	})
 }
 
-const esbuild = await import("esbuild-wasm")
-const wasm = await import("esbuild-wasm/esbuild.wasm?url")
+// const esbuild = await import("esbuild-wasm")
+// const wasm = await import("esbuild-wasm/esbuild.wasm?url")
 
-await esbuild.initialize({
-	wasmURL: wasm.default,
-})
+// await esbuild.initialize({
+// wasmURL: wasm.default,
+// })
 
 async function compile(text: string) {
-	const result = await esbuild.transform(text, {
-		loader: "ts",
-		target: "esnext",
-	})
-	return result.code
+	// const result = await esbuild.transform(text, {
+	// loader: "ts",
+	// target: "esnext",
+	// })
+	// return result.code
 }
 
 export default function registerBaseSinks(api: PluginAPI) {
