@@ -1,0 +1,1 @@
+pnpm json2ts -i 'spec/v0.4/**/*.json' > types/v0.4.ts

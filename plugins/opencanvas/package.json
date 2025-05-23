@@ -1,0 +1,39 @@
+{
+	"name": "@littlebook/opencanvas",
+	"description": "a littlebook content plugin for drawing little pictures",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "entry.ts",
+	"keywords": [],
+	"author": "chee",
+	"license": "AGPL-3.0+",
+	"dependencies": {
+		"@automerge/automerge": "3.0.0-beta.0",
+		"@automerge/vanillajs": "2.0.0",
+		"@excalidraw/excalidraw": "0.18.0",
+		"@littlebook/mkplugin": "workspace:~",
+		"@littlebook/plugin-api": "workspace:~",
+		"@tldraw/assets": "^2.3.0",
+		"@tldraw/editor": "^3.7.2",
+		"@tldraw/tldraw": "^2.3.0",
+		"@tldraw/tlschema": "^2.3.0",
+		"@types/react": "^18.3.3",
+		"@types/react-dom": "^18.3.0",
+		"@types/throttle-debounce": "^5.0.2",
+		"fast-json-patch": "^3.1.1",
+		"json-schema-to-typescript": "^15.0.4",
+		"json-schema-to-zod": "^2.6.1",
+		"open-color": "^1.9.1",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"throttle-debounce": "^5.0.0",
+		"tldraw": "^3.7.2",
+		"tldraw-vscode": "^1.28.2",
+		"ts-to-zod": "^3.15.0",
+		"typescript": "^5.4.5",
+		"zod": "^3.25.23"
+	},
+	"devDependencies": {
+		"react-devtools": "^6.1.2"
+	}
+}
