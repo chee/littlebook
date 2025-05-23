@@ -3,6 +3,7 @@
 	"references": [
 		{"path": "./tsconfig.serviceworker.json"},
 		{"path": "./tsconfig.browser.json"},
-		{"path": "./tsconfig.node.json"}
+		{"path": "./tsconfig.node.json"},
+		{"path": "../plugins/opencanvas/tsconfig.json"}
 	]
 }

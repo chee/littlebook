@@ -17,6 +17,7 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"noUncheckedSideEffectImports": true,
+
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"paths": {
 			":/*": ["./src/*"],
