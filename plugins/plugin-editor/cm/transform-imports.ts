@@ -1,11 +1,8 @@
-import typescript, {
-	type ExportDeclaration,
-	type ImportDeclaration,
-} from "typescript"
+import typescript from "typescript"
 
 export function transformModulePaths(
 	code: string,
-	callback: (path: ImportDeclaration | ExportDeclaration) => string | null
+	callback: (path: string, isImport: boolean) => string | null
 ) {
 	const sourceFile = typescript.createSourceFile(
 		"",
@@ -24,8 +21,10 @@ export function transformModulePaths(
 					node.moduleSpecifier &&
 					typescript.isStringLiteral(node.moduleSpecifier)
 				) {
+					const isImport = typescript.isImportDeclaration(node)
+
 					const previous = node.moduleSpecifier.text
-					const result = callback(node)
+					const result = callback(node.moduleSpecifier.text, isImport)
 
 					if (result === null) {
 						shouldPrint = true
@@ -36,13 +35,24 @@ export function transformModulePaths(
 
 					if (previous !== node.moduleSpecifier.text) {
 						shouldPrint = true
-						return typescript.factory.updateImportDeclaration(
-							node,
-							node.modifiers,
-							node.importClause,
-							typescript.factory.createStringLiteral(result),
-							node.assertClause // Preserve the assert clause if it exists
-						)
+						if (isImport) {
+							return typescript.factory.updateImportDeclaration(
+								node,
+								node.modifiers,
+								node.importClause,
+								typescript.factory.createStringLiteral(result),
+								node.assertClause // Preserve the assert clause if it exists
+							)
+						} else {
+							return typescript.factory.updateExportDeclaration(
+								node,
+								node.modifiers,
+								false,
+								node.exportClause,
+								typescript.factory.createStringLiteral(result),
+								node.assertClause // Preserve the assert clause if it exists
+							)
+						}
 					}
 				}
 				return typescript.visitEachChild(node, visit, context)
@@ -55,6 +65,8 @@ export function transformModulePaths(
 	if (!shouldPrint) return code
 	const printer = typescript.createPrinter({
 		newLine: typescript.NewLineKind.LineFeed,
+		omitTrailingSemicolon: true,
+		removeComments: true,
 	})
 	return printer.printFile(result.transformed[0])
 }

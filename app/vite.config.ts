@@ -14,19 +14,6 @@ export default defineConfig({
 		"process.env.NODE_DEBUG": "false",
 	},
 	plugins: [
-		maps({
-			shared: [
-				"solid-js",
-				"solid-js/web",
-				"solid-js/html",
-				"solid-js/h",
-				"solid-js/jsx-runtime",
-				"@automerge/automerge",
-				"@automerge/automerge-repo",
-				"@automerge/vanillajs",
-				"valibot",
-			],
-		}),
 		paths({
 			configNames: ["tsconfig.browser.json"],
 		}),
