@@ -1,6 +1,8 @@
 import type {DocHandle} from "@automerge/vanillajs"
 import type {FileMenu} from "./file-menu.ts"
 import type {StandardSchemaV1} from "@standard-schema/spec"
+import type {BembyModifier, BembyModifiers} from "@chee/bemby"
+import type {JSX} from "solid-js"
 
 export type ViewID = string & {lb: "view-id"}
 
@@ -19,6 +21,17 @@ interface FileViewBase<Shape, API> extends ViewBase<API> {
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface StandaloneViewAPI extends ViewAPIBase {}
 export type StandaloneViewID = ViewID & {standalone: true}
+
+export function normalizeStandaloneViewID(
+	id: StandaloneViewID
+): StandaloneViewID {
+	if (id.startsWith("standalone:")) {
+		return id.slice(11) as StandaloneViewID
+	} else {
+		return id
+	}
+}
+
 export interface StandaloneView extends ViewBase<StandaloneViewAPI> {
 	id: StandaloneViewID
 	category: "standalone"
@@ -36,10 +49,23 @@ export interface FileViewer<Shape = unknown>
 
 interface ViewAPIBase {
 	updateStatusItems(items: string[]): void
-	registerKeybinding(keybinding: string, action: () => void): void
+	registerKeybinding(
+		keybinding: string,
+		action: (event: KeyboardEvent) => void
+	): void
 	isActive(): boolean
 	onCleanup(cleanup: () => void): void
 	onMount(mount: () => void): void
+	toast: {
+		show(
+			title: JSX.Element,
+			opts?: {
+				body?: JSX.Element
+				link?: JSX.Element
+				modifiers?: BembyModifier | BembyModifiers
+			}
+		): void
+	}
 }
 
 export interface FileViewerAPI<Shape> extends ViewAPIBase {
@@ -61,3 +87,7 @@ export type View<Shape = unknown> =
 	| FileEditor<Shape>
 	| FileViewer<Shape>
 	| StandaloneView
+
+export type FileEditorRenderFunction<Shape> = FileEditor<Shape>["render"]
+export type FileViewerRenderFunction<Shape> = FileViewer<Shape>["render"]
+export type StandaloneViewRenderFunction = StandaloneView["render"]

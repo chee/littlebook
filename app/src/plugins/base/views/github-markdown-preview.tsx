@@ -8,7 +8,7 @@ import {all} from "@wooorm/starry-night"
 import gfm from "remark-gfm"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
-import type {FileViewer} from "@littlebook/plugin-api/types/view.ts"
+import type {FileViewer, ViewID} from "@littlebook/plugin-api/types/view.ts"
 import {MarkdownShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 
 const markdown = await unified()
@@ -27,7 +27,7 @@ const markdown = await unified()
 export default {
 	category: "readonly",
 	displayName: "github preview",
-	id: "github-markdown-preview",
+	id: "github-markdown-preview" as ViewID,
 	schema: MarkdownShape,
 	render(props) {
 		// eslint-disable-next-line solid/reactivity

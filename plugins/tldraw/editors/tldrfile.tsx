@@ -1,11 +1,3 @@
-// things i'll need to make available in @littlebook/plugin
-// import "../../web/src/types.ts"
-// import type {ContentHandleChangePayload} from "../../web/src/types.ts"
-// import {
-// ContentViewElement,
-// type ContentViewComponent,
-// } from "../../web/src/files/contents/view-registry.ts"
-
 export const id = "tldraw/.tldr"
 export const name = "Tldraw Canvas Editor"
 
@@ -248,7 +240,7 @@ export function useDocument<T>(
 	handle: DocHandle<T>
 ): [
 	Doc<T> | undefined,
-	(changeFn: ChangeFn<T>, options?: ChangeOptions<T> | undefined) => void,
+	(changeFn: ChangeFn<T>, options?: ChangeOptions<T> | undefined) => void
 ] {
 	const handleRef = useRef<DocHandle<T> | null>(handle)
 	if (handle !== handleRef.current) {

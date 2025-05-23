@@ -16,6 +16,8 @@
 		position: relative;
 		width: 0;
 		border: 0;
+		background: transparent;
+		border-left: 1px solid var(--dock-line);
 		&:hover {
 			outline: 2px solid var(--selected-fill);
 		}

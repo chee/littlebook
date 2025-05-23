@@ -1,5 +1,4 @@
 import type {AutomergeURL} from ":/core/sync/url.ts"
-import type {CreateSource, FilesystemSource} from ":/domain/source/source.ts"
 import type PluginAPI from "../../../../plugin-api/plugin-api.ts"
 import type {
 	CodeShape,
@@ -7,6 +6,10 @@ import type {
 	MarkdownShape,
 	TextShape,
 } from "../../../../plugin-api/shapes/shapes.ts"
+import type {
+	CreateSource,
+	FilesystemSource,
+} from "@littlebook/plugin-api/types/source.ts"
 
 const newFolder: CreateSource<FolderShape> = {
 	id: "new-folder",

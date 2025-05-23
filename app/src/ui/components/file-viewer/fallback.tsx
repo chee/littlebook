@@ -19,23 +19,29 @@ export default function FileViewerFallback(props: {
 			</p>
 			<br />
 			<p>debug info:</p>
-			<pre style={{background: "black", color: "lime"}}>{json()}</pre>
 
 			<Show
 				when={props.error instanceof Error}
 				fallback={<div>{props.error?.message || props.error}</div>}>
 				<article class="error error--file-viewer">
-					<h1>
-						<code>{props.error.toString()}</code>
-					</h1>
-
-					<div>
+					<details>
+						<summary>{props.error.toString()}</summary>
 						<code>
 							<pre>{props.error.stack}</pre>
 						</code>
-					</div>
+					</details>
 				</article>
 			</Show>
+
+			<pre
+				style={{
+					"tab-size": "2",
+					background: "black",
+					color: "white",
+					"font-size": "var(--font-size-7)",
+				}}>
+				{json()}
+			</pre>
 		</div>
 	)
 }

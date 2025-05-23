@@ -17,8 +17,6 @@ import type {
 } from "@littlebook/plugin-api/types/view.ts"
 import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 import type {FileMenu} from "@littlebook/plugin-api/types/file-menu.ts"
-// import type {FileEditorAPI, FileEditor, FileMenu} from "+types+"
-// todo these default shapes should be provided another way
 
 function render(
 	props: FileEditorAPI<CodeShape> & {

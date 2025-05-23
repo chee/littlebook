@@ -39,6 +39,7 @@ export default function Main() {
 			<DockProvider
 				components={{
 					document(props) {
+						console.log("rerender???")
 						return (
 							<FileViewer
 								url={props.id}

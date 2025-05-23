@@ -57,8 +57,23 @@ export default function DocumentListWidget(props: {
 						<DocumentList
 							urls={props.area.files}
 							depth={0}
-							remove={url => {
-								/* todo */
+							remove={async url => {
+								const repo = window.repo
+								// todo fix
+								const home = await repo.find(
+									(
+										await repo.find(
+											localStorage["littlebook:user-id"],
+										)
+									).doc().home,
+								)
+								home.change(doc => {
+									const index = [...doc.files].indexOf(url)
+									console.log(doc.files, doc)
+									if (index > -1) {
+										doc.files.splice(index, 1)
+									}
+								})
 							}}
 							openDocument={openDocument}
 						/>

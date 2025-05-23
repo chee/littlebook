@@ -56,16 +56,14 @@ export default function Intro() {
 											setUserId(result.url)
 											nav("/app")
 										} else {
-											toast.show({
-												title: "didn't work",
+											toast.show("didn't work", {
 												body: "sorry",
 												modifiers: "ohno",
 											})
 										}
 									})
 								} else {
-									toast.show({
-										title: "didn't work",
+									toast.show("didn't work", {
 										body: "sorry",
 										modifiers: "ohno",
 									})

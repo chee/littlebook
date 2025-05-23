@@ -1,18 +1,14 @@
-import automergeDocEditor from ":/plugins/base/views/editors/automerge-doc-editor.tsx"
 import githubMarkdownPreview from ":/plugins/base/views/github-markdown-preview.tsx"
 import * as v from "valibot"
 import {createEffect} from "solid-js"
 import type PluginAPI from "@littlebook/plugin-api"
+import type {ViewID} from "@littlebook/plugin-api/types/view.ts"
 
 export default async function registerBaseViews(api: PluginAPI) {
-	await import("@littlebook/plugin-editor").then(activate => activate.default(api))
-	await import("@littlebook/codemirror").then(activate => activate.default(api))
-	await import("@littlebook/prosemirror").then(activate => activate.default(api))
 	api.registerView(githubMarkdownPreview)
-	api.registerView(automergeDocEditor)
 
 	api.registerView({
-		id: "image",
+		id: "image" as ViewID,
 		displayName: "Image",
 		category: "readonly",
 		render(props) {

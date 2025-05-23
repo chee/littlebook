@@ -177,7 +177,7 @@ export function DocumentListFile(props: DocumentListItemProps) {
 				class="document-list-item__indent"
 				style={{
 					"padding-inline-start": props.depth
-						? `calc(var(--space-05) * ${props.depth})`
+						? `calc(var(--space-6) * ${props.depth})`
 						: "",
 				}}
 			/>
@@ -207,7 +207,7 @@ export function DocumentListFolder(props: DocumentListItemProps) {
 					class="document-list-item__indent"
 					style={{
 						"padding-inline-start": props.depth
-							? `calc(var(--space-05) * ${props.depth})`
+							? `calc(var(--space-6) * ${props.depth})`
 							: "",
 					}}
 				/>

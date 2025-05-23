@@ -43,6 +43,10 @@
 	height: calc(100% - var(--file-viewer-status-bar__height));
 	width: 100%;
 	overflow: scroll;
+	> * {
+		height: 100%;
+		width: 100%;
+	}
 }
 
 .file-viewer-status-bar {
