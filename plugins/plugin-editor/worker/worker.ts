@@ -3,8 +3,7 @@ import ts from "typescript"
 import * as Comlink from "comlink"
 import {createWorker} from "@valtown/codemirror-ts/worker"
 import {setupTypeAcquisition} from "@typescript/ata"
-import fsMap from "../map/_map.ts"
-import lbdts from "../grave/lbdts.ts"
+import fsMap from "./libmap/_map.ts"
 import {
 	Repo,
 	WebSocketClientAdapter,
@@ -15,8 +14,10 @@ import {automergeWasmBase64} from "@automerge/automerge/automerge.wasm.base64"
 import {next as Automerge} from "@automerge/automerge/slim"
 import {transformModulePaths} from "@bigmistqke/repl"
 import type {Remote} from "comlink"
-import solid from "./babel/babel-preset-solid.js"
+// @ts-expect-error maybe i'll write one
+import solid from "../babel/babel-preset-solid.js"
 import * as babel from "@babel/standalone"
+import LittlebookPluginAPITypes from "./types/LittlebookPluginAPITypes.ts"
 
 const repo = new Repo({
 	network: [new WebSocketClientAdapter(`wss://galaxy.observer`)],
@@ -40,17 +41,15 @@ const compilerOptions = {
 const worker = createWorker({
 	env: (async function () {
 		await Automerge.initializeBase64Wasm(automergeWasmBase64)
-		// await esbuild.initialize({wasmURL: esbuildWebAssembly})
-
 		const system = createSystem(fsMap)
-
 		const vfs = createVirtualTypeScriptEnvironment(
 			system,
 			[],
 			ts,
 			compilerOptions
 		)
-		vfs.createFile("global.d.ts", lbdts)
+		vfs.createFile("global.d.ts", LittlebookPluginAPITypes)
+
 		return vfs
 	})(),
 	onFileUpdated(_env, _path, code) {
@@ -84,39 +83,21 @@ const ata = setupTypeAcquisition({
 })
 
 const exposed = {
+	async fix(path: string, start: number, end: number) {
+		const env = worker.getEnv()
+	},
 	async getTranspiledFile(path: string) {
 		const env = worker.getEnv()
 		const file = env.getSourceFile(path)
 		if (!file) throw new Error(`File not found for path ${path}`)
-		// const result = await esbuild.build({
-		// 	entryPoints: [file.text],
-		// 	format: "esm",
-		// 	plugins: [solid()],
-		// 	outfile: "out.js",
-		// })
-		// console.log(result.outputFiles?.[0])
-		// if (!file) throw new Error(`File not found for path ${path}`)
 		const transpiled = ts.transpileModule(file.text, {compilerOptions})
 		return transpiled.outputText
-		// globalThis.process = {env: {}}
-		// const solid = await import("babel-preset-solid")
-
-		// const transformed = babel.transform(transpiled.outputText, {
-		// 	presets: [
-		// 		[solid.default, {generate: "dom"}],
-		// 		["typescript", {onlyRemoveTypeImports: true}],
-		// 	],
-		// 	filename: path,
-		// })
-		// console.log(transformed)
-		// return transformed?.code
-
-		// return transformed?.code
 	},
 	async getTransformedFile(path: string) {
 		const env = worker.getEnv()
 		const file = env.getSourceFile(path)
 		if (!file) throw new Error(`File not found for path ${path}`)
+
 		const transformed = babel.transform(file.text, {
 			presets: [
 				"typescript",
