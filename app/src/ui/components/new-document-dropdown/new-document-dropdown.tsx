@@ -1,6 +1,5 @@
 import {For, getOwner, runWithOwner} from "solid-js"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
-import "./new-document-dropdown.css"
 import Icon from "../icons/icon.tsx"
 import {useSourceRegistry} from "@littlebook/plugin-api/registries/source-registry.ts"
 import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
