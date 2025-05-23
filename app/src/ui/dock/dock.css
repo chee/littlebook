@@ -1,5 +1,3 @@
-@import "./dockview.css";
-
 :root {
 	--dock-fill: var(--fill);
 	--dock-line: var(--line);
@@ -12,20 +10,35 @@
 }
 
 .dock-tab {
+	user-select: none;
 	display: flex;
 	place-items: center;
-	font-weight: 500;
+	font-weight: 400;
 	height: 100%;
 	gap: 1ex;
-	padding-inline: 1ex;
-	> * {
-		display: flex;
-	}
+	padding-inline: var(--space-2);
 	cursor: default;
 }
 
+.dock-tab__close {
+	/* height: 100%; */
+	padding: var(--space-05);
+	width: 1rem;
+	border-top-right-radius: 4px;
+	border-bottom-right-radius: 4px;
+	display: flex;
+	place-content: center;
+	place-items: center;
+	transition: background 0.21s ease-out;
+	border-radius: 4px;
+	svg {
+		width: 100%;
+		height: 100%;
+	}
+}
+
 .dock-tab__close:hover {
-	color: var(--pynk);
+	background: rgb(0 0 0 / 10%);
 }
 
 .dock-header-actions {

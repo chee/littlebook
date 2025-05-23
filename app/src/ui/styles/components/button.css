@@ -1,6 +1,6 @@
 .button {
 	--fill: var(--page);
-	--border-color: color-mix(in oklab, var(--page), var(--text) 10%);
+	--border-color: color-mix(in oklab, var(--page), var(--text) 80%);
 	--text-color: color-mix(in oklab, var(--page), var(--text) 70%);
 	background: var(--fill);
 	color: var(--text-color);
@@ -20,7 +20,9 @@
 	min-height: 2rem;
 	align-items: center;
 	justify-content: center;
-	transition: border-color 0.1s ease-out, color 0.1s ease-out,
+	transition:
+		border-color 0.1s ease-out,
+		color 0.1s ease-out,
 		background-color 0.1s ease-out;
 	&.ghost {
 		--fill: transparent;
@@ -31,7 +33,9 @@
 	&:hover {
 		--border-color: var(--text);
 		--text-color: var(--text);
-		box-shadow: 1px 1px 0px var(--border-color), 2px 2px 0px var(--border-color);
+		box-shadow:
+			1px 1px 0px var(--border-color),
+			2px 2px 0px var(--border-color);
 		top: -1px;
 		left: -1px;
 	}
@@ -47,38 +51,38 @@
 		border-top-width: 2px;
 	}
 	&.primary {
-		--fill: var(--primary);
+		--fill: var(--primary-light);
 		--border-color: var(--primary-dark);
-		color: black;
+		--text-color: black;
 	}
 	&.info {
 		--fill: var(--info);
 		--border-color: var(--info-dark);
-		color: black;
+		--text-color: black;
 	}
 	&.success {
 		--fill: var(--success);
 		--border-color: var(--success-dark);
-		color: black;
+		--text-color: black;
 	}
 	&.warning {
 		--fill: var(--warning);
 		--border-color: var(--warning-dark);
-		color: var(--text);
+		--text-color: var(--text);
 	}
 	&.danger {
 		--fill: var(--danger-light);
 		--border-color: var(--danger-dark);
-		color: white;
+		--text-color: white;
 	}
 	&.subtle.danger {
 		--fill: var(--page);
 		--border-color: var(--text);
-		color: var(--text);
+		--text-color: var(--text);
 		&:hover {
 			--fill: var(--danger-light);
 			--border-color: var(--danger-dark);
-			color: white;
+			--text-color: white;
 		}
 	}
 }

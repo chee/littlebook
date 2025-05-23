@@ -87,8 +87,8 @@
 	--black-dark: oklch(from var(--black) calc(l * 0.8) c h);
 	--black-light: oklch(from var(--black) calc(l * 1.2) c h);
 
-	--primary: var(--carribean-current-light);
-	--primary-dark: oklch(from var(--primary) calc(l * 0.6) calc(c * 7) h);
+	--primary: var(--mynt);
+	--primary-dark: oklch(from var(--primary) calc(l * 0.6) c h);
 	--primary-light: oklch(from var(--primary) calc(l * 1.2) c h);
 
 	--link: var(--blue-crayola);
@@ -123,12 +123,22 @@
 	--page: var(--white);
 	--page-dark: oklch(from var(--page) calc(l * 0.7) c h);
 	--page-dirk-gently: oklch(from var(--page) calc(l * 0.9) c h);
-	--page-offset: oklch(from var(--page) calc(l * 0.98) c h);
+	--page-offset: color-mix(
+		in oklab,
+		oklch(from var(--page) calc(l * 0.96) c h),
+		var(--primary) 2.2%
+	);
 	--page-light: oklch(from var(--page) calc(l * 1.2) c h);
 
 	--caret-color: #5cdbce;
 
 	--selected-fill: color-mix(in oklab, var(--primary), transparent 20%);
+	--almost-selected-fill: color-mix(
+		in oklab,
+		var(--selected-fill),
+		transparent 60%
+	);
+	--selected-line: var(--text);
 
 	--fill: var(--page);
 	--fill-dark: oklch(from var(--fill) calc(l * 0.8) c h);

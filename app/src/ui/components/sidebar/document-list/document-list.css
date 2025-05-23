@@ -8,19 +8,23 @@
 	font-weight: 500;
 }
 
-.document-list__button {
+.document-list-item {
+	font-size: 1rem;
 	width: 100%;
 	text-align: left;
 	padding-inline: var(--sidebar-widget-padding);
-	padding-block: 0.25rem;
+	padding-block: var(--space-2);
 	cursor: default;
 	user-select: none;
 	display: flex;
-	gap: 0.5ex;
 
 	&[aria-pressed="true"] {
-		background: var(--carribean-current);
-		color: white;
+		background: var(--selected-fill);
+		color: var(--selected-line);
+		&:last-child {
+			border-bottom-left-radius: calc(var(--sidebar-widget-radius));
+			border-bottom-right-radius: calc(var(--sidebar-widget-radius));
+		}
 	}
 }
 
@@ -31,11 +35,13 @@
 	text-overflow: ellipsis;
 	text-align: center;
 	display: block;
+	margin-left: var(--space-2);
 }
 
 .document-list-item__expander {
 	height: 1em;
 	width: 1em;
+	margin-left: auto;
 }
 
 .document-list [role="treeitem"]:last-of-type .document-list__button {

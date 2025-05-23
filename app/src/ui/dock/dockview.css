@@ -1,5 +1,22 @@
 @import "dockview-core/dist/styles/dockview.css";
-:root {
+:root,
+.dv-dockview {
+	--dock-tabs-fill: #d3f6db;
+	--dock-tabs-line: black;
+	--dock-tab-fill: var(--dock-tabs-fill);
+	--dock-tab-line: var(--dock-tabs-line);
+	--dock-active-tab-fill: var(--page-fill);
+	--dock-active-tab-line: var(--page-line);
+	--dock-active-tab-hover-fill: var(--dock-active-tab-fill);
+	--dock-active-tab-hover-line: var(--dock-active-tab-line);
+	--dock-inactive-tab-fill: transparent;
+	--dock-inactive-tab-line: color-mix(
+		in oklab,
+		var(--dock-tab-line),
+		transparent 25%
+	);
+	--dock-inactive-tab-hover-fill: rgb(0 0 0 / 10%);
+	--dock-inactive-tab-hover-line: var(--page-line);
 	--dv-paneview-active-outline-color: var(--primary);
 	--dv-tabs-and-actions-container-font-size: 1rem;
 	--dv-tabs-and-actions-container-height: 2rem;
@@ -8,49 +25,49 @@
 		var(--blue-crayola),
 		transparent
 	);
+
 	--dv-drag-over-border-color: var(--blue-crayola);
 	--dv-tabs-container-scrollbar-color: #888;
 	--dv-icon-hover-background-color: rgba(255, 255, 255, 0.5);
-	--dv-floating-box-shadow: 1px 1px var(--dock-line), 2px 2px var(--dock-line),
+	--dv-floating-box-shadow:
+		1px 1px var(--dock-line), 2px 2px var(--dock-line),
 		3px 3px var(--dock-line), 4px 4px var(--dock-line),
 		0 0 4px color-mix(in srgb, var(--dock-line), transparent 80%);
 	--dv-overlay-z-index: 999;
-	--dv-tab-divider-color: var(--dock-line);
+	--dv-tab-divider-color: transparent;
 
-	--dv-group-view-background-color: var(--dock-fill);
-	--dv-tabs-and-actions-container-background-color: var(--dock-fill);
+	--dv-group-view-background-color: var(--dock-tabs-fill);
+	--dv-tabs-and-actions-container-background-color: var(--dock-tabs-fill);
 
-	--dock-item-fill--active: var(--carribean-current);
-	--dock-item-line--active: white;
 	--dv-activegroup-visiblepanel-tab-background-color: var(
-		--dock-item-fill--active
+		--dock-active-tab-fill
 	);
-	--dv-activegroup-visiblepanel-tab-color: var(--dock-item-line--active);
+	--dv-activegroup-visiblepanel-tab-color: var(--dock-active-tab-line);
 
-	--dv-activegroup-hiddenpanel-tab-background-color: color-mix(
-		in srgb,
-		var(--dock-fill),
-		var(--dock-line) 5%
+	--dv-activegroup-hiddenpanel-tab-background-color: var(
+		--dock-inactive-tab-fill
 	);
-	--dv-activegroup-hiddenpanel-tab-color: var(--dock-line);
+
+	--dv-activegroup-hiddenpanel-tab-color: var(--dock-inactive-tab-line);
 
 	--dv-inactivegroup-visiblepanel-tab-background-color: color-mix(
-		in srgb,
-		var(--dv-activegroup-hiddenpanel-tab-background-color),
-		var(--dv-activegroup-visiblepanel-tab-background-color) 30%
+		in oklab,
+		var(--dock-active-tab-fill),
+		transparent 10%
 	);
-	--dv-inactivegroup-visiblepanel-tab-color: black;
-
-	--dv-inactivegroup-hiddenpanel-tab-background-color: color-mix(
-		in srgb,
-		var(--dock-fill),
-		var(--dv-activegroup-hiddenpanel-tab-background-color) 20%
+	--dv-inactivegroup-visiblepanel-tab-color: color-mix(
+		in oklab,
+		var(--dock-active-tab-line),
+		transparent 10%
 	);
-	--dv-inactivegroup-hiddenpanel-tab-color: black;
-
-	--dv-separator-border: var(--workspace-separator-line);
-
+	--dv-inactivegroup-hiddenpanel-tab-background-color: transparent;
+	--dv-inactivegroup-hiddenpanel-tab-color: var(--dock-inactive-tab-line);
+	--dv-separator-border: transparent;
 	--dv-paneview-header-border-color: var(--dock-line);
+	--dv-tabs-and-actions-container-height: 2.5rem;
+
+	--dv-sash-color: black;
+	--dv-active-sash-color: var(--primary);
 }
 
 .dv-dockview {
@@ -64,6 +81,15 @@
 	.dv-tabs-container {
 		scrollbar-width: none;
 	}
+	padding-inline: var(--space-1);
+	background: linear-gradient(
+		128deg,
+		#e0f7f1 0%,
+		#c1ece5 35%,
+		#90dad1 50%,
+		#5dc8be 75%,
+		#3db8a6 90%
+	) !important;
 }
 
 .dv-resize-container .dv-resize-handle-right {
@@ -79,4 +105,58 @@
 .dv-resize-container .dv-resize-handle-bottom {
 	height: 8px;
 	bottom: -5px;
+}
+.dv-tab:focus-within::after,
+.dv-tab:focus::after {
+	display: none !important;
+}
+
+.dv-tabs-container.dv-horizontal {
+	display: flex;
+	gap: var(--space-2);
+	padding: var(--space-1);
+	padding-block: 0.275rem;
+}
+
+.dv-tab {
+	display: flex;
+	padding: 0;
+	padding-inline: 0;
+	font-size: 0.87rem;
+	border-radius: 4px;
+	transition: background-color 0.14s ease-out;
+}
+
+.dv-tab.dv-inactive-tab.dv-tab.dv-inactive-tab.dv-tab.dv-inactive-tab {
+	&:hover {
+		background-color: var(--dock-inactive-tab-hover-fill);
+	}
+}
+
+.dv-tab.dv-active-tab {
+	box-shadow:
+		rgb(0 0 0 / 100%) 0px 0px 0px 1px,
+		rgb(0 0 0 / 20%) 0px 1px 3px;
+}
+
+.dv-inactive-group {
+	.dv-tab.dv-active-tab {
+		box-shadow: none;
+	}
+}
+
+.dv-split-view-container.dv-horizontal > .dv-sash-container > .dv-sash {
+	width: 1px;
+	&:after {
+		content: "";
+		width: 8px;
+		left: -4px;
+		height: 100%;
+		display: block;
+		position: absolute;
+		z-index: 100;
+	}
+	&:hover {
+		outline: 1px solid var(--primary);
+	}
 }

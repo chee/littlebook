@@ -11,7 +11,7 @@ import type {
 const newFolder: CreateSource<FolderShape> = {
 	id: "new-folder",
 	category: "new",
-	displayName: "folder",
+	displayName: "Folder",
 	new: () => [{files: [] as AutomergeURL[]}, {name: "new folder"}],
 }
 
@@ -25,7 +25,7 @@ const newText: CreateSource<TextShape> = {
 const importText: FilesystemSource<TextShape> = {
 	id: "new-text",
 	category: "filesystem",
-	displayName: "plain text",
+	displayName: "Plain Text",
 	patterns: ["*.txt", "*.text"],
 	mimes: ["text/plain", "text/*"],
 	async import(file) {
@@ -42,21 +42,21 @@ const importText: FilesystemSource<TextShape> = {
 const newCode: CreateSource<CodeShape> = {
 	id: "new-code",
 	category: "new",
-	displayName: "computer code",
+	displayName: "Computer Code",
 	new: () => [{text: "", language: ""}],
 }
 
 const newMarkdown: CreateSource<MarkdownShape> = {
 	id: "new-markdown",
 	category: "new",
-	displayName: "markdown",
+	displayName: "Markdown",
 	new: () => [{text: "", language: "markdown"}],
 }
 
 const importMarkdown: FilesystemSource<MarkdownShape> = {
 	id: "import-markdown",
 	category: "filesystem",
-	displayName: "markdown",
+	displayName: "Markdown",
 	mimes: ["text/markdown", "text/x-markdown"],
 	patterns: ["*.md", "*.markdown", "*.mdown", "*.markdn"],
 	async import(file) {

@@ -6,10 +6,27 @@ import {VitePWA} from "vite-plugin-pwa"
 import autoprefixer from "autoprefixer"
 import netlify from "@netlify/vite-plugin"
 import paths from "vite-tsconfig-paths"
+import {vitePluginNativeImportMaps as maps} from "vite-plugin-native-import-maps"
 
 export default defineConfig({
 	envPrefix: "LITTLEBOOK_",
+	define: {
+		"process.env.NODE_DEBUG": "false",
+	},
 	plugins: [
+		maps({
+			shared: [
+				"solid-js",
+				"solid-js/web",
+				"solid-js/html",
+				"solid-js/h",
+				"solid-js/jsx-runtime",
+				"@automerge/automerge",
+				"@automerge/automerge-repo",
+				"@automerge/vanillajs",
+				"valibot",
+			],
+		}),
 		paths({
 			configNames: ["tsconfig.browser.json"],
 		}),
@@ -28,7 +45,7 @@ export default defineConfig({
 			devOptions: {
 				enabled: true,
 				// enabled: false,
-				type: "classic",
+				type: "module",
 			},
 			manifest: {
 				name: "littlebook",
@@ -63,5 +80,6 @@ export default defineConfig({
 	},
 	server: {
 		port: 1111,
+		allowedHosts: true,
 	},
 })

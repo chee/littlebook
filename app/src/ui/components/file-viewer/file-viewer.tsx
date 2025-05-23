@@ -30,9 +30,9 @@ import {
 } from ":/core/sync/url.ts"
 import type {FileEntry} from ":/docs/file-entry-doc.ts"
 import defaultRepo from ":/core/sync/automerge.ts"
-import type {FileViewer} from ":/domain/view/view.ts"
 
 import debug from ":/core/debug.ts"
+import type {FileEditor, FileViewer} from "@littlebook/plugin-api/types/view.ts"
 const log = debug.extend("file-viewer")
 
 export default function FileViewer(props: {

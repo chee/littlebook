@@ -40,8 +40,8 @@ export default function DocumentListWidget(props: {
 				console.log(event.dataTransfer, event)
 			}}>
 			<header class="sidebar-widget__header">
-				<Icon name={props.area.icon || ""} />
-				<span>{props.area.name}</span>
+				<div class="sidebar-widget__header-icon">🏡</div>
+				<span class="sidebar-widget__header-title">{props.area.name}</span>
 				<div class="sidebar-widget__header-actions">
 					<NewDocumentMenu
 						create={({name, content}) => {

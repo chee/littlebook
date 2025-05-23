@@ -105,9 +105,9 @@ export default function DocumentList(props: {
 									</Show>
 								</ContextMenu.Trigger>
 								<ContextMenu.Portal>
-									<ContextMenu.Content class="pop-menu__content">
+									<ContextMenu.Content class="popmenu__content">
 										<ContextMenu.Item
-											class="pop-menu__item"
+											class="popmenu__item"
 											onSelect={() => {
 												rename(
 													window.prompt(
@@ -119,7 +119,7 @@ export default function DocumentList(props: {
 											rename
 										</ContextMenu.Item>
 										<ContextMenu.Item
-											class="pop-menu__item"
+											class="popmenu__item"
 											onSelect={() => {
 												props.remove(url)
 											}}>
@@ -169,20 +169,19 @@ export function DocumentListFile(props: DocumentListItemProps) {
 
 	return (
 		<Button
-			class="pop-menu__trigger document-list__button"
+			class="popmenu__trigger popmenu__trigger--document-list document-list-item"
 			onclick={() => props.openDocument(asDocumentURL(props.url))}
 			aria-pressed={props.pressed}>
-			<span class="document-list-item__expander" />
-			<span class="document-list-item__icon">
-				<div
-					style={{
-						"padding-inline-start": props.depth
-							? `calc(${props.depth * 1}ex)`
-							: "",
-					}}
-				/>
-				<Icon icon={entry()?.icon || "solar:document-bold"} />
-			</span>
+			{/* <span class="document-list-item__expander" /> */}
+			<div
+				class="document-list-item__indent"
+				style={{
+					"padding-inline-start": props.depth
+						? `calc(var(--space-05) * ${props.depth})`
+						: "",
+				}}
+			/>
+			<span class="document-list-item__icon">{entry()?.icon ?? "📄"}</span>
 			<span class="document-list-item__name">
 				{entry()!.name ?? props.url}
 			</span>
@@ -201,10 +200,31 @@ export function DocumentListFolder(props: DocumentListItemProps) {
 	return (
 		<>
 			<Button
-				class="pop-menu__trigger document-list__button"
-				onclick={toggle}
-				aria-pressed={props.pressed}>
-				<span class="document-list-item__expander">
+				class="popmenu__trigger popmenu__trigger--document-list document-list-item"
+				aria-pressed={props.pressed}
+				onClick={() => props.openDocument(asDocumentURL(props.url))}>
+				<div
+					class="document-list-item__indent"
+					style={{
+						"padding-inline-start": props.depth
+							? `calc(var(--space-05) * ${props.depth})`
+							: "",
+					}}
+				/>
+				<span class="document-list-item__icon">
+					{entry()?.icon ?? "📁"}
+				</span>
+
+				<span class="document-list-item__name">
+					{entry()!.name ?? props.url}
+				</span>
+
+				<button
+					class="document-list-item__expander"
+					onClick={event => {
+						event.stopPropagation()
+						toggle()
+					}}>
 					<Switch>
 						<Match when={expanded()}>
 							<Icon name="alt-arrow-down-bold" />
@@ -213,21 +233,7 @@ export function DocumentListFolder(props: DocumentListItemProps) {
 							<Icon name="alt-arrow-right-bold" />
 						</Match>
 					</Switch>
-				</span>
-				<span class="document-list-item__icon">
-					<div
-						style={{
-							"padding-inline-start": props.depth
-								? `calc(${props.depth * 1}ex)`
-								: "",
-						}}
-					/>
-					<Icon icon={entry()?.icon || "solar:folder-bold"} />
-				</span>
-
-				<span class="document-list-item__name">
-					{entry()!.name ?? props.url}
-				</span>
+				</button>
 			</Button>
 			<Show when={folder()}>
 				<div role="group" hidden={!expanded()}>

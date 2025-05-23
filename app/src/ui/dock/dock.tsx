@@ -10,10 +10,11 @@ import {
 	splitProps,
 	createRoot,
 } from "solid-js"
+import "./dockview.css"
 import "./dock.css"
 import {createDockAPI} from "./dock-api.ts"
 import {Dynamic} from "solid-js/web"
-import type { DocumentURL } from ":/core/sync/url.ts"
+import type {DocumentURL} from ":/core/sync/url.ts"
 
 export interface DockComponentProps {
 	// the id of the file to open
@@ -59,6 +60,7 @@ function createDockContext(dockOptions: {
 		},
 		createTabComponent(options) {
 			const component = () => dockOptions.tabComponents?.[options.name]
+
 			if (!component()) {
 				console.error(`no such tab component ${options.name}`)
 			}

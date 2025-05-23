@@ -33,7 +33,7 @@ export function FileContextMenu(props: {
 					<Match
 						when={fileAction.type == "action" && when(fileAction.when)}>
 						<ContextMenu.Item
-							class="pop-menu__item"
+							class="popmenu__item"
 							onSelect={() =>
 								(fileAction as FileMenuAction).action!({
 									fileHandle: props.fileHandle,
@@ -45,16 +45,16 @@ export function FileContextMenu(props: {
 
 					<Match when={fileAction.type == "sub" && when(fileAction.when)}>
 						<ContextMenu.Sub overlap gutter={-10}>
-							<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
+							<ContextMenu.SubTrigger class="popmenu__sub-trigger">
 								{(fileAction as FileMenuSubMenu).label}
 
-								<div class="pop-menu__item-right-slot">
+								<div class="popmenu__item-right-slot">
 									<Icon name="alt-arrow-right-linear" />
 								</div>
 							</ContextMenu.SubTrigger>
 
 							<ContextMenu.Portal>
-								<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
+								<ContextMenu.SubContent class="popmenu__content popmenu__sub-content">
 									<FileContextMenu
 										items={(fileAction as FileMenuSubMenu).sub}
 										entry={props.entry}
@@ -81,8 +81,8 @@ export function FileContextMenu(props: {
 								{choice => (
 									<ContextMenu.RadioItem
 										value={choice.value}
-										class="pop-menu__radio-item">
-										<ContextMenu.ItemIndicator class="pop-menu__item-indicator">
+										class="popmenu__radio-item">
+										<ContextMenu.ItemIndicator class="popmenu__item-indicator">
 											<Icon name="check-square-bold" />
 										</ContextMenu.ItemIndicator>
 										{choice.label}

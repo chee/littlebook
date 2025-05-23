@@ -1,4 +1,3 @@
-import Icon from "../components/icons/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import type {Doc} from "@automerge/vanillajs"
 import {Button} from "@kobalte/core/button"
@@ -11,11 +10,10 @@ import {
 	Suspense,
 	type Accessor,
 } from "solid-js"
-import {useDockAPI} from "./dock.tsx"
+import {useDockAPI} from "../dock.tsx"
 import {useDocument} from "solid-automerge"
-import {Tooltip} from "@kobalte/core/tooltip"
-import OpenWithContextMenu from "./open-with.tsx"
-import {FileContextMenu} from "../components/file-viewer/filemenu.tsx"
+import OpenWithContextMenu from "../open-with.tsx"
+import {FileContextMenu} from "../../components/file-viewer/filemenu.tsx"
 import {
 	asAutomergeURL,
 	parseDocumentURL,
@@ -24,7 +22,7 @@ import {
 import {usePerfectView} from ":/ui/components/file-viewer/usePerfectView.tsx"
 import type {FileEntry} from ":/docs/file-entry-doc.ts"
 
-export default function DockTab(props: {url: DocumentURL}) {
+export default function DocumentDockTab(props: {url: DocumentURL}) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const dockAPI = useDockAPI()
 	// todo obviously useFile(() => docinfo().url)
@@ -76,23 +74,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 			<ContextMenu>
 				<ContextMenu.Trigger class="dock-tab__context-menu-trigger">
 					<div class="dock-tab" ref={tabElement}>
-						<div class="dock-tab__icon">
-							<Tooltip openDelay={0} closeDelay={0}>
-								<Tooltip.Trigger class="dock-tab__editor-icon">
-									<Icon
-										name={entry()?.icon || "document-text-bold"}
-										inline
-									/>
-								</Tooltip.Trigger>
-
-								<Tooltip.Portal>
-									<Tooltip.Content class="dock-tab__editor-tooltip">
-										<Tooltip.Arrow />
-										{editorDisplayName()}
-									</Tooltip.Content>
-								</Tooltip.Portal>
-							</Tooltip>
-						</div>
+						<div class="dock-tab__icon">{entry()?.icon ?? "📄"}</div>
 
 						<div class="dock-tab__name">{entry()?.name}</div>
 						<Button
@@ -106,19 +88,30 @@ export default function DockTab(props: {url: DocumentURL}) {
 							onclick={() => {
 								dockAPI.closePanel(props.url)
 							}}>
-							<Icon name="close-square-linear" inline />
+							<svg
+								class="x"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round">
+								<path d="M18 6L6 18" />
+								<path d="M6 6l12 12" />
+							</svg>
 						</Button>
 					</div>
 				</ContextMenu.Trigger>
 				<ContextMenu.Portal>
-					<ContextMenu.Content class="pop-menu__content">
+					<ContextMenu.Content class="popmenu__content">
 						<ContextMenu.Item
-							class="pop-menu__item"
+							class="popmenu__item"
 							onSelect={() => dockAPI.closePanel(props.url)}>
 							close tab
 						</ContextMenu.Item>
 						<ContextMenu.Item
-							class="pop-menu__item"
+							class="popmenu__item"
 							onSelect={() => {
 								for (const id of dockAPI.panelIDs) {
 									if (id != props.url) dockAPI.closePanel(id)
@@ -128,7 +121,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 						</ContextMenu.Item>
 						<ContextMenu.Separator />
 						<ContextMenu.Item
-							class="pop-menu__item"
+							class="popmenu__item"
 							onSelect={() => navigator.clipboard.writeText(props.url)}>
 							copy url
 						</ContextMenu.Item>
@@ -144,7 +137,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 												{publisher => {
 													return (
 														<ContextMenu.Item
-															class="pop-menu__item"
+															class="popmenu__item"
 															onSelect={() => {
 																publisher.publish({
 																	entry: entry()!,
@@ -160,19 +153,19 @@ export default function DockTab(props: {url: DocumentURL}) {
 									} else {
 										return (
 											<ContextMenu.Sub overlap gutter={-10}>
-												<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
+												<ContextMenu.SubTrigger class="popmenu__sub-trigger">
 													publish to {category}
-													<div class="pop-menu__item-right-slot">
+													<div class="popmenu__item-right-slot">
 														<Icon name="alt-arrow-right-linear" />
 													</div>
 												</ContextMenu.SubTrigger>
 												<ContextMenu.Portal>
-													<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
+													<ContextMenu.SubContent class="popmenu__content popmenu__sub-content">
 														<For each={publishers}>
 															{publisher => {
 																return (
 																	<ContextMenu.Item
-																		class="pop-menu__item"
+																		class="popmenu__item"
 																		onSelect={() => {
 																			publisher.publish({
 																				entry: entry()!,
@@ -195,7 +188,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 						</Show> */}
 						{/* <Show when={!home()?.files.includes(docinfo().url)}>
 							<ContextMenu.Item
-								class="pop-menu__item"
+								class="popmenu__item"
 								onSelect={() => {
 									// eslint-disable-next-line solid/reactivity
 									changeHome(home => {
@@ -213,7 +206,7 @@ export default function DockTab(props: {url: DocumentURL}) {
 							openDocument={(url, opts) => openDocument(url, opts)}
 						/>
 						<Show when={entry() && file() && fileMenu()?.length}>
-							<ContextMenu.Separator class="pop-menu__separator" />
+							<ContextMenu.Separator class="popmenu__separator" />
 							<FileContextMenu
 								items={fileMenu()!}
 								entry={entry as Accessor<FileEntry>}

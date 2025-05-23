@@ -1,11 +1,13 @@
 import {
 	asAutomergeURL,
+	isValidDocumentURL,
 	parseDocumentURL,
 	renderDocumentURL,
 	type AutomergeURLOrDocumentURL,
 	type DocumentURL,
 } from ":/core/sync/url.ts"
 import {usePerfectView} from ":/ui/components/file-viewer/usePerfectView.tsx"
+import type {StandaloneViewID} from "@littlebook/plugin-api/types/view.ts"
 import type {
 	DockviewApi,
 	DockviewIDisposable,
@@ -21,6 +23,8 @@ export interface OpenDocumentOptions {
 	side?: string
 }
 
+type PanelID = DocumentURL | StandaloneViewID
+
 export function createDockAPI(dockviewAPI: DockviewApi) {
 	const owner = getOwner()!
 	function loadLayout(layout: SerializedDockview): Result<Unit, Error> {
@@ -32,6 +36,15 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		}
 	}
 	const [dockAPI, updateAPI] = createStore({
+		openStandaloneView(id: StandaloneViewID, opts?: OpenDocumentOptions) {
+			dockviewAPI.addPanel({
+				id: id.startsWith("standalone:") ? id : `standalone:${id}`,
+				component: "standalone",
+				tabComponent: "standalone",
+				renderer: "always",
+				position: opts?.side ? {direction: opts.side} : undefined,
+			})
+		},
 		openDocument(url: AutomergeURLOrDocumentURL, opts?: OpenDocumentOptions) {
 			const component = opts?.component ?? "document"
 			runWithOwner(getOwner() ?? owner, () => {
@@ -79,7 +92,7 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 				onCleanup(() => disposer.dispose())
 			})
 		},
-		closePanel(id: DocumentURL) {
+		closePanel(id: PanelID) {
 			runWithOwner(getOwner() ?? owner, () => {
 				dockviewAPI.getPanel(id)?.api.close()
 			})
@@ -94,17 +107,20 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 		},
 		activePanelID: runWithOwner(
 			getOwner() ?? owner,
-			() => dockviewAPI.activePanel?.id as DocumentURL | undefined,
+			() => dockviewAPI.activePanel?.id as PanelID | undefined,
 		),
 		panelIDs: runWithOwner(getOwner() ?? owner, () =>
-			dockviewAPI.panels.map(p => p.id as DocumentURL),
+			dockviewAPI.panels.map(p => p.id as PanelID),
 		)!,
 		// todo this is very specific.
-		isPressed(url: AutomergeURLOrDocumentURL) {
-			if (!dockAPI.activePanelID) return "false"
-			return asAutomergeURL(dockAPI.activePanelID) == url
+		isPressed(panelID: AutomergeURLOrDocumentURL | StandaloneViewID) {
+			const active = dockAPI.activePanelID
+			if (!active) return "false"
+			if (panelID == active) return "true"
+			if (`standalone:${panelID}` == active) return "true"
+			return isValidDocumentURL(active) && asAutomergeURL(active) == panelID
 				? "true"
-				: dockAPI.panelIDs.includes(url as DocumentURL)
+				: dockAPI.panelIDs.includes(panelID as DocumentURL)
 					? "mixed"
 					: "false"
 		},

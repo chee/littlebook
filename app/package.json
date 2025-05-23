@@ -37,6 +37,7 @@
 		"workbox-window": "^7.3.0"
 	},
 	"dependencies": {
+		"@atlaskit/pragmatic-drag-and-drop": "^1.7.0",
 		"@automerge/automerge": "3.0.0-beta.0",
 		"@automerge/automerge-repo": "^2.0.0",
 		"@automerge/vanillajs": "^2.0.0",
@@ -51,6 +52,7 @@
 		"@littlebook/prosemirror": "workspace:^",
 		"@littlebook/repl": "workspace:^",
 		"@littlebook/tldraw": "workspace:^",
+		"@solid-primitives/media": "^2.3.1",
 		"@solid-primitives/storage": "^4.3.2",
 		"@solidjs/router": "^0.15.3",
 		"@standard-schema/spec": "^1.0.0",
@@ -59,6 +61,7 @@
 		"clsx": "^2.1.1",
 		"debug": "^4.4.1",
 		"dockview-core": "^4.2.5",
+		"emoji-picker-element": "^1.26.3",
 		"esbuild-wasm": "^0.25.4",
 		"file-system-access": "^1.0.4",
 		"fuse.js": "^7.1.0",
@@ -79,6 +82,7 @@
 		"unified": "^11.0.5",
 		"valibot": "^1.1.0",
 		"vite-plugin-dts": "^4.5.4",
-		"vite-plugin-jspm": "^0.6.1"
+		"vite-plugin-jspm": "^0.6.1",
+		"vite-plugin-native-import-maps": "^0.0.3"
 	}
 }

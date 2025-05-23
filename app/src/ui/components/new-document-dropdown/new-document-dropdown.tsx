@@ -1,38 +1,62 @@
-import {For} from "solid-js"
+import {For, getOwner, runWithOwner} from "solid-js"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import "./new-document-dropdown.css"
 import Icon from "../icons/icon.tsx"
 import {useSourceRegistry} from "@littlebook/plugin-api/registries/source-registry.ts"
+import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
+import {useDockAPI} from ":/ui/dock/dock.tsx"
+
+export function BigPlus() {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 512 512"
+			style={{height: "1em", width: "1em"}}
+			class="icon icon--big-plus">
+			<path
+				stroke="currentColor"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="32"
+				d="M256 142v288m144-144H112"
+			/>
+		</svg>
+	)
+}
 
 export default function NewDocumentMenu(props: {
 	create(opts: {name: string; content: unknown; creator: string}): void
 }) {
 	const sources = useSourceRegistry()
+	const views = useViewRegistry()
+	const standalones = () => [...views.standalones()]
+	const dock = useDockAPI()
+	const owner = getOwner()
 
 	return (
 		<DropdownMenu>
 			<DropdownMenu.Trigger
-				class="pop-menu__trigger"
+				class="popmenu__trigger"
 				aria-label="add document">
-				<Icon name="add-circle-linear" />
+				<BigPlus />
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
-				<DropdownMenu.Content class="pop-menu__content">
+				<DropdownMenu.Content class="popmenu__content">
 					<DropdownMenu.Sub overlap gutter={-10}>
-						<DropdownMenu.SubTrigger class="pop-menu__sub-trigger">
-							create
-							<div class="pop-menu__item-right-slot">
+						<DropdownMenu.SubTrigger class="popmenu__sub-trigger">
+							Create
+							<div class="popmenu__item-right-slot">
 								<Icon name="alt-arrow-right-linear" />
 							</div>
 						</DropdownMenu.SubTrigger>
 						<DropdownMenu.Portal>
-							<DropdownMenu.SubContent class="pop-menu__sub-content">
+							<DropdownMenu.SubContent class="popmenu__sub-content">
 								<For each={Object.entries(sources.records)}>
 									{([id, source]) => {
 										if (source.category !== "new") return
 										return (
 											<DropdownMenu.Item
-												class="pop-menu__item"
+												class="popmenu__item"
 												// eslint-disable-next-line solid/reactivity
 												onSelect={async () => {
 													const [content, info] =
@@ -54,8 +78,36 @@ export default function NewDocumentMenu(props: {
 						</DropdownMenu.Portal>
 					</DropdownMenu.Sub>
 
+					<DropdownMenu.Sub overlap gutter={-10}>
+						<DropdownMenu.SubTrigger class="popmenu__sub-trigger">
+							Open Standalone View
+							<div class="popmenu__item-right-slot">
+								<Icon name="alt-arrow-right-linear" />
+							</div>
+						</DropdownMenu.SubTrigger>
+						<DropdownMenu.Portal>
+							<DropdownMenu.SubContent class="popmenu__sub-content">
+								<For each={standalones()}>
+									{view => {
+										return (
+											<DropdownMenu.Item
+												class="popmenu__item"
+												// eslint-disable-next-line solid/reactivity
+												onSelect={async () =>
+													runWithOwner(owner, () =>
+														dock.openStandaloneView(view.id),
+													)
+												}>
+												{view.displayName}
+											</DropdownMenu.Item>
+										)
+									}}
+								</For>
+							</DropdownMenu.SubContent>
+						</DropdownMenu.Portal>
+					</DropdownMenu.Sub>
 					<DropdownMenu.Item
-						class="pop-menu__item"
+						class="popmenu__item"
 						// eslint-disable-next-line solid/reactivity
 						onSelect={async () => {
 							// // todo move this somewhere sensible
@@ -128,7 +180,7 @@ export default function NewDocumentMenu(props: {
 							// 	}
 							// }
 						}}>
-						import
+						Import from Computer
 					</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>

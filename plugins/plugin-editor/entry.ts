@@ -10,7 +10,16 @@ const createPlugin: CreateSource<PluginShape> = {
 	category: "new",
 	displayName: "Plugin",
 	new() {
-		return [{type: "plugin", text: ""}, {name: "My Plugin"}]
+		return [
+			{
+				type: "plugin",
+				package: "",
+				tsconfig: "",
+				javascript: "",
+				css: "",
+			},
+			{name: "My Plugin"},
+		]
 	},
 }
 

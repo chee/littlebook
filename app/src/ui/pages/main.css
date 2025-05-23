@@ -5,11 +5,6 @@
 	--workspace-line: var(--page-line);
 
 	--workspace-separator-line: black;
-
-	--sidebar-widget-fill: var(--page-fill);
-	--sidebar-widget-line: var(--page-line);
-	--sidebar-widget-radius: 8px;
-	--sidebar-widget-padding: 0.5rem;
 }
 
 .main {

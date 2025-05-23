@@ -24,11 +24,13 @@ export const lycheeTheme = EditorView.theme(
 			backgroundColor: "#e3f6ff",
 		},
 		".cm-gutters": {
+			userSelect: "none",
 			backgroundColor: "#f9fcff",
 			color: "#086F8A",
 			border: "none",
 		},
 		".cm-lineNumbers .cm-gutterElement": {
+			userSelect: "none",
 			color: "#b3e6ffcc",
 		},
 		".cm-tooltip": {
@@ -47,7 +49,7 @@ export const lycheeTheme = EditorView.theme(
 			lineHeight: "1.5",
 		},
 	},
-	{dark: false},
+	{dark: false}
 )
 
 // export const lycheeHighlight = HighlightStyle.define([

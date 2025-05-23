@@ -26,15 +26,15 @@ export default function OpenWithContextMenu(props: {
 	return (
 		<Show when={views().length > 1}>
 			<ContextMenu.Sub overlap gutter={-10}>
-				<ContextMenu.SubTrigger class="pop-menu__sub-trigger">
+				<ContextMenu.SubTrigger class="popmenu__sub-trigger">
 					open with
-					<div class="pop-menu__item-right-slot">
+					<div class="popmenu__item-right-slot">
 						<Icon name="alt-arrow-right-linear" />
 					</div>
 				</ContextMenu.SubTrigger>
 
 				<ContextMenu.Portal>
-					<ContextMenu.SubContent class="pop-menu__content pop-menu__sub-content">
+					<ContextMenu.SubContent class="popmenu__content popmenu__sub-content">
 						<For each={views()}>
 							{choice => (
 								<ContextMenu.Item
@@ -48,9 +48,9 @@ export default function OpenWithContextMenu(props: {
 										})
 									}}
 									disabled={choice.id == props.currentEditorID}
-									class="pop-menu__item">
+									class="popmenu__item">
 									<Show when={choice.id == props.currentEditorID}>
-										<div class="pop-menu__item-indicator">
+										<div class="popmenu__item-indicator">
 											<Icon name="check-square-bold" />
 										</div>
 									</Show>

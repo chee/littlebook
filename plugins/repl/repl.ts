@@ -1,5 +1,3 @@
-import type {FileEditor} from ":/domain/view/view.ts"
-import {TypeScriptEditorShape} from ":/plugins/base/shapes/shapes.ts"
 import loader from "@monaco-editor/loader"
 import automonaco from "automerge-monaco"
 import {

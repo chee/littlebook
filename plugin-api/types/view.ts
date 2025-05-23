@@ -2,8 +2,10 @@ import type {DocHandle} from "@automerge/vanillajs"
 import type {FileMenu} from "./file-menu.ts"
 import type {StandardSchemaV1} from "@standard-schema/spec"
 
+export type ViewID = string & {lb: "view-id"}
+
 interface ViewBase<API> {
-	id: string
+	id: ViewID
 	displayName: string
 	category: string
 	render(api: API): HTMLElement
@@ -16,7 +18,9 @@ interface FileViewBase<Shape, API> extends ViewBase<API> {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface StandaloneViewAPI extends ViewAPIBase {}
+export type StandaloneViewID = ViewID & {standalone: true}
 export interface StandaloneView extends ViewBase<StandaloneViewAPI> {
+	id: StandaloneViewID
 	category: "standalone"
 }
 

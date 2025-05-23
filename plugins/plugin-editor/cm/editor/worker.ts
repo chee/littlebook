@@ -5,27 +5,70 @@ import {createWorker} from "@valtown/codemirror-ts/worker"
 import {setupTypeAcquisition} from "@typescript/ata"
 import fsMap from "../map/_map.ts"
 import lbdts from "../grave/lbdts.ts"
+import {
+	Repo,
+	WebSocketClientAdapter,
+	IndexedDBStorageAdapter,
+	type AutomergeUrl,
+} from "@automerge/vanillajs/slim"
+import {automergeWasmBase64} from "@automerge/automerge/automerge.wasm.base64"
+import {next as Automerge} from "@automerge/automerge/slim"
+import {transformModulePaths} from "@bigmistqke/repl"
+import type {Remote} from "comlink"
+import solid from "./babel/babel-preset-solid.js"
+import * as babel from "@babel/standalone"
+
+const repo = new Repo({
+	network: [new WebSocketClientAdapter(`wss://galaxy.observer`)],
+	storage: new IndexedDBStorageAdapter("littlebook"),
+	enableRemoteHeadsGossiping: true,
+})
+
+const compilerOptions = {
+	target: ts.ScriptTarget.ESNext,
+	moduleResolution: ts.ModuleResolutionKind.Bundler,
+	jsx: ts.JsxEmit.Preserve,
+	jsxImportSource: "solid-js",
+
+	lib: ["esnext", "dom"],
+	module: ts.ModuleKind.ESNext,
+	allowJs: true,
+	composite: true,
+	strict: true,
+} as ts.CompilerOptions
 
 const worker = createWorker({
 	env: (async function () {
-		const compilerOpts = {
-			target: ts.ScriptTarget.ESNext,
-			moduleResolution: ts.ModuleResolutionKind.Bundler,
-			jsx: ts.JsxEmit.Preserve,
-			jsxImportSource: "solid-js",
-		} as ts.CompilerOptions
+		await Automerge.initializeBase64Wasm(automergeWasmBase64)
+		// await esbuild.initialize({wasmURL: esbuildWebAssembly})
 
 		const system = createSystem(fsMap)
 
-		const vfs = createVirtualTypeScriptEnvironment(system, [], ts, {
-			...compilerOpts,
-			// lib: ["esnext", "dom"],
-		})
+		const vfs = createVirtualTypeScriptEnvironment(
+			system,
+			[],
+			ts,
+			compilerOptions
+		)
 		vfs.createFile("global.d.ts", lbdts)
 		return vfs
 	})(),
 	onFileUpdated(_env, _path, code) {
+		// todo if there is an /automerge: import, find the file and inject it to
+		// the vfs
 		ata(code)
+		const env = worker.getEnv()
+		transformModulePaths(code, path => {
+			if (path.startsWith("./automerge:")) {
+				repo.find<{text: string}>(path.slice(2) as AutomergeUrl).then(h => {
+					env.createFile(
+						path.slice(1) + ".tsx",
+						h.doc().javascript ?? h.doc().text
+					)
+				})
+			}
+			return path
+		})
 	},
 })
 
@@ -40,4 +83,74 @@ const ata = setupTypeAcquisition({
 	},
 })
 
-Comlink.expose(worker)
+const exposed = {
+	async getTranspiledFile(path: string) {
+		const env = worker.getEnv()
+		const file = env.getSourceFile(path)
+		if (!file) throw new Error(`File not found for path ${path}`)
+		// const result = await esbuild.build({
+		// 	entryPoints: [file.text],
+		// 	format: "esm",
+		// 	plugins: [solid()],
+		// 	outfile: "out.js",
+		// })
+		// console.log(result.outputFiles?.[0])
+		// if (!file) throw new Error(`File not found for path ${path}`)
+		const transpiled = ts.transpileModule(file.text, {compilerOptions})
+		return transpiled.outputText
+		// globalThis.process = {env: {}}
+		// const solid = await import("babel-preset-solid")
+
+		// const transformed = babel.transform(transpiled.outputText, {
+		// 	presets: [
+		// 		[solid.default, {generate: "dom"}],
+		// 		["typescript", {onlyRemoveTypeImports: true}],
+		// 	],
+		// 	filename: path,
+		// })
+		// console.log(transformed)
+		// return transformed?.code
+
+		// return transformed?.code
+	},
+	async getTransformedFile(path: string) {
+		const env = worker.getEnv()
+		const file = env.getSourceFile(path)
+		if (!file) throw new Error(`File not found for path ${path}`)
+		const transformed = babel.transform(file.text, {
+			presets: [
+				"typescript",
+				[
+					"env",
+					{
+						loose: true,
+						modules: false,
+					},
+				],
+				[solid, {generate: "dom"}],
+			],
+
+			filename: path,
+		})
+		const redirected = transformModulePaths(
+			transformed.code!,
+			(path, isImport) => {
+				if (isImport) {
+					if ([".", "/"].includes(path[0])) {
+						return `${location.origin}/${path.replace(
+							/^[./]+/,
+							""
+						)}?${Math.random()}`
+					}
+				}
+				return path
+			}
+		)!
+		return redirected
+	},
+	worker,
+}
+
+export type Exposed = Remote<typeof exposed>
+
+Comlink.expose(exposed)

@@ -18,8 +18,8 @@ add a button in the top right for
 	- loading an entire indexedb database
 */
 export default function PageHeader(props: {
-	leftSidebarCollapsed: boolean
-	toggleLeftSidebar(): void
+	sidebarIsCollapsed: boolean
+	toggleSidebar(): void
 	// rightSidebarExpanded: boolean
 	// expandRightSidebar(): void
 }) {
@@ -29,9 +29,9 @@ export default function PageHeader(props: {
 			<section class="page-header__section">
 				<Button
 					class="sidebar-toggle sidebar-toggle--left"
-					onclick={() => props.toggleLeftSidebar()}>
+					onclick={() => props.toggleSidebar()}>
 					<Show
-						when={props.leftSidebarCollapsed}
+						when={props.sidebarIsCollapsed}
 						fallback={
 							<Icon name="sidebar-minimalistic-outline" inline />
 						}>
@@ -47,14 +47,14 @@ export default function PageHeader(props: {
 			<section class="page-header__section">
 				<DropdownMenu>
 					<DropdownMenu.Trigger
-						class="pop-menu__trigger"
+						class="popmenu__trigger"
 						aria-label="add document">
 						<Icon name="home-bold" />
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Portal>
-						<DropdownMenu.Content class="pop-menu__content">
+						<DropdownMenu.Content class="popmenu__content">
 							<DropdownMenu.Item
-								class="pop-menu__item"
+								class="popmenu__item"
 								onSelect={() => {
 									navigator.clipboard.writeText(
 										encodeJSON({
@@ -66,7 +66,7 @@ export default function PageHeader(props: {
 								copy user code
 							</DropdownMenu.Item>
 							<DropdownMenu.Item
-								class="pop-menu__item"
+								class="popmenu__item"
 								onSelect={() => {
 									// todo move this to a reusable piece of code shared
 									// with intro page

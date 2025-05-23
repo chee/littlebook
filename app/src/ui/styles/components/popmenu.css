@@ -1,43 +1,36 @@
 :root {
-	--popmenu-fill: var(--page-line);
-	--popmenu-line: var(--page-fill);
+	--popmenu-selected-fill: var(--selected-fill);
+	--popmenu-selected-line: var(--selected-line);
+	--popmenu-hover-fill: var(--almost-selected-fill);
+	--popmenu-fill: var(--page-offset);
+	--popmenu-line: var(--page-line);
 }
 
 .popmenu {
-	font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-		Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+	font-family:
+		"Jost*",
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		Oxygen,
+		Ubuntu,
+		Cantarell,
+		"Open Sans",
+		"Helvetica Neue",
+		sans-serif;
 	min-width: 220px;
 	padding: var(--space-2);
 	background-color: var(--popmenu-fill);
 	color: var(--popmenu-line);
-	border-radius: 7px;
-	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+	border-radius: 3px;
 	outline: none;
 	transform-origin: var(--kb-menu-content-transform-origin);
 	animation: contentHide 50ms ease-in forwards;
 	&[data-expanded],
 	&[data-open] {
 		animation: contentShow 50ms ease-out;
-	}
-}
-
-.popmenu__item {
-	font-size: 1rem;
-	line-height: 1;
-	color: var(--popmenu-line);
-	border-radius: 0;
-	display: flex;
-	align-items: center;
-	min-height: 2em;
-	padding-block: var(--space-1);
-	padding-inline: var(--space-2);
-	position: relative;
-	user-select: none;
-	outline: none;
-
-	&[data-highlighted] {
-		outline: none;
-		background-color: var(--primary-dark);
 	}
 }
 
@@ -64,5 +57,114 @@
 	100% {
 		opacity: 0;
 		transform: scale(0.2);
+	}
+}
+
+[data-popper-positioner] {
+	z-index: 1000000 !important;
+}
+
+/* TODO why is this diff from popmenu.css ???? */
+.popmenu__content,
+.popmenu__sub-content {
+	z-index: 99999999;
+	min-width: 100px;
+	background-color: var(--popmenu-fill);
+	border: 1px solid var(--popmenu-line);
+	outline: none;
+	transform-origin: var(--kb-menu-content-transform-origin);
+	animation: contentHide 250ms ease-in forwards;
+	overflow: hidden;
+	border-radius: 3px;
+}
+.popmenu__content[data-expanded],
+.popmenu__sub-content[data-expanded] {
+	animation: contentShow 250ms ease-out;
+}
+.popmenu__item,
+.popmenu__checkbox-item,
+.popmenu__radio-item,
+.popmenu__sub-trigger {
+	user-select: none;
+	cursor: default;
+	font-size: 1em;
+	line-height: 1;
+	color: hsl(240 4% 16%);
+	display: flex;
+	align-items: center;
+	height: 32px;
+	padding: 0 8px 0 24px;
+	position: relative;
+	user-select: none;
+	outline: none;
+}
+.popmenu__item[data-disabled],
+.popmenu__checkbox-item[data-disabled],
+.popmenu__radio-item[data-disabled],
+.popmenu__sub-trigger[data-disabled] {
+	color: hsl(240 5% 65%);
+	opacity: 0.5;
+	pointer-events: none;
+}
+.popmenu__item[data-highlighted],
+.popmenu__checkbox-item[data-highlighted],
+.popmenu__radio-item[data-highlighted],
+.popmenu__sub-trigger[data-highlighted] {
+	outline: none;
+	background-color: var(--popmenu-hover-fill);
+	color: var(--popmenu-selected-line);
+}
+.popmenu__group-label {
+	padding: 0 24px;
+	font-size: 14px;
+	line-height: 32px;
+	color: hsl(240 4% 46%);
+}
+.popmenu__separator {
+	height: 1px;
+	border-top: 1px solid hsl(240 6% 90%);
+	margin: 6px;
+}
+.popmenu__item-indicator {
+	position: absolute;
+	left: 0;
+	height: 20px;
+	width: 20px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+.popmenu__item-right-slot {
+	margin-left: auto;
+	padding-left: 20px;
+	font-size: 1em;
+	color: hsl(240 4% 46%);
+}
+
+[data-highlighted] > .popmenu__item-right-slot {
+	color: var(--popmenu-fill);
+}
+[data-disabled] .popmenu__item-right-slot {
+	color: hsl(240 5% 65%);
+	opacity: 0.5;
+}
+@keyframes contentShow {
+	from {
+		opacity: 0;
+		transform: scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+@keyframes contentHide {
+	from {
+		opacity: 1;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(0.96);
 	}
 }

@@ -1,28 +1,24 @@
 import "./main.css"
-import {createEffect, createSignal, onCleanup} from "solid-js"
-import {type ContextValue} from "@corvu/resizable"
-import {makePersisted} from "@solid-primitives/storage"
+import {createEffect} from "solid-js"
+
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import activateBasePlugin from ":/plugins/base/base-plugin.ts"
-
 import {useUserDocContext} from ":/domain/user/user.ts"
-import PageHeader from ":/ui/components/page-header/page-header.tsx"
-import {useHotkeys} from ":/ui/lib/useHotkeys.ts"
-import Modmask from ":/ui/lib/modmask.ts"
 import DockProvider, {Dock} from ":/ui/dock/dock.tsx"
 import FileViewer from ":/ui/components/file-viewer/file-viewer.tsx"
-import DockTab from ":/ui/dock/dock-tab.tsx"
+import DocumentDockTab from ":/ui/dock/components/document-tab"
 import Icon from ":/ui/components/icons/icon.tsx"
-import Workspace from ":/ui/components/workspace/workspace.tsx"
 import {usePluginAPI} from "@littlebook/plugin-api"
 import {useSourceRegistry} from "@littlebook/plugin-api/registries/source-registry.ts"
 import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
+import StandaloneViewer from ":/ui/components/file-viewer/standalone-viewer.tsx"
+import StandaloneViewTab from ":/ui/dock/components/standalone-tab"
+import {Workspace} from ":/ui/layouts/workspace/workspace.tsx"
 
 export default function Main() {
-	const [resizableContext, setResizableContext] = createSignal<ContextValue>()
+	// todo this has nothing to do with UI
 	const pluginAPI = usePluginAPI()
 	activateBasePlugin(pluginAPI)
-
 	const user = useUserDocContext()
 	const sourceRegistry = useSourceRegistry()
 	const viewRegistry = useViewRegistry()
@@ -35,57 +31,14 @@ export default function Main() {
 			viewRegistry.maybe(viewURL)
 		}
 	})
-	// todo adopt the much better sidebar logic from nextaction
-
-	const defaultSizes = [0.2, 0.8]
-
-	const [sizes, setSizes] = makePersisted(
-		// eslint-disable-next-line solid/reactivity
-		createSignal<number[]>(defaultSizes),
-		{
-			name: "littlebook:layout",
-		},
-	)
-
-	if (!sizes().length || sizes().every(n => n <= 0)) {
-		setSizes(defaultSizes)
-	}
-
-	const leftSidebarCollapsed = () => sizes()[0] === 0
-
-	const toggleLeftSidebar = () => {
-		if (leftSidebarCollapsed()) {
-			resizableContext()?.expand(0, "following")
-
-			if (leftSidebarCollapsed()) {
-				setSizes(() => [
-					lastLeftSidebarExpandedSize(),
-					1 - lastLeftSidebarExpandedSize(),
-				])
-			}
-		} else {
-			resizableContext()?.collapse(0, "following")
-		}
-	}
-
-	useHotkeys("command+backslash", toggleLeftSidebar)
-
-	function onkeydown(event: KeyboardEvent) {
-		const modmask = new Modmask(event)
-		if (modmask.only.meta && event.key == "\\") toggleLeftSidebar()
-	}
-
-	window.addEventListener("keydown", onkeydown)
-	onCleanup(() => window.removeEventListener("keydown", onkeydown))
-
-	const [lastLeftSidebarExpandedSize, setLastLeftSidebarExpandedSize] =
-		createSignal(defaultSizes[0])
+	//todo end
 
 	return (
 		<div class="main">
+			{/* todo there must be a better way */}
 			<DockProvider
 				components={{
-					document: props => {
+					document(props) {
 						return (
 							<FileViewer
 								url={props.id}
@@ -93,10 +46,21 @@ export default function Main() {
 							/>
 						)
 					},
+					standalone(props) {
+						return (
+							<StandaloneViewer
+								id={props.id.split(":")[1]}
+								isActive={props.dockAPI.activePanelID == props.id}
+							/>
+						)
+					},
 				}}
 				tabComponents={{
-					document: props => {
-						return <DockTab url={props.id} />
+					document(props) {
+						return <DocumentDockTab url={props.id} />
+					},
+					standalone(props) {
+						return <StandaloneViewTab id={props.id} />
 					},
 				}}
 				watermarkComponent={() => <div class="dock-watermark" />}
@@ -104,34 +68,25 @@ export default function Main() {
 					<div class="dock-header-actions">
 						<DropdownMenu>
 							<DropdownMenu.Trigger
-								class="pop-menu__trigger dock-header-actions__button"
+								class="popmenu__trigger popmenu__trigger--dock-header  dock-header-actions__button"
 								aria-label="more actions">
 								<Icon name="menu-dots-bold" inline />
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="pop-menu__content">
+								<DropdownMenu.Content class="popmenu__content">
 									<DropdownMenu.Item
-										class="pop-menu__item"
-										onSelect={() => {
+										class="popmenu__item"
+										onSelect={() =>
 											props.dockAPI.closeGroup(props.groupID)
-										}}>
-										close group
+										}>
+										Close Group
 									</DropdownMenu.Item>
 								</DropdownMenu.Content>
 							</DropdownMenu.Portal>
 						</DropdownMenu>
 					</div>
 				)}>
-				<PageHeader
-					leftSidebarCollapsed={leftSidebarCollapsed()}
-					toggleLeftSidebar={toggleLeftSidebar}
-				/>
-
-				<Workspace
-					sizes={sizes()}
-					setSizes={setSizes}
-					setLastLeftSidebarExpandedSize={setLastLeftSidebarExpandedSize}
-					setResizableContext={setResizableContext}>
+				<Workspace>
 					<Dock />
 				</Workspace>
 			</DockProvider>
