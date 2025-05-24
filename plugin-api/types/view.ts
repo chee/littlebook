@@ -4,11 +4,12 @@ import type {StandardSchemaV1} from "@standard-schema/spec"
 import type {BembyModifier, BembyModifiers} from "@chee/bemby"
 import type {JSX} from "solid-js"
 
-export type ViewID = string & {lb: "view-id"}
+export type ViewID = string & {__viewID: true}
 
 interface ViewBase<API> {
 	id: ViewID
-	displayName: string
+	icon?: string
+	displayName?: string
 	category: string
 	render(api: API): HTMLElement
 }

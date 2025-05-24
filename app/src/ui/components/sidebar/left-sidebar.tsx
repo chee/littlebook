@@ -13,7 +13,7 @@ export default function Sidebar(props: {collapse(): void}) {
 	// todo changes in the area rich model
 	const [home, handle] = useDocument<AreaDoc>(homeEntryURL())
 	return (
-		<aside class="sidebar sidebar--left">
+		<aside class="sidebar sidebar--left ui">
 			<div class="sidebar-widgets">
 				<Show when={home()}>
 					<DocumentListWidget

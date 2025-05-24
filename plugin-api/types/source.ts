@@ -1,20 +1,29 @@
-type MaybeNamedShape<Shape> = [shape: Shape] | [shape: Shape, {name: string}]
+import type {ContentShape} from "./content.ts"
+
+type PartialEntry<Shape> = {
+	/** the file's name */
+	name?: string
+	/** an emoji */
+	icon?: string
+	/** the file's inner helpings */
+	content: Shape
+}
 export type MaybePromise<T> = T | Promise<T>
 
 interface SourceBase {
 	id: string
-	displayName: string
+	displayName?: string
 	category: string
 }
 
 export interface CreateSource<Shape = unknown> extends SourceBase {
 	category: "new"
-	"new"(): MaybePromise<MaybeNamedShape<Shape>>
+	"new"(): MaybePromise<PartialEntry<Shape>>
 }
 
 export interface FilesystemSource<Shape = unknown> extends SourceBase {
 	category: "filesystem"
-	import(file: File): MaybePromise<MaybeNamedShape<Shape>>
+	import(file: File): MaybePromise<PartialEntry<Shape>>
 	patterns?: string[]
 	mimes?: string[]
 }

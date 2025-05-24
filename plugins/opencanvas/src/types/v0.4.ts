@@ -9,131 +9,131 @@
  * The schema for the Open Component Interconnect Format (OCIF) Core document structure.
  */
 export interface OCIFCore04 {
-  /**
-   * The URI of the OCIF schema
-   */
-  ocif: string;
-  /**
-   * A list of nodes
-   */
-  nodes?: Node[];
-  /**
-   * A list of relations
-   */
-  relations?: Relation[];
-  /**
-   * A list of resources
-   */
-  resources?: Resource[];
-  /**
-   * Declared schemas
-   */
-  schemas?: Schema[];
-  [k: string]: unknown;
+	/**
+	 * The URI of the OCIF schema
+	 */
+	ocif: string
+	/**
+	 * A list of nodes
+	 */
+	nodes?: Node[]
+	/**
+	 * A list of relations
+	 */
+	relations?: Relation[]
+	/**
+	 * A list of resources
+	 */
+	resources?: Resource[]
+	/**
+	 * Declared schemas
+	 */
+	schemas?: Schema[]
+	[k: string]: unknown
 }
 /**
  * A node in the OCIF document
  */
 export interface Node {
-  /**
-   * A unique identifier for the node.
-   */
-  id: string;
-  /**
-   * Coordinate as (x,y) or (x,y,z).
-   */
-  position?: number[];
-  /**
-   * The size of the node per dimension.
-   */
-  size?: number[];
-  /**
-   * The resource to display
-   */
-  resource?: string;
-  /**
-   * Extended node data
-   */
-  data?: unknown[];
-  /**
-   * +/- 360 degrees
-   */
-  rotation?: number;
-  /**
-   * Scale factors to resize nodes
-   */
-  scale?: number[];
-  [k: string]: unknown;
+	/**
+	 * A unique identifier for the node.
+	 */
+	id: string
+	/**
+	 * Coordinate as (x,y) or (x,y,z).
+	 */
+	position?: number[]
+	/**
+	 * The size of the node per dimension.
+	 */
+	size?: number[]
+	/**
+	 * The resource to display
+	 */
+	resource?: string
+	/**
+	 * Extended node data
+	 */
+	data?: unknown[]
+	/**
+	 * +/- 360 degrees
+	 */
+	rotation?: number
+	/**
+	 * Scale factors to resize nodes
+	 */
+	scale?: number[]
+	[k: string]: unknown
 }
 /**
  * A relation between nodes
  */
 export interface Relation {
-  /**
-   * A unique identifier for the relation.
-   */
-  id: string;
-  /**
-   * Additional data for the relation.
-   */
-  data?: unknown[];
-  [k: string]: unknown;
+	/**
+	 * A unique identifier for the relation.
+	 */
+	id: string
+	/**
+	 * Additional data for the relation.
+	 */
+	data?: unknown[]
+	[k: string]: unknown
 }
 /**
  * A resource in the OCIF document
  */
 export interface Resource {
-  /**
-   * A unique identifier for the resource.
-   */
-  id: string;
-  /**
-   * A list of representations of the resource.
-   */
-  representations: Representation[];
-  [k: string]: unknown;
+	/**
+	 * A unique identifier for the resource.
+	 */
+	id: string
+	/**
+	 * A list of representations of the resource.
+	 */
+	representations: Representation[]
+	[k: string]: unknown
 }
 /**
  * A representation of a resource. Either content or location MUST be present. If content is used, location must be left out and vice versa.
  */
 export interface Representation {
-  /**
-   * The storage location for the resource. This can be a relative URI for an external resource or an absolute URI for a remote resource. If a data: URI is used, the content and mime-type properties are implicitly defined already. Values in content and mime-type are ignored.
-   */
-  location?: string;
-  /**
-   * The IANA MIME Type of the resource.
-   */
-  "mime-type"?: string;
-  /**
-   * The content of the resource. This is the actual data of the resource as a string. Can be base64-encoded.
-   */
-  content?: string;
-  [k: string]: unknown;
+	/**
+	 * The storage location for the resource. This can be a relative URI for an external resource or an absolute URI for a remote resource. If a data: URI is used, the content and mime-type properties are implicitly defined already. Values in content and mime-type are ignored.
+	 */
+	location?: string
+	/**
+	 * The IANA MIME Type of the resource.
+	 */
+	"mime-type"?: string
+	/**
+	 * The content of the resource. This is the actual data of the resource as a string. Can be base64-encoded.
+	 */
+	content?: string
+	[k: string]: unknown
 }
 /**
  * A schema in the OCIF document
  */
 export interface Schema {
-  /**
-   * The URI of the schema, Identifier (and location) of the schema.
-   */
-  uri: string;
-  /**
-   * The actual JSON schema as a JSON object.
-   */
-  schema?: {
-    [k: string]: unknown;
-  };
-  /**
-   * The storage location for the schema.
-   */
-  location?: string;
-  /**
-   * An optional short name for the schema.
-   */
-  name?: string;
-  [k: string]: unknown;
+	/**
+	 * The URI of the schema, Identifier (and location) of the schema.
+	 */
+	uri: string
+	/**
+	 * The actual JSON schema as a JSON object.
+	 */
+	schema?: {
+		[k: string]: unknown
+	}
+	/**
+	 * The storage location for the schema.
+	 */
+	location?: string
+	/**
+	 * An optional short name for the schema.
+	 */
+	name?: string
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -146,45 +146,45 @@ export interface Schema {
  * Arrow node extension
  */
 export interface OcifNodeArrow {
-  /**
-   * The line width.
-   */
-  strokeWidth?: number;
-  /**
-   * The color of the stroke.
-   */
-  strokeColor?: string;
-  /**
-   * The color of the fill.
-   */
-  fillColor?: string;
-  /**
-   * The start point.
-   *
-   * @minItems 2
-   * @maxItems 2
-   */
-  start?: [number, number];
-  /**
-   * The end point.
-   *
-   * @minItems 2
-   * @maxItems 2
-   */
-  end?: [number, number];
-  /**
-   * The marker at the start of the arrow.
-   */
-  startMarker?: "none" | "arrowhead";
-  /**
-   * The marker at the end of the arrow.
-   */
-  endMarker?: "none" | "arrowhead";
-  /**
-   * The ID of the relation defining the semantics of the arrow.
-   */
-  relation?: string;
-  [k: string]: unknown;
+	/**
+	 * The line width.
+	 */
+	strokeWidth?: number
+	/**
+	 * The color of the stroke.
+	 */
+	strokeColor?: string
+	/**
+	 * The color of the fill.
+	 */
+	fillColor?: string
+	/**
+	 * The start point.
+	 *
+	 * @minItems 2
+	 * @maxItems 2
+	 */
+	start?: [number, number]
+	/**
+	 * The end point.
+	 *
+	 * @minItems 2
+	 * @maxItems 2
+	 */
+	end?: [number, number]
+	/**
+	 * The marker at the start of the arrow.
+	 */
+	startMarker?: "none" | "arrowhead"
+	/**
+	 * The marker at the end of the arrow.
+	 */
+	endMarker?: "none" | "arrowhead"
+	/**
+	 * The ID of the relation defining the semantics of the arrow.
+	 */
+	relation?: string
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -197,27 +197,27 @@ export interface OcifNodeArrow {
  * Edge relation extension
  */
 export interface OcifRelEdge {
-  /**
-   * ID of start (source) element.
-   */
-  start: string;
-  /**
-   * ID of end (target) element.
-   */
-  end: string;
-  /**
-   * Is the edge directed?
-   */
-  directed?: boolean;
-  /**
-   * Represented relation type. Can be a URI to represent the predicate of an RDF triple.
-   */
-  rel?: string;
-  /**
-   * The ID of a node that visually represents the edge.
-   */
-  node?: string;
-  [k: string]: unknown;
+	/**
+	 * ID of start (source) element.
+	 */
+	start: string
+	/**
+	 * ID of end (target) element.
+	 */
+	end: string
+	/**
+	 * Is the edge directed?
+	 */
+	directed?: boolean
+	/**
+	 * Represented relation type. Can be a URI to represent the predicate of an RDF triple.
+	 */
+	rel?: string
+	/**
+	 * The ID of a node that visually represents the edge.
+	 */
+	node?: string
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -230,11 +230,11 @@ export interface OcifRelEdge {
  * Group relation extension
  */
 export interface OcifRelGroup {
-  /**
-   * IDs of members of the group
-   */
-  members: string[];
-  [k: string]: unknown;
+	/**
+	 * IDs of members of the group
+	 */
+	members: string[]
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -247,19 +247,19 @@ export interface OcifRelGroup {
  * Oval node extension
  */
 export interface OcifNodeOval {
-  /**
-   * The line width.
-   */
-  strokeWidth?: number;
-  /**
-   * The color of the stroke.
-   */
-  strokeColor?: string;
-  /**
-   * The color of the fill.
-   */
-  fillColor?: string;
-  [k: string]: unknown;
+	/**
+	 * The line width.
+	 */
+	strokeWidth?: number
+	/**
+	 * The color of the stroke.
+	 */
+	strokeColor?: string
+	/**
+	 * The color of the fill.
+	 */
+	fillColor?: string
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -272,23 +272,23 @@ export interface OcifNodeOval {
  * Path node extension
  */
 export interface OcifNodePath {
-  /**
-   * The line width.
-   */
-  strokeWidth?: number;
-  /**
-   * The color of the stroke.
-   */
-  strokeColor?: string;
-  /**
-   * The color of the fill.
-   */
-  fillColor?: string;
-  /**
-   * The path data in SVG 'd' attribute syntax.
-   */
-  path: string;
-  [k: string]: unknown;
+	/**
+	 * The line width.
+	 */
+	strokeWidth?: number
+	/**
+	 * The color of the stroke.
+	 */
+	strokeColor?: string
+	/**
+	 * The color of the fill.
+	 */
+	fillColor?: string
+	/**
+	 * The path data in SVG 'd' attribute syntax.
+	 */
+	path: string
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -301,19 +301,19 @@ export interface OcifNodePath {
  * Rectangle node extension
  */
 export interface OcifNodeRect {
-  /**
-   * The line width.
-   */
-  strokeWidth?: number;
-  /**
-   * The color of the stroke.
-   */
-  strokeColor?: string;
-  /**
-   * The color of the fill.
-   */
-  fillColor?: string;
-  [k: string]: unknown;
+	/**
+	 * The line width.
+	 */
+	strokeWidth?: number
+	/**
+	 * The color of the stroke.
+	 */
+	strokeColor?: string
+	/**
+	 * The color of the fill.
+	 */
+	fillColor?: string
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -326,11 +326,11 @@ export interface OcifNodeRect {
  * Set relation extension
  */
 export interface OcifRelSet {
-  /**
-   * IDs of members of the set
-   */
-  members: string[];
-  [k: string]: unknown;
+	/**
+	 * IDs of members of the set
+	 */
+	members: string[]
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -343,30 +343,30 @@ export interface OcifRelSet {
  * Hyperedge relation extension
  */
 export interface OcifRelHyperedge {
-  endpoints?: {
-    /**
-     * ID of attached entity (node or relation)
-     */
-    id: string;
-    /**
-     * Direction of the connection: 'in' (edge is going into the hyper-edge), 'out' (edge is going out from thy hyper-edge), 'undir' (edge is attached undirected). This is the default.
-     */
-    direction?: "in" | "out" | "undir";
-    /**
-     * Weight of the edge
-     */
-    weight?: number;
-    [k: string]: unknown;
-  }[];
-  /**
-   * Weight of the edge. A floating-point number, which can be used to model the strength of the connection, as a whole. More general than endpoint-specific weights, and often sufficient.
-   */
-  weight?: number;
-  /**
-   * Represented relation type
-   */
-  rel?: string;
-  [k: string]: unknown;
+	endpoints?: {
+		/**
+		 * ID of attached entity (node or relation)
+		 */
+		id: string
+		/**
+		 * Direction of the connection: 'in' (edge is going into the hyper-edge), 'out' (edge is going out from thy hyper-edge), 'undir' (edge is attached undirected). This is the default.
+		 */
+		direction?: "in" | "out" | "undir"
+		/**
+		 * Weight of the edge
+		 */
+		weight?: number
+		[k: string]: unknown
+	}[]
+	/**
+	 * Weight of the edge. A floating-point number, which can be used to model the strength of the connection, as a whole. More general than endpoint-specific weights, and often sufficient.
+	 */
+	weight?: number
+	/**
+	 * Represented relation type
+	 */
+	rel?: string
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -379,19 +379,19 @@ export interface OcifRelHyperedge {
  * Parent-child relationship extension. A parent-child relation models a hierarchical relationship between nodes. It can be used to model inheritance, containment, or other hierarchical relationships.
  */
 export interface OcifRelParentChild {
-  /**
-   * ID of the parent node. There SHOULD be only one parent per child.
-   */
-  parent?: string;
-  /**
-   * ID of the child node. A parent can have multiple children (expressed my multiple parent-child relations).
-   */
-  child?: string;
-  /**
-   * Inherit properties. A boolean flag indicating if the child should inherit properties from the parent. Default is false. The exact semantics of inheritance are defined by the application. In general, when looking for JSON properties of a node and finding them undefined, an app should look for the same value in the parent node. This chain of parents should be followed until root is reached or a cycle is detected.
-   */
-  inherit?: boolean;
-  [k: string]: unknown;
+	/**
+	 * ID of the parent node. There SHOULD be only one parent per child.
+	 */
+	parent?: string
+	/**
+	 * ID of the child node. A parent can have multiple children (expressed my multiple parent-child relations).
+	 */
+	child?: string
+	/**
+	 * Inherit properties. A boolean flag indicating if the child should inherit properties from the parent. Default is false. The exact semantics of inheritance are defined by the application. In general, when looking for JSON properties of a node and finding them undefined, an app should look for the same value in the parent node. This chain of parents should be followed until root is reached or a cycle is detected.
+	 */
+	inherit?: boolean
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -404,8 +404,8 @@ export interface OcifRelParentChild {
  * Node ports extension
  */
 export interface OcifNodePorts {
-  ports?: string[];
-  [k: string]: unknown;
+	ports?: string[]
+	[k: string]: unknown
 }
 /* eslint-disable */
 /**
@@ -418,17 +418,17 @@ export interface OcifNodePorts {
  * Relative constraints for nodes
  */
 export interface OcifNodeRelative {
-  /**
-   * ID of the source node. The ID of the source node, which is used as a reference for the relative positioning.
-   */
-  source: string;
-  /**
-   * Relative position of the target. The numbers given in the array are vector-added to the position of the source node.
-   */
-  position?: number[];
-  /**
-   * Relative angle of the target. The rotation is added to the rotation of the source node.
-   */
-  rotation?: number;
-  [k: string]: unknown;
+	/**
+	 * ID of the source node. The ID of the source node, which is used as a reference for the relative positioning.
+	 */
+	source: string
+	/**
+	 * Relative position of the target. The numbers given in the array are vector-added to the position of the source node.
+	 */
+	position?: number[]
+	/**
+	 * Relative angle of the target. The rotation is added to the rotation of the source node.
+	 */
+	rotation?: number
+	[k: string]: unknown
 }

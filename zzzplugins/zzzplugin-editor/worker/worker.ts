@@ -14,7 +14,6 @@ import {automergeWasmBase64} from "@automerge/automerge/automerge.wasm.base64"
 import {next as Automerge} from "@automerge/automerge/slim"
 import {transformModulePaths} from "@bigmistqke/repl"
 import type {Remote} from "comlink"
-// @ts-expect-error maybe i'll write one
 import solid from "../babel/babel-preset-solid.js"
 import * as babel from "@babel/standalone"
 import LittlebookPluginAPITypes from "./types/LittlebookPluginAPITypes.ts"
@@ -60,10 +59,7 @@ const worker = createWorker({
 		transformModulePaths(code, path => {
 			if (path.startsWith("./automerge:")) {
 				repo.find<{text: string}>(path.slice(2) as AutomergeUrl).then(h => {
-					env.createFile(
-						path.slice(1) + ".tsx",
-						h.doc().javascript ?? h.doc().text
-					)
+					env.createFile(path.slice(1) + ".tsx", h.doc().text)
 				})
 			}
 			return path
@@ -110,7 +106,6 @@ const exposed = {
 				],
 				[solid, {generate: "dom"}],
 			],
-
 			filename: path,
 		})
 		const redirected = transformModulePaths(

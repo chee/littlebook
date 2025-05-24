@@ -66,7 +66,7 @@ function createDockContext(dockOptions: {
 			}
 
 			const element = (
-				<div style={{display: "contents"}}>
+				<div class="ui">
 					<Show when={component()}>
 						<Dynamic
 							component={component()}
@@ -83,9 +83,8 @@ function createDockContext(dockOptions: {
 		},
 		createRightHeaderActionComponent(options) {
 			const component = () => dockOptions.rightHeaderActionComponent
-
 			const element = (
-				<div style={{display: "contents"}}>
+				<div class="ui">
 					<Show when={component()}>
 						<Dynamic
 							component={component()}

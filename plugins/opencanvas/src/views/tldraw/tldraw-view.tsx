@@ -13,7 +13,6 @@ import {TldrawInner} from "./tldraw-inner.tsx"
 import "tldraw/tldraw.css"
 
 const render = function render(api) {
-	console.log("rendering tldraw", api)
 	const div = document.createElement("div")
 	const root = createRoot(div)
 

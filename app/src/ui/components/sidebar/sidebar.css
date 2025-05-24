@@ -69,6 +69,12 @@
 	> * {
 		display: flex;
 	}
+	> button {
+		display: block;
+		height: 1em;
+		width: 1em;
+	}
+	margin-right: var(--space-05);
 }
 
 .sidebar-widget__content {

@@ -127,8 +127,8 @@ async function transject(handle: DocHandle<{text: string}>) {
 }
 
 export default {
-	id: "plugin-editor-codemirror" as ViewID,
-	displayName: "Plugin Editor (CodeMirror)",
+	id: "zzzplugin-editor-codemirror" as ViewID,
+	displayName: "zzzPlugin Editor",
 	category: "editor",
 	render(props) {
 		const tryTransject = () =>

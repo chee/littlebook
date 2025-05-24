@@ -5,10 +5,10 @@ import type {AutomergeValue} from "@automerge/automerge"
 export type AutomergeMapValue = {
 	[key: string]: AutomergeValue
 }
-export type FileEntryURL = AutomergeURL & {type: "entry"}
-export type FileContentURL = AutomergeURL & {type: "content"}
+export type FileEntryURL = AutomergeURL & {__entryURL: true}
+export type FileContentURL = AutomergeURL & {__contentURL: true}
 
-export interface FileEntry {
+export interface FileEntryDoc {
 	/**
 	 * an entry that describes and points to a file
 	 */
@@ -22,20 +22,27 @@ export interface FileEntry {
 }
 
 export function createFileEntryDoc(
-	entry: Partial<FileEntry> &
-		({content: AutomergeMapValue} | {url: FileContentURL}),
-): FileEntry {
+	entry: Partial<FileEntryDoc> &
+		({content?: AutomergeMapValue} | {url: FileContentURL}),
+): FileEntryDoc {
+	let content: AutomergeMapValue | undefined
+	if ("content" in entry) {
+		content = entry.content
+		delete entry.content
+	}
 	return {
 		name: "new",
 		...entry,
 		type: "entry",
-		url: "url" in entry ? entry.url! : curl<FileContentURL>(entry.content),
+		url: "url" in entry ? entry.url! : curl<FileContentURL>(content),
 	}
 }
 
 export function createFileEntry(
-	entry: Partial<FileEntry> &
+	entry: Partial<FileEntryDoc> &
 		({content: AutomergeMapValue} | {url: FileContentURL}),
 ): FileEntryURL {
 	return curl(createFileEntryDoc(entry))
 }
+
+export type FileEntryTemplate = Parameters<typeof createFileEntry>[0]

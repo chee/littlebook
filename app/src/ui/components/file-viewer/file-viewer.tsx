@@ -28,7 +28,7 @@ import {
 	parseDocumentURL,
 	type AutomergeURLOrDocumentURL,
 } from ":/core/sync/url.ts"
-import type {FileEntry} from ":/docs/file-entry-doc.ts"
+import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
 import defaultRepo from ":/core/sync/automerge.ts"
 
 import debug from ":/core/debug.ts"
@@ -41,7 +41,7 @@ export default function FileViewer(props: {
 	isActive?: boolean
 }) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url))
-	const [entry, entryHandle] = useDocument<FileEntry>(() => docinfo().url, {
+	const [entry, entryHandle] = useDocument<FileEntryDoc>(() => docinfo().url, {
 		repo: defaultRepo,
 	})
 	const view = usePerfectView(() => props.url)
@@ -110,7 +110,7 @@ export default function FileViewer(props: {
 function EditorViewWrapper<T>(props: {
 	editor: FileEditor<T>
 	fileHandle: DocHandle<T>
-	entryHandle: DocHandle<FileEntry>
+	entryHandle: DocHandle<FileEntryDoc>
 	updateStatusItems: SetStoreFunction<string[]>
 	isActive: boolean
 }) {

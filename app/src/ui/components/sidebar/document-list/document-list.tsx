@@ -22,7 +22,7 @@ import {
 	type AutomergeURL,
 	type DocumentURL,
 } from ":/core/sync/url.ts"
-import type {FileEntry} from ":/docs/file-entry-doc.ts"
+import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
 
 export function andRemove(url: AutomergeURL) {
 	return (doc: {files: AutomergeURL[]}) => {
@@ -70,10 +70,10 @@ export default function DocumentList(props: {
 	const dockAPI = useDockAPI()
 
 	return (
-		<ul class="document-list" data-depth={props.depth} role="group">
+		<div class="document-list" data-depth={props.depth} role="group">
 			<For each={props.urls}>
 				{url => {
-					const [entry, entryHandle] = useDocument<FileEntry>(
+					const [entry, entryHandle] = useDocument<FileEntryDoc>(
 						asAutomergeURL(url),
 					)
 					const [file] = useDocument<unknown>(
@@ -90,7 +90,7 @@ export default function DocumentList(props: {
 					}
 
 					return (
-						<li role="treeitem">
+						<div role="treeitem">
 							<ContextMenu>
 								<ContextMenu.Trigger>
 									<Show when={entry() && file()} fallback="">
@@ -132,11 +132,11 @@ export default function DocumentList(props: {
 									</ContextMenu.Content>
 								</ContextMenu.Portal>
 							</ContextMenu>
-						</li>
+						</div>
 					)
 				}}
 			</For>
-		</ul>
+		</div>
 	)
 }
 
@@ -165,11 +165,11 @@ export function DocumentListItem(props: DocumentListItemProps) {
 }
 
 export function DocumentListFile(props: DocumentListItemProps) {
-	const [entry] = useDocument<FileEntry>(() => props.url)
+	const [entry] = useDocument<FileEntryDoc>(() => props.url)
 
 	return (
 		<Button
-			class="popmenu__trigger popmenu__trigger--document-list document-list-item"
+			class="document-list-item"
 			onclick={() => props.openDocument(asDocumentURL(props.url))}
 			aria-pressed={props.pressed}>
 			{/* <span class="document-list-item__expander" /> */}
@@ -192,7 +192,7 @@ export function DocumentListFile(props: DocumentListItemProps) {
 export function DocumentListFolder(props: DocumentListItemProps) {
 	const [expanded, setExpanded] = createSignal(false)
 	const toggle = () => setExpanded(expanded => !expanded)
-	const [entry] = useDocument<FileEntry>(() => props.url)
+	const [entry] = useDocument<FileEntryDoc>(() => props.url)
 	const [folder, folderHandle] = useDocument<{files: AutomergeUrl[]}>(
 		() => entry()?.url,
 	)

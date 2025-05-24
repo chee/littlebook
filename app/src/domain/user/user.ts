@@ -47,7 +47,7 @@ import {createContext, useContext, type Accessor} from "solid-js"
 // todo eventually we need a rich version of this
 export function useUserDoc(repo = defaultRepo): Accessor<UserDoc | undefined> {
 	const [userId] = useUserId()
-	const [user, handle] = useDocument<UserDoc>(userId, {repo})
+	const [user] = useDocument<UserDoc>(userId, {repo})
 	return user
 }
 

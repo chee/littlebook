@@ -1,6 +1,6 @@
 import {createMemo} from "solid-js"
 import {useDocument} from "solid-automerge"
-import type {FileEntry, FileEntryURL} from ":/docs/file-entry-doc.ts"
+import type {FileEntryDoc, FileEntryURL} from ":/docs/file-entry-doc.ts"
 import {useUserDocContext} from ":/domain/user/user.ts"
 import {
 	parseDocumentURL,
@@ -16,7 +16,7 @@ export function usePerfectView<Schema = unknown>(
 ) {
 	const docinfo = createMemo(() => parseDocumentURL(url()))
 	const user = useUserDocContext()
-	const [entry] = useDocument<FileEntry>(() => docinfo().url)
+	const [entry] = useDocument<FileEntryDoc>(() => docinfo().url)
 	const viewRegistry = useViewRegistry()
 	const [file] = useDocument<Schema>(() => entry()?.url)
 	const views = () => file() && viewRegistry.views(file()!)

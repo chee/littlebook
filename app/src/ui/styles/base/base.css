@@ -3,10 +3,27 @@
 @import url("./font-face.css");
 @import url("./access.css");
 @import url("./html.css");
-
 @import url("./animations.css");
 @import url("./typography.css");
 @import url("./palette.css");
 @import url("./spacing.css");
-
 @import url("./util.css");
+
+.ui {
+	user-select: none;
+	cursor: default;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	button {
+		background-color: inherit;
+		color: inherit;
+		font-size: inherit;
+		border: 0;
+	}
+}

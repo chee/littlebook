@@ -39,7 +39,6 @@ export default function Main() {
 			<DockProvider
 				components={{
 					document(props) {
-						console.log("rerender???")
 						return (
 							<FileViewer
 								url={props.id}
@@ -66,7 +65,7 @@ export default function Main() {
 				}}
 				watermarkComponent={() => <div class="dock-watermark" />}
 				rightHeaderActionComponent={props => (
-					<div class="dock-header-actions">
+					<div class="dock-header-actions ui">
 						<DropdownMenu>
 							<DropdownMenu.Trigger
 								class="popmenu__trigger popmenu__trigger--dock-header  dock-header-actions__button"

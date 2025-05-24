@@ -9,7 +9,7 @@ import {
 	type AutomergeURL,
 	type DocumentURL,
 } from ":/core/sync/url.ts"
-import type {FileEntry} from ":/docs/file-entry-doc.ts"
+import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
 import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
 
 export default function OpenWithContextMenu(props: {
@@ -18,7 +18,7 @@ export default function OpenWithContextMenu(props: {
 	openDocument: (url: DocumentURL, opts: OpenDocumentOptions) => void
 }) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url))
-	const [entry, entryHandle] = useDocument<FileEntry>(() => docinfo().url)
+	const [entry, entryHandle] = useDocument<FileEntryDoc>(() => docinfo().url)
 	const [file] = useDocument(() => entry()?.url)
 	const viewRegistry = useViewRegistry()
 	const views = () => [...(viewRegistry.views(file()!) ?? [])]

@@ -1,9 +1,9 @@
 import {Show} from "solid-js"
 import "./fallback.css"
-import type {FileEntry} from ":/docs/file-entry-doc.ts"
+import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
 
 export default function FileViewerFallback(props: {
-	entry?: FileEntry
+	entry?: FileEntryDoc
 	view: unknown
 	fileHandle: unknown
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

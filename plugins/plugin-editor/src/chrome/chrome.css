@@ -1,0 +1,57 @@
+.plugin-editor-chrome {
+	display: flex;
+
+	height: 100%;
+	width: 100%;
+}
+
+.plugin-editor-sidebar {
+	user-select: none;
+	background: black;
+	color: white;
+	padding: var(--space-4);
+	font-family: var(--family-mono);
+	display: flex;
+	flex-direction: column;
+}
+
+.plugin-editor-sidebar__footer {
+	margin-top: auto;
+	button {
+		border: 1px solid currentColor;
+		&:hover {
+			background: rgba(255, 255, 255, 0.2);
+		}
+		&:active {
+			background: cyan;
+			color: black;
+		}
+	}
+}
+
+.plugin-editor__main {
+	display: flex;
+	height: 100%;
+	width: 100%;
+	flex-direction: column;
+}
+
+.plugin-editor-sidebar__indent {
+	margin-left: 1rem;
+}
+
+.plugin-editor-sidebar__item.plugin-editor-sidebar__item--folder {
+	font-weight: 500;
+}
+
+.plugin-editor__header {
+	background: black;
+	color: white;
+	font-family: var(--family-mono);
+	padding: var(--space-1);
+}
+
+.plugin-editor__content {
+	height: 100%;
+	overflow: scroll;
+}

@@ -15,14 +15,21 @@ const newFolder: CreateSource<FolderShape> = {
 	id: "new-folder",
 	category: "new",
 	displayName: "Folder",
-	new: () => [{files: [] as AutomergeURL[]}, {name: "new folder"}],
+	new() {
+		return {
+			name: "new folder",
+			content: {files: [] as AutomergeURL[]},
+		}
+	},
 }
 
 const newText: CreateSource<TextShape> = {
 	id: "new-text",
 	category: "new",
 	displayName: "plain text",
-	new: () => [{text: ""}],
+	new() {
+		return {content: {text: ""}}
+	},
 }
 
 const importText: FilesystemSource<TextShape> = {
@@ -33,12 +40,10 @@ const importText: FilesystemSource<TextShape> = {
 	mimes: ["text/plain", "text/*"],
 	async import(file) {
 		const text = await file.text()
-		return [
-			{
-				text,
-			},
-			{name: file.name},
-		]
+		return {
+			name: file.name,
+			content: {text},
+		}
 	},
 }
 
@@ -46,14 +51,21 @@ const newCode: CreateSource<CodeShape> = {
 	id: "new-code",
 	category: "new",
 	displayName: "Computer Code",
-	new: () => [{text: "", language: ""}],
+	new() {
+		return {content: {text: "", language: ""}}
+	},
 }
 
 const newMarkdown: CreateSource<MarkdownShape> = {
 	id: "new-markdown",
 	category: "new",
 	displayName: "Markdown",
-	new: () => [{text: "", language: "markdown"}],
+	new() {
+		return {
+			name: "new markdown",
+			content: {text: "", language: "markdown"},
+		}
+	},
 }
 
 const importMarkdown: FilesystemSource<MarkdownShape> = {
@@ -64,13 +76,13 @@ const importMarkdown: FilesystemSource<MarkdownShape> = {
 	patterns: ["*.md", "*.markdown", "*.mdown", "*.markdn"],
 	async import(file) {
 		const text = await file.text()
-		return [
-			{
+		return {
+			name: file.name,
+			content: {
 				text,
 				language: "markdown",
 			},
-			{name: file.name},
-		]
+		}
 	},
 }
 

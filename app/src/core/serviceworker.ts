@@ -34,7 +34,8 @@ const mimes: [RegExp, string][] = [
 	[/\.html$/, "text/html"],
 	[/\.css$/, "text/css"],
 	[/\.js$/, "application/javascript"],
-	[/\.ts$/, "application/javascript"],
+	[/\.ts$/, "application/typescript"],
+	[/\.tsx$/, "application/typescript"],
 ]
 
 const langmime: Record<string, string> = {
@@ -55,27 +56,32 @@ clientsClaim()
 precacheAndRoute(self.__WB_MANIFEST)
 
 self.addEventListener("fetch", event => {
-	console.log("fetch", event.request.url)
 	const url = new URL(event.request.url)
-	const [, automergeUrl] =
-		url.pathname.match(/^\/(automerge:[a-zA-Z0-9]+)/) ?? []
+	const [, automergeUrl, path] =
+		url.pathname.match(/^\/(automerge:[^/]+)[./]?(.*)/) ?? []
 	if (automergeUrl && isValidAutomergeUrl(automergeUrl)) {
 		try {
-			const handle = repo.find<{text: string; language?: string}>(
-				automergeUrl as AutomergeUrl,
-			)
+			const handle = repo.find<
+				{src: Record<string, string>} | {text: string}
+			>(automergeUrl as AutomergeUrl)
 			event.respondWith(
 				handle.then(handle => {
-					if (typeof handle.doc().text != "string") {
-						return new Response("not a string", {status: 400})
-					}
+					let text: string | undefined
 					const doc = handle.doc()
+					if ("src" in doc) {
+						const p = path.split("/") ?? ["entry.tsx"]
+						p.unshift("src")
+						text = getProperty(doc.src, p)
+					} else if ("text" in doc) {
+						text = doc.text
+					}
+					if (typeof text != "string") {
+						return new Response(`couldnt locate`, {status: 404})
+					}
 
-					// todo configure path with query param
-					return new Response(doc.text, {
+					return new Response(text, {
 						headers: {
 							"content-type":
-								langmime[doc.language] ??
 								mimes.find(([re]) => re.test(url.pathname))?.[1] ??
 								"text/plain",
 							"cache-control": "no-store",
@@ -89,23 +95,6 @@ self.addEventListener("fetch", event => {
 	}
 })
 
-// registerRoute(({url}) => {
-// 	console.log(
-// 		"handle?",
-// 		url.origin,
-// 		self.location.origin,
-// 		url.pathname,
-// 		url.pathname.slice(0, 11),
-// 		url.origin === self.location.origin &&
-// 			url.pathname.startsWith("/automerge:"),
-// 	)
-
-// 	return (
-// 		url.origin === self.location.origin &&
-// 		url.pathname.startsWith("/automerge:")
-// 	)
-// })
-
 registerRoute(
 	({url}) => url.origin === "https://esm.sh",
 	new StaleWhileRevalidate({
@@ -118,3 +107,14 @@ registerRoute(
 		],
 	}),
 )
+function getProperty(src: Record<string, string>, p: string[]) {
+	let current: any = src
+	for (const part of p) {
+		if (current && typeof current === "object" && part in current) {
+			current = current[part]
+		} else {
+			return undefined // Or throw an error if the property is required
+		}
+	}
+	return current
+}

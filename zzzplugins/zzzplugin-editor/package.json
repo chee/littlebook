@@ -1,5 +1,5 @@
 {
-	"name": "@littlebook/plugin-editor",
+	"name": "@littlebook/zzz-plugin-editor",
 	"version": "1.0.0",
 	"type": "module",
 	"description": "",
@@ -27,8 +27,6 @@
 		"@codemirror/lint": "^6.8.5",
 		"@codemirror/state": "^6.5.2",
 		"@codemirror/view": "^6.36.8",
-		"@codingame/monaco-vscode-api": "^17.1.1",
-		"@codingame/monaco-vscode-configuration-service-override": "^17.1.1",
 		"@deno/graph": "^0.29.0",
 		"@lezer/highlight": "^1.2.1",
 		"@littlebook/plugin-api": "workspace:~",
@@ -38,7 +36,6 @@
 		"@typescript/vfs": "^1.6.1",
 		"@valtown/codemirror-ts": "3.0.0-10",
 		"assert": "^2.1.0",
-		"automerge-monaco": "^0.0.4",
 		"babel-preset-solid": "2.0.0-experimental.5",
 		"codemirror": "^6.0.1",
 		"codemirror-copilot": "^0.0.7",
@@ -46,15 +43,10 @@
 		"esbuild-plugin-solid": "^0.6.0",
 		"esbuild-plugin-wasm": "^1.1.0",
 		"esbuild-wasm": "^0.25.4",
-		"lz-string": "^1.5.0",
-		"monaco-editor": "^0.52.2",
-		"monaco-editor-workers": "^0.45.0",
 		"solid-js": "^1.9.7",
-		"solid-monaco": "^0.3.0",
 		"typescript": "^5.8.3",
 		"valibot": "^1.1.0",
-		"vite": "^6.3.5",
-		"vscode": "npm:@codingame/monaco-vscode-extension-api@^17.1.1"
+		"vite": "^6.3.5"
 	},
 	"devDependencies": {
 		"@littlebook/mkplugin": "workspace:~",

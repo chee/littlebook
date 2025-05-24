@@ -14,6 +14,7 @@ import type {DocHandleChangePayload} from "@automerge/vanillajs"
 import type {
 	FileEditor,
 	FileEditorAPI,
+	ViewID,
 } from "@littlebook/plugin-api/types/view.ts"
 import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 import type {FileMenu} from "@littlebook/plugin-api/types/file-menu.ts"
@@ -352,7 +353,7 @@ export function getFileMenu() {
 }
 
 export default {
-	id: "codemirror",
+	id: "codemirror" as ViewID,
 	displayName: "codemirror",
 	category: "editor",
 	render,

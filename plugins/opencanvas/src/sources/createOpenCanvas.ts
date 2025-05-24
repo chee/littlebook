@@ -1,4 +1,4 @@
-import type {OCIFCore04} from "@/types/v0.4.ts"
+import type {OCIFCore04} from "../types/v0.4.ts"
 import type {CreateSource} from "@littlebook/plugin-api/types/source.ts"
 
 export const createOpenCanvas04: CreateSource<OCIFCore04> = {
@@ -11,8 +11,9 @@ export const createOpenCanvas04: CreateSource<OCIFCore04> = {
 		// return {content: {whatever}, name: "whatever"}
 		// i.e. it should return an _entry_, not a content
 		// todo i should make an ocif builder
-		return [
-			{
+		return {
+			name: "untitled canvas",
+			content: {
 				ocif: "https://canvasprotocol.org/ocif/v0.4",
 				nodes: [
 					{
@@ -53,6 +54,6 @@ export const createOpenCanvas04: CreateSource<OCIFCore04> = {
 					},
 				],
 			},
-		]
+		}
 	},
 }

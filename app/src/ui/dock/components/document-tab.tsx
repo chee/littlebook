@@ -20,13 +20,13 @@ import {
 	type DocumentURL,
 } from ":/core/sync/url.ts"
 import {usePerfectView} from ":/ui/components/file-viewer/usePerfectView.tsx"
-import type {FileEntry} from ":/docs/file-entry-doc.ts"
+import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
 
 export default function DocumentDockTab(props: {url: DocumentURL}) {
 	const docinfo = createMemo(() => parseDocumentURL(props.url as DocumentURL))
 	const dockAPI = useDockAPI()
 	// todo obviously useFile(() => docinfo().url)
-	const [entry] = useDocument<FileEntry>(() => docinfo().url)
+	const [entry] = useDocument<FileEntryDoc>(() => docinfo().url)
 
 	const editor = usePerfectView(() => props.url)
 
@@ -209,7 +209,7 @@ export default function DocumentDockTab(props: {url: DocumentURL}) {
 							<ContextMenu.Separator class="popmenu__separator" />
 							<FileContextMenu
 								items={fileMenu()!}
-								entry={entry as Accessor<FileEntry>}
+								entry={entry as Accessor<FileEntryDoc>}
 								file={file as Accessor<Doc<unknown>>}
 								fileHandle={fileHandle()!}
 							/>

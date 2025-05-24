@@ -9,7 +9,7 @@ import type {
 	FileMenuItem,
 	FileMenuSubMenu,
 } from ":/domain/file/file-menu.ts"
-import type {FileEntry} from ":/docs/file-entry-doc.ts"
+import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
 
 export const [fileMenu, updateFileMenu] = createRoot(() => {
 	const [fileMenu, updateFileMenu] = createStore<FileMenuItem[]>([])
@@ -18,12 +18,12 @@ export const [fileMenu, updateFileMenu] = createRoot(() => {
 
 export function FileContextMenu(props: {
 	items: FileMenuItem[]
-	entry: Accessor<FileEntry>
+	entry: Accessor<FileEntryDoc>
 	file: Accessor<Doc<unknown>>
 	fileHandle: DocHandle<unknown>
 }) {
 	const when = (
-		fn?: (opts: {entry: FileEntry; file: Doc<unknown>}) => boolean,
+		fn?: (opts: {entry: FileEntryDoc; file: Doc<unknown>}) => boolean,
 	) => (fn ? fn({entry: props.entry(), file: props.file()}) : true)
 
 	return (

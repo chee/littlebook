@@ -4,36 +4,18 @@ import type {CreateSource} from "@littlebook/plugin-api/types/source.ts"
 import type PluginAPI from "@littlebook/plugin-api"
 import pluginEditor from "./editor/plugin-editor.tsx"
 
-// const createPlugin: CreateSource<PluginShape> = {
-// 	id: "create-plugin",
-// 	category: "new",
-// 	displayName: "Plugin",
-// 	new() {
-// 		return [
-// 			{
-// 				type: "plugin",
-// 				package: "",
-// 				tsconfig: "",
-// 				javascript: "",
-// 				css: "",
-// 			},
-// 			{name: "My Plugin"},
-// 		]
-// 	},
-// }
-
 const createPlugin: CreateSource<PluginShape> = {
-	id: "create-plugin",
+	id: "create-zzz-plugin",
 	category: "new",
-	displayName: "Plugin",
+	displayName: "zzzPlugin",
 	new() {
-		return [
-			{
+		return {
+			name: "untitled plugin",
+			content: {
 				type: "plugin",
 				text: "",
 			},
-			{name: "My Plugin"},
-		]
+		}
 	},
 }
 

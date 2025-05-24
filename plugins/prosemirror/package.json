@@ -4,9 +4,6 @@
 	"version": "1.0.0",
 	"type": "module",
 	"main": "entry.ts",
-	"scripts": {
-		"dev": "mkplugin -w"
-	},
 	"keywords": [],
 	"author": "chee",
 	"license": "AGPL-3.0+",

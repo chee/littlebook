@@ -14,6 +14,7 @@ import {createStore, reconcile} from "solid-js/store"
 import {createSolidTable, getCoreRowModel} from "@tanstack/solid-table"
 import {any, record, string} from "valibot"
 import type {FileEditor} from ":/domain/view/view.ts"
+import {setProperty} from "@littlebook/plugin-editor/src/util/path.ts"
 
 function StringEditor(props: {value: string; change: (value: string) => void}) {
 	return (
@@ -85,7 +86,22 @@ function AutomergeEditor(props: {
 										/>
 									</Match>
 									<Match when={type() == "number"}>
-										<input type="number" value={value()} />
+										<input
+											type="number"
+											value={value()}
+											onInput={event => {
+												props.handle.change(doc => {
+													const path = props.path?.concat(
+														key(),
+													) ?? [key]
+													setProperty(
+														doc,
+														path,
+														event.currentTarget.valueAsNumber,
+													)
+												})
+											}}
+										/>
 									</Match>
 									<Match when={type() == "string"}>
 										<StringEditor

@@ -4,6 +4,10 @@ import Icon from "../icons/icon.tsx"
 import {useSourceRegistry} from "@littlebook/plugin-api/registries/source-registry.ts"
 import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
 import {useDockAPI} from ":/ui/dock/dock.tsx"
+import type {
+	AutomergeMapValue,
+	FileEntryTemplate,
+} from ":/docs/file-entry-doc.ts"
 
 export function BigPlus() {
 	return (
@@ -24,7 +28,7 @@ export function BigPlus() {
 }
 
 export default function NewDocumentMenu(props: {
-	create(opts: {name: string; content: unknown; creator: string}): void
+	create(template: FileEntryTemplate): void
 }) {
 	const sources = useSourceRegistry()
 	const views = useViewRegistry()
@@ -58,13 +62,12 @@ export default function NewDocumentMenu(props: {
 												class="popmenu__item"
 												// eslint-disable-next-line solid/reactivity
 												onSelect={async () => {
-													const [content, info] =
-														await source.new()
+													const partialEntry = await source.new()
 													props.create({
 														name:
-															info?.name ??
-															`new ${source.displayName}`,
-														content,
+															partialEntry.name ??
+															`untitled ${source.displayName}`.toLowerCase(),
+														content: partialEntry.content,
 														creator: id,
 													})
 												}}>

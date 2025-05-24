@@ -42,7 +42,7 @@ export function ToastRegion() {
 	return (
 		<Portal>
 			<Toast.Region class="toast-region">
-				<Toast.List class="toast-list" />
+				<Toast.List class="toast-list ui" />
 			</Toast.Region>
 		</Portal>
 	)
