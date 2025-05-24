@@ -64,6 +64,7 @@ export function createBaseEditor(opts: {
 			lycheeTheme,
 			syntaxHighlighting(lycheeHighlightStyle),
 			lineNumbers(),
+
 			keymap.of([indentWithTab, ...emacsStyleKeymap, ...searchKeymap]),
 			EditorState.allowMultipleSelections.of(true),
 			EditorState.tabSize.of(2),

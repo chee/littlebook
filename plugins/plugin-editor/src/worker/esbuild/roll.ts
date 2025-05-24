@@ -5,35 +5,9 @@ import esbuild from "esbuild-wasm"
 // @ts-expect-error i don't know why
 import esbuildWasm from "esbuild-wasm/esbuild.wasm?url"
 import esbuildVirtual from "../virtual/esbuild-plugin-virtual.ts"
-import transformFile from "../babel/transform-file.ts"
 import {pluginToVFS} from "../virtual/util.ts"
 import {findEntryFileName} from "../../util/path.ts"
 import {solid} from "./solid.ts"
-
-// todo enable extension fixing in babel and here?
-// function replaceExtension(name: string, extension: string) {
-// 	return name.replace(/\.[^.]+$/, `${extension}`)
-// }
-
-// async function transformVFS(
-// 	virtual: Record<string, string>,
-// 	handle: DocHandle<LittlebookPluginShape>
-// ) {
-// 	const vfs: Record<string, string> = {}
-// 	for (const [name, code] of Object.entries(virtual)) {
-// 		if (
-// 			name.endsWith(".ts") ||
-// 			name.endsWith(".tsx") ||
-// 			name.endsWith(".jsx")
-// 		) {
-// 			const transformedCode = await transformFile(handle, name, code)
-// 			vfs[replaceExtension(name, ".js")] = transformedCode.code!
-// 		} else {
-// 			vfs[name] = code
-// 		}
-// 	}
-// 	return vfs
-// }
 
 let done = false
 async function initializeEsbuild() {

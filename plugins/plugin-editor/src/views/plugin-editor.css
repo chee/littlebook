@@ -81,6 +81,10 @@
 		padding: var(--space-2);
 	}
 }
+
 .cm-editor {
 	height: 100%;
+	width: 100%;
+	overflow: scroll;
+	font-size: 0.8rem;
 }

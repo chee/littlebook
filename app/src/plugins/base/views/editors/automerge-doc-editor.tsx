@@ -13,8 +13,8 @@ import {updateText, type DocHandle} from "@automerge/vanillajs"
 import {createStore, reconcile} from "solid-js/store"
 import {createSolidTable, getCoreRowModel} from "@tanstack/solid-table"
 import {any, record, string} from "valibot"
-import type {FileEditor} from ":/domain/view/view.ts"
 import {setProperty} from "@littlebook/plugin-editor/src/util/path.ts"
+import type {FileEditor} from "@littlebook/plugin-api/types/view.ts"
 
 function StringEditor(props: {value: string; change: (value: string) => void}) {
 	return (
