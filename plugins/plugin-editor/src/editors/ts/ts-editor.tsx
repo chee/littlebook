@@ -24,6 +24,7 @@ import {
 	type LBPSrcFilePath,
 } from "../../util/path.ts"
 import {createBaseEditor} from "../base/base-editor.tsx"
+import type {PluginEditorWorker} from "../../worker/worker.ts"
 
 const extLangMap = {
 	js: javascriptLanguage,
@@ -37,6 +38,7 @@ export default function createTypescriptEditor(opts: {
 	handle: DocHandle<LittlebookPluginShape>
 	path: LBPSrcFilePath
 	tsWorker: WorkerShape
+	worker: PluginEditorWorker
 }) {
 	const ext = getExtension(opts) as keyof typeof extLangMap
 	if (!(ext in extLangMap)) {
@@ -46,6 +48,7 @@ export default function createTypescriptEditor(opts: {
 			)}`
 		)
 	}
+
 	const baseEditor = createBaseEditor({
 		...opts,
 		extensions: [

@@ -54,8 +54,8 @@ export default function NewDocumentMenu(props: {
 						</DropdownMenu.SubTrigger>
 						<DropdownMenu.Portal>
 							<DropdownMenu.SubContent class="popmenu__sub-content">
-								<For each={Object.entries(sources.records)}>
-									{([id, source]) => {
+								<For each={Object.values(sources.records)}>
+									{source => {
 										if (source.category !== "new") return
 										return (
 											<DropdownMenu.Item
@@ -66,12 +66,13 @@ export default function NewDocumentMenu(props: {
 													props.create({
 														name:
 															partialEntry.name ??
-															`untitled ${source.displayName}`.toLowerCase(),
-														content: partialEntry.content,
-														creator: id,
+															`untitled ${source.displayName ?? source.id}`.toLowerCase(),
+														content:
+															partialEntry.content as AutomergeMapValue,
+														// creator: id,
 													})
 												}}>
-												{source.displayName}
+												{source.displayName ?? source.id}
 											</DropdownMenu.Item>
 										)
 									}}
@@ -100,7 +101,7 @@ export default function NewDocumentMenu(props: {
 														dock.openStandaloneView(view.id),
 													)
 												}>
-												{view.displayName}
+												{view.displayName ?? view.id}
 											</DropdownMenu.Item>
 										)
 									}}

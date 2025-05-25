@@ -54,7 +54,7 @@ export default function OpenWithContextMenu(props: {
 											<Icon name="check-square-bold" />
 										</div>
 									</Show>
-									{choice.displayName}
+									{choice.displayName ?? choice.id}
 								</ContextMenu.Item>
 							)}
 						</For>

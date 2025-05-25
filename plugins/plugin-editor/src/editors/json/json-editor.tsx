@@ -12,12 +12,15 @@ import type {LittlebookPluginShape} from "../../shapes/shapes.ts"
 import type {WorkerShape} from "@valtown/codemirror-ts/worker"
 import {hoverTooltip} from "@codemirror/view"
 import {Compartment} from "@codemirror/state"
+import type {PluginEditorWorker} from "../../worker/worker.ts"
+import type {LBPSrcFilePath} from "../../util/path.ts"
 
 export default function createJSONEditor(opts: {
 	parent: HTMLElement
-	handle: DocHandle<PluginShape>
-	path: Prop[]
+	handle: DocHandle<LittlebookPluginShape>
+	path: LBPSrcFilePath
 	tsWorker: WorkerShape
+	worker: PluginEditorWorker
 }) {
 	const schemaCompartment = new Compartment()
 	const lastPathPart = opts.path[opts.path.length - 1]

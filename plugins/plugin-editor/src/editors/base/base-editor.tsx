@@ -20,7 +20,7 @@ import {lycheeHighlightStyle, lycheeTheme} from "../../themes/lychee.ts"
 import {indentUnit, syntaxHighlighting} from "@codemirror/language"
 import {indentWithTab, emacsStyleKeymap} from "@codemirror/commands"
 import {minimalSetup} from "codemirror"
-import type {DocHandle, Prop} from "@automerge/vanillajs"
+import type {DocHandle} from "@automerge/vanillajs"
 import {EditorState, type Extension} from "@codemirror/state"
 import {mod, modshift} from "../../util/modshift.ts"
 import type {LittlebookPluginShape} from "../../shapes/shapes.ts"
@@ -30,6 +30,7 @@ import {
 	getFileContent,
 	type LBPSrcFilePath,
 } from "../../util/path.ts"
+import type {PluginEditorWorker} from "../../worker/worker.ts"
 
 export function createBaseEditor(opts: {
 	parent: HTMLElement
@@ -37,15 +38,18 @@ export function createBaseEditor(opts: {
 	path: LBPSrcFilePath
 	extensions?: Extension[]
 	tsWorker: WorkerShape
+	worker: PluginEditorWorker
 }) {
 	const content = getFileContent({
 		handle: opts.handle,
 		path: opts.path,
 	})
+	const path = getTypescriptEnvPath(opts)
 	opts.tsWorker.updateFile({
-		path: getTypescriptEnvPath(opts),
+		path,
 		code: content ?? "",
 	})
+	opts.worker.ata(content ?? "", path)
 	return new EditorView({
 		doc: getFileContent(opts),
 		extensions: [

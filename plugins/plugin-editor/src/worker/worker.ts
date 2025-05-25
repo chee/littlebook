@@ -12,12 +12,12 @@ import {
 } from "@automerge/vanillajs/slim"
 import {automergeWasmBase64} from "@automerge/automerge/automerge.wasm.base64"
 import {next as Automerge} from "@automerge/automerge/slim"
-import {transformModulePaths} from "@bigmistqke/repl"
 import type {Remote} from "comlink"
 import LittlebookPluginAPITypes from "./types/LittlebookPluginAPITypes.ts"
 import type {LittlebookPluginShape} from "../shapes/shapes.ts"
-import {cd, getFileContent, getFileContentWithJSXPragma} from "../util/path.ts"
-import roll from "./esbuild/roll.ts"
+import {cd, getFileContentWithJSXPragma} from "../util/path.ts"
+import bundle from "./esbuild/bundle.ts"
+import walkImports from "./babel/walk-imports.ts"
 
 const repo = new Repo({
 	network: [new WebSocketClientAdapter(`wss://galaxy.observer`)],
@@ -53,43 +53,12 @@ const vfs = (async function () {
 
 const typescriptWorker = createWorker({
 	env: vfs,
-	async onFileUpdated(_env, filePath, code) {
-		// the vfs
-		ata(code)
-		const env = typescriptWorker.getEnv()
-		transformModulePaths(
-			code,
-			importPath => (
-				(async () => {
-					if (!importPath.startsWith(".")) return
-
-					const fullPath = cd(filePath, importPath)
-					const [, automergeUrl] = fullPath.split("/")
-					const handle = await repo.find<LittlebookPluginShape>(
-						automergeUrl as AutomergeUrl
-					)
-					const start = fullPath.indexOf("/src/")
-					const path = fullPath.slice(start + 1).split("/") as [
-						"src",
-						...string[]
-					]
-					if (path[0] !== "src") {
-						throw new Error(
-							`Expected path to start with "src", got "${path}"`
-						)
-					}
-					const content = getFileContentWithJSXPragma({handle, path})
-					if (content != null) {
-						env.createFile(fullPath, content)
-					}
-				})(),
-				importPath
-			)
-		)
+	async onFileUpdated(env, filePath, code) {
+		ata(code, filePath)
 	},
 })
 
-const ata = setupTypeAcquisition({
+const typescriptATA = setupTypeAcquisition({
 	projectName: "hehe",
 	typescript: ts,
 	logger: console,
@@ -100,12 +69,42 @@ const ata = setupTypeAcquisition({
 	},
 })
 
+function ata(code: string, filePath: string) {
+	typescriptATA(code)
+	walkImports(code, async importPath => {
+		if (importPath.startsWith(".")) {
+			const fullPath = cd(filePath, importPath)
+			const content = await getRelativeImportContent(fullPath)
+			content && typescriptWorker.getEnv().createFile(fullPath, content)
+		} else if (importPath.startsWith("https://")) {
+			// download-types x-typescript-typeswise
+		}
+	})
+}
+
+// todo handle ../automerge: and /automerge: imports
+async function getRelativeImportContent(path: string) {
+	const [, automergeUrl] = path.split("/")
+	const handle = await repo.find<LittlebookPluginShape>(
+		automergeUrl as AutomergeUrl
+	)
+	const start = path.indexOf("/src/")
+	const pathParts = path.slice(start + 1).split("/") as ["src", ...string[]]
+	if (pathParts[0] !== "src") {
+		throw new Error(`Expected path to start with "src", got "${path}"`)
+	}
+	return getFileContentWithJSXPragma({handle, path: pathParts})
+}
+
 const pluginEditorWorker = {
 	async compile(url: AutomergeUrl) {
-		const handle = await repo.find<PluginShape>(url)
-		return roll(handle)
+		const handle = await repo.find<LittlebookPluginShape>(url)
+		return bundle(handle)
 	},
 	tsWorker: typescriptWorker,
+	ata(code: string, filePath: string) {
+		ata(code, filePath)
+	},
 }
 
 export type PluginEditorWorker = Remote<typeof pluginEditorWorker>

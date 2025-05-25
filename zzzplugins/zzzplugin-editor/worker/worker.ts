@@ -12,7 +12,7 @@ import {
 } from "@automerge/vanillajs/slim"
 import {automergeWasmBase64} from "@automerge/automerge/automerge.wasm.base64"
 import {next as Automerge} from "@automerge/automerge/slim"
-import {transformModulePaths} from "@bigmistqke/repl"
+// import {transformModulePaths} from "@bigmistqke/repl"
 import type {Remote} from "comlink"
 import solid from "../babel/babel-preset-solid.js"
 import * as babel from "@babel/standalone"

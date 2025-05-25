@@ -1,12 +1,12 @@
 import {DocHandle} from "@automerge/automerge-repo"
 
 export namespace Littlebook {
-	export interface Source {
+	export interface Source<T> {
 		id: string
 		displayName: string
 		category: "filesystem" | "new" | "network"
-		"new"(): Promise<[unknown, {name: string}] | [unknown]>
-		import?(file: File): Promise<unknown>
+		"new"(): Promise<{name: string; icon?: string; content: T}>
+		import?(file: File): Promise<{name: string; icon?: string; content: T}>
 	}
 	export interface View<T> {
 		id: string
@@ -30,7 +30,7 @@ export namespace Littlebook {
 	}
 }
 declare module "@littlebook/plugin-api" {
-	export interface Source extends Littlebook.Source {}
+	export interface Source<T> extends Littlebook.Source<T> {}
 	export interface View<T = unknown> extends Littlebook.View<T> {}
 	const littlebook: {
 		registerSource(source: Littlebook.Source): void
@@ -39,6 +39,10 @@ declare module "@littlebook/plugin-api" {
 	export default littlebook
 }
 declare global {
+	namespace Littlebook {
+		export interface Source<T> extends Littlebook.Source<T> {}
+		export interface View<T> extends Littlebook.View<T> {}
+	}
 	interface Window {
 		littlebook: {
 			registerSource(source: Littlebook.Source): void

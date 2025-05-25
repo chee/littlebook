@@ -4,10 +4,11 @@ import type {DocHandle} from "@automerge/vanillajs"
 import esbuild from "esbuild-wasm"
 // @ts-expect-error i don't know why
 import esbuildWasm from "esbuild-wasm/esbuild.wasm?url"
-import esbuildVirtual from "../virtual/esbuild-plugin-virtual.ts"
-import {pluginToVFS} from "../virtual/util.ts"
+import esbuildVirtual from "./plugin-virtual.ts"
 import {findEntryFileName} from "../../util/path.ts"
-import {solid} from "./solid.ts"
+import {solid} from "./plugin-solid.ts"
+import {eternal} from "./plugin-dynamic-external.ts"
+import {littlebookFileTreeToVirtualFileSystem} from "./virtual.ts"
 
 let done = false
 async function initializeEsbuild() {
@@ -16,11 +17,18 @@ async function initializeEsbuild() {
 	done = true
 }
 
-export default async function roll(handle: DocHandle<LittlebookPluginShape>) {
+export default async function bundle(handle: DocHandle<LittlebookPluginShape>) {
 	await initializeEsbuild()
 	const doc = handle.doc()
-	const virtualFileSystem = pluginToVFS(doc.src, `/${handle.url}`)
+	const virtualFileSystem = littlebookFileTreeToVirtualFileSystem(
+		doc.src,
+		`/${handle.url}`
+	)
 	const entry = findEntryFileName(doc)
+	const jsxImportSource =
+		doc.meta.jsxImportSource == "string"
+			? doc.meta.jsxImportSource
+			: undefined
 
 	const build = await esbuild.build({
 		entryPoints: [`/${handle.url}/${entry}`],
@@ -29,28 +37,12 @@ export default async function roll(handle: DocHandle<LittlebookPluginShape>) {
 		format: "esm",
 		treeShaking: true,
 		plugins: [
-			solid({
-				files: virtualFileSystem,
-				jsxImportSource:
-					typeof doc.meta.jsxImportSource == "string"
-						? doc.meta.jsxImportSource
-						: undefined,
-			}),
-			eternalExternal,
+			solid({files: virtualFileSystem, jsxImportSource}),
+			eternal,
 			esbuildVirtual(virtualFileSystem),
 		],
 		outdir: ".",
 	})
 
 	return build
-}
-
-// make everything external except for relative paths
-const eternalExternal = {
-	name: "eternal-external",
-	setup(build: esbuild.PluginBuild) {
-		build.onResolve({filter: /^[a-zA-Z]/}, args => {
-			return {path: args.path, external: true}
-		})
-	},
 }

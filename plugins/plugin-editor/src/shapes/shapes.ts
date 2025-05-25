@@ -1,10 +1,10 @@
 import * as v from "valibot"
 
-type FileDirectory = {[key: string]: string | FileDirectory}
+export type LittlebookFileTree = {[key: string]: string | LittlebookFileTree}
 
-const directory: v.GenericSchema<FileDirectory> = v.record(
+const fileTree: v.GenericSchema<LittlebookFileTree> = v.record(
 	v.string(),
-	v.union([v.string(), v.lazy(() => directory)])
+	v.union([v.string(), v.lazy(() => fileTree)])
 )
 
 const scalar = v.union([
@@ -32,7 +32,7 @@ const configish: v.GenericSchema<Configish> = v.record(
 export const LittlebookPluginShape = v.object({
 	type: v.literal("plugin"),
 	meta: configish,
-	src: directory,
+	src: fileTree,
 })
 
 export type LittlebookPluginShape = v.InferOutput<typeof LittlebookPluginShape>

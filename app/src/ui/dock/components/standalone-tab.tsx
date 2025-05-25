@@ -1,9 +1,7 @@
-import Icon from "../../components/icons/icon.tsx"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {Button} from "@kobalte/core/button"
 import {createEffect, Suspense} from "solid-js"
 import {useDockAPI} from "../dock.tsx"
-import {Tooltip} from "@kobalte/core/tooltip"
 import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
 import {
 	normalizeStandaloneViewID,

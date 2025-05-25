@@ -80,7 +80,7 @@ export default function StandaloneViewer(props: {
 								props.isActive && "file-viewer-status-bar--active",
 							)}>
 							<span class="file-viewer-status-bar__editor-name">
-								{view()?.displayName}
+								{view()?.displayName ?? view()?.id}
 							</span>
 							<For each={statusItems}>{item => <span>{item}</span>}</For>
 						</footer>

@@ -41,8 +41,6 @@ export default function DocumentDockTab(props: {url: DocumentURL}) {
 
 	const [file, fileHandle] = useDocument<unknown>(() => entry()?.url)
 
-	const editorDisplayName = () => editor()?.displayName
-
 	const editorID = () => editor()?.id
 
 	const owner = getOwner()
@@ -57,17 +55,6 @@ export default function DocumentDockTab(props: {url: DocumentURL}) {
 			return v.getFileMenu?.()
 		}
 	}
-
-	// const publisherRegistry = useSinkRegistry()
-	// const publishers = () => {
-	// 	if (file()) {
-	// 		return Object.groupBy(
-	// 			publisherRegistry.sinks(file()!),
-	// 			x => x.category ?? "other",
-	// 		)
-	// 	}
-	// 	return {}
-	// }
 
 	return (
 		<Suspense>
@@ -108,7 +95,7 @@ export default function DocumentDockTab(props: {url: DocumentURL}) {
 						<ContextMenu.Item
 							class="popmenu__item"
 							onSelect={() => dockAPI.closePanel(props.url)}>
-							close tab
+							Close Tab
 						</ContextMenu.Item>
 						<ContextMenu.Item
 							class="popmenu__item"
@@ -117,89 +104,15 @@ export default function DocumentDockTab(props: {url: DocumentURL}) {
 									if (id != props.url) dockAPI.closePanel(id)
 								}
 							}}>
-							close other tabs
+							Close All Other Tabs
 						</ContextMenu.Item>
 						<ContextMenu.Separator />
 						<ContextMenu.Item
 							class="popmenu__item"
 							onSelect={() => navigator.clipboard.writeText(props.url)}>
-							copy url
+							Copy URL
 						</ContextMenu.Item>
-						{/* <Show
-							when={
-								entry() && file() && Object.keys(publishers()).length
-							}>
-							<For each={Object.entries(publishers())}>
-								{([category, publishers]) => {
-									if (category == "other") {
-										return (
-											<For each={publishers}>
-												{publisher => {
-													return (
-														<ContextMenu.Item
-															class="popmenu__item"
-															onSelect={() => {
-																publisher.publish({
-																	entry: entry()!,
-																	handle: fileHandle()!,
-																})
-															}}>
-															{publisher.displayName}
-														</ContextMenu.Item>
-													)
-												}}
-											</For>
-										)
-									} else {
-										return (
-											<ContextMenu.Sub overlap gutter={-10}>
-												<ContextMenu.SubTrigger class="popmenu__sub-trigger">
-													publish to {category}
-													<div class="popmenu__item-right-slot">
-														<Icon name="alt-arrow-right-linear" />
-													</div>
-												</ContextMenu.SubTrigger>
-												<ContextMenu.Portal>
-													<ContextMenu.SubContent class="popmenu__content popmenu__sub-content">
-														<For each={publishers}>
-															{publisher => {
-																return (
-																	<ContextMenu.Item
-																		class="popmenu__item"
-																		onSelect={() => {
-																			publisher.publish({
-																				entry: entry()!,
-																				handle:
-																					fileHandle()!,
-																			})
-																		}}>
-																		{publisher.displayName}
-																	</ContextMenu.Item>
-																)
-															}}
-														</For>
-													</ContextMenu.SubContent>
-												</ContextMenu.Portal>
-											</ContextMenu.Sub>
-										)
-									}
-								}}
-							</For>
-						</Show> */}
-						{/* <Show when={!home()?.files.includes(docinfo().url)}>
-							<ContextMenu.Item
-								class="popmenu__item"
-								onSelect={() => {
-									// eslint-disable-next-line solid/reactivity
-									changeHome(home => {
-										if (!home.files.includes(docinfo().url)) {
-											home.files.push(docinfo().url)
-										}
-									})
-								}}>
-								add to sidebar
-							</ContextMenu.Item>
-						</Show> */}
+
 						<OpenWithContextMenu
 							url={asAutomergeURL(props.url)}
 							currentEditorID={editorID()}
