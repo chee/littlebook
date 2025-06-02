@@ -11,13 +11,15 @@ type ParsedDocumentURL = Record<string, string> & {
 
 export const isValidAutomergeURL = isValidAutomergeUrl
 
-export function asAutomergeURL(url: AutomergeURLOrDocumentURL): AutomergeURL {
+export function asAutomergeURL<T extends AutomergeURL = AutomergeURL>(
+	url: AutomergeURLOrDocumentURL,
+): T {
 	if (isValidAutomergeURL(url)) {
-		return url
+		return url as T
 	}
 	const docinfo = parseDocumentURL(url)
 	if (isValidAutomergeURL(docinfo.url)) {
-		return docinfo.url
+		return docinfo.url as T
 	}
 	throw new Error(`invalid documentURL: ${url}`)
 }

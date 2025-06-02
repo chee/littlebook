@@ -18,6 +18,38 @@
 	color: var(--sidebar-line);
 }
 
+.sidebar-header {
+	margin-top: var(--space-1);
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	padding-inline: var(--space-2);
+	padding-block: var(--space-1);
+	button {
+		background: var(--sidebar-widget-fill);
+		padding: var(--space-1) var(--space-2);
+		border-radius: 4px;
+		&:hover {
+			box-shadow: 0 0 0 2px rgba(0, 0, 0, 1);
+		}
+	}
+}
+
+.sidebar-footer {
+	margin-top: auto;
+	min-height: var(--space-7);
+	border-top: 1px solid var(--sidebar-widget-line);
+	padding-inline: var(--space-2);
+	padding-bottom: calc(env(safe-area-inset-bottom) + var(--space-4));
+	padding-top: var(--space-4);
+	background: color-mix(
+		in oklab,
+		var(--sidebar-fill) 96%,
+		var(--sidebar-line)
+	);
+}
+
 .sidebar-widgets {
 	height: 100%;
 	display: flex;
@@ -53,7 +85,7 @@
 .sidebar-widget__header {
 	font-size: 1rem;
 	user-select: none;
-	font-weight: 500;
+	font-weight: 600;
 	padding-block: var(--space-2);
 	padding-inline: var(--space-2);
 	display: flex;
@@ -65,6 +97,9 @@
 }
 
 .sidebar-widget__header-actions {
+	display: flex;
+	flex-direction: row;
+	gap: var(--space-1);
 	margin-left: auto;
 	> * {
 		display: flex;
@@ -80,4 +115,55 @@
 .sidebar-widget__content {
 	display: flex;
 	flex-direction: column;
+}
+
+.sidebar-widget__link {
+	text-decoration: none;
+	color: var(--sidebar-link-line);
+	background: var(--sidebar-section-fill);
+	padding-block: var(--space-2);
+	padding-inline: var(--space-2);
+	display: flex;
+	min-width: 0;
+	gap: var(--space-2);
+	&[aria-current] {
+		background: var(--sidebar-link-fill--current);
+	}
+	&:first-child {
+		border-top-left-radius: 4px;
+		border-top-right-radius: 4px;
+	}
+	&:last-child {
+		border-bottom-left-radius: 4px;
+		border-bottom-right-radius: 4px;
+	}
+}
+
+:root {
+	--sidebar-link-line: var(--sidebar-section-line);
+	--sidebar-link-fill: var(--sidebar-section-fill);
+	--sidebar-link-fill--current: var(--selected-fill);
+}
+
+.sidebar-meta-link {
+	font-weight: 500;
+	text-decoration: none;
+	color: var(--sidebar-link-line);
+	background: var(--sidebar-section-fill);
+	padding-block: var(--space-2);
+	padding-inline: var(--space-2);
+	display: flex;
+	min-width: 0;
+	gap: var(--space-2);
+	&[aria-current] {
+		background: var(--sidebar-link-fill--current);
+	}
+	&:first-child {
+		border-top-left-radius: 4px;
+		border-top-right-radius: 4px;
+	}
+	&:last-child {
+		border-bottom-left-radius: 4px;
+		border-bottom-right-radius: 4px;
+	}
 }

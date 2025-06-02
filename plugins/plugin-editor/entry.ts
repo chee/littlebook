@@ -1,9 +1,10 @@
-import type {LittlebookPluginShape} from "./src/shapes/shapes.ts"
 import type {CreateSource} from "@littlebook/plugin-api/types/source.ts"
 import type PluginAPI from "@littlebook/plugin-api"
 import view from "./src/views/plugin-editor.tsx"
 import dedent from "dedent"
+import type {LittlebookPluginShape} from "./src/shapes/shapes.ts"
 
+// todo make this a working plugin with good types
 const defaultPluginSrc = {
 	views: {
 		"counter.tsx": dedent`
@@ -58,7 +59,7 @@ const defaultPluginSrc = {
 	`,
 }
 
-const createPlugin: CreateSource<PluginShape> = {
+const createPlugin: CreateSource<LittlebookPluginShape> = {
 	id: "create-plugin",
 	category: "new",
 	displayName: "Plugin",

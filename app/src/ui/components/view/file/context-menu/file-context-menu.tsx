@@ -2,14 +2,14 @@ import type {Doc, DocHandle} from "@automerge/vanillajs"
 import {ContextMenu} from "@kobalte/core/context-menu"
 import {createRoot, For, Match, Switch, type Accessor} from "solid-js"
 import {createStore} from "solid-js/store"
-import Icon from "../icons/icon.tsx"
+import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
 import type {
 	FileMenuAction,
 	FileMenuChoice,
 	FileMenuItem,
 	FileMenuSubMenu,
-} from ":/domain/file/file-menu.ts"
-import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
+} from "@littlebook/plugin-api/types/file-menu.ts"
+import Icon from ":/ui/components/icons/icon.tsx"
 
 export const [fileMenu, updateFileMenu] = createRoot(() => {
 	const [fileMenu, updateFileMenu] = createStore<FileMenuItem[]>([])
@@ -43,7 +43,11 @@ export function FileContextMenu(props: {
 						</ContextMenu.Item>
 					</Match>
 
-					<Match when={fileAction.type == "sub" && when(fileAction.when)}>
+					<Match
+						when={
+							fileAction.type == "sub" &&
+							("when" in fileAction ? when(fileAction.when) : true)
+						}>
 						<ContextMenu.Sub overlap gutter={-10}>
 							<ContextMenu.SubTrigger class="popmenu__sub-trigger">
 								{(fileAction as FileMenuSubMenu).label}

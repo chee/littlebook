@@ -29,6 +29,10 @@ export default {
 	displayName: "github preview",
 	id: "github-markdown-preview" as ViewID,
 	schema: MarkdownShape,
+	styles: [
+		githubMarkdownCSS,
+		".markdown-preview, .markdown-body {height: 100%} .markdown-body {padding: 1rem}",
+	],
 	render(props) {
 		// eslint-disable-next-line solid/reactivity
 		const [text, updateText] = createSignal(props.doc().text)
@@ -42,14 +46,6 @@ export default {
 
 		return (
 			<div class="markdown-preview">
-				<style>{
-					/* css */ `
-					.markdown-preview {
-						padding: 1rem;
-						${githubMarkdownCSS}
-					}
-					`
-				}</style>
 				<div class="markdown-body">{html.latest}</div>
 			</div>
 		) as HTMLElement

@@ -2,8 +2,14 @@
 	--popmenu-selected-fill: var(--selected-fill);
 	--popmenu-selected-line: var(--selected-line);
 	--popmenu-hover-fill: var(--almost-selected-fill);
-	--popmenu-fill: var(--page-offset);
-	--popmenu-line: var(--page-line);
+	--popmenu-hover-line: var(--almost-selected-line);
+	--popmenu-fill: var(--page-line);
+	--popmenu-line: var(--page-fill);
+	--popmenu-line--dim: color-mix(
+		in oklab,
+		var(--popmenu-line) 50%,
+		var(--popmenu-fill)
+	);
 }
 
 .popmenu {
@@ -70,12 +76,14 @@
 	z-index: 99999999;
 	min-width: 100px;
 	background-color: var(--popmenu-fill);
-	border: 1px solid var(--popmenu-line);
+	/*  */
+	/* border: 1px solid var(--popmenu-line); */
 	outline: none;
 	transform-origin: var(--kb-menu-content-transform-origin);
 	animation: contentHide 250ms ease-in forwards;
 	overflow: hidden;
 	border-radius: 3px;
+	box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.1);
 }
 .popmenu__content[data-expanded],
 .popmenu__sub-content[data-expanded] {
@@ -89,7 +97,7 @@
 	cursor: default;
 	font-size: 1em;
 	line-height: 1;
-	color: hsl(240 4% 16%);
+	color: var(--popmenu-line);
 	display: flex;
 	align-items: center;
 	height: 32px;
@@ -102,7 +110,7 @@
 .popmenu__checkbox-item[data-disabled],
 .popmenu__radio-item[data-disabled],
 .popmenu__sub-trigger[data-disabled] {
-	color: hsl(240 5% 65%);
+	color: var(--popmenu-line--dim);
 	opacity: 0.5;
 	pointer-events: none;
 }
@@ -111,18 +119,18 @@
 .popmenu__radio-item[data-highlighted],
 .popmenu__sub-trigger[data-highlighted] {
 	outline: none;
-	background-color: var(--popmenu-hover-fill);
+	background-color: var(--popmenu-selected-fill);
 	color: var(--popmenu-selected-line);
 }
 .popmenu__group-label {
 	padding: 0 24px;
 	font-size: 14px;
 	line-height: 32px;
-	color: hsl(240 4% 46%);
+	color: var(--popmenu-line--dim);
 }
 .popmenu__separator {
 	height: 1px;
-	border-top: 1px solid hsl(240 6% 90%);
+	border-top: 1px solid var(--popmenu-line--dim);
 	margin: 6px;
 }
 .popmenu__item-indicator {
@@ -138,14 +146,14 @@
 	margin-left: auto;
 	padding-left: 20px;
 	font-size: 1em;
-	color: hsl(240 4% 46%);
+	color: var(--popmenu-line);
 }
 
 [data-highlighted] > .popmenu__item-right-slot {
 	color: var(--popmenu-fill);
 }
 [data-disabled] .popmenu__item-right-slot {
-	color: hsl(240 5% 65%);
+	color: var(--popmenu-line--dim);
 	opacity: 0.5;
 }
 @keyframes contentShow {
@@ -167,4 +175,9 @@
 		opacity: 0;
 		transform: scale(0.96);
 	}
+}
+
+.popmenu__close {
+	background: transparent;
+	border: transparent;
 }

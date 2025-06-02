@@ -1,6 +1,6 @@
+import * as Comlink from "comlink"
 import {createSystem, createVirtualTypeScriptEnvironment} from "@typescript/vfs"
 import ts from "typescript"
-import * as Comlink from "comlink"
 import {createWorker} from "@valtown/codemirror-ts/worker"
 import {setupTypeAcquisition} from "@typescript/ata"
 import fsMap from "./libmap/_map.ts"
@@ -14,10 +14,13 @@ import {automergeWasmBase64} from "@automerge/automerge/automerge.wasm.base64"
 import {next as Automerge} from "@automerge/automerge/slim"
 import type {Remote} from "comlink"
 import LittlebookPluginAPITypes from "./types/LittlebookPluginAPITypes.ts"
+import LittlebookImportTypes from "./types/import-types.ts"
 import type {LittlebookPluginShape} from "../shapes/shapes.ts"
 import {cd, getFileContentWithJSXPragma} from "../util/path.ts"
-import bundle from "./esbuild/bundle.ts"
-import walkImports from "./babel/walk-imports.ts"
+import {walkImportsAndRequires} from "./babel/walk-imports.ts"
+import {fetchXTypescriptTypes as fetchXTypescriptTypes} from "./types/x-typescript-types.ts"
+import debug from "debug"
+const log = debug("littlebook:plugin-editor:worker")
 
 const repo = new Repo({
 	network: [new WebSocketClientAdapter(`wss://galaxy.observer`)],
@@ -47,7 +50,11 @@ const vfs = (async function () {
 		ts,
 		compilerOptions
 	)
-	vfs.createFile("global.d.ts", LittlebookPluginAPITypes)
+	vfs.createFile(
+		"/node_modules/littlebook/index.d.ts",
+		LittlebookPluginAPITypes
+	)
+	vfs.createFile("/imports.d.ts", LittlebookImportTypes)
 	return vfs
 })()
 
@@ -69,15 +76,39 @@ const typescriptATA = setupTypeAcquisition({
 	},
 })
 
+const files = new Map<string, string>()
+
+const javascriptFilenameRegex = /\.(m|c)?(t|j)sx?$/
+
 function ata(code: string, filePath: string) {
+	if (!javascriptFilenameRegex.test(filePath)) {
+		log("skipping ata for not javascript file:", filePath)
+		return
+	}
+
 	typescriptATA(code)
-	walkImports(code, async importPath => {
-		if (importPath.startsWith(".")) {
-			const fullPath = cd(filePath, importPath)
+
+	walkImportsAndRequires(code, async (identifier, nodePath) => {
+		const env = typescriptWorker.getEnv()
+		env.createFile(
+			`/node_modules/https://esm.sh/valibot/index.d.ts`,
+			`declare module "https://esm.sh/valibot" {}`
+		)
+		if (identifier == "littlebook") {
+		} else if (identifier.startsWith(".")) {
+			const fullPath = cd(filePath, identifier)
 			const content = await getRelativeImportContent(fullPath)
-			content && typescriptWorker.getEnv().createFile(fullPath, content)
-		} else if (importPath.startsWith("https://")) {
-			// download-types x-typescript-typeswise
+			content && env.createFile(fullPath, content)
+		} else if (identifier.startsWith("https://")) {
+			const content = await fetchXTypescriptTypes(identifier, files)
+			if (!content) return
+
+			for (const [path, code] of content.entries()) {
+				env.createFile(
+					`/node_modules/${path}/index.d.ts`,
+					`declare module "${path}" {${code}}`
+				)
+			}
 		}
 	})
 }
@@ -97,10 +128,6 @@ async function getRelativeImportContent(path: string) {
 }
 
 const pluginEditorWorker = {
-	async compile(url: AutomergeUrl) {
-		const handle = await repo.find<LittlebookPluginShape>(url)
-		return bundle(handle)
-	},
 	tsWorker: typescriptWorker,
 	ata(code: string, filePath: string) {
 		ata(code, filePath)

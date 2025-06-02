@@ -3,9 +3,9 @@
 	--dark-blue-dark: oklch(from var(--dark-blue) calc(l * 0.8) c h);
 	--dark-blue-light: oklch(from var(--dark-blue) calc(l * 1.2) c h);
 
-	--f-blue: oklch(0.57 0.23 262.55 / 1);
-	--f-blue-dark: oklch(from var(--f-blue) calc(l * 0.8) c h);
-	--f-blue-light: oklch(from var(--f-blue) calc(l * 1.2) c h);
+	--orla-blue: oklch(0.57 0.23 262.55 / 1);
+	--orla-blue-dark: oklch(from var(--orla-blue) calc(l * 0.8) c h);
+	--orla-blue-light: oklch(from var(--orla-blue) calc(l * 1.2) c h);
 	--cherries-fill: oklch(0.95 0.02 5.09 / 1);
 	--cherries-line: oklch(0.56 0.2 10.02 / 1);
 

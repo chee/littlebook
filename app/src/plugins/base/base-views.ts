@@ -3,8 +3,10 @@ import * as v from "valibot"
 import {createEffect} from "solid-js"
 import type PluginAPI from "@littlebook/plugin-api"
 import type {ViewID} from "@littlebook/plugin-api/types/view.ts"
+import worseMarkdownPreview from ":/plugins/base/views/worse-markdown-preview.tsx"
 
 export default async function registerBaseViews(api: PluginAPI) {
+	api.registerView(worseMarkdownPreview)
 	api.registerView(githubMarkdownPreview)
 
 	api.registerView({

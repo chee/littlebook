@@ -5,13 +5,15 @@ import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import activateBasePlugin from ":/plugins/base/base-plugin.ts"
 import {useUserDocContext} from ":/domain/user/user.ts"
 import DockProvider, {Dock} from ":/ui/dock/dock.tsx"
-import FileViewer from ":/ui/components/file-viewer/file-viewer.tsx"
+import FileView from ":/ui/components/view/file/fileview"
 import DocumentDockTab from ":/ui/dock/components/document-tab"
 import Icon from ":/ui/components/icons/icon.tsx"
-import {usePluginAPI} from "@littlebook/plugin-api"
-import {useSourceRegistry} from "@littlebook/plugin-api/registries/source-registry.ts"
-import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
-import StandaloneViewer from ":/ui/components/file-viewer/standalone-viewer.tsx"
+import {
+	usePluginAPI,
+	useSourceRegistry,
+	useViewRegistry,
+} from "@littlebook/plugin-api"
+import StandaloneViewer from ":/ui/components/view/standalone/standalone-viewer"
 import StandaloneViewTab from ":/ui/dock/components/standalone-tab"
 import {Workspace} from ":/ui/layouts/workspace/workspace.tsx"
 
@@ -40,7 +42,7 @@ export default function Main() {
 				components={{
 					document(props) {
 						return (
-							<FileViewer
+							<FileView
 								url={props.id}
 								isActive={props.dockAPI.activePanelID == props.id}
 							/>

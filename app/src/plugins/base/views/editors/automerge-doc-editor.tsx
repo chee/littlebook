@@ -12,7 +12,7 @@ import "./automerge-doc-editor.css"
 import {updateText, type DocHandle} from "@automerge/vanillajs"
 import {createStore, reconcile} from "solid-js/store"
 import {createSolidTable, getCoreRowModel} from "@tanstack/solid-table"
-import {any, record, string} from "valibot"
+import {Schema} from "effect"
 import {setProperty} from "@littlebook/plugin-editor/src/util/path.ts"
 import type {FileEditor} from "@littlebook/plugin-api/types/view.ts"
 
@@ -143,7 +143,9 @@ const AutomergeDocEditor = {
 	category: "editor",
 	displayName: "automerge doc editor",
 	id: "automerge-doc-editor",
-	schema: record(string(), any()),
+	schema: Schema.standardSchemaV1(
+		Schema.Record({key: Schema.String, value: Schema.Any}),
+	),
 	render(props) {
 		const doc = createDocumentProjection(() => props.handle)
 		return (

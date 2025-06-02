@@ -1,6 +1,6 @@
 import type {DocHandle, Prop} from "@automerge/vanillajs"
-import type {LittlebookPluginShape} from "../shapes/shapes.ts"
 import type {Doc} from "@automerge/automerge"
+import type {LittlebookPluginShape} from "@littlebook/plugin-api/workers/shapes.ts"
 
 export type LBPSrcPath = ["src", ...Prop[]]
 export type LBPSrcFilePath = ["src", ...Prop[], string]
@@ -65,19 +65,19 @@ export function getFileContentWithJSXPragma({
 export function getProperty(
 	obj: any,
 	path: (string | number)[]
-): string | undefined {
+): string | undefined | object {
 	let current = obj
 	for (const key of path) {
 		if (current == null || typeof current !== "object") return undefined
 		current = current[key]
 	}
-	return typeof current === "string" ? current : undefined
+	return current
 }
 
 export function setProperty(
 	obj: any,
 	path: (string | number)[],
-	value: string | number | undefined
+	value: string | number | undefined | object
 ): void {
 	let current = obj
 	for (let i = 0; i < path.length - 1; i++) {
@@ -142,4 +142,20 @@ export function findEntryFileName(doc: Doc<LittlebookPluginShape>) {
 	throw new Error(
 		`No entry file found in plugin. Expected "entry.tsx", "entry.ts", "entry.jsx", or "entry.js".`
 	)
+}
+
+export function eq(a: Prop[], b: Prop[]): boolean {
+	if (a === b) return true
+	if (a.length !== b.length) return false
+	for (let i = 0; i < a.length; i++) {
+		if (a[i] !== b[i]) return false
+	}
+	return true
+}
+
+export function has(a: Prop[][], b: Prop[]): boolean {
+	for (const item of a) {
+		if (eq(item, b)) return true
+	}
+	return false
 }

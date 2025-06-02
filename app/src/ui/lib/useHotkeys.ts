@@ -90,16 +90,6 @@ export function useHotkeys(
 	const owner = getOwner()
 
 	function onkeydown(event: KeyboardEvent) {
-		if (
-			event.target instanceof HTMLButtonElement ||
-			event.target instanceof HTMLInputElement ||
-			event.target instanceof HTMLTextAreaElement ||
-			(event.target as HTMLElement).nodeName?.includes("-")
-		) {
-			// don't trigger the space key if the button is focused
-			return
-		}
-
 		if (shouldTriggerOnKeydown) {
 			const bits = modshift(event)
 
@@ -107,7 +97,14 @@ export function useHotkeys(
 				if (shouldPreventDefault()) {
 					event.preventDefault()
 				}
-				runWithOwner(owner, () => action(event))
+				if (
+					event.target instanceof HTMLButtonElement ||
+					event.target instanceof HTMLInputElement ||
+					event.target instanceof HTMLTextAreaElement ||
+					(event.target as HTMLElement).nodeName?.includes("-")
+				) {
+					runWithOwner(owner, () => action(event))
+				}
 			}
 		}
 	}

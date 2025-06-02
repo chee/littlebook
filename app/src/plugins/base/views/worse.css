@@ -1,0 +1,17 @@
+markdown-preview {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	.markdown-body {
+		max-width: 70ex;
+		margin: auto;
+	}
+	.markdown-content {
+		overflow: scroll;
+	}
+	.markdown__toolbar {
+		position: fixed;
+		bottom: 2rem;
+	}
+}

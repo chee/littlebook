@@ -1,0 +1,93 @@
+:root {
+	--view-fill: var(--dock-fill);
+	--view-line: var(--dock-line);
+	--view-status-bar__font-size: 12px;
+	--view-status-bar__height: 30px;
+
+	--view-status-bar-fill: color-mix(
+		in srgb,
+		var(--view-fill),
+		var(--view-line) 2%
+	);
+	--view-status-bar-border-line: color-mix(
+		in srgb,
+		var(--view-fill),
+		var(--view-line) 10%
+	);
+
+	--view-status-item-fill--inactive: color-mix(
+		in srgb,
+		var(--view-fill),
+		var(--view-line) 5%
+	);
+	--view-status-item-line--inactive: color-mix(
+		in srgb,
+		var(--view-fill),
+		var(--view-line) 40%
+	);
+	--view-status-item-border-line--inactive: transparent;
+
+	--view-status-item-fill--active: var(--russian-violet);
+	--view-status-item-line--active: white;
+	--view-status-item-border-line--active: transparent;
+}
+
+.view {
+	height: 100%;
+	overflow: scroll;
+	background: var(--view-fill);
+	color: var(--view-line);
+	display: flex;
+	flex-direction: column;
+}
+
+littlebook-view {
+	&,
+	> div {
+		height: 100%;
+		overflow: scroll;
+		background: var(--view-fill);
+		color: var(--view-line);
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.view__content {
+	height: calc(100% - var(--view-status-bar__height));
+	width: 100%;
+	overflow: scroll;
+	> * {
+		height: 100%;
+		width: 100%;
+	}
+}
+
+.view-status-bar {
+	--item-fill: var(--view-status-item-fill--inactive);
+	--item-line: var(--view-status-item-line--inactive);
+	--item-border-line: var(--view-status-item-border-line--inactive);
+	height: var(--view-status-bar__height);
+	font-size: var(--view-status-bar__font-size);
+	display: flex;
+	align-items: center;
+	padding-inline: 8px;
+	gap: 8px;
+	border-top: 1px solid var(--view-status-bar-border-line);
+	background: var(--view-status-bar-fill);
+
+	> * {
+		background: var(--item-fill);
+		color: var(--item-line);
+		padding: 1px 4px;
+		border-radius: 2px;
+		border: 1px solid var(--item-border-line);
+		user-select: none;
+	}
+}
+
+.view-status-bar--active {
+	--item-fill: var(--view-status-item-fill--active);
+	--item-line: var(--view-status-item-line--active);
+	--item-border-line: var(--view-status-item-border-line--active);
+}

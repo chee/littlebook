@@ -1,0 +1,22 @@
+.emoji-picker__trigger {
+	margin: 0;
+	padding: 0;
+	/* border: 1px solid transparent; */
+	border-radius: 7px;
+	&:hover {
+		/* border-color: var(--page-dark); */
+		/* transition: border-color 0.5s ease-out, background-color 0.4s ease-out; */
+		/* background-color: var(--pop); */
+	}
+}
+
+.emoji-picker {
+	padding: 0 !important;
+	border: 2px solid black;
+	display: flex;
+}
+
+emoji-picker {
+	--background: var(--popmenu-fill);
+	--border-color: var(--popmenu-fill);
+}

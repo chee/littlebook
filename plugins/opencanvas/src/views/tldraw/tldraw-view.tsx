@@ -10,9 +10,12 @@ import {OCIFCore04} from "../../types/v0.4.ts"
 import {createRoot} from "react-dom/client"
 import {Tldraw} from "@tldraw/tldraw"
 import {TldrawInner} from "./tldraw-inner.tsx"
-import "tldraw/tldraw.css"
 
 const render = function render(api) {
+	api.adoptStyles(
+		import("tldraw/tldraw.css?inline"),
+		":host > div {height: 100%}"
+	)
 	const div = document.createElement("div")
 	const root = createRoot(div)
 

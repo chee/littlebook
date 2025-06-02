@@ -4,16 +4,16 @@
 // // import repo from ":/core/sync/automerge.ts"
 // // import {JavaScriptEditorShape} from "./shapes/shapes.ts"
 
-// // const automergeFileSink: FileSink<unknown> = {
-// // 	category: "file",
-// // 	id: "automerge-file-sink",
-// // 	displayName: "automerge file",
-// // 	schema: v.record(v.string(), v.any()),
-// // 	// deno-lint-ignore require-await
-// // 	async publish({handle, entry}) {
-// // 		return new File([Automerge.save(handle.doc())], `${entry.name}.automerge`)
-// // 	},
-// // }
+// const automergeFileSink: FileSink<unknown> = {
+// 	category: "file",
+// 	id: "automerge-file-sink",
+// 	displayName: "automerge file",
+// 	schema: v.record(v.string(), v.any()),
+// 	// deno-lint-ignore require-await
+// 	async publish({handle, entry}) {
+// 		return new File([Automerge.save(handle.doc())], `${entry.name}.automerge`)
+// 	},
+// }
 
 // // const compileToEditor: VoidSink<JavaScriptEditorShape> = {
 // // 	id: "compile-to-editor",

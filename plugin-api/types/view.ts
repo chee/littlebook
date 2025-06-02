@@ -6,11 +6,18 @@ import type {JSX} from "solid-js"
 
 export type ViewID = string & {__viewID: true}
 
+type ViewStyle = string
+type MaybePromise<T> = T | Promise<T>
+type MaybeModule<T> = T | {default: T}
+
+export type ViewStylesType = MaybePromise<MaybeModule<ViewStyle>>
+
 interface ViewBase<API> {
 	id: ViewID
 	icon?: string
 	displayName?: string
 	category: string
+	styles?: ViewStylesType | ViewStylesType[]
 	render(api: API): HTMLElement
 }
 
@@ -57,6 +64,9 @@ interface ViewAPIBase {
 	isActive(): boolean
 	onCleanup(cleanup: () => void): void
 	onMount(mount: () => void): void
+	shadow: ShadowRoot
+	adoptStyles(...sheet: ViewStylesType[]): void
+	// todo stick this on pluginAPI
 	toast: {
 		show(
 			title: JSX.Element,

@@ -1,4 +1,4 @@
-import {dirname, join} from "../../util/path.ts"
+import {dirname, join} from "../path.ts"
 import type {Plugin} from "esbuild-wasm"
 
 export default function virtual(modules: Record<string, string>): Plugin {
@@ -14,7 +14,7 @@ export default function virtual(modules: Record<string, string>): Plugin {
 					return {path: id, namespace: "virtual-file-system"}
 				}
 
-				const resolved = join(dirname(args.importer), id)
+				const resolved = join(dirname(args.importer), args.path)
 				if (resolvedIds.has(resolved)) {
 					return {path: resolved, namespace: "virtual-file-system"}
 				}

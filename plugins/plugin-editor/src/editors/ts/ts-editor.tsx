@@ -23,7 +23,7 @@ import {
 	getExtension,
 	type LBPSrcFilePath,
 } from "../../util/path.ts"
-import {createBaseEditor} from "../base/base-editor.tsx"
+import {createBaseEditor, type BaseEditorOpts} from "../base/base-editor.tsx"
 import type {PluginEditorWorker} from "../../worker/worker.ts"
 
 const extLangMap = {
@@ -33,13 +33,7 @@ const extLangMap = {
 	tsx: tsxLanguage,
 } as const
 
-export default function createTypescriptEditor(opts: {
-	parent: HTMLElement
-	handle: DocHandle<LittlebookPluginShape>
-	path: LBPSrcFilePath
-	tsWorker: WorkerShape
-	worker: PluginEditorWorker
-}) {
+export default function createTypescriptEditor(opts: BaseEditorOpts) {
 	const ext = getExtension(opts) as keyof typeof extLangMap
 	if (!(ext in extLangMap)) {
 		throw new Error(
@@ -64,12 +58,7 @@ export default function createTypescriptEditor(opts: {
 			tsSync(),
 			tsLinterWorker(),
 			tsHover(),
-			tsGoto({
-				// gotoHandler(currentPath, hoverData, view) {
-				// 	console.log(currentPath, hoverData, view)
-				// 	return undefined
-				// },
-			}),
+			tsGoto(),
 			tsTwoslash(),
 			extLangMap[ext] ?? tsxLanguage,
 		],

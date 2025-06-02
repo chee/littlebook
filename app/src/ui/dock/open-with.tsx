@@ -1,33 +1,25 @@
-import {Show, For, createMemo} from "solid-js"
+import {Show, For} from "solid-js"
 import {ContextMenu} from "@kobalte/core"
 import Icon from "../components/icons/icon.tsx"
 import type {OpenDocumentOptions} from "./dock-api.ts"
-import {useDocument} from "solid-automerge"
-import {
-	parseDocumentURL,
-	renderDocumentURL,
-	type AutomergeURL,
-	type DocumentURL,
-} from ":/core/sync/url.ts"
-import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
-import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
+import {renderDocumentURL, type DocumentURL} from ":/core/sync/url.ts"
+import type {FileEntry} from ":/domain/entry/file-entry.ts"
+import {useViewRegistry} from "@littlebook/plugin-api"
 
 export default function OpenWithContextMenu(props: {
-	url: AutomergeURL
+	entry: FileEntry
+	file: unknown
 	currentEditorID?: string
 	openDocument: (url: DocumentURL, opts: OpenDocumentOptions) => void
 }) {
-	const docinfo = createMemo(() => parseDocumentURL(props.url))
-	const [entry, entryHandle] = useDocument<FileEntryDoc>(() => docinfo().url)
-	const [file] = useDocument(() => entry()?.url)
 	const viewRegistry = useViewRegistry()
-	const views = () => [...(viewRegistry.views(file()!) ?? [])]
+	const views = () => [...(viewRegistry.views(props.file) ?? [])]
 
 	return (
 		<Show when={views().length > 1}>
 			<ContextMenu.Sub overlap gutter={-10}>
 				<ContextMenu.SubTrigger class="popmenu__sub-trigger">
-					open with
+					Open with
 					<div class="popmenu__item-right-slot">
 						<Icon name="alt-arrow-right-linear" />
 					</div>
@@ -40,12 +32,10 @@ export default function OpenWithContextMenu(props: {
 								<ContextMenu.Item
 									onSelect={() => {
 										const url = renderDocumentURL({
-											url: entryHandle()!.url,
+											url: props.entry.url,
 											editor: choice.id,
 										})
-										props.openDocument(url, {
-											side: "right",
-										})
+										props.openDocument(url, {side: "right"})
 									}}
 									disabled={choice.id == props.currentEditorID}
 									class="popmenu__item">

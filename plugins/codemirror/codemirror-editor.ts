@@ -34,31 +34,13 @@ function render(
 	const getSchemeTheme = () => {
 		return darkmatch.matches ? dracula : github
 	}
-	const style = new CSSStyleSheet()
-	style.replaceSync(/*css*/ `
-		.cm-editor {
-			height: 100%;
-			font-size: var(--font-size);
-			font-family: var(--family-mono);
-			background: var(--fill);
-			color: var(--line);
-		}
-	`)
-	try {
-		if (document.adoptedStyleSheets) {
-			document.adoptedStyleSheets.push(style)
-		} else {
-			document.adoptedStyleSheets = [style]
-		}
-	} catch {
-		/* is ok */
-	}
 
 	const file = props.handle.doc()
 
 	const view = new EditorView({
 		doc: file?.text ?? "",
 		parent,
+		root: props.shadow,
 		extensions: [
 			minimalSetup,
 			indentUnit.of("\t"),
@@ -358,6 +340,16 @@ export default {
 	category: "editor",
 	render,
 	getFileMenu,
-	// todo
+	styles: [
+		/*css*/ `
+		.cm-editor {
+			height: 100%;
+			font-size: var(--font-size);
+			font-family: var(--family-mono);
+			/* background: var(--fill); */
+			/* color: var(--line); */
+		}
+	`,
+	],
 	schema: CodeShape,
 } satisfies FileEditor<CodeShape>

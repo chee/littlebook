@@ -1,3 +1,4 @@
+// todo this is, like, a viewmodel or something?
 import {createMemo} from "solid-js"
 import {useDocument} from "solid-automerge"
 import type {FileEntryDoc, FileEntryURL} from ":/docs/file-entry-doc.ts"
@@ -6,8 +7,8 @@ import {
 	parseDocumentURL,
 	type AutomergeURLOrDocumentURL,
 } from ":/core/sync/url.ts"
-import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
 import type {View} from "@littlebook/plugin-api/types/view.ts"
+import {useViewRegistry} from "@littlebook/plugin-api"
 
 // todo usePerfectIcon that starts with entry, then editor,
 // then defaults to a document icon

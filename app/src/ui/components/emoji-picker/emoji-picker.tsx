@@ -5,6 +5,9 @@ import {Popover} from "@kobalte/core/popover"
 
 import bemby, {type BembyModifier} from "@chee/bemby"
 import {clsx} from "clsx"
+import type {DocHandle} from "@automerge/automerge-repo"
+import {setIcon} from ":/docs/traits/icon.ts"
+import {createDocumentProjection} from "solid-automerge"
 
 declare module "solid-js" {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
@@ -38,7 +41,7 @@ declare module "solid-js" {
 export default function EmojiPicker(props: {
 	icon: string
 	onEmoji(emoji: string): void
-	modifiers: BembyModifier | BembyModifier[]
+	modifiers?: BembyModifier | BembyModifier[]
 }) {
 	const [open, setOpen] = createSignal(false)
 	return (
@@ -51,7 +54,7 @@ export default function EmojiPicker(props: {
 			<Popover.Portal>
 				<Popover.Content
 					class={clsx("popmenu", bemby("emoji-picker", props.modifiers))}>
-					<Popover.CloseButton />
+					<Popover.CloseButton class="popmenu__close" />
 					<emoji-picker
 						class="dark"
 						emoji-version="17.0"
@@ -63,5 +66,24 @@ export default function EmojiPicker(props: {
 				</Popover.Content>
 			</Popover.Portal>
 		</Popover>
+	)
+}
+
+export function IconPicker(props: {
+	handle: DocHandle<{icon?: string}> | undefined
+	fallback: string
+	modifiers?: BembyModifier | BembyModifier[]
+}) {
+	const doc = createDocumentProjection<{icon?: string}>(() => props.handle)
+	return (
+		<EmojiPicker
+			icon={doc()?.icon || props.fallback || "👄"}
+			onEmoji={emoji => {
+				props.handle?.change(doc => {
+					setIcon(doc, emoji)
+				})
+			}}
+			modifiers={["icon" as BembyModifier].concat(props.modifiers)}
+		/>
 	)
 }

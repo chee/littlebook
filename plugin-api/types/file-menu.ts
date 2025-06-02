@@ -1,6 +1,8 @@
 // import type {FileEntry} from "../../app/src/docs/file-entry-doc.ts"
 import type {DocHandle, Doc} from "@automerge/vanillajs"
 
+// todo completely revisit this concept. these are probably more like commands
+//
 export interface FileMenuAction<FileShape = unknown> {
 	type: "action"
 	label: string

@@ -1,7 +1,6 @@
 /** @jsxRuntime automatic */
 /** @jsxImportSource react */
 
-import "./index.css"
 import * as OCIF from "../../types/v0.4.ts"
 import type {
 	FileEditor,
@@ -23,7 +22,9 @@ export default {
 	displayName: "OpenCanvas Excalidraw",
 	category: "editor",
 	render(api) {
+		api.adoptStyles(import("./index.css?inline"))
 		const div = document.createElement("div")
+		div.style.height = "100%"
 		const root = createRoot(div)
 		api.onCleanup(() => root.unmount())
 		root.render(<ExcalidrawView api={api} />)

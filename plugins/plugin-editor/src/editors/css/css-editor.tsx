@@ -1,19 +1,8 @@
 import {css, cssCompletionSource, cssLanguage} from "@codemirror/lang-css"
-import {colorPicker} from "@replit/codemirror-css-color-picker"
-import {createBaseEditor} from "../base/base-editor.tsx"
-import type {DocHandle, Prop} from "@automerge/vanillajs"
-import type {LittlebookPluginShape} from "../../shapes/shapes.ts"
-import type {WorkerShape} from "@valtown/codemirror-ts/worker"
-import {type LBPSrcFilePath} from "../../util/path.ts"
-import type {PluginEditorWorker} from "../../worker/worker.ts"
+import {createBaseEditor, type BaseEditorOpts} from "../base/base-editor.tsx"
+import type {EditorView} from "@codemirror/view"
 
-export default function createStyleEditor(opts: {
-	parent: HTMLElement
-	handle: DocHandle<LittlebookPluginShape>
-	path: LBPSrcFilePath
-	tsWorker: WorkerShape
-	worker: PluginEditorWorker
-}) {
+export default function createStyleEditor(opts: BaseEditorOpts): EditorView {
 	const baseEditor = createBaseEditor({
 		...opts,
 		extensions: [
@@ -21,7 +10,7 @@ export default function createStyleEditor(opts: {
 			cssLanguage.data.of({
 				autocomplete: cssCompletionSource,
 			}),
-			colorPicker,
+			// colorPicker,
 		],
 	})
 	return baseEditor

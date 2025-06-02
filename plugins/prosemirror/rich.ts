@@ -2,7 +2,7 @@ import {init} from "@automerge/prosemirror"
 import {EditorView} from "prosemirror-view"
 import {EditorState} from "prosemirror-state"
 import {exampleSetup} from "prosemirror-example-setup"
-import "prosemirror-menu/style/menu.css"
+
 import {TextShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 import type {FileEditor} from "@littlebook/plugin-api/types/view.ts"
 
@@ -10,6 +10,7 @@ export default {
 	id: "rich",
 	displayName: "rich",
 	category: "editor",
+	styles: [import("prosemirror-menu/style/menu.css?inline")],
 	render(api) {
 		const dom = document.createElement("div")
 		dom.className = "editor content"

@@ -1,62 +1,53 @@
-import defaultRepo from ":/core/sync/automerge.ts"
+import {AreaDoc} from ":/docs/area-doc.ts"
 import type {UserDoc} from ":/docs/user-doc.ts"
 import {useUserId} from ":/domain/user/user-id.ts"
+import usePerfectRepo from ":/lib/sync/useRepo.ts"
+import type {DocHandle} from "@automerge/automerge-repo"
 // import type {DocHandle} from "@automerge/vanillajs/slim"
-import {useDocument} from "solid-automerge"
-import {createContext, useContext, type Accessor} from "solid-js"
+import {useDocHandle, useDocument} from "solid-automerge"
+import {createContext, createMemo, useContext, type Accessor} from "solid-js"
 
-// export function createUser(
-// 	doc: Accessor<UserDoc>,
-// 	handle: Accessor<DocHandle<UserDoc>>,
-// ) {
-// 	return {
-// 		get url() {
-// 			return handle().url
-// 		},
-// 		get name() {
-// 			return doc().name
-// 		},
-// 		// todo make this a useArea(doc().home, repo)
-// 		get home() {
-// 			return doc().home
-// 		},
-// 		get picture() {
-// 			return doc().picture
-// 		},
-// 		get areas() {
-// 			return doc().areas
-// 		},
-// 		get associations() {
-// 			return doc().associations
-// 		},
-// 		get commands() {
-// 			return doc().commands
-// 		},
-// 		get sources() {
-// 			return doc().sources
-// 		},
-// 		get plugins() {
-// 			return doc().plugins
-// 		},
-// 		get views() {
-// 			return doc().views
-// 		},
-// 	}
-// }
-
-// todo eventually we need a rich version of this
-export function useUserDoc(repo = defaultRepo): Accessor<UserDoc | undefined> {
+export function useUserDocument() {
 	const [userId] = useUserId()
-	const [user] = useDocument<UserDoc>(userId, {repo})
+	const [user, handle] = useDocument<UserDoc>(userId, {repo: usePerfectRepo()})
+	return [user, handle] as const
+}
+
+export function useUserDoc(): Accessor<UserDoc | undefined> {
+	const [user] = useUserDocument()
 	return user
 }
 
-export const UserDocContext = createContext<Accessor<UserDoc | undefined>>()
+export const UserContext =
+	createContext<
+		readonly [
+			user: Accessor<UserDoc | undefined>,
+			handle: Accessor<DocHandle<UserDoc> | undefined>,
+		]
+	>()
+
+export const useUserContext = () => {
+	const context = useContext(UserContext)
+	if (!context) {
+		throw new Error(
+			"useUserContext must be used within a UserContext.Provider",
+		)
+	}
+	return context
+}
 
 export const useUserDocContext = () => {
-	const user = useContext(UserDocContext)
-	if (!user) {
-		throw new Error("useUserContext must be used within a UserProvider")
-	}
+	const [user] = useUserContext()
 	return user
+}
+
+export const useHomeURL = () => {
+	const user = useUserDocContext()
+	const home = createMemo(() => user()?.home)
+	return home
+}
+
+export const useHomeHandle = () => {
+	const home = useDocHandle<AreaDoc>(useHomeURL())
+	return home
 }

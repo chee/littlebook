@@ -6,7 +6,7 @@ import {
 	stateExtensions,
 } from "codemirror-json-schema"
 import {linter} from "@codemirror/lint"
-import {createBaseEditor} from "../base/base-editor.tsx"
+import {createBaseEditor, type BaseEditorOpts} from "../base/base-editor.tsx"
 import type {DocHandle, Prop} from "@automerge/vanillajs"
 import type {LittlebookPluginShape} from "../../shapes/shapes.ts"
 import type {WorkerShape} from "@valtown/codemirror-ts/worker"
@@ -15,13 +15,7 @@ import {Compartment} from "@codemirror/state"
 import type {PluginEditorWorker} from "../../worker/worker.ts"
 import type {LBPSrcFilePath} from "../../util/path.ts"
 
-export default function createJSONEditor(opts: {
-	parent: HTMLElement
-	handle: DocHandle<LittlebookPluginShape>
-	path: LBPSrcFilePath
-	tsWorker: WorkerShape
-	worker: PluginEditorWorker
-}) {
+export default function createJSONEditor(opts: BaseEditorOpts) {
 	const schemaCompartment = new Compartment()
 	const lastPathPart = opts.path[opts.path.length - 1]
 	fetch("https://json.schemastore.org/" + lastPathPart).then(
@@ -34,6 +28,7 @@ export default function createJSONEditor(opts: {
 			}
 		}
 	)
+
 	const baseEditor = createBaseEditor({
 		...opts,
 		extensions: [

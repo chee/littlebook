@@ -6,7 +6,7 @@ import {
 	type AutomergeURLOrDocumentURL,
 	type DocumentURL,
 } from ":/core/sync/url.ts"
-import {usePerfectView} from ":/ui/components/file-viewer/usePerfectView.tsx"
+import {usePerfectView} from ":/ui/components/view/usePerfectView"
 import type {StandaloneViewID} from "@littlebook/plugin-api/types/view.ts"
 import type {
 	DockviewApi,
@@ -37,12 +37,14 @@ export function createDockAPI(dockviewAPI: DockviewApi) {
 	}
 	const [dockAPI, updateAPI] = createStore({
 		openStandaloneView(id: StandaloneViewID, opts?: OpenDocumentOptions) {
-			dockviewAPI.addPanel({
-				id: id.startsWith("standalone:") ? id : `standalone:${id}`,
-				component: "standalone",
-				tabComponent: "standalone",
-				renderer: "always",
-				position: opts?.side ? {direction: opts.side} : undefined,
+			runWithOwner(getOwner() ?? owner, () => {
+				dockviewAPI.addPanel({
+					id: id.startsWith("standalone:") ? id : `standalone:${id}`,
+					component: "standalone",
+					tabComponent: "standalone",
+					renderer: "always",
+					position: opts?.side ? {direction: opts.side} : undefined,
+				})
 			})
 		},
 		openDocument(url: AutomergeURLOrDocumentURL, opts?: OpenDocumentOptions) {

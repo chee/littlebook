@@ -27,10 +27,14 @@
 		background: var(--selected-fill);
 		color: var(--selected-line);
 		&:last-child {
-			border-bottom-left-radius: calc(var(--sidebar-widget-radius));
-			border-bottom-right-radius: calc(var(--sidebar-widget-radius));
+			/* border-bottom-left-radius: calc(var(--sidebar-widget-radius)); */
+			/* border-bottom-right-radius: calc(var(--sidebar-widget-radius)); */
 		}
 	}
+}
+
+.document-list-item--folder {
+	font-weight: 500;
 }
 
 .document-list-item__name {
@@ -53,4 +57,13 @@
 .document-list [role="treeitem"]:last-of-type .document-list__button {
 	border-end-start-radius: calc(var(--sidebar-widget-radius) - 1px);
 	border-end-end-radius: calc(var(--sidebar-widget-radius) - 1px);
+}
+
+.document-list-item:not([data-droptarget]) {
+	border: 2px solid transparent;
+}
+
+.document-list-item[data-droptarget="true"] {
+	background: var(--mynt-light);
+	border: 2px dashed black;
 }

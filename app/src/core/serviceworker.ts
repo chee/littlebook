@@ -96,7 +96,7 @@ self.addEventListener("fetch", event => {
 })
 
 registerRoute(
-	({url}) => url.origin === "https://esm.sh",
+	({url}) => url.origin === "esm.sh",
 	new StaleWhileRevalidate({
 		cacheName: "cache.https://esm.sh",
 		plugins: [
@@ -107,6 +107,20 @@ registerRoute(
 		],
 	}),
 )
+
+registerRoute(
+	({url}) => url.origin === "data.jsdelivr.com",
+	new StaleWhileRevalidate({
+		cacheName: "cache.https://jsdelivr.sh",
+		plugins: [
+			new ExpirationPlugin({
+				maxEntries: 200,
+				maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+			}),
+		],
+	}),
+)
+
 function getProperty(src: Record<string, string>, p: string[]) {
 	let current: any = src
 	for (const part of p) {

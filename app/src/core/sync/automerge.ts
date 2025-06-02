@@ -6,9 +6,12 @@ import {
 import * as AutomergeRepo from "@automerge/automerge-repo"
 import * as Automerge from "@automerge/automerge"
 import type {AutomergeURL} from "./url.ts"
+import {getSyncServers} from ":/core/sync/servers.ts"
 export async function createAutomergeRepo() {
 	const repo = new Repo({
-		network: [new WebSocketClientAdapter("wss://galaxy.observer/")],
+		network: [
+			...getSyncServers().map(url => new WebSocketClientAdapter(url)),
+		],
 		storage: new IndexedDBStorageAdapter("littlebook"),
 		enableRemoteHeadsGossiping: true,
 	})

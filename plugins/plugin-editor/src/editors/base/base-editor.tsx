@@ -1,4 +1,3 @@
-import "./base-editor.css"
 import {autocompletion} from "@codemirror/autocomplete"
 import {
 	EditorView,
@@ -32,14 +31,17 @@ import {
 } from "../../util/path.ts"
 import type {PluginEditorWorker} from "../../worker/worker.ts"
 
-export function createBaseEditor(opts: {
+export interface BaseEditorOpts {
 	parent: HTMLElement
 	handle: DocHandle<LittlebookPluginShape>
 	path: LBPSrcFilePath
 	extensions?: Extension[]
 	tsWorker: WorkerShape
 	worker: PluginEditorWorker
-}) {
+	shadow: ShadowRoot
+}
+
+export function createBaseEditor(opts: BaseEditorOpts): EditorView {
 	const content = getFileContent({
 		handle: opts.handle,
 		path: opts.path,
@@ -51,6 +53,7 @@ export function createBaseEditor(opts: {
 	})
 	opts.worker.ata(content ?? "", path)
 	return new EditorView({
+		root: opts.shadow,
 		doc: getFileContent(opts),
 		extensions: [
 			minimalSetup,

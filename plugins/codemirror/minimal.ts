@@ -4,6 +4,7 @@ import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 import type {
 	FileEditor,
 	FileEditorAPI,
+	ViewID,
 } from "@littlebook/plugin-api/types/view.ts"
 import {minimalSetup} from "codemirror"
 // import {CodeSchema, FileEditor, type FileEditorAPI} from "+types+"
@@ -11,9 +12,9 @@ import {minimalSetup} from "codemirror"
 function render(props: FileEditorAPI<CodeShape>) {
 	const editor = new EditorView({
 		doc: props.handle.doc()?.text,
-
 		extensions: [
 			minimalSetup,
+			EditorView.lineWrapping,
 			automergeSyncPlugin({
 				handle: props.handle,
 				path: ["text"],
@@ -25,9 +26,12 @@ function render(props: FileEditorAPI<CodeShape>) {
 }
 
 export default {
-	id: "text-editor",
+	id: "text-editor" as ViewID,
 	displayName: "Text Editor",
 	category: "editor",
 	render,
+	styles: [
+		".cm-editor, .cm-scroller, .cm-content {height: 100%; display: flex; flex-direction: column; overflow: auto;}",
+	],
 	schema: CodeShape,
 } satisfies FileEditor<CodeShape>

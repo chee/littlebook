@@ -2,52 +2,90 @@
 export default /* ts */ `
 import {DocHandle} from "@automerge/automerge-repo"
 import {StandardSchemaV1} from "@standard-schema/spec"
-export as namespace Littlebook
-export interface Source<T> {
-	id: string
-	displayName: string
-	category: "filesystem" | "new" | "network"
-	"new"(): Promise<{name: string, icon?: string, content: T}>
-	import?(file: File): Promise<{name: string, icon?: string, content: T}>
-}
-export interface View<T> {
-	id: string
-	icon?: string
-	displayName: string
-	category: "readonly" | "editor" | "standalone"
-	schema: StandardSchemaV1<T>
-	render(api: {
+export namespace Littlebook {
+	export type Source<T> = {
+		id: string
+		displayName: string
+	} & (
+		| {
+				category: "filesystem"
+				import(
+					file: File
+				): Promise<{name: string; icon?: string; content: T}>
+		  }
+		| {
+				category: "new"
+				"new"(): Promise<{name: string; icon?: string; content: T}>
+		  }
+	)
+
+	type StylesType = string | Promise<string> | Promise<{default: string}>
+	type ViewAPIBase<T> = {
 		updateStatusItems(items: string[]): void
-		registerKeybinding(keybinding: string, action: () => void): void
+		registerKeybinding(
+			keybinding: string,
+			action: (event: KeyboardEvent) => void
+		): void
 		isActive(): boolean
 		onCleanup(cleanup: () => void): void
 		onMount(mount: () => void): void
-		handle: DocHandle<T>
-		updateName(name: string): void
-		onChange(fn: () => {}): void
-		updateIndex(): void
-		callCommand(command: string, ...args: unknown[]): void
-		adoptStylesheet(stylesheet: string): void
-		addCSS(css: string): void
-	})
-}
-
-
-declare module "@littlebook/plugin-api" {
-	export interface Source<T> extends Littlebook.Source<T> {}
-	export interface View<T = unknown> extends Littlebook.View<T> {}
-	export const littlebook: {
-		registerSource(source: Littlebook.Source): void
-		registerView(view: Littlebook.View): void
+		toast: {
+			show(
+				title: JSX.Element,
+				opts?: {
+					body?: JSX.Element
+					link?: JSX.Element
+					modifiers?: BembyModifier | BembyModifiers
+				}
+			): void
+		}
 	}
-	export default littlebook
+	export type View<T> = {
+		id: string
+		icon?: string
+		displayName: string
+		schema: StandardSchemaV1<T>
+		styles?: StylesType | StylesType[]
+		render(api: {
+			updateStatusItems(items: string[]): void
+			registerKeybinding(keybinding: string, action: () => void): void
+			isActive(): boolean
+			onCleanup(cleanup: () => void): void
+			onMount(mount: () => void): void
+			handle: DocHandle<T>
+			updateName(name: string): void
+			onChange(fn: () => {}): void
+		})
+	} & (
+		| {
+				category: "readonly"
+				render(
+					api: {
+						doc(): Shape
+						onChange(fn: () => void): void
+					} & ViewAPIBase<T>
+				)
+		  }
+		| {
+				category: "editor"
+				render(
+					api: {
+						handle: DocHandle<Shape>
+						updateName(name: string): void
+					} & ViewAPIBase<T>
+				)
+		  }
+		| {category: "standalone"; render(api: ViewAPIBase<T>)}
+	)
+	export function registerSource<T>(source: Littlebook.Source<T>): void
+	export function registerView<T>(view: Littlebook.View<T>): void
 }
+
+export default Littlebook
+export type Source<T> = Littlebook.Source<T>
+export type View<T> = Littlebook.View<T>
 
 declare global {
-	namespace Littlebook {
-		export interface Source<T> extends Littlebook.Source<T> {}
-		export interface View<T> extends Littlebook.View<T> {}
-	}
 	interface Window {
 		littlebook: {
 			registerSource(source: Littlebook.Source): void

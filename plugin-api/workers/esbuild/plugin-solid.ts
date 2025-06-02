@@ -1,11 +1,10 @@
 import * as babel from "@babel/standalone"
 import {type Plugin as EsbuildPlugin} from "esbuild-wasm"
-import type {VirtualFileSystem} from "../virtual/util.ts"
 import babelSolid from "../babel/babel-preset-solid.js"
 import {getJSXImportSource} from "../babel/jsx-comments.ts"
 
 export function solid(options: {
-	files: VirtualFileSystem
+	files: Record<string, string>
 	jsxImportSource?: string
 }): EsbuildPlugin {
 	return {

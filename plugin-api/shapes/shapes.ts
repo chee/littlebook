@@ -1,5 +1,6 @@
 // todo either this file doesn't belong here, or more things do. maybe this is
 // better the @littlebook/plugin-api or something
+// haha what about @littlebook/.well-known/
 import * as v from "valibot"
 import {automergeURL} from "./util.ts"
 
@@ -37,7 +38,7 @@ export const TypeScriptEditorShape = v.object({
 export type TypeScriptEditorShape = v.InferOutput<typeof TypeScriptEditorShape>
 
 export const FolderShape = v.object({
-	files: v.array(v.string()),
+	files: v.array(automergeURL),
 })
 
 export type FolderShape = v.InferOutput<typeof FolderShape>

@@ -1,13 +1,11 @@
-import {For, getOwner, runWithOwner} from "solid-js"
+import {For} from "solid-js"
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import Icon from "../icons/icon.tsx"
-import {useSourceRegistry} from "@littlebook/plugin-api/registries/source-registry.ts"
-import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
-import {useDockAPI} from ":/ui/dock/dock.tsx"
 import type {
 	AutomergeMapValue,
 	FileEntryTemplate,
 } from ":/docs/file-entry-doc.ts"
+import {useSourceRegistry} from "@littlebook/plugin-api"
 
 export function BigPlus() {
 	return (
@@ -31,23 +29,18 @@ export default function NewDocumentMenu(props: {
 	create(template: FileEntryTemplate): void
 }) {
 	const sources = useSourceRegistry()
-	const views = useViewRegistry()
-	const standalones = () => [...views.standalones()]
-	const dock = useDockAPI()
-	const owner = getOwner()
-
 	return (
 		<DropdownMenu>
 			<DropdownMenu.Trigger
 				class="popmenu__trigger"
-				aria-label="add document">
-				<BigPlus />
+				aria-label="Add Document">
+				Add document
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
 				<DropdownMenu.Content class="popmenu__content">
 					<DropdownMenu.Sub overlap gutter={-10}>
 						<DropdownMenu.SubTrigger class="popmenu__sub-trigger">
-							Create
+							New
 							<div class="popmenu__item-right-slot">
 								<Icon name="alt-arrow-right-linear" />
 							</div>
@@ -81,40 +74,13 @@ export default function NewDocumentMenu(props: {
 						</DropdownMenu.Portal>
 					</DropdownMenu.Sub>
 
-					<DropdownMenu.Sub overlap gutter={-10}>
-						<DropdownMenu.SubTrigger class="popmenu__sub-trigger">
-							Open Standalone View
-							<div class="popmenu__item-right-slot">
-								<Icon name="alt-arrow-right-linear" />
-							</div>
-						</DropdownMenu.SubTrigger>
-						<DropdownMenu.Portal>
-							<DropdownMenu.SubContent class="popmenu__sub-content">
-								<For each={standalones()}>
-									{view => {
-										return (
-											<DropdownMenu.Item
-												class="popmenu__item"
-												// eslint-disable-next-line solid/reactivity
-												onSelect={async () =>
-													runWithOwner(owner, () =>
-														dock.openStandaloneView(view.id),
-													)
-												}>
-												{view.displayName ?? view.id}
-											</DropdownMenu.Item>
-										)
-									}}
-								</For>
-							</DropdownMenu.SubContent>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Sub>
 					<DropdownMenu.Item
 						class="popmenu__item"
 						// eslint-disable-next-line solid/reactivity
 						onSelect={async () => {
 							// // todo move this somewhere sensible
 							// // todo make this make sense
+							// todo probably should go in the plugin api
 							// const fsa = await import("file-system-access")
 							// const [computerFileHandle] = await fsa.showOpenFilePicker({
 							// 	_preferPolyfill: false,

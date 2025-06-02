@@ -13,7 +13,7 @@ import {
 import type {SerializedDockview} from "dockview-core"
 import {useDockAPI} from ":/ui/dock/dock.tsx"
 import {asDocumentURL, isValidDocumentURL} from ":/core/sync/url.ts"
-import Sidebar from ":/ui/components/sidebar/left-sidebar.tsx"
+import Sidebar from ":/ui/components/sidebar/sidebar"
 import bemby from "@chee/bemby"
 
 import {createMediaQuery} from "@solid-primitives/media"
@@ -23,9 +23,10 @@ import {useHotkeys} from ":/ui/lib/useHotkeys.ts"
 const isMobile = createMediaQuery("(max-width: 600px)")
 
 export function Workspace(props: {children: JSX.Element}) {
-	// todo this is obviously in the wrong place, should be elsewhere. but where?
+	// todo a non-dockview workspace too? tldraw based maybe?
 	const dockAPI = useDockAPI()
 	const owner = getOwner()
+	// todo <this is obviously in the wrong place, should be elsewhere. but where?
 	function onhash() {
 		const hash = location.hash.slice(1)
 		if (isValidDocumentURL(hash)) {
@@ -71,8 +72,7 @@ export function Workspace(props: {children: JSX.Element}) {
 			dockAPI.openDocument(loadhash)
 		}
 	}
-
-	// todo ok
+	// todo ok/>
 	const [firstLoad, setFirstLoad] = createSignal(true)
 
 	onMount(() => {
@@ -164,6 +164,17 @@ export function Workspace(props: {children: JSX.Element}) {
 	}
 
 	useHotkeys("command+backslash", toggleSidebar)
+	useHotkeys(
+		"cmd+w",
+		() => {
+			dockAPI.activePanelID && dockAPI.closePanel(dockAPI.activePanelID)
+		},
+		{
+			preventDefault() {
+				return true
+			},
+		},
+	)
 
 	return (
 		<Resizable
@@ -186,7 +197,7 @@ export function Workspace(props: {children: JSX.Element}) {
 							class="workspace__panel workspace__panel--sidebar"
 							ref={element => setSidebarElement(element)}
 							collapsible>
-							<Sidebar collapse={collapseSidebar} />
+							<Sidebar />
 						</Resizable.Panel>
 						<Resizable.Handle
 							class="workspace__handle"

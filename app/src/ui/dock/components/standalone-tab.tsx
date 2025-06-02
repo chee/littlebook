@@ -2,12 +2,12 @@ import {ContextMenu} from "@kobalte/core/context-menu"
 import {Button} from "@kobalte/core/button"
 import {createEffect, Suspense} from "solid-js"
 import {useDockAPI} from "../dock.tsx"
-import {useViewRegistry} from "@littlebook/plugin-api/registries/view-registry.ts"
 import {
 	normalizeStandaloneViewID,
 	type StandaloneView,
 	type StandaloneViewID,
 } from "@littlebook/plugin-api/types/view.ts"
+import {useViewRegistry} from "@littlebook/plugin-api"
 
 // todo StandaloneViewID type
 export default function StandaloneViewTab(props: {id: StandaloneViewID}) {
