@@ -73,6 +73,7 @@ export default defineConfig({
 			},
 			injectManifest: {
 				maximumFileSizeToCacheInBytes: 5000 * 1024 * 1024,
+				rollupFormat: "es",
 			},
 		}),
 	],
