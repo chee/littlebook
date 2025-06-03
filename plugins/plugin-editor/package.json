@@ -48,6 +48,7 @@
 		"codemirror-copilot": "^0.0.7",
 		"codemirror-json-schema": "^0.8.1",
 		"comlink": "^4.4.2",
+		"debug": "^4.4.1",
 		"dedent": "^1.6.0",
 		"esbuild-wasm": "^0.25.4",
 		"solid-automerge": "^1.0.10",

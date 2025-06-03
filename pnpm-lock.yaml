@@ -571,6 +571,9 @@ importers:
       comlink:
         specifier: ^4.4.2
         version: 4.4.2
+      debug:
+        specifier: ^4.4.1
+        version: 4.4.1(supports-color@8.1.1)
       dedent:
         specifier: ^1.6.0
         version: 1.6.0(babel-plugin-macros@3.1.0)
