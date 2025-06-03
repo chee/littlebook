@@ -1,4 +1,3 @@
-import githubMarkdownPreview from ":/plugins/base/views/github-markdown-preview.tsx"
 import * as v from "valibot"
 import {createEffect} from "solid-js"
 import type PluginAPI from "@littlebook/plugin-api"
@@ -7,7 +6,12 @@ import worseMarkdownPreview from ":/plugins/base/views/worse-markdown-preview.ts
 
 export default async function registerBaseViews(api: PluginAPI) {
 	api.registerView(worseMarkdownPreview)
-	api.registerView(githubMarkdownPreview)
+
+	await import(":/plugins/base/views/github-markdown-preview.tsx").then(
+		mod => {
+			api.registerView(mod.default)
+		},
+	)
 
 	api.registerView({
 		id: "image" as ViewID,

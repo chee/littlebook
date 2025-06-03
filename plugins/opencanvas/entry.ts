@@ -1,12 +1,15 @@
 import {createOpenCanvas04} from "./src/sources/createOpenCanvas.ts"
-import excalidrawView from "./src/views/excalidraw/excalidraw-view.tsx"
 // import readonlyView from "./src/views/readonly/readonly-view.tsx"
-import {TldrawView} from "./src/views/tldraw/tldraw-view.tsx"
 import PluginAPI from "@littlebook/plugin-api"
 
-export default function activateOpenCanvas(api: PluginAPI) {
-	api.registerView(TldrawView)
-	api.registerView(excalidrawView)
+export default async function activateOpenCanvas(api: PluginAPI) {
+	await import("./src/views/excalidraw/excalidraw-view.tsx").then(mod => {
+		api.registerView(mod.default)
+	})
+	await import("./src/views/tldraw/tldraw-view.tsx").then(mod => {
+		api.registerView(mod.TldrawView)
+	})
+
 	// api.registerView(readonlyView)
 	api.registerSource(createOpenCanvas04)
 }

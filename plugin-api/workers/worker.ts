@@ -8,9 +8,7 @@ import {
 } from "@automerge/vanillajs/slim"
 import bundle from "./esbuild/bundle.ts"
 import {type LittlebookPluginShape} from "./shapes.ts"
-import {automergeWasmBase64} from "@automerge/automerge/automerge.wasm.base64"
 import {next as Automerge} from "@automerge/automerge/slim"
-Automerge.initializeBase64Wasm(automergeWasmBase64)
 
 const repo = new Repo({
 	network: [
@@ -23,6 +21,13 @@ const repo = new Repo({
 
 const pluginAPIWorker = {
 	async compile(url: AutomergeUrl) {
+		if (!Automerge.isWasmInitialized()) {
+			await import("@automerge/automerge/automerge.wasm.base64").then(
+				mod => {
+					return Automerge.initializeBase64Wasm(mod.automergeWasmBase64)
+				}
+			)
+		}
 		const handle = await repo.find<LittlebookPluginShape>(url)
 		return bundle(handle)
 	},

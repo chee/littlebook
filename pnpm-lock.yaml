@@ -144,9 +144,6 @@ importers:
       tinykeys:
         specifier: ^3.0.0
         version: 3.0.0
-      true-myth:
-        specifier: ^9.0.0
-        version: 9.0.1
       unified:
         specifier: ^11.0.5
         version: 11.0.5
@@ -271,9 +268,6 @@ importers:
       solid-js:
         specifier: ^1.9.7
         version: 1.9.7
-      true-myth:
-        specifier: ^9.0.1
-        version: 9.0.1
       valibot:
         specifier: ^1.1.0
         version: 1.1.0(typescript@5.8.3)
@@ -8134,10 +8128,6 @@ packages:
 
   trough@2.2.0:
     resolution: {integrity: sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==}
-
-  true-myth@9.0.1:
-    resolution: {integrity: sha512-8ePgamjgV3CKDI43o6eUtid+9iadfEKUiu2WTucbeCnPTyDOQpZ4svCuozLwm9S4hzUolOclsUCJf3yjQg3g/Q==}
-    engines: {node: 18.* || >= 20.*}
 
   ts-api-utils@2.1.0:
     resolution: {integrity: sha512-CUgTZL1irw8u29bzrOD/nH85jqyc74D6SshFgujOIA7osm2Rz7dYH77agkx7H4FBNxDq7Cjf+IjaX/8zwFW+ZQ==}
@@ -17694,8 +17684,6 @@ snapshots:
   triple-beam@1.4.1: {}
 
   trough@2.2.0: {}
-
-  true-myth@9.0.1: {}
 
   ts-api-utils@2.1.0(typescript@5.8.3):
     dependencies:

@@ -3,7 +3,7 @@ import {
 	IndexedDBStorageAdapter,
 	Repo,
 } from "@automerge/vanillajs"
-import * as AutomergeRepo from "@automerge/automerge-repo"
+import * as Vanilla from "@automerge/vanillajs"
 import * as Automerge from "@automerge/automerge"
 import type {AutomergeURL} from "./url.ts"
 import {getSyncServers} from ":/core/sync/servers.ts"
@@ -22,13 +22,13 @@ const defaultRepo = await createAutomergeRepo()
 
 self.repo = defaultRepo
 self.Automerge = Automerge
-self.AutomergeRepo = AutomergeRepo
+self.Vanilla = Vanilla
 
 declare global {
 	interface Window {
 		repo: typeof defaultRepo
 		Automerge: typeof Automerge
-		AutomergeRepo: typeof AutomergeRepo
+		Vanilla: typeof Vanilla
 	}
 }
 

@@ -1,10 +1,10 @@
 import {createResource, createSignal} from "solid-js"
 import githubMarkdownCSS from "github-markdown-css/github-markdown.css?raw"
-import rehypeStarryNight from "rehype-starry-night"
+// import rehypeStarryNight from "rehype-starry-night"
 import rehypeReact from "rehype-react"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
-import {all} from "@wooorm/starry-night"
+// import {all} from "@wooorm/starry-night"
 import gfm from "remark-gfm"
 import {unified} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
@@ -15,7 +15,7 @@ const markdown = await unified()
 	.use(gfm)
 	.use(remarkParse)
 	.use(remarkRehype)
-	.use(rehypeStarryNight, {grammars: all})
+	// .use(rehypeStarryNight, {grammars: all})
 	.use(rehypeReact, {
 		Fragment,
 		jsx,

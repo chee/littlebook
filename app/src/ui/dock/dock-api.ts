@@ -15,8 +15,6 @@ import type {
 } from "dockview-core"
 import {getOwner, onCleanup, runWithOwner} from "solid-js"
 import {createStore} from "solid-js/store"
-import Result, {err, ok} from "true-myth/result"
-import type Unit from "true-myth/unit"
 
 export interface OpenDocumentOptions {
 	component?: string
@@ -27,12 +25,11 @@ type PanelID = DocumentURL | StandaloneViewID
 
 export function createDockAPI(dockviewAPI: DockviewApi) {
 	const owner = getOwner()!
-	function loadLayout(layout: SerializedDockview): Result<Unit, Error> {
+	function loadLayout(layout: SerializedDockview): Error | undefined {
 		try {
 			dockviewAPI.fromJSON(layout)
-			return ok()
 		} catch {
-			return err(new Error("failed to load layout"))
+			return new Error("failed to load layout")
 		}
 	}
 	const [dockAPI, updateAPI] = createStore({

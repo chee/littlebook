@@ -38,7 +38,7 @@ export default defineConfig({
 			],
 		}),
 		paths({configNames: ["tsconfig.browser.json"]}),
-		netlify(),
+		// netlify(),
 		solid({
 			include: [
 				"**/*.{jsx,tsx}",
@@ -84,8 +84,7 @@ export default defineConfig({
 	build: {
 		outDir: "output",
 		emptyOutDir: true,
-		// todo temporary
-		sourcemap: false,
+		sourcemap: true,
 		minify: true,
 		target: ["firefox137", "safari18", "esnext"],
 		rollupOptions: {jsx: "preserve"},

@@ -1,4 +1,4 @@
-import {createEffect, createResource, createSignal} from "solid-js"
+import {createResource, createSignal} from "solid-js"
 import rehypeReact from "rehype-react"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"

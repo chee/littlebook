@@ -5,7 +5,6 @@ import {
 } from "@automerge/vanillajs"
 import {getOwner, onCleanup} from "solid-js"
 import {createStore, type SetStoreFunction} from "solid-js/store"
-import {Task} from "true-myth/task"
 import debug from "debug"
 const log = debug("littlebook:registries")
 
@@ -17,10 +16,10 @@ export interface Stored<Typename extends string> {
 	category?: string
 }
 
-export function importFromAutomerge<Typename extends string, T>(
+export async function importFromAutomerge<Typename extends string, T>(
 	stored: Stored<Typename>
-): Task<T, Error> {
-	return new Task(async (yay, boo) => {
+): Promise<T> {
+	return new Promise(async (yay, boo) => {
 		const blob = new Blob([stored.bytes], {type: "application/javascript"})
 		const blobURL = URL.createObjectURL(blob)
 		const module = await import(/* @vite-ignore */ blobURL)
@@ -72,14 +71,13 @@ export abstract class Registry<
 		return this.import(payload.patchInfo.after)
 	}
 
-	private import = (doc: Stored<Doctype>) => {
-		return importFromAutomerge<Doctype, ValueType>(doc)
-			.map(bundle => {
-				this.register(bundle)
-			})
-			.mapRejected(err => {
-				console.error(`failed to import ${this.type} document`, err)
-			})
+	private import = async (doc: Stored<Doctype>) => {
+		try {
+			const bundle = await importFromAutomerge<Doctype, ValueType>(doc)
+			return this.register(bundle)
+		} catch (err) {
+			console.error(`failed to import ${this.type} document`, err)
+		}
 	}
 
 	async maybe(url: AutomergeUrl) {

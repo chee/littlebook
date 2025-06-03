@@ -1,18 +1,12 @@
 import "./main.css"
-import {createEffect} from "solid-js"
 
 import {DropdownMenu} from "@kobalte/core/dropdown-menu"
 import activateBasePlugin from ":/plugins/base/base-plugin.ts"
-import {useUserDocContext} from ":/domain/user/user.ts"
 import DockProvider, {Dock} from ":/ui/dock/dock.tsx"
 import FileView from ":/ui/components/view/file/fileview"
 import DocumentDockTab from ":/ui/dock/components/document-tab"
 import Icon from ":/ui/components/icons/icon.tsx"
-import {
-	usePluginAPI,
-	useSourceRegistry,
-	useViewRegistry,
-} from "@littlebook/plugin-api"
+import {usePluginAPI} from "@littlebook/plugin-api"
 import StandaloneViewer from ":/ui/components/view/standalone/standalone-viewer"
 import StandaloneViewTab from ":/ui/dock/components/standalone-tab"
 import {Workspace} from ":/ui/layouts/workspace/workspace.tsx"
@@ -21,18 +15,7 @@ export default function Main() {
 	// todo this has nothing to do with UI
 	const pluginAPI = usePluginAPI()
 	activateBasePlugin(pluginAPI)
-	const user = useUserDocContext()
-	const sourceRegistry = useSourceRegistry()
-	const viewRegistry = useViewRegistry()
 
-	createEffect(() => {
-		for (const sourceURL of user()?.sources ?? []) {
-			sourceRegistry.maybe(sourceURL)
-		}
-		for (const viewURL of user()?.views ?? []) {
-			viewRegistry.maybe(viewURL)
-		}
-	})
 	//todo end
 
 	return (
