@@ -55,6 +55,7 @@
 		"@solid-primitives/storage": "^4.3.2",
 		"@solidjs/router": "^0.15.3",
 		"@tanstack/solid-table": "^8.21.3",
+		"@types/ws": "^8.18.1",
 		"@vitejs/plugin-react": "^4.5.0",
 		"@wooorm/starry-night": "^3.7.0",
 		"clsx": "^2.1.1",
@@ -80,6 +81,7 @@
 		"true-myth": "^9.0.0",
 		"unified": "^11.0.5",
 		"valibot": "^1.1.0",
-		"vite-plugin-native-import-maps": "^0.0.4"
+		"vite-plugin-native-import-maps": "^0.0.4",
+		"ws": "^8.18.2"
 	}
 }

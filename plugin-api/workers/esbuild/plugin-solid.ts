@@ -1,5 +1,6 @@
 import * as babel from "@babel/standalone"
 import {type Plugin as EsbuildPlugin} from "esbuild-wasm"
+// @ts-expect-error
 import babelSolid from "../babel/babel-preset-solid.js"
 import {getJSXImportSource} from "../babel/jsx-comments.ts"
 

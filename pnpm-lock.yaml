@@ -74,6 +74,9 @@ importers:
       '@tanstack/solid-table':
         specifier: ^8.21.3
         version: 8.21.3(solid-js@1.9.7)
+      '@types/ws':
+        specifier: ^8.18.1
+        version: 8.18.1
       '@vitejs/plugin-react':
         specifier: ^4.5.0
         version: 4.5.0(vite@6.3.5(@types/node@20.17.50)(sass@1.51.0)(terser@5.39.2)(yaml@2.8.0))
@@ -152,6 +155,9 @@ importers:
       vite-plugin-native-import-maps:
         specifier: ^0.0.4
         version: 0.0.4(vite@6.3.5(@types/node@20.17.50)(sass@1.51.0)(terser@5.39.2)(yaml@2.8.0))
+      ws:
+        specifier: ^8.18.2
+        version: 8.18.2
     devDependencies:
       '@eslint/js':
         specifier: ^9.27.0
@@ -413,12 +419,6 @@ importers:
       fast-json-patch:
         specifier: ^3.1.1
         version: 3.1.1
-      json-schema-to-typescript:
-        specifier: ^15.0.4
-        version: 15.0.4
-      json-schema-to-zod:
-        specifier: ^2.6.1
-        version: 2.6.1
       open-color:
         specifier: ^1.9.1
         version: 1.9.1
@@ -437,9 +437,6 @@ importers:
       tldraw-vscode:
         specifier: ^1.28.2
         version: 1.28.2
-      ts-to-zod:
-        specifier: ^3.15.0
-        version: 3.15.0
       typescript:
         specifier: ^5.4.5
         version: 5.8.3
@@ -447,9 +444,18 @@ importers:
         specifier: ^3.25.23
         version: 3.25.28
     devDependencies:
+      json-schema-to-typescript:
+        specifier: ^15.0.4
+        version: 15.0.4
+      json-schema-to-zod:
+        specifier: ^2.6.1
+        version: 2.6.1
       react-devtools:
         specifier: ^6.1.2
         version: 6.1.2
+      ts-to-zod:
+        specifier: ^3.15.0
+        version: 3.15.0
 
   plugins/plugin-editor:
     dependencies:
@@ -3942,6 +3948,9 @@ packages:
 
   '@types/use-sync-external-store@0.0.6':
     resolution: {integrity: sha512-zFDAD+tlpf2r4asuHEj0XH6pY6i0g5NeAHPn+15wk3BV6JA69eERFXC1gyGThDkVa1zCyKr5jox1+2LbV/AMLg==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -12612,6 +12621,10 @@ snapshots:
   '@types/unist@3.0.3': {}
 
   '@types/use-sync-external-store@0.0.6': {}
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 20.17.50
 
   '@types/yauzl@2.10.3':
     dependencies:
