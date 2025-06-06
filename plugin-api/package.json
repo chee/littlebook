@@ -17,6 +17,8 @@
 		"@automerge/vanillajs": "^2.0.0",
 		"@babel/parser": "^7.27.2",
 		"@babel/standalone": "^7.27.2",
+		"@babel/traverse": "^7.27.1",
+		"@babel/types": "^7.27.3",
 		"@chee/bemby": "npm:@jsr/chee__bemby@^1.0.1",
 		"@codemirror/state": "^6.5.2",
 		"@standard-schema/spec": "^1.0.0",

@@ -22,42 +22,6 @@ await tsWorker.initialize()
 
 async function compile(props: FileEditorAPI<LittlebookPluginShape>) {
 	window.littlebook.registerPlugin(props.handle.url)
-	// // todo should live elsewhere
-	// const output = await worker.compile(props.handle.url)
-	// if (output.errors.length) {
-	// 	props.toast.show("couldn't compile", {
-	// 		body: (
-	// 			<pre style={{"user-select": "text"}}>
-	// 				{output.errors.join("\n")}
-	// 			</pre>
-	// 		),
-	// 		modifiers: "ohno danger bad",
-	// 	})
-	// 	return
-	// }
-	// // todo maybe we stick all this in a doc as immutable strings?
-	// // hmm
-	// for (const file of output.outputFiles ?? []) {
-	// 	if (file.path.endsWith(".css")) {
-	// 	} else if (file.path.endsWith(".js")) {
-	// 		const blob = new Blob([file.contents], {
-	// 			type: "application/javascript",
-	// 		})
-	// 		const url = URL.createObjectURL(blob)
-	// 		import(/* @vite-ignore */ url)
-	// 	} else {
-	// 		props.toast.show("warning: unknown file kind", {
-	// 			body: (
-	// 				<pre>
-	// 					{file.path} is not a .js or .css file, so i don't know what to
-	// 					do i'm so sorry
-	// 				</pre>
-	// 			),
-	// 			modifiers: "warning warn uhoh",
-	// 		})
-	// 	}
-	// }
-	// props.toast.show("compiled", {modifiers: "yay good done"})
 }
 
 export default {
@@ -65,11 +29,11 @@ export default {
 	displayName: "Plugin Editor",
 	category: "editor",
 	schema: LittlebookPluginShape,
+	styles: [
+		import("./plugin-editor.css?inline"),
+		import("../chrome/chrome.css?inline"),
+	],
 	render(api) {
-		api.adoptStyles(
-			import("./plugin-editor.css?inline"),
-			import("../chrome/chrome.css?inline")
-		)
 		const [path, setPath] = createSignal<Prop[]>(["entry.tsx"])
 
 		createEffect(() => {
@@ -89,16 +53,6 @@ export default {
 				worker={worker}
 				tsWorker={tsWorker}
 				compile={() => compile(api)}
-				setMeta={() => {
-					// todo lol
-					const key = window.prompt("key")
-					const val = key && window.prompt(`value for ${key}`)
-					if (val) {
-						api.handle.change(doc => {
-							doc.meta[key] = val
-						})
-					}
-				}}
 			/>
 		) as HTMLElement
 	},

@@ -1,22 +1,26 @@
 import type {FileEntryDoc} from ":/docs/file-entry-doc.ts"
 import {toast} from ":/ui/components/toast/toast.tsx"
-import type {ShadowsChildrenProps} from ":/ui/components/view/shadow.tsx"
 import {useHotkeys} from ":/ui/lib/useHotkeys.ts"
 import {updateText, type DocHandle} from "@automerge/vanillajs"
 import type {FileEditor} from "@littlebook/plugin-api/types/view.ts"
-import {getOwner, onCleanup, onMount, runWithOwner} from "solid-js"
+import {
+	getOwner,
+	onCleanup,
+	onMount,
+	runWithOwner,
+	type Accessor,
+} from "solid-js"
 import type {SetStoreFunction} from "solid-js/store"
 import {Dynamic} from "solid-js/web"
 
-export default function EditorFileview<T>(
-	props: {
-		view: FileEditor<T>
-		fileHandle: DocHandle<T>
-		entryHandle: DocHandle<FileEntryDoc>
-		updateStatusItems: SetStoreFunction<string[]>
-		isActive: boolean
-	} & ShadowsChildrenProps,
-) {
+export default function EditorFileview<T>(props: {
+	view: FileEditor<T>
+	fileHandle: DocHandle<T>
+	entryHandle: DocHandle<FileEntryDoc>
+	updateStatusItems: SetStoreFunction<string[]>
+	isActive: boolean
+	shadow: Accessor<ShadowRoot>
+}) {
 	const owner = getOwner()
 	const dom = (
 		<Dynamic
@@ -36,7 +40,6 @@ export default function EditorFileview<T>(
 			toast={toast}
 			isActive={() => !!props.isActive}
 			shadow={props.shadow()}
-			adoptStyles={props.adoptStyles}
 		/>
 	) as ReturnType<typeof props.view.render>
 

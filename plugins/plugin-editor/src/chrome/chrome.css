@@ -75,6 +75,13 @@ button {
 	margin-right: var(--space-2);
 }
 
+.sidebar__header {
+	display: flex;
+	place-content: space-evenly;
+	place-items: center;
+	gap: var(--space-2);
+}
+
 .sidebar__footer {
 	display: flex;
 	flex-direction: column;
@@ -150,6 +157,7 @@ button {
 	&:hover {
 		background: var(--contextmenu-hover);
 	}
+	z-index: 99990;
 }
 
 .folder-collapse {

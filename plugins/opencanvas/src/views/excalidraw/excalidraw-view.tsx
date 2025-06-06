@@ -21,10 +21,9 @@ export default {
 	id: "@opencanvas/excalidraw" as ViewID,
 	displayName: "OpenCanvas Excalidraw",
 	category: "editor",
+	styles: [import("./index.css?inline"), ":host > div {height: 100%}"],
 	render(api) {
-		api.adoptStyles(import("./index.css?inline"))
 		const div = document.createElement("div")
-		div.style.height = "100%"
 		const root = createRoot(div)
 		api.onCleanup(() => root.unmount())
 		root.render(<ExcalidrawView api={api} />)

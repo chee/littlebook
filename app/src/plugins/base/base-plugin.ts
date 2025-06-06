@@ -7,7 +7,6 @@ import pluginEditor from "@littlebook/plugin-editor"
 export default async function activateBasePlugin(api: PluginAPI) {
 	pluginEditor(api)
 	registerBaseSources(api)
-
 	registerBaseViews(api)
 	await import("@littlebook/opencanvas").then(activate =>
 		activate.default(api),

@@ -34,8 +34,7 @@ export function useCanUndo() {
 	return [canUndo, canRedo]
 }
 
-// todo rename this to make it clear that it combines recent entries
-export function pushHistoryEntry(entry: CommandHistoryEntry) {
+export function addRecencyCollapsingHistoryEntry(entry: CommandHistoryEntry) {
 	if (history.length > 0 && Date.now() - lastEntryTime < COMBINE_THRESHOLD) {
 		const lastEntry = history[history.length - 1]
 		const combinedUndo = () => {

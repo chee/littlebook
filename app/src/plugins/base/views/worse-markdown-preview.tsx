@@ -27,7 +27,6 @@ export default {
 	schema: MarkdownShape,
 	styles: [import("./worse.css?inline")],
 	render(props) {
-		props.adoptStyles(import("./worse.css?inline"))
 		// eslint-disable-next-line solid/reactivity
 		const [text, updateText] = createSignal(props.doc().text)
 		// eslint-disable-next-line solid/reactivity

@@ -1,6 +1,6 @@
 import "./shadow.css"
 import resolveStyles from ":/ui/components/view/resolveStyles.ts"
-import type {ViewStylesType} from "@littlebook/plugin-api/types/view.ts"
+import type {ViewID, ViewStylesType} from "@littlebook/plugin-api/types/view.ts"
 import {
 	createEffect,
 	createSignal,
@@ -11,12 +11,19 @@ import {
 import {render} from "solid-js/web"
 
 export interface ShadowsProps {
+	// id: ViewID
 	children(props: ShadowsChildrenProps): JSX.Element
 }
 
 export type ShadowsChildrenProps = {
 	shadow(): ShadowRoot
-	adoptStyles(...styles: (ViewStylesType | ViewStylesType[])[]): Promise<void>
+	/**
+	 *
+	 * adopt styles registered in the view's styles array
+	 */
+	setViewStyles(
+		...styles: (ViewStylesType | ViewStylesType[])[]
+	): Promise<void>
 }
 
 export function Shadows(props: ShadowsProps) {
@@ -35,18 +42,24 @@ export function Shadows(props: ShadowsProps) {
 		}
 	})
 
-	async function adoptStyles(
+	async function setViewStyles(
 		...styles: (ViewStylesType | ViewStylesType[])[]
 	) {
+		const rul = `💖 { }`
 		const css = await resolveStyles(styles.flat())
+		let consumed = false
+		for (const sheet of shadow()!.adoptedStyleSheets) {
+			if (sheet.cssRules.item(0)?.cssText == rul) {
+				sheet.replaceSync(css)
+				consumed = true
+				break
+			}
+		}
+		if (consumed) return
 		const sheet = new CSSStyleSheet()
-		// todo this will not replace old stylesheets, so if the same style is adopted twice there will be overlapping styles
-		// that's a shame. but otherwise i need some kind of unique identifier for the sheet, to replace it.
-		// todo maybe adoptStyles should be like adoptStyles(id: string, ...styles: ViewStylesType[])
-		// then maybe i can replaceSync the sheet by id? something?
-		// this is only a hotreload consideration during PLuginDev
-		shadow()!.adoptedStyleSheets.push(sheet)
 		sheet.replaceSync(css)
+		sheet.insertRule(rul, 0)
+		shadow()!.adoptedStyleSheets.push(sheet)
 	}
 
 	const [hostConnected, setHostConnected] = createSignal(false)
@@ -88,7 +101,7 @@ export function Shadows(props: ShadowsProps) {
 		shadow()?.ownerDocument?.defaultView &&
 		props.children({
 			shadow: shadow as Accessor<ShadowRoot>,
-			adoptStyles,
+			setViewStyles,
 		})
 
 	createEffect(() => dom() && render(dom, shadow()!))

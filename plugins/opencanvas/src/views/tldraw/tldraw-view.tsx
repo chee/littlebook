@@ -12,13 +12,8 @@ import {Tldraw} from "@tldraw/tldraw"
 import {TldrawInner} from "./tldraw-inner.tsx"
 
 const render = function render(api) {
-	api.adoptStyles(
-		import("tldraw/tldraw.css?inline"),
-		":host > div {height: 100%}"
-	)
 	const div = document.createElement("div")
 	const root = createRoot(div)
-
 	root.render(
 		<Tldraw inferDarkMode options={{maxPages: 1}} autoFocus={true}>
 			<TldrawInner api={api} />
@@ -34,4 +29,5 @@ export const TldrawView = {
 	category: "editor",
 	render,
 	schema: oCIFCore04Schema,
+	styles: [import("tldraw/tldraw.css?inline"), ":host > div {height: 100%}"],
 } satisfies FileEditor<OCIFCore04>

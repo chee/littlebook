@@ -57,6 +57,7 @@ export default class PluginAPI {
 	// todo registerTask
 	// todo registerCommand
 	// todo registerWorker
+	// todo registerIndexer
 }
 
 export const PluginAPIContext = createContext<PluginAPI>()

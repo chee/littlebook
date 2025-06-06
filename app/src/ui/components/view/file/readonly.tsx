@@ -1,5 +1,4 @@
 import {toast} from ":/ui/components/toast/toast.tsx"
-import type {ShadowsChildrenProps} from ":/ui/components/view/shadow.tsx"
 import {useHotkeys} from ":/ui/lib/useHotkeys.ts"
 import type {DocHandle} from "@automerge/automerge-repo"
 import type {FileViewer} from "@littlebook/plugin-api/types/view.ts"
@@ -9,18 +8,18 @@ import {
 	onCleanup,
 	onMount,
 	runWithOwner,
+	type Accessor,
 } from "solid-js"
 import type {SetStoreFunction} from "solid-js/store"
 import {Dynamic} from "solid-js/web"
 
-export default function ReadonlyFileview<T>(
-	props: {
-		view: FileViewer<T>
-		fileHandle: DocHandle<T>
-		isActive: boolean
-		updateStatusItems: SetStoreFunction<string[]>
-	} & ShadowsChildrenProps,
-) {
+export default function ReadonlyFileview<T>(props: {
+	view: FileViewer<T>
+	fileHandle: DocHandle<T>
+	isActive: boolean
+	updateStatusItems: SetStoreFunction<string[]>
+	shadow: Accessor<ShadowRoot>
+}) {
 	const subs = new Set<() => void>()
 	function change() {
 		for (const sub of subs) {
@@ -52,7 +51,6 @@ export default function ReadonlyFileview<T>(
 			onCleanup={fn => runWithOwner(owner, () => onCleanup(fn))}
 			toast={toast}
 			shadow={props.shadow()}
-			adoptStyles={props.adoptStyles}
 		/>
 	) as ReturnType<typeof props.view.render>
 }

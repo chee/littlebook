@@ -50,13 +50,12 @@ export default function StandaloneViewer(props: {
 							{shadowProps => {
 								createRenderEffect(() => {
 									if (view()!.styles) {
-										// todo how to destroy the correct old stylesheets
-										shadowProps.adoptStyles(view()!.styles!)
+										shadowProps.setViewStyles(view()!.styles!)
 									}
 								})
 
 								// todo toast should be part of the plugin api
-								// todo adoptStyles should go away?
+
 								return (
 									<Dynamic
 										component={view()!.render}
@@ -70,7 +69,6 @@ export default function StandaloneViewer(props: {
 										toast={toast}
 										isActive={() => !!props.isActive}
 										shadow={shadowProps.shadow()}
-										adoptStyles={shadowProps.adoptStyles}
 										updateStatusItems={updateStatusItems}
 									/>
 								) as HTMLElement

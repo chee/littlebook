@@ -28,15 +28,10 @@ import Resizable from "@corvu/resizable"
 import {
 	eq,
 	getProperty,
-	has,
 	setProperty,
 	type LBPSrcFilePath,
 } from "../util/path.ts"
 import {makePersisted} from "@solid-primitives/storage"
-import {
-	draggable,
-	dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import {Collapsible} from "@kobalte/core/collapsible"
 import {ContextMenu} from "@kobalte/core/context-menu"
 
@@ -87,7 +82,6 @@ export function createFileTreeContext(opts: {
 	setPath(path: Prop[]): void
 	getURL(path: Prop[]): string
 }): FileTreeContext {
-	// todo can selection context be global?
 	const selected = new ReactiveSet<Prop[]>([opts.path()])
 	const [renaming, setRenaming] = createSignal<Prop[] | null>(null)
 	createEffect(() => {
@@ -112,32 +106,35 @@ export function createFileTreeContext(opts: {
 			selected.add(path)
 		},
 		move(path: Prop[], newPath: Prop[]) {
-			const source = getProperty(opts.src(), path)
-			const target = getProperty(opts.src(), newPath)
+			const src = opts.src()
+			const source = getProperty(src, path)
+			const target = getProperty(src, newPath)
 
 			if (typeof target == "string" || !target) {
 				opts.change(src => {
-					setProperty(src, path, undefined)
-				})
-				opts.change(src => {
-					setProperty(
-						src,
-						newPath,
-						typeof source == "string" ? source : {...source}
-					)
-				})
-			} else if (typeof target == "object") {
-				opts.change(src => {
-					const content = getProperty(src, path)
-					if (content) {
+					try {
 						setProperty(src, path, undefined)
 						setProperty(
 							src,
-							newPath.concat(path[path.length - 1]),
-							content
+							newPath,
+							typeof source == "string" ? source : {...source}
 						)
-					}
+					} catch {}
 				})
+			} else if (typeof target == "object") {
+				const content = getProperty(src, path)
+				if (content) {
+					opts.change(src => {
+						try {
+							setProperty(src, path, undefined)
+							setProperty(
+								src,
+								newPath.concat(path[path.length - 1]),
+								typeof content == "string" ? content : {...content}
+							)
+						} catch {}
+					})
+				}
 			}
 		},
 		rm(path: Prop[]) {
@@ -215,7 +212,6 @@ export default function Chrome(
 		worker: PluginEditorWorker
 		tsWorker: WorkerShape
 		compile(): void
-		setMeta(): void
 	}
 ) {
 	const context = createFileTreeContext({
@@ -264,7 +260,6 @@ export default function Chrome(
 		if (last.match(/\.[tj]sx?$/)) {
 			return createTypescriptEditor(editorProps)
 		}
-		// todo other json files
 		if (last.match(/\.json$/)) {
 			return createJSONEditor(editorProps)
 		}
@@ -310,17 +305,11 @@ export default function Chrome(
 							}
 							element.ondragover = event => event.preventDefault()
 						}}>
-						<button
-							onClick={() => {
-								context.new(props.path, "folder")
-							}}>
-							📁
+						<button onClick={() => context.new(props.path, "folder")}>
+							📁 new folder
 						</button>
-						<button
-							onClick={() => {
-								context.new(props.path, "file")
-							}}>
-							📄
+						<button onClick={() => context.new(props.path, "file")}>
+							📄 new file
 						</button>
 					</header>
 					<nav class="sidebar__files">
@@ -459,7 +448,6 @@ export function TreeItem(props: {
 					{option => (
 						<ContextMenu.Item
 							onSelect={() => {
-								console.log(props.path, option)
 								context.selectContextMenuOption(props.path, option)
 							}}>
 							{option}

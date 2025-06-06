@@ -22,10 +22,6 @@ export function getExtension({path}: {path: Prop[]}) {
 		throw new Error("filename isn't a string? impossible!")
 	}
 	const lastIndex = last.lastIndexOf(".")
-	if (lastIndex == -1) {
-		// todo maybe this isn't an error
-		throw new Error("File has no extension!")
-	}
 	return lastIndex == -1 ? "" : last.slice(lastIndex + 1)
 }
 

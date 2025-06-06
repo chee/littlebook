@@ -4,6 +4,13 @@ import type {StandardSchemaV1} from "@standard-schema/spec"
 import type {BembyModifier, BembyModifiers} from "@chee/bemby"
 import type {JSX} from "solid-js"
 
+/* todo
+ * what are some other kinds of views that are missing?
+ * - sidebar widgets
+ * - views over multiple files
+ * - views over the whole repo
+ */
+
 export type ViewID = string & {__viewID: true}
 
 type ViewStyle = string
@@ -56,16 +63,20 @@ export interface FileViewer<Shape = unknown>
 }
 
 interface ViewAPIBase {
+	// todo this should be a plugin concern, not a view concern.
+	// and maybe it's just registerTask and it requires an icon and display name and a schema
+	// that i guess would be registerFileTask. there's also other tasks. registerStartupTask registerScheduledTask
+	// nah, these are all just tasks with categories. maybe a sink is also a task? or... idk, a sink is maybe different.
+	//
+
+	// and then we need sinks. sinks are maybe just functions
 	updateStatusItems(items: string[]): void
+	// todo maybe this is a plugin concern? and then `when` should know about the current view
+
 	registerKeybinding(
 		keybinding: string,
 		action: (event: KeyboardEvent) => void
 	): void
-	isActive(): boolean
-	onCleanup(cleanup: () => void): void
-	onMount(mount: () => void): void
-	shadow: ShadowRoot
-	adoptStyles(...sheet: ViewStylesType[]): void
 	// todo stick this on pluginAPI
 	toast: {
 		show(
@@ -77,6 +88,11 @@ interface ViewAPIBase {
 			}
 		): void
 	}
+
+	isActive(): boolean
+	onCleanup(cleanup: () => void): void
+	onMount(mount: () => void): void
+	shadow: ShadowRoot
 }
 
 export interface FileViewerAPI<Shape> extends ViewAPIBase {
@@ -84,11 +100,7 @@ export interface FileViewerAPI<Shape> extends ViewAPIBase {
 	onChange(fn: () => void): void
 }
 
-// todo pass a `adoptStylesheet` or `addCSS(string)`
 // todo pass a `callCommand`
-// todo maybe an `updateIndex` for search
-// but maybe that's the content-type's job or maybe a
-// Indexer is another thing
 export interface FileEditorAPI<Shape> extends ViewAPIBase {
 	handle: DocHandle<Shape>
 	updateName(name: string): void

@@ -49,8 +49,7 @@ export default function Fileview(props: {
 						{shadowProps => {
 							createRenderEffect(() => {
 								if (view()!.styles) {
-									// todo how to destroy the correct old stylesheets
-									shadowProps.adoptStyles(view()!.styles!)
+									shadowProps.setViewStyles(view()!.styles!)
 								}
 							})
 
@@ -63,7 +62,7 @@ export default function Fileview(props: {
 											entryHandle={entryHandle()!}
 											updateStatusItems={updateStatusItems}
 											isActive={!!props.isActive}
-											{...shadowProps}
+											shadow={shadowProps.shadow}
 										/>
 									</Match>
 									<Match when={view()?.category === "readonly"}>
@@ -72,7 +71,7 @@ export default function Fileview(props: {
 											fileHandle={contentHandle()!}
 											isActive={!!props.isActive}
 											updateStatusItems={updateStatusItems}
-											{...shadowProps}
+											shadow={shadowProps.shadow}
 										/>
 									</Match>
 								</Switch>
