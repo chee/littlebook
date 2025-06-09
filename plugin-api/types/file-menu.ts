@@ -1,3 +1,4 @@
+// todo this is nonsense
 // import type {FileEntry} from "../../app/src/docs/file-entry-doc.ts"
 import type {DocHandle, Doc} from "@automerge/vanillajs"
 

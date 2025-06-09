@@ -1,17 +1,37 @@
 import {createResource, createSignal} from "solid-js"
+import type {FileViewer, ViewID} from "@littlebook/plugin-api/types/view.ts"
+import {MarkdownShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 import rehypeReact from "rehype-react"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
 import gfm from "remark-gfm"
-import {unified} from "unified"
+import {unified, type Processor} from "unified"
 import {Fragment, jsx, jsxs} from "solid-js/h/jsx-runtime"
-import type {FileViewer, ViewID} from "@littlebook/plugin-api/types/view.ts"
-import {MarkdownShape} from "@littlebook/plugin-api/shapes/shapes.ts"
+import remarkFrontmatter from "remark-frontmatter"
+import {matter} from "vfile-matter"
+import type {Node} from "unist"
+import type {VFile} from "vfile"
+import type {Root as MdastRoot} from "mdast"
+import type {Root as HastRoot} from "hast"
 
-const markdown = await unified()
+/**
+ * Parse YAML frontmatter and expose it at `file.data.matter`.
+ *
+ * @returns
+ *   Transform.
+ */
+function extractFrontmatter() {
+	return function (_tree: Node, file: VFile) {
+		matter(file)
+	}
+}
+
+const markdown: Processor<MdastRoot, HastRoot, HastRoot> = unified()
 	.use(gfm)
 	.use(remarkParse)
-	.use(remarkRehype)
+	.use(remarkFrontmatter)
+	.use(extractFrontmatter)
+	.use(remarkRehype, {allowDangerousHtml: true})
 	.use(rehypeReact, {
 		Fragment,
 		jsx,
@@ -32,32 +52,14 @@ export default {
 		// eslint-disable-next-line solid/reactivity
 		props.onChange(() => updateText(props.doc().text))
 
-		const [html] = createResource(
-			text,
-			async text => (await markdown.process(text)).result,
-		)
-
-		const [fontFamily, setFontFamily] = createSignal("sans-serif")
-		const [fontSize, setFontSize] = createSignal("1rem")
+		const [html] = createResource(text, async text => {
+			return "lol"
+		})
 
 		return (
-			<markdown-preview
-				style={{
-					"font-family": fontFamily(),
-					"font-size": fontSize(),
-				}}>
+			<markdown-preview>
 				<div class="markdown-body">
-					<div class="markdown-content">{html.latest}</div>
-				</div>
-				<div class="markdown__toolbar">
-					<input
-						value={fontFamily()}
-						onInput={e => setFontFamily(e.currentTarget.value)}
-					/>
-					<input
-						value={fontSize()}
-						onInput={e => setFontSize(e.currentTarget.value)}
-					/>
+					<div class="markdown-content" innerHTML={html.latest}></div>
 				</div>
 			</markdown-preview>
 		) as HTMLElement

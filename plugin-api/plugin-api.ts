@@ -7,7 +7,10 @@ import * as Comlink from "comlink"
 import debug from "debug"
 import type {PluginAPIWorker} from "./workers/worker.ts"
 import type {AutomergeUrl, Repo} from "@automerge/vanillajs"
+import {PublisherRegistry} from "./registries/publisher-registry.ts"
+import type {Publisher} from "./types/publisher.ts"
 const log = debug("littlebook:plugin-api")
+import * as wellKnownShapes from "./shapes/shapes.ts"
 
 const workerProgram = new Worker(
 	new URL("./workers/worker.ts", import.meta.url),
@@ -16,14 +19,19 @@ const workerProgram = new Worker(
 
 export type {View, Source}
 
+// todo something like .toast should be here
 export default class PluginAPI {
 	private viewRegistry: ViewRegistry
 	private sourceRegistry: SourceRegistry
+	private sinkRegistry: PublisherRegistry
 	worker: Comlink.Remote<PluginAPIWorker>
+	// todo shape registry?????
+	wellKnownShapes = wellKnownShapes
 
 	constructor(repo: Repo) {
 		this.viewRegistry = new ViewRegistry({repo})
 		this.sourceRegistry = new SourceRegistry({repo})
+		this.sinkRegistry = new PublisherRegistry({repo})
 		this.worker = Comlink.wrap(workerProgram)
 	}
 	// callCommand<T>(commandId: string, args?: T): void
@@ -37,6 +45,11 @@ export default class PluginAPI {
 	registerSource<T>(source: Source<T>) {
 		this.sourceRegistry.register(source)
 		log("source registered", source.id)
+	}
+
+	registerPublisher<T>(publisher: Publisher<T>) {
+		this.sinkRegistry.register(publisher)
+		log("publisher registered", publisher.id)
 	}
 
 	// todo this should actually register it, and something else should inject these scripts
@@ -82,4 +95,10 @@ export function useSourceRegistry() {
 	const api = usePluginAPI()
 	// @ts-expect-error i know it's private, but it's mine
 	return api.sourceRegistry
+}
+
+export function usePublisherRegistry() {
+	const api = usePluginAPI()
+	// @ts-expect-error i know it's private, but it's mine
+	return api.sinkRegistry
 }

@@ -1,7 +1,7 @@
 /** @jsxRuntime automatic */
 /** @jsxImportSource react */
 import type {
-	FileEditor,
+	AutomergeFileEditor,
 	FileEditorRenderFunction,
 	ViewID,
 } from "@littlebook/plugin-api/types/view.ts"
@@ -30,4 +30,4 @@ export const TldrawView = {
 	render,
 	schema: oCIFCore04Schema,
 	styles: [import("tldraw/tldraw.css?inline"), ":host > div {height: 100%}"],
-} satisfies FileEditor<OCIFCore04>
+} satisfies AutomergeFileEditor<OCIFCore04>

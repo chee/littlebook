@@ -35,4 +35,27 @@ export default async function registerBaseViews(api: PluginAPI) {
 			bytes: v.instance(Uint8Array),
 		}),
 	})
+
+	api.registerView({
+		id: "video" as ViewID,
+		displayName: "Video",
+		category: "readonly",
+		render(props) {
+			const video = document.createElement("video")
+			const src = () =>
+				URL.createObjectURL(
+					new Blob([props.doc().bytes], {type: props.doc().mime}),
+				)
+			createEffect(() => (video.src = src()))
+			video.style.width = "100%"
+			video.style.height = "100%"
+			video.style.objectFit = "contain"
+			return video
+		},
+		schema: v.object({
+			type: v.literal("video"),
+			mime: v.string(),
+			bytes: v.instance(Uint8Array),
+		}),
+	})
 }

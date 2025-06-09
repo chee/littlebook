@@ -10,14 +10,12 @@ import {
 	runWithOwner,
 	type Accessor,
 } from "solid-js"
-import type {SetStoreFunction} from "solid-js/store"
 import {Dynamic} from "solid-js/web"
 
 export default function ReadonlyFileview<T>(props: {
 	view: FileViewer<T>
 	fileHandle: DocHandle<T>
 	isActive: boolean
-	updateStatusItems: SetStoreFunction<string[]>
 	shadow: Accessor<ShadowRoot>
 }) {
 	const subs = new Set<() => void>()
@@ -45,7 +43,6 @@ export default function ReadonlyFileview<T>(props: {
 			registerKeybinding={(key, action) =>
 				onCleanup(useHotkeys(key, action))
 			}
-			updateStatusItems={props.updateStatusItems}
 			onChange={fn => subs.add(fn)}
 			onMount={onMount}
 			onCleanup={fn => runWithOwner(owner, () => onCleanup(fn))}

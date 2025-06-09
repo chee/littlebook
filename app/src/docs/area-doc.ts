@@ -3,6 +3,7 @@ import type {AutomergeURL} from ":/core/sync/url.ts"
 
 export type AreaURL = AutomergeURL & {type: "area"}
 
+// todo rename this thing to like type: "@littlebook/folder"
 export interface AreaDoc {
 	type: "area"
 	name: string

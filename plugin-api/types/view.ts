@@ -1,8 +1,6 @@
 import type {DocHandle} from "@automerge/vanillajs"
 import type {FileMenu} from "./file-menu.ts"
 import type {StandardSchemaV1} from "@standard-schema/spec"
-import type {BembyModifier, BembyModifiers} from "@chee/bemby"
-import type {JSX} from "solid-js"
 
 /* todo
  * what are some other kinds of views that are missing?
@@ -52,9 +50,22 @@ export interface StandaloneView extends ViewBase<StandaloneViewAPI> {
 	category: "standalone"
 }
 
-export interface FileEditor<Shape = unknown>
-	extends FileViewBase<Shape, FileEditorAPI<Shape>> {
+export interface IndicatorView<Shape = unknown>
+	extends FileViewBase<Shape, IndicatorViewAPI<Shape>> {
+	category: "indicator"
+}
+
+export interface AutomergeFileEditor<Shape = unknown>
+	extends FileViewBase<Shape, AutomergeFileEditorAPI<Shape>> {
 	category: "editor"
+	kind: "automerge"
+}
+
+export interface BlobEditor extends ViewBase<BlobEditorAPI> {
+	category: "editor"
+	kind: "blob"
+	patterns: string[]
+	mimes: string[]
 }
 
 export interface FileViewer<Shape = unknown>
@@ -70,24 +81,11 @@ interface ViewAPIBase {
 	//
 
 	// and then we need sinks. sinks are maybe just functions
-	updateStatusItems(items: string[]): void
-	// todo maybe this is a plugin concern? and then `when` should know about the current view
 
 	registerKeybinding(
 		keybinding: string,
 		action: (event: KeyboardEvent) => void
 	): void
-	// todo stick this on pluginAPI
-	toast: {
-		show(
-			title: JSX.Element,
-			opts?: {
-				body?: JSX.Element
-				link?: JSX.Element
-				modifiers?: BembyModifier | BembyModifiers
-			}
-		): void
-	}
 
 	isActive(): boolean
 	onCleanup(cleanup: () => void): void
@@ -100,17 +98,31 @@ export interface FileViewerAPI<Shape> extends ViewAPIBase {
 	onChange(fn: () => void): void
 }
 
-// todo pass a `callCommand`
-export interface FileEditorAPI<Shape> extends ViewAPIBase {
+export interface IndicatorViewAPI<Shape> extends ViewAPIBase {
+	doc(): Shape
+	onChange(fn: () => void): void
+}
+
+export interface AutomergeFileEditorAPI<Shape> extends ViewAPIBase {
 	handle: DocHandle<Shape>
-	updateName(name: string): void
+}
+
+export interface BlobEditorAPI extends ViewAPIBase {
+	// todo should this be the arrayBuffer or uint8array?
+	blob(): Blob
+	onChange(fn: () => void): void
+	// todo should this actually take an arraybuffer?
+	update(blob: Blob): void
 }
 
 export type View<Shape = unknown> =
-	| FileEditor<Shape>
+	| AutomergeFileEditor<Shape>
 	| FileViewer<Shape>
+	| IndicatorView<Shape>
 	| StandaloneView
+	| BlobEditor
 
-export type FileEditorRenderFunction<Shape> = FileEditor<Shape>["render"]
+export type FileEditorRenderFunction<Shape> =
+	AutomergeFileEditor<Shape>["render"]
 export type FileViewerRenderFunction<Shape> = FileViewer<Shape>["render"]
 export type StandaloneViewRenderFunction = StandaloneView["render"]

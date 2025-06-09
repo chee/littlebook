@@ -70,7 +70,7 @@
 	z-index: 1000000 !important;
 }
 
-/* TODO why is this diff from popmenu.css ???? */
+/* todo why is this diff from popmenu.css ???? */
 .popmenu__content,
 .popmenu__sub-content {
 	z-index: 99999999;

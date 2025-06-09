@@ -4,6 +4,12 @@
 import * as v from "valibot"
 import {automergeURL} from "./util.ts"
 
+export const DOMFileShape = v.instance(File)
+export type DOMFileShape = v.InferOutput<typeof DOMFileShape>
+
+export const BlobShape = v.blob()
+export type BlobShape = v.InferOutput<typeof BlobShape>
+
 export const TextShape = v.object({text: v.string()})
 export type TextShape = v.InferOutput<typeof TextShape>
 

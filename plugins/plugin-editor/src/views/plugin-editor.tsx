@@ -1,6 +1,6 @@
 import type {
-	FileEditor,
-	FileEditorAPI,
+	AutomergeFileEditor,
+	AutomergeFileEditorAPI,
 	ViewID,
 } from "@littlebook/plugin-api/types/view.ts"
 import {LittlebookPluginShape} from "../shapes/shapes.ts"
@@ -20,7 +20,7 @@ const worker = Comlink.wrap(workerProgram) as PluginEditorWorker
 const tsWorker = worker.tsWorker as unknown as WorkerShape
 await tsWorker.initialize()
 
-async function compile(props: FileEditorAPI<LittlebookPluginShape>) {
+async function compile(props: AutomergeFileEditorAPI<LittlebookPluginShape>) {
 	window.littlebook.registerPlugin(props.handle.url)
 }
 
@@ -56,7 +56,7 @@ export default {
 			/>
 		) as HTMLElement
 	},
-} satisfies FileEditor<LittlebookPluginShape>
+} satisfies AutomergeFileEditor<LittlebookPluginShape>
 
 declare module "solid-js" {
 	namespace JSX {

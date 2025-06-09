@@ -1,6 +1,6 @@
 /// <reference types="../../../../app/node_modules/vite/client" />
 
-import type {FileEditorAPI} from "@littlebook/plugin-api/types/view.ts"
+import type {AutomergeFileEditorAPI} from "@littlebook/plugin-api/types/view.ts"
 import type {
 	LittlebookFileTree,
 	LittlebookPluginShape,
@@ -206,7 +206,7 @@ export function FileTreeProvider(
 }
 
 export default function Chrome(
-	props: FileEditorAPI<LittlebookPluginShape> & {
+	props: AutomergeFileEditorAPI<LittlebookPluginShape> & {
 		path: Prop[]
 		setPath(path: Prop[]): void
 		worker: PluginEditorWorker

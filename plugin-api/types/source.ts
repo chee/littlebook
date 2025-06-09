@@ -1,5 +1,10 @@
 import type {ContentShape} from "./content.ts"
 
+// todo http source?
+// todo SMS source?
+// todo RSS source?
+// todo email source? -- can littlebook have an e-mail address?
+
 type PartialEntry<Shape> = {
 	/** the file's name */
 	name?: string

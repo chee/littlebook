@@ -11,7 +11,8 @@ import {
 import {render} from "solid-js/web"
 
 export interface ShadowsProps {
-	// id: ViewID
+	style?: JSX.IntrinsicElements["div"]["style"]
+	class?: JSX.IntrinsicElements["div"]["class"]
 	children(props: ShadowsChildrenProps): JSX.Element
 }
 
@@ -106,7 +107,7 @@ export function Shadows(props: ShadowsProps) {
 
 	createEffect(() => dom() && render(dom, shadow()!))
 
-	return <shadow-root ref={setHost} />
+	return <shadow-root ref={setHost} class={props.class} style={props.style} />
 }
 
 export function useShadowRoot() {}
@@ -116,7 +117,8 @@ declare module "solid-js" {
 		interface IntrinsicElements {
 			"shadow-root": {
 				ref?: HTMLDivElement | ((el: HTMLDivElement) => void)
-				style?: JSX.CSSProperties
+				style?: JSX.IntrinsicElements["div"]["style"]
+				class?: JSX.IntrinsicElements["div"]["class"]
 				children?: JSX.Element
 			}
 		}

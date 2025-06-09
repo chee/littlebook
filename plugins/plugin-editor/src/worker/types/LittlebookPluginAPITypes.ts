@@ -21,25 +21,10 @@ export namespace Littlebook {
 
 	type StylesType = string | Promise<string> | Promise<{default: string}>
 	type ViewAPIBase<T> = {
-		updateStatusItems(items: string[]): void
-		registerKeybinding(
-			keybinding: string,
-			action: (event: KeyboardEvent) => void
-		): void
-		isActive(): boolean
 		onCleanup(cleanup: () => void): void
 		onMount(mount: () => void): void
-		toast: {
-			show(
-				title: JSX.Element,
-				opts?: {
-					body?: JSX.Element
-					link?: JSX.Element
-					modifiers?: BembyModifier | BembyModifiers
-				}
-			): void
-		}
 	}
+
 	export type View<T> = {
 		id: string
 		icon?: string
@@ -53,7 +38,6 @@ export namespace Littlebook {
 			onCleanup(cleanup: () => void): void
 			onMount(mount: () => void): void
 			handle: DocHandle<T>
-			updateName(name: string): void
 			onChange(fn: () => {}): void
 		})
 	} & (
@@ -71,7 +55,6 @@ export namespace Littlebook {
 				render(
 					api: {
 						handle: DocHandle<Shape>
-						updateName(name: string): void
 					} & ViewAPIBase<T>
 				)
 		  }

@@ -41,6 +41,11 @@
 	flex-direction: column;
 }
 
+.view-shadow-root {
+	height: 100%;
+	overflow: hidden;
+}
+
 littlebook-view {
 	&,
 	> div {

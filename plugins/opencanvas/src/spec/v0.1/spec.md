@@ -18,13 +18,13 @@ The goal of the Open Canvas format is to enable interoperability between differe
 
 Open Canvas has been designed to meet the following goals:
 
-- **Balance between visual and conceptual canvases.** Nodes provide the core elements for the canvas. Relations provide rich support for creating conceptual relationships between nodes.
-- **Extensibility.** Open Canvas is fully extensibile using custom-defined schemas.
-- **Runtime-independence.** Enable different canvases to work together without canvases needing to implement or even understand all aspects of the spec.
+-  **Balance between visual and conceptual canvases.** Nodes provide the core elements for the canvas. Relations provide rich support for creating conceptual relationships between nodes.
+-  **Extensibility.** Open Canvas is fully extensibile using custom-defined schemas.
+-  **Runtime-independence.** Enable different canvases to work together without canvases needing to implement or even understand all aspects of the spec.
 
 Out of scope:
 
-- **Backwards compatibility with Obsidian's JSON Canvas.** JSON Canvas isn't designed to support the full gamut of functionality supported by Open Canvas.
+-  **Backwards compatibility with Obsidian's JSON Canvas.** JSON Canvas isn't designed to support the full gamut of functionality supported by Open Canvas.
 
 ## Structure: Nodes, Relations, Resources, Schemas
 
@@ -36,11 +36,11 @@ The structure of an Open Canvas JSON consists of `nodes`, `relations`, and `reso
 
 ```json
 {
-  "schema_version": "1.0", // this could be implied
-  "nodes": [],
-  "relations": [],
-  "resources": [],
-  "schemas": []
+	"schema_version": "1.0", // this could be implied
+	"nodes": [],
+	"relations": [],
+	"resources": [],
+	"schemas": []
 }
 ```
 
@@ -54,21 +54,21 @@ All Nodes must implement the following properties:
 
 ```ts
 type Node = {
-  id: string;
-  position: [number, number] | [number, number, number]; // x,y or x,y,z
-  size?: [number, number] | [number, number, number]; // w,h or w,h,d
-  rotation?: number; // +/- 360 degrees; if not included, defaults to 0
-  scale?: number; // defaults to 0
-  resource?: string; // id of a resource
-  properties?: [
-    {
-      schema: string; // name of a schema listed in schemas
-      schema_version: string;
-      [key: string]: any;
-    }
-  ];
-  fallback?: string;
-};
+	id: string
+	position: [number, number] | [number, number, number] // x,y or x,y,z
+	size?: [number, number] | [number, number, number] // w,h or w,h,d
+	rotation?: number // +/- 360 degrees; if not included, defaults to 0
+	scale?: number // defaults to 0
+	resource?: string // id of a resource
+	properties?: [
+		{
+			schema: string // name of a schema listed in schemas
+			schema_version: string
+			[key: string]: any
+		}
+	]
+	fallback?: string
+}
 ```
 
 ### Relations
@@ -79,16 +79,16 @@ Relations are used to indicate relationships between Nodes on the canvas. Relati
 
 ```ts
 type Relation = {
-  id: string;
-  name: string;
-  properties?: [
-    {
-      schema: string;
-      schema_version: string;
-      [key: string]: any;
-    }
-  ];
-};
+	id: string
+	name: string
+	properties?: [
+		{
+			schema: string
+			schema_version: string
+			[key: string]: any
+		}
+	]
+}
 ```
 
 ### Resources
@@ -99,19 +99,19 @@ Resources are the hypermedia assets that Nodes display. They are stored separate
 
 ```ts
 type Resource = {
-  id: string;
-  uri: string;
-  mimeType?: string;
-};
+	id: string
+	uri: string
+	mimeType?: string
+}
 ```
 
-- [ ] What happens if `id`s collide? Should we just use array indexes instead?
+-  [ ] What happens if `id`s collide? Should we just use array indexes instead?
 
 The `uri` for a resource can either be:
 
-- embedded in the file itself
-- a local file relative to the open canvas file
-- a remote URL
+-  embedded in the file itself
+-  a local file relative to the open canvas file
+-  a remote URL
 
 **Embedded in the file**
 
@@ -127,8 +127,8 @@ The `uri` for a resource can either be:
 }
 ```
 
-- [ ] is `mimeType` duplicative?
-- [ ] what if `mimeType` and the mimeType specified in `data:` differ?
+-  [ ] is `mimeType` duplicative?
+-  [ ] what if `mimeType` and the mimeType specified in `data:` differ?
 
 **Local file relative to the Open Canvas file**
 
@@ -158,7 +158,7 @@ The `uri` for a resource can either be:
 }
 ```
 
-- [ ] what if `mimeType` and the mimeType specified in the http response differ?
+-  [ ] what if `mimeType` and the mimeType specified in the http response differ?
 
 ## Extensibility
 
@@ -202,7 +202,7 @@ Schemas can extend one another.
 
 When extending, properties are simply merged to establish the full schema. This allows extension with meaningful fallbacks: if an implementer doesn't support the extended schema, but does support the base schema, they can render the node using a simpler representation.
 
-- [ ] "merging properties" is probably a bad idea - let the implementer choose which property to use rather than using this inheritance-like behavior
+-  [ ] "merging properties" is probably a bad idea - let the implementer choose which property to use rather than using this inheritance-like behavior
 
 Schemas are defined in JSONSchema format.
 
@@ -214,7 +214,7 @@ Schemas are defined in JSONSchema format.
 
 For example, a `@tldraw/arrow` schema could extend a `@ocwg/arrow` schema, adding properties that are only applicable to TLDraw arrow.
 
-- [ ] Flesh out this example
+-  [ ] Flesh out this example
 
 ## Core Node Schemas
 
@@ -313,19 +313,19 @@ Here's an example:
 
 ```json
 {
-  "id": "setRelationID1234",
-  "name": "group a",
-  "properties": [
-    {
-      "schema": "@ocwg/set",
-      "schema_version": "1.0",
-      "members": ["someID", "someOtherID"]
-    }
-  ]
+	"id": "setRelationID1234",
+	"name": "group a",
+	"properties": [
+		{
+			"schema": "@ocwg/set",
+			"schema_version": "1.0",
+			"members": ["someID", "someOtherID"]
+		}
+	]
 }
 ```
 
-- `members` can be Nodes or Relations.
+-  `members` can be Nodes or Relations.
 
 ### Edges
 
@@ -335,20 +335,20 @@ Here's an example:
 
 ```json
 {
-  "id": "edgeRelationID1234",
-  "name": "a named edge",
-  "properties": [
-    {
-      "schema": "@ocwg/edge",
-      "schema_version": "1.0",
-      "from": "someNodeID124135",
-      "to": "someNodeID11321"
-    }
-  ]
+	"id": "edgeRelationID1234",
+	"name": "a named edge",
+	"properties": [
+		{
+			"schema": "@ocwg/edge",
+			"schema_version": "1.0",
+			"from": "someNodeID124135",
+			"to": "someNodeID11321"
+		}
+	]
 }
 ```
 
-- `from` and `to` can be Nodes or Relations.
+-  `from` and `to` can be Nodes or Relations.
 
 ### Hyper-edges
 
@@ -356,17 +356,17 @@ Hyper-edges represent many-to-many relationships.
 
 ```json
 {
-  "id": "hyperEdgeRelation1234",
-  "name": "a named hyperedge",
-  "properties": [
-    {
-      "schema": "@ocwg/hyperedge",
-      "schema_version": "1.0",
-      "from": ["someShapeID124135", "someShapeID11321"],
-      "to": ["someShapeID124135", "someShapeID11321"]
-    }
-  ]
+	"id": "hyperEdgeRelation1234",
+	"name": "a named hyperedge",
+	"properties": [
+		{
+			"schema": "@ocwg/hyperedge",
+			"schema_version": "1.0",
+			"from": ["someShapeID124135", "someShapeID11321"],
+			"to": ["someShapeID124135", "someShapeID11321"]
+		}
+	]
 }
 ```
 
-- The `from[]` and `to[]` arrays can contain Nodes or Relations.
+-  The `from[]` and `to[]` arrays can contain Nodes or Relations.

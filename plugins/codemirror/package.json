@@ -40,7 +40,6 @@
 		"codemirror": "^6.0.1"
 	},
 	"devDependencies": {
-		"@littlebook/mkplugin": "workspace:~",
-		"@types/node": "^20.14.10"
+		"@littlebook/mkplugin": "workspace:~"
 	}
 }

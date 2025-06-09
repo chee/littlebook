@@ -19,5 +19,5 @@
 		"outDir": "_dts",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"]
 	},
-	"include": ["plugin-api.ts", "registries", "shapes", "types"]
+	"include": ["plugin-api.ts", "registries", "shapes", "types", "schema.ts"]
 }

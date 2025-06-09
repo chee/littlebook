@@ -9,6 +9,7 @@ import type {DocHandle} from "@automerge/automerge-repo"
 import {useDockAPI} from ":/ui/dock/dock.tsx"
 import {useViewRegistry} from "@littlebook/plugin-api"
 import NewDocumentMenu from ":/ui/components/new-document-dropdown/new-document-dropdown.tsx"
+import PreferencesIcon from ":/ui/icons/preferences.tsx"
 
 export default function Sidebar() {
 	const user = useUserDocContext()
@@ -75,7 +76,9 @@ export default function Sidebar() {
 					</div>
 				</Show>
 			</div>
-			<footer class="sidebar-footer"></footer>
+			<footer class="sidebar-footer">
+				<PreferencesIcon />
+			</footer>
 		</aside>
 	)
 }

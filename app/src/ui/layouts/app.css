@@ -1,0 +1,10 @@
+.early-warning {
+	height: 1.5rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	background: #2ccbbe;
+	color: var(--white);
+	text-align: center;
+	font-weight: 600;
+	font-family: var(--family-mono);
+}

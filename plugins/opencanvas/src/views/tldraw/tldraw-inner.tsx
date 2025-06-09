@@ -2,14 +2,14 @@
 /** @jsxImportSource react */
 import type {OCIFCore04} from "../../types/v0.4.ts"
 import type * as OCIF from "../../types/v0.4.ts"
-import type {FileEditorAPI} from "@littlebook/plugin-api/types/view.ts"
+import type {AutomergeFileEditorAPI} from "@littlebook/plugin-api/types/view.ts"
 import {useEditor, Box, TLRecord} from "@tldraw/tldraw"
 import {useLayoutEffect} from "react"
 import {openCanvasToTldrawSnapshot} from "./from-opencanvas.ts"
 import type {TLGeoShapeProps} from "tldraw"
 import {patch} from "../../utils/patch.ts"
 
-export function TldrawInner(props: {api: FileEditorAPI<OCIFCore04>}) {
+export function TldrawInner(props: {api: AutomergeFileEditorAPI<OCIFCore04>}) {
 	const {api} = props
 	const editor = useEditor()
 	editor.store.loadStoreSnapshot({

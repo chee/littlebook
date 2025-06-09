@@ -12,15 +12,15 @@ import {githubLight as github} from "@uiw/codemirror-theme-github"
 
 import type {DocHandleChangePayload} from "@automerge/vanillajs"
 import type {
-	FileEditor,
-	FileEditorAPI,
+	AutomergeFileEditor,
+	AutomergeFileEditorAPI,
 	ViewID,
 } from "@littlebook/plugin-api/types/view.ts"
 import {CodeShape} from "@littlebook/plugin-api/shapes/shapes.ts"
 import type {FileMenu} from "@littlebook/plugin-api/types/file-menu.ts"
 
 function render(
-	props: FileEditorAPI<CodeShape> & {
+	props: AutomergeFileEditorAPI<CodeShape> & {
 		path?: (string | number)[]
 	}
 ) {
@@ -247,20 +247,6 @@ function render(
 		) {
 			onlang()
 		}
-		const doc = change.patchInfo.after
-		// todo shouldn't this be something... else? it's not an editor's job,
-		// it's a new kind of THING not a sink, source or view... some kind of
-		// file-specific addon that boots when _any_ view opens a file what would
-		// that be? what would it called? a (monitor)?
-		if (doc.language == "markdown") {
-			const firstLine = doc.text.slice(0, doc.text.indexOf("\n"))
-			const title = firstLine.slice(2).trim()
-			if (firstLine && firstLine.startsWith("# ") && title) {
-				props.updateName(title)
-			} else {
-				props.updateName("untitled")
-			}
-		}
 	}
 
 	props.handle.on("change", onchange)
@@ -352,4 +338,4 @@ export default {
 	`,
 	],
 	schema: CodeShape,
-} satisfies FileEditor<CodeShape>
+} satisfies AutomergeFileEditor<CodeShape>

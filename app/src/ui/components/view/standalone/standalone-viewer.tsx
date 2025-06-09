@@ -8,7 +8,6 @@ import {
 } from "solid-js"
 import {Dynamic} from "solid-js/web"
 import clsx from "clsx"
-import {createStore} from "solid-js/store"
 import {useHotkeys} from ":/ui/lib/useHotkeys.ts"
 
 import type {StandaloneView} from "@littlebook/plugin-api/types/view.ts"
@@ -24,7 +23,7 @@ export default function StandaloneViewer(props: {
 }) {
 	const views = useViewRegistry()
 	const view = () => views.get(props.id) as StandaloneView
-	const [statusItems, updateStatusItems] = createStore([] as string[])
+
 	let ref!: HTMLDivElement
 	return (
 		<div class={bemby("view", "standalone")}>
@@ -46,15 +45,13 @@ export default function StandaloneViewer(props: {
 						</p>
 					}>
 					<ViewErrorBoundary view={view()}>
-						<Shadows>
+						<Shadows class="view-shadow-root">
 							{shadowProps => {
 								createRenderEffect(() => {
 									if (view()!.styles) {
 										shadowProps.setViewStyles(view()!.styles!)
 									}
 								})
-
-								// todo toast should be part of the plugin api
 
 								return (
 									<Dynamic
@@ -66,10 +63,8 @@ export default function StandaloneViewer(props: {
 											key: string,
 											action: (event: KeyboardEvent) => void,
 										) => onCleanup(useHotkeys(key, action))}
-										toast={toast}
 										isActive={() => !!props.isActive}
 										shadow={shadowProps.shadow()}
-										updateStatusItems={updateStatusItems}
 									/>
 								) as HTMLElement
 							}}
@@ -83,7 +78,7 @@ export default function StandaloneViewer(props: {
 							<span class="view-status-bar__editor-name">
 								{view()?.displayName ?? view()?.id}
 							</span>
-							<For each={statusItems}>{item => <span>{item}</span>}</For>
+							{/* <For each={statusItems}>{item => <span>{item}</span>}</For> */}
 						</footer>
 					</ViewErrorBoundary>
 				</Show>

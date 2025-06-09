@@ -4,7 +4,7 @@ import {EditorState} from "prosemirror-state"
 import {exampleSetup} from "prosemirror-example-setup"
 
 import {TextShape} from "@littlebook/plugin-api/shapes/shapes.ts"
-import type {FileEditor} from "@littlebook/plugin-api/types/view.ts"
+import type {AutomergeFileEditor} from "@littlebook/plugin-api/types/view.ts"
 
 export default {
 	id: "rich",
@@ -24,4 +24,4 @@ export default {
 		return dom
 	},
 	schema: TextShape,
-} satisfies FileEditor<TextShape>
+} satisfies AutomergeFileEditor<TextShape>

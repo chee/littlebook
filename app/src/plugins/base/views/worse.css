@@ -1,11 +1,251 @@
 markdown-preview {
-	height: 100%;
-	width: 100%;
+	--green: #33ffcc;
+	--blue: #33ccff;
+	--dark-blue: #03c;
+	--red: #ff2a50;
+	--orange: #ff7c7a;
+	--mustard: #fe8;
+	--lemon: #ff8;
+	--f-blue: #2269ff;
+	--cherries-fill: #ffe9ed;
+	--cherries-line: #cc2959;
+
+	--mynt: #36f9c0;
+	--russian-violet: #261447ff;
+	--melon: #f9b5acff;
+	--melon2: rgb(255, 202, 196);
+	--blue-crayola: #3772ffff;
+	--sunglow: #fdca40ff;
+	--flax: #f3e37c;
+	--jonquil: #ffcf00;
+	--viridian: #417b5a;
+	--chili: #e3170a;
+	--ombe: #9f2042;
+	--carribean-current: #216869;
+	--scrollbar-front: black;
+	--scrollbar-back: rgb(255, 202, 230);
+	--sky: oklch(0.79 0.14 226.17 / 1);
+	--sky-dark: oklch(from var(--sky) calc(l * 0.8) c h);
+	--sky-light: oklch(from var(--sky) calc(l * 1.2) c h);
+	--terracotta: oklch(0.74 0.16 22.65 / 1);
+	--terracotta-dark: oklch(from var(--terracotta) calc(l * 0.8) c h);
+	--terracotta-light: oklch(from var(--terracotta) calc(l * 1.2) c h);
+	--red: oklch(0.65 1.2402 19.02);
+	--red-dark: oklch(from var(--red) calc(l * 0.8) c h);
+	--red-light: oklch(from var(--red) calc(l * 1.2) c h);
+	--mynt: oklch(0.88 0.17 167.51 / 1);
+	--mynt-dark: oklch(from var(--mynt) calc(l * 0.8) c h);
+	--mynt-light: oklch(from var(--mynt) calc(l * 1.2) c h);
+	--sunglow: oklch(0.86 0.16 87.44 / 1);
+	--sunglow-dark: oklch(from var(--sunglow) calc(l * 0.8) c h);
+	--sunglow-light: oklch(from var(--sunglow) calc(l * 1.2) c h);
+	--blue-crayola: oklch(0.52 0.2689 263.27);
+	--blue-crayola-dark: oklch(from var(--blue-crayola) calc(l * 0.8) c h);
+	--blue-crayola-light: oklch(from var(--blue-crayola) calc(l * 1.2) c h);
+	--mosque: oklch(0.77 0.2143 148.08);
+	--mosque-dark: oklch(from var(--mosque) calc(l * 0.8) c h);
+	--mosque-light: oklch(from var(--mosque) calc(l * 1.2) c h);
+	--carribean-current: oklch(0.47 0.07 196.43 / 1);
+	--carribean-current-dark: oklch(
+		from var(--carribean-current) calc(l * 0.8) c h
+	);
+	--carribean-current-light: oklch(
+		from var(--carribean-current) calc(l * 1.2) c h
+	);
+	--brown: oklch(from #5e3023);
+	--brown-dark: oklch(from var(--brown) calc(l * 0.8) c h);
+	--brown-light: oklch(from var(--brown) calc(l * 1.2) c h);
+
+	--white: oklch(1 0 0 / 1);
+	--white-dark: oklch(from var(--white) calc(l * 0.8) c h);
+	--white-light: oklch(from var(--white) calc(l * 1.2) c h);
+	--black: oklch(0 0 0 / 1);
+	--black-dark: oklch(from var(--black) calc(l * 0.8) c h);
+	--black-light: oklch(from var(--black) calc(l * 1.2) c h);
+
+	--primary: #c0f5fa;
+	--primary-dark: oklch(from var(--primary) calc(l * 0.6) calc(c * 7) h);
+	--primary-light: oklch(from var(--primary) calc(l * 1.2) c h);
+
+	--link: var(--blue-crayola);
+	--link-dark: oklch(from var(--link) calc(l * 0.8) c h);
+	--link-light: oklch(from var(--link) calc(l * 1.2) c h);
+
+	--info: var(--sky);
+	--info-dark: oklch(from var(--info) calc(l * 0.8) c h);
+	--info-light: oklch(from var(--info) calc(l * 1.2) c h);
+
+	--success: var(--mosque);
+	--success-dark: oklch(from var(--success) calc(l * 0.8) c h);
+	--success-light: oklch(from var(--success) calc(l * 1.2) c h);
+
+	--warning: var(--sunglow);
+	--warning-dark: oklch(from var(--warning) calc(l * 0.8) c h);
+	--warning-light: oklch(from var(--warning) calc(l * 1.2) c h);
+
+	--danger: #ad2e24;
+	--danger-dark: oklch(from var(--danger) calc(l * 0.8) c h);
+	--danger-light: oklch(from var(--danger) calc(l * 1.2) c h);
+
+	--text: var(--black);
+	--text-dark: oklch(from var(--text) calc(l * 0.8) c h);
+	--text-light: oklch(from var(--text) calc(l * 1.2) c h);
+
+	--page: var(--white);
+	--page-dark: oklch(from var(--page) calc(l * 0.7) c h);
+	--page-dirk-gently: oklch(from var(--page) calc(l * 0.9) c h);
+	--page-light: oklch(from var(--page) calc(l * 1.2) c h);
+
+	--caret-color: #5cdbce;
+
+	--selected-fill: color-mix(in oklab, var(--primary), transparent 20%);
+	background: #fbf6ff;
+	color: black;
+
 	.markdown-body {
 		max-width: 70ex;
 		margin: auto;
+		--header-fill: #ffaacc33;
+		--box-shadow-fill: #fac;
+		--long-box-shadow:
+			1px 1px var(--box-shadow-fill), 2px 2px var(--box-shadow-fill),
+			3px 3px var(--box-shadow-fill), 4px 4px var(--box-shadow-fill),
+			5px 5px var(--box-shadow-fill);
+		--box-shadow: 3px 3px var(--box-shadow-fill);
+		--entry-fill: white;
+		--entry-border-line: black;
+		max-width: 84ex;
+		margin: auto;
+		font-size: 1em;
+		/* border: 1px solid var(--entry-border-line); */
+		padding-top: 0px;
+		box-shadow: var(--box-shadow);
+		background: var(--entry-fill);
+		height: 100%;
 	}
+
 	.markdown-content {
+		height: 100%;
+		overflow: scroll;
+		--padding-inline: 0.5em;
+		padding-inline: var(--padding-inline);
+		.full-width {
+			width: calc(100% + var(--padding-inline) * 2);
+			margin-left: calc(-1 * var(--padding-inline));
+		}
+		border-top: 1px solid #a46;
+		--quote-left-border-line: rgb(0, 110, 255);
+		--quote-fill: rgb(232, 242, 255);
+		--quote-family:
+			Hoefler Text, New York, Palatino, Apple Garamond, Garamond, serif;
+		--quote-line: rgb(0, 54, 124);
+		font-weight: 420;
+		letter-spacing: -0.6px;
+
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			font-weight: 450;
+			line-height: 1.2;
+		}
+		h1 {
+			font-size: var(--font-size-2);
+			margin-bottom: var(--space-2);
+		}
+		h1:not(:first-child) {
+			margin-top: var(--space-5);
+		}
+		h2 {
+			font-size: var(--font-size-3);
+			margin-bottom: var(--space-3);
+		}
+		h2:not(:first-child) {
+			margin-top: var(--space-6);
+		}
+		h3 {
+			font-size: var(--font-size-4);
+			margin-bottom: var(--space-3);
+		}
+		h3:not(:first-child) {
+			margin-top: var(--space-5);
+		}
+		h4 {
+			font-size: var(--font-size-5);
+			margin-bottom: var(--space-2);
+		}
+		h4:not(:first-child) {
+			margin-top: var(--space-5);
+		}
+		h5 {
+			font-size: var(--font-size-6);
+			font-size: 1.125em;
+			margin-bottom: var(--space-1);
+		}
+		h5:not(:first-child) {
+			margin-top: var(--space-5);
+		}
+		h6 {
+			font-size: 1.1rem;
+			margin-bottom: var(--space-2);
+		}
+		h6:not(:first-child) {
+			margin-top: var(--space-5);
+		}
+
+		ul,
+		ol {
+			padding-left: 1rem;
+			margin-bottom: 4px;
+		}
+
+		ol {
+			list-style-type: decimal;
+			ol {
+				list-style-type: lower-alpha;
+				ol {
+					list-style-type: lower-roman;
+					ol {
+						list-style-type: lower-greek;
+						ol {
+							list-style-type: decimal;
+						}
+					}
+				}
+			}
+		}
+
+		ul {
+			::marker {
+				padding-right: 1ch;
+			}
+			list-style: initial;
+		}
+		p {
+			margin-top: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
+		blockquote {
+			/* background: var(--quote-fill); */
+
+			box-sizing: border-box;
+			color: var(--quote-line);
+			font-family: var(--quote-family);
+			/* font-size: 0.9em; */
+			/* font-weight: var(--default-font-weight); */
+			/* line-height: 1.2; */
+			/* margin-left: -0.125em; */
+			/* margin-right: -0.125em; */
+			margin-block: 0.75rem;
+			padding: 0.25em 1.5em 0.125em 0.75em;
+			position: relative;
+			/* border-radius: 4px; */
+			/* border: 1px solid var(--quote-left-border-line); */
+			border-left: 0.24em solid var(--quote-left-border-line);
+			background: var(--quote-fill);
+		}
 		overflow: scroll;
 	}
 	.markdown__toolbar {
